@@ -1,0 +1,16 @@
+﻿Построение начато 19.01.2014 15:09:46.
+     1>Проект "F:\Programing\QT\playo2\playo2.vcxproj" в узле 2 (целевые объекты Build).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(345,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+     1>ClCompile:
+         F:\Visual studio 2012\VC\bin\CL.exe /c /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtMultimediaWidgets /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtMultimedia /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtWidgets /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtNetwork /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtGui /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtANGLE /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtCore /Idebug /I. /I"..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\mkspecs\win32-msvc2012" /I.\GeneratedFiles /Zi /nologo /W3 /WX- /Od /Oy- /D _WINDOWS /D UNICODE /D WIN32 /D QT_MULTIMEDIAWIDGETS_LIB /D QT_MULTIMEDIA_LIB /D QT_WIDGETS_LIB /D QT_NETWORK_LIB /D QT_GUI_LIB /D QT_CORE_LIB /D QT_OPENGL_ES_2 /D QT_OPENGL_ES_2_ANGLE /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt -Zm200 -w34100 -w34189 mainwindow.cpp
+         mainwindow.cpp
+       Link:
+         F:\Visual studio 2012\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"debug\\playo2.exe" /NOLOGO /LIBPATH:F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib /LIBPATH:F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib qtmaind.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5MultimediaWidgetsd.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Multimediad.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Widgetsd.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Networkd.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Guid.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Cored.lib libEGLd.lib libGLESv2d.lib gdi32.lib user32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"debug\playo2.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /SAFESEH "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" Win32\Debug\moc_mainwindow.obj
+         Win32\Debug\main.obj
+         Win32\Debug\mainwindow.obj
+         playo2.vcxproj -> F:\Programing\QT\playo2\debug\playo2.exe
+     1>Построение проекта "F:\Programing\QT\playo2\playo2.vcxproj" завершено (целевые объекты Build).
+
+Построение успешно завершено.
+
+Затраченное время: 00:00:01.93
