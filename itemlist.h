@@ -11,6 +11,7 @@
 #include "model.h"
 #include "model_item.h"
 #include "model_item_delegate.h"
+#include "dnd.h"
 
 class TreeModel;
 class ModelItem;
@@ -56,9 +57,6 @@ private:
 
 //  QPixmap currentPixmap;
 //  QPoint dragPoint;
-
-  QString inner;
-  QString system;
 };
 
 //def __init__(self, parent=None):

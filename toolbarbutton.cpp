@@ -2,9 +2,6 @@
 #include <qDebug>
 
 ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent) : QToolButton(parent) {
-    system = "text/uri-list";
-    inner = "application/x-QListView-DragAndDrop";
-
     path = folderPath;
     setText(text);
     setStyleSheet(
@@ -24,7 +21,8 @@ ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent)
 }
 
 void ToolbarButton::dragEnterEvent(QDragEnterEvent *event) {
-   if (event->mimeData()->hasFormat(system)){
+   if (event->mimeData()->hasFormat(DnD::instance() -> listItems)
+           || event->mimeData()->hasFormat(DnD::instance() -> files)){
        event->accept();
    } else {
         event->ignore();
@@ -32,10 +30,10 @@ void ToolbarButton::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 void ToolbarButton::dropEvent(QDropEvent *event) {
-      if (event->mimeData()->hasFormat(inner)) {
+      if (event->mimeData()->hasFormat(DnD::instance() -> listItems)) {
 
           event->accept();
-      } else if (event->mimeData()->hasFormat(system)) {
+      } else if (event->mimeData()->hasFormat(DnD::instance() -> files)) {
           if(event -> mimeData() -> hasUrls()) {
               QList<QUrl> list = event -> mimeData() -> urls();
               foreach(QUrl url, list) {

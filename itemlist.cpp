@@ -2,9 +2,6 @@
 #include <QDebug>
 
 ItemList::ItemList(QWidget *parent, QJsonObject * attrs) : QTreeView(parent){
-    inner = "application/x-QListView-DragAndDrop";
-    system = "text/uri-list";
-
     setIndentation(5);
 //    setStyleSheet(QString(
 //                      "QTreeView {"
@@ -130,8 +127,8 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
 //}
 
 void ItemList::dragEnterEvent(QDragEnterEvent *event) {
-   if (event->mimeData()->hasFormat(inner)
-       || event->mimeData()->hasFormat(system)){
+   if (event->mimeData()->hasFormat(DnD::instance() -> listItems)
+       || event->mimeData()->hasFormat(DnD::instance() -> files)){
        event->accept();
    } else {
         event->ignore();
@@ -205,13 +202,13 @@ void ItemList::filesRoutine(ModelItem * index, QList<QUrl> list){
 }
 
 void ItemList::dropEvent(QDropEvent *event) {
-      if (event->mimeData()->hasFormat(inner)) {
+      if (event->mimeData()->hasFormat(DnD::instance() -> listItems)) {
 
           event->accept();
-      } else if (event->mimeData()->hasFormat(system)) {
+      } else if (event->mimeData()->hasFormat(DnD::instance() -> files)) {
           if(event -> mimeData() -> hasUrls()) {          
               QList<QUrl> list = event -> mimeData() -> urls();
-              ModelItem * index = model -> buildPath(list.first().path()) -> parent();
+              ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path()); // -> parent();
 //              model -> startRowInsertion(model->index(index));
               filesRoutine(index, list);
 //              model -> endRowInsertion();

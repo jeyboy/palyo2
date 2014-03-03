@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     toolbardialog.cpp \
     toolbarbuttondialog.cpp \
     toolbar.cpp \
-    toolbarbutton.cpp
+    toolbarbutton.cpp \
+    dnd.cpp
 
 unix:!mac {
         SOURCES += globalshortcut/qxtglobalshortcut_x11.cpp
@@ -70,7 +71,8 @@ HEADERS  += mainwindow.h \
     toolbardialog.h \
     toolbarbuttondialog.h \
     toolbar.h \
-    toolbarbutton.h
+    toolbarbutton.h \
+    dnd.h
 
 FORMS    += mainwindow.ui \
     tabdialog.ui \

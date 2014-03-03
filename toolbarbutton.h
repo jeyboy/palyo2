@@ -5,6 +5,8 @@
 #include <QMimeData>
 #include <QMouseEvent>
 
+#include "dnd.h"
+
 class ToolbarButton : public QToolButton {
     Q_OBJECT
 
@@ -16,10 +18,6 @@ public:
     ToolbarButton(QString text, QString folderPath, QWidget * parent=0);
 
     QString path;
-
-private:
-    QString system;
-    QString inner;
 };
 
 #endif // TOOLBARBUTTON_H
