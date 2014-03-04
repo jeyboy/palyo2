@@ -4,6 +4,7 @@
 #include <QToolBar>
 #include <QMimeData>
 #include <QMouseEvent>
+#include <QFileInfo>
 
 #include "dnd.h"
 
@@ -24,6 +25,7 @@ protected:
 
 signals:
     void eventTriggered(QEvent * ev);
+    void folderDropped(QString name, QString path);
 };
 
 #endif // TOOLBAR_H

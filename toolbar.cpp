@@ -2,11 +2,10 @@
 #include <qDebug>
 
 ToolBar::ToolBar(const QString &title, QWidget * parent) : QToolBar(title, parent) {
-
+    setAcceptDrops(true);
 }
 
 ToolBar::~ToolBar() {
-
 }
 
 void ToolBar::dragEnterEvent(QDragEnterEvent *event) {
@@ -22,7 +21,12 @@ void ToolBar::dropEvent(QDropEvent *event) {
       if(event -> mimeData() -> hasUrls()) {
           QList<QUrl> list = event -> mimeData() -> urls();
           foreach(QUrl url, list) {
-              qDebug() << url;
+              if (url.isLocalFile()) {
+                  QFileInfo file = QFileInfo(url.toLocalFile());
+                  if (file.isDir()) {
+                      emit folderDropped(file.baseName(), file.filePath());
+                  }
+              }
           }
       }
 

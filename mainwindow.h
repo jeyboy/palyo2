@@ -37,6 +37,7 @@ public:
     QToolBar* createMediaBar();
     QToolBar* createControlToolBar();
     void createToolbars();
+    void addPanelButton(QString name, QString path, QToolBar * bar);
 
 private slots:
     void showAttTabDialog();
@@ -45,6 +46,7 @@ private slots:
     void addPanelTriggered();
     void addPanelButtonTriggered();
     void OpenFolderTriggered();
+    void folderDropped(QString name, QString path);
 
 
 //    void dropEvent(QDropEvent * event);

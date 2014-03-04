@@ -62,7 +62,6 @@ MainWindow::MainWindow(QWidget *parent) :
         QJsonObject obj, actionObj;
         QString barName;
         QToolBar * curr_bar;
-        QToolButton * button;
 
         foreach(QJsonValue bar, bars) {
             obj = bar.toObject();
@@ -93,9 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
                 foreach(QJsonValue act, actions) {
                     actionObj = act.toObject();
-                    button = new ToolbarButton(actionObj.value("name").toString(), actionObj.value("path").toString());
-                    curr_bar -> addWidget(button);
-                    connect(button, SIGNAL(clicked()), this, SLOT(OpenFolderTriggered()));
+                    addPanelButton(actionObj.value("name").toString(), actionObj.value("path").toString(), curr_bar);
                 }
             }
         }
@@ -267,6 +264,7 @@ QToolBar* MainWindow::createControlToolBar() {
 QToolBar* MainWindow::createToolBar(QString name) {
     ToolBar* ptb = new ToolBar(name, this);
     ptb -> setToolButtonStyle(Qt::ToolButtonTextOnly);
+    connect(ptb, SIGNAL(folderDropped(QString, QString)), this, SLOT(folderDropped(QString, QString)));
 
 //    ptb->addAction(QPixmap(QString(":/like")), "1", this, SLOT(slotNoImpl()));
 //    ptb->addAction(QPixmap(QString(":/next")), "2", this, SLOT(slotNoImpl()));
@@ -370,9 +368,19 @@ MainWindow::~MainWindow() {
     delete settings;
 }
 
+void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {
+    ToolbarButton * button = new ToolbarButton(name, path);
+    bar -> addWidget(button);
+    connect(button, SIGNAL(clicked()), this, SLOT(OpenFolderTriggered()));
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 ///SLOTS
 /////////////////////////////////////////////////////////////////////////////////////
+
+void MainWindow::folderDropped(QString name, QString path) {
+    addPanelButton(name, path, (QToolBar*)QObject::sender());
+}
 
 void MainWindow::addPanelTriggered() {
 //    ((QAction*)QObject::sender()) -> userData(0);
@@ -389,9 +397,7 @@ void MainWindow::addPanelButtonTriggered() {
     ToolbarButtonDialog dialog(this);
 
     if (dialog.exec() == QDialog::Accepted) {
-        ToolbarButton * button = new ToolbarButton(dialog.getName(), dialog.getPath());
-        underMouseBar -> addWidget(button);
-        connect(button, SIGNAL(clicked()), this, SLOT(OpenFolderTriggered()));
+        addPanelButton(dialog.getName(), dialog.getPath(), underMouseBar);
     }
 }
 
