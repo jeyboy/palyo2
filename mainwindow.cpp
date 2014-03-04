@@ -59,9 +59,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QJsonArray bars = settings -> read("bars").toArray();
 
     if (bars.count() > 0) {
-        QJsonObject obj;
+        QJsonObject obj, actionObj;
         QString barName;
         QToolBar * curr_bar;
+        QToolButton * button;
 
         foreach(QJsonValue bar, bars) {
             obj = bar.toObject();
@@ -75,6 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 curr_bar = createToolBar(barName);
             }
 
+
+
     //        curr_bar -> setAcceptDrops(true);
             curr_bar -> setHidden(obj.value("hidden").toBool());
             curr_bar -> setOrientation((Qt::Orientation)obj.value("orient").toInt());
@@ -85,22 +88,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
             curr_bar -> move(obj.value("posx").toInt(), obj.value("posy").toInt());
 
+            if (obj.contains("actions")) {
+                QJsonArray actions = obj.value("actions").toArray();
 
-    //            QList<QAction*> actions = bar -> actions();
-
-    //            if (actions.length() > 0) {
-    //                QJsonArray action_array = QJsonArray();
-    //                QJsonObject curr_act;
-
-    //                foreach(QAction * act, actions) {
-    //                    curr_act = QJsonObject();
-    //                    curr_act.insert("path", act -> data().toString());
-    //                    curr_act.insert("name", act -> text());
-    //                }
-
-    //                curr_tab.insert("actions", action_array);
-    //            }
-
+                foreach(QJsonValue act, actions) {
+                    actionObj = act.toObject();
+                    button = new ToolbarButton(actionObj.value("name").toString(), actionObj.value("path").toString());
+                    curr_bar -> addWidget(button);
+                    connect(button, SIGNAL(clicked()), this, SLOT(OpenFolderTriggered()));
+                }
+            }
         }
     } else {
         createToolbars();
@@ -315,6 +312,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     if (toolbars.length() > 0) {
         QJsonArray toolbar_array = QJsonArray();
         QJsonObject curr_tab;
+        QList<QAction*> actions;
+        ToolbarButton* button;
 
         foreach(QToolBar * bar, toolbars) {
             curr_tab = QJsonObject();
@@ -327,19 +326,26 @@ void MainWindow::closeEvent(QCloseEvent *event) {
             curr_tab.insert("orient", bar -> orientation());
             curr_tab.insert("title", bar -> windowTitle());
 
-            QList<QAction*> actions = bar -> actions();
+            if (bar -> windowTitle() != "Media" && bar -> windowTitle() != "Controls") {
+                actions = bar -> actions();
+                if (actions.length() > 0) {
+                    QJsonArray action_array = QJsonArray();
+                    QJsonObject curr_act;
 
-            if (actions.length() > 0) {
-                QJsonArray action_array = QJsonArray();
-                QJsonObject curr_act;
+                    foreach(QAction * act, actions) {
+                        if (QString(act -> metaObject() -> className()) == "QWidgetAction") {
+                            curr_act = QJsonObject();
+                            button = (ToolbarButton*) bar -> widgetForAction(act);// (((QWidgetAction*)act) -> defaultWidget());
 
-                foreach(QAction * act, actions) {
-                    curr_act = QJsonObject();
-                    curr_act.insert("path", act -> data().toString());
-                    curr_act.insert("name", act -> text());
+                            curr_act.insert("path", button -> path);
+                            curr_act.insert("name", button -> text());
+                        }
+                        action_array.append(curr_act);
+                    }
+
+                    if (action_array.count() > 0)
+                        curr_tab.insert("actions", action_array);
                 }
-
-                curr_tab.insert("actions", action_array);
             }
 
             toolbar_array.append(curr_tab);
@@ -383,14 +389,15 @@ void MainWindow::addPanelButtonTriggered() {
     ToolbarButtonDialog dialog(this);
 
     if (dialog.exec() == QDialog::Accepted) {
-        QAction * act = underMouseBar -> addWidget(new ToolbarButton(dialog.getName(), dialog.getPath()));
-        connect(act, SIGNAL(triggered(bool)), this, SLOT(OpenFolderTriggered()));
+        ToolbarButton * button = new ToolbarButton(dialog.getName(), dialog.getPath());
+        underMouseBar -> addWidget(button);
+        connect(button, SIGNAL(clicked()), this, SLOT(OpenFolderTriggered()));
     }
 }
 
 void MainWindow::OpenFolderTriggered() {
-    QString pathStr = ((QAction*)QObject::sender()) -> data().toString();
-    QDesktopServices::openUrl(QUrl::fromLocalFile(pathStr));
+    ToolbarButton * button = (ToolbarButton*)QObject::sender();
+    QDesktopServices::openUrl(QUrl::fromLocalFile(button -> path));
 }
 
 void MainWindow::slotNoImpl() {

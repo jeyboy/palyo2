@@ -9,6 +9,7 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QDesktopServices>
+#include <QWidgetAction>
 
 #include "globalshortcut/qxtglobalshortcut.h"
 #include "tabber.h"
