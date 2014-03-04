@@ -30,6 +30,9 @@ Tab::~Tab() {
     delete list;
 }
 
+bool Tab::isRemoveFileWithItem() {
+    return settings['d'];
+}
 
 void Tab::updateHeader(QTabWidget * parent) {
     list -> updateTabCounter(this, parent);

@@ -11,11 +11,13 @@
 #include "model.h"
 #include "model_item.h"
 #include "model_item_delegate.h"
+#include "tab.h"
 #include "dnd.h"
 
 class TreeModel;
 class ModelItem;
 class ItemList;
+class Tab;
 
 class ItemList : public QTreeView {
   Q_OBJECT

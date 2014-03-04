@@ -18,21 +18,21 @@
   Q_DECLARE_METATYPE(CBHash);
 #endif // CBHASH
 
+class ItemList;
+
 class Tab : public QWidget {
     Q_OBJECT
 public:
+    void init(QJsonObject * attrs = 0);
+
     explicit Tab(CBHash params, QWidget * parent = 0);
     explicit Tab(QJsonObject json_attrs, QWidget * parent = 0);
     ~Tab();
 
-    void init(QJsonObject * attrs = 0);
-
-//    void addItem(QString &file_path, QString &file_extension, char file_state = 'd') {}
-
     void updateHeader(QTabWidget * parent = 0);
     QJsonObject toJSON(QString name);
-//      model
-//    int addTab(QString name);
+
+    bool isRemoveFileWithItem();
 
 private:
     ItemList * list;

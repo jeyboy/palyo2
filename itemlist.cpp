@@ -85,10 +85,18 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
     } else if (event ->key() == Qt::Key_Delete) {
         QModelIndexList list = selectedIndexes();
         QModelIndex modelIndex;
-        qDebug() << list;
+        Tab * tab = (Tab*)parentWidget();
+        bool delFile = tab -> isRemoveFileWithItem();
 
+        QString delPath;
         for(int i = list.count() - 1; i >= 0; i--) {
             modelIndex = list.at(i);
+
+            if (delFile) {
+                delPath = model -> getItem(modelIndex) -> fullpath();
+                QFile::remove(delPath);
+            }
+
             model -> removeRow(modelIndex.row(), modelIndex.parent());
         }
     } else { QTreeView::keyPressEvent(event); }
