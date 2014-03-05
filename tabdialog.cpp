@@ -20,14 +20,14 @@ void TabDialog::setName(QString name) {
 
 CBHash TabDialog::getSettings() {
   CBHash res;
-  res.insert('d', ui -> deleteFile -> checkState() == Qt::Checked);
-  res.insert('i', ui -> interactive -> checkState() == Qt::Checked);
-  res.insert('p', ui -> playlist -> checkState() == Qt::Checked);
+  res.insert("d", ui -> deleteFile -> checkState() == Qt::Checked);
+  res.insert("i", ui -> interactive -> checkState() == Qt::Checked);
+  res.insert("p", ui -> playlist -> checkState() == Qt::Checked);
   return res;
 }
 
 void TabDialog::setSettings(CBHash & hash) {
-  ui -> deleteFile -> setChecked(hash.value('d'));
-  ui -> interactive -> setChecked(hash.value('i'));
-  ui -> playlist -> setChecked(hash.value('p'));
+  ui -> deleteFile -> setChecked(hash.value("d"));
+  ui -> interactive -> setChecked(hash.value("i"));
+  ui -> playlist -> setChecked(hash.value("p"));
 }

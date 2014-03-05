@@ -19,8 +19,10 @@ Tab::Tab(QJsonObject json_attrs, QWidget * parent) : QWidget(parent) {
     QJsonObject set = json_attrs["s"].toObject();
     CBHash params = CBHash();
 
-    foreach(QString key, set.keys())
-        params.insert(key[0].toLatin1(), set[key].toBool());
+    foreach(QString key, set.keys()) {
+        qDebug() << key << set[key].toBool();
+        params.insert(key, set[key].toBool());
+    }
 
     settings = params;
     init(&json_attrs);
@@ -31,7 +33,7 @@ Tab::~Tab() {
 }
 
 bool Tab::isRemoveFileWithItem() {
-    return settings['d'];
+    return settings["d"];
 }
 
 void Tab::updateHeader(QTabWidget * parent) {
@@ -42,8 +44,10 @@ QJsonObject Tab::toJSON(QString name) {
     QJsonObject res = list-> toJSON();
     QJsonObject set = QJsonObject();
 
-    foreach(char c, settings)
-        set[QString(c)] = settings.value(c);
+
+    foreach(QString c, settings.keys()) {
+        set[c] = settings.value(c);
+    }
 
     res["s"] = set;
     res["n"] = name;

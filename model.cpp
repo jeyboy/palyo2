@@ -184,6 +184,7 @@ bool TreeModel::removeRow(int row, const QModelIndex &parent) {
         if (item -> getState() != STATE_UNPROCESSED) {
             beginRemoveRows(parent, row, row);
             if (parentItem -> removeChildren(row, 1)) {
+                qDebug() << item -> data(0);
                 count--;
             }
             endRemoveRows();

@@ -152,8 +152,16 @@ void ItemList::deleteCurrentProceedNext() {
 
     if (Player::instance() -> currentPlaylist() == this) {
         if (Player::instance() -> playedItem()) {
-            QString delPath = Player::instance() -> playedItem() -> fullpath();
-            QFile::remove(delPath);
+
+            Tab * tab = (Tab*)parentWidget();
+            bool delFile = tab -> isRemoveFileWithItem();
+
+            QModelIndex modelIndex = model -> index(Player::instance() -> playedItem());
+            if (delFile) {
+                QString delPath = Player::instance() -> playedItem() -> fullpath();
+                QFile::remove(delPath);
+            }
+            model -> removeRow(modelIndex.row(), modelIndex.parent());
         }
     }
 
