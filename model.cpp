@@ -124,7 +124,7 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
 }
 
 QModelIndex TreeModel::index(ModelItem * item) const {
-   return createIndex(item -> column(), item -> row(), item);
+   return createIndex(item -> row(), item -> column(), item);
 }
 
 /////////////////////////////////////////////////////////
@@ -184,7 +184,6 @@ bool TreeModel::removeRow(int row, const QModelIndex &parent) {
         if (item -> getState() != STATE_UNPROCESSED) {
             beginRemoveRows(parent, row, row);
             if (parentItem -> removeChildren(row, 1)) {
-                qDebug() << item -> data(0);
                 count--;
             }
             endRemoveRows();
