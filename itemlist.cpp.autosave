@@ -3,6 +3,7 @@
 
 ItemList::ItemList(QWidget *parent, QJsonObject * attrs) : QTreeView(parent){
     setIndentation(10);
+
 //    setStyleSheet(QString(
 //                      "QTreeView {"
 //                          "background-color: black;"

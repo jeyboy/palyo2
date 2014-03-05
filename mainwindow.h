@@ -43,10 +43,15 @@ private slots:
     void showAttTabDialog();
     void mediaVisibilityChanged(bool visible);
     void slotNoImpl();
+
     void addPanelTriggered();
     void addPanelButtonTriggered();
     void OpenFolderTriggered();
     void folderDropped(QString name, QString path);
+
+    void nextItemTriggered();
+    void nextItemWithDelTriggered();
+    void prevItemTriggered();
 
 
 //    void dropEvent(QDropEvent * event);

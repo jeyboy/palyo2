@@ -27,13 +27,18 @@ public:
 
     QJsonObject toJSON();
 
-    ModelItem * nextItem(QModelIndex currIndex);
-    ModelItem * nextItem(ModelItem * curr);
-    ModelItem * prevItem(ModelItem * curr);
+    void proceedPrev();
+    void proceedNext();
+    void deleteCurrentProceedNext();
 
     void updateTabCounter(QWidget * parentTab = 0, QTabWidget * container = 0);
     TreeModel * model;
 protected:
+    ModelItem * activeItem();
+    ModelItem * nextItem(QModelIndex currIndex);
+    ModelItem * nextItem(ModelItem * curr);
+    ModelItem * prevItem(ModelItem * curr);
+
 
 //    void setModel(QAbstractItemModel *model);
 

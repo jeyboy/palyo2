@@ -49,3 +49,15 @@ QJsonObject Tab::toJSON(QString name) {
     res["n"] = name;
     return res;
 }
+
+void Tab::proceedPrev() {
+    list -> proceedPrev();
+}
+
+void Tab::proceedNext() {
+    list -> proceedNext();
+}
+
+void Tab::deleteCurrentProceedNext() {
+    list -> deleteCurrentProceedNext();
+}

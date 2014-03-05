@@ -75,9 +75,6 @@ MainWindow::MainWindow(QWidget *parent) :
                 curr_bar = createToolBar(barName);
             }
 
-
-
-    //        curr_bar -> setAcceptDrops(true);
             curr_bar -> setHidden(obj.value("hidden").toBool());
             curr_bar -> setOrientation((Qt::Orientation)obj.value("orient").toInt());
 
@@ -107,20 +104,17 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(&autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
 //    autoSaveTimer.start(1000*60*5);//Every 5 minutes
 //    QApplication::setWindowIcon(QIcon(":/images/tray.png"));
-
-//    CBHash hash;
-//    tabber -> addTab(tr("Test"),  hash);
 }
 
 void MainWindow::registrateGlobalKeys() {
    next = new QxtGlobalShortcut(QKeySequence("Ctrl+Down"));
-   connect(next, SIGNAL(activated()), this, SLOT(slotNoImpl()));
+   connect(next, SIGNAL(activated()), this, SLOT(nextItemTriggered()));
 
    next_and_delete = new QxtGlobalShortcut(QKeySequence("Ctrl+Delete"));
-   connect(next_and_delete, SIGNAL(activated()), this, SLOT(slotNoImpl()));
+   connect(next_and_delete, SIGNAL(activated()), this, SLOT(nextItemWithDelTriggered()));
 
    prev = new QxtGlobalShortcut(QKeySequence("Ctrl+Up"));
-   connect(prev, SIGNAL(activated()), this, SLOT(slotNoImpl()));
+   connect(prev, SIGNAL(activated()), this, SLOT(prevItemTriggered()));
 }
 
 void MainWindow::registrateTray() {
@@ -377,6 +371,16 @@ void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {
 /////////////////////////////////////////////////////////////////////////////////////
 ///SLOTS
 /////////////////////////////////////////////////////////////////////////////////////
+
+void MainWindow::nextItemTriggered() {
+   tabber -> currentTab() -> proceedNext();
+}
+void MainWindow::nextItemWithDelTriggered() {
+   tabber -> currentTab() -> deleteCurrentProceedNext();
+}
+void MainWindow::prevItemTriggered() {
+   tabber -> currentTab() -> proceedPrev();
+}
 
 void MainWindow::folderDropped(QString name, QString path) {
     addPanelButton(name, path, (QToolBar*)QObject::sender());

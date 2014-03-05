@@ -34,6 +34,10 @@ public:
 
     bool isRemoveFileWithItem();
 
+    void proceedPrev();
+    void proceedNext();
+    void deleteCurrentProceedNext();
+
 private:
     ItemList * list;
     CBHash settings;
