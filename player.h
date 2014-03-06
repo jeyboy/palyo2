@@ -4,6 +4,7 @@
 #include <QMediaPlayer>
 #include <QMediaMetaData>
 #include <QSlider>
+#include <QAction>
 
 #include "model.h"
 #include "itemlist.h"
@@ -18,6 +19,11 @@ public:
     static Player * instance();
     static void playItem(ItemList * itemPlaylist, ModelItem * item);
     static void playFile(QString uri);
+
+    static void setPlayButton(QAction * playAction);
+    static void setPauseButton(QAction * pauseAction);
+    static void setStopButton(QAction * stopAction);
+
     static void setTrackBar(QSlider * trackBar);
     static void setVideoOutput(QVideoWidget * container);
     static void setPlaylist(ItemList * playlist);
@@ -37,15 +43,28 @@ private:
 
     Player() {
        slider = 0;
+       played = 0;
+       playlist = 0;
+
+       playButton = 0;
+       pauseButton = 0;
+       stopButton = 0;
+
        setNotifyInterval(500);
        connect(this, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(onStateChanged(QMediaPlayer::State)));
-       played = 0;
+
     }
 
     static Player * self;
     QSlider * slider;
     ModelItem * played;
     ItemList * playlist;
+
+    QAction * playButton;
+    QAction * pauseButton;
+    QAction * stopButton;
+
+
 //    int ref;
 //    float max, climax;
 };

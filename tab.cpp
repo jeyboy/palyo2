@@ -20,7 +20,6 @@ Tab::Tab(QJsonObject json_attrs, QWidget * parent) : QWidget(parent) {
     CBHash params = CBHash();
 
     foreach(QString key, set.keys()) {
-        qDebug() << key << set[key].toBool();
         params.insert(key, set[key].toBool());
     }
 
@@ -34,6 +33,10 @@ Tab::~Tab() {
 
 bool Tab::isRemoveFileWithItem() {
     return settings["d"];
+}
+
+bool Tab::isPlaylist() {
+    return settings["p"];
 }
 
 void Tab::updateHeader(QTabWidget * parent) {

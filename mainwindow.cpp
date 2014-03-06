@@ -18,6 +18,7 @@ QMenu * MainWindow::createPopupMenu () {
     QAction * addButtonAct = new QAction("Add button", menu);
     QWidget * widget = this -> childAt(this -> mapFromGlobal(QCursor::pos()));
     underMouseBar = ((ToolBar*)widget);
+
     addButtonAct -> setEnabled(QString(widget -> metaObject() -> className()) == "ToolBar");
     menu -> insertAction(menu->actions().first(), addButtonAct);
     connect(addButtonAct, SIGNAL(triggered(bool)), this, SLOT(addPanelButtonTriggered()));
@@ -50,6 +51,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     move(left, top);
     resize(settings->read("width").toInt(), settings->read("height").toInt());
+
+
+    //TODO: toolbars location glitches
     ///////////////////////////////////////////////////////////
     /// toolbars
     ///////////////////////////////////////////////////////////
@@ -100,10 +104,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     tabber = new Tabber(ui -> tabber);
     registrateGlobalKeys();
+    registrateTray();
 
 //    connect(&autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
 //    autoSaveTimer.start(1000*60*5);//Every 5 minutes
-//    QApplication::setWindowIcon(QIcon(":/images/tray.png"));
+    QApplication::setWindowIcon(QIcon(":icon"));
 }
 
 void MainWindow::registrateGlobalKeys() {
@@ -117,20 +122,21 @@ void MainWindow::registrateGlobalKeys() {
    connect(prev, SIGNAL(activated()), this, SLOT(prevItemTriggered()));
 }
 
+//TODO: menu finish needed
 void MainWindow::registrateTray() {
-//    m_tray.setIcon(QIcon(":/images/tray.png"));
+    m_tray.setIcon(QIcon(":/icon"));
 
-//    if(m_tray.isSystemTrayAvailable()) {
-//        QMenu *pTrayMenu = new QMenu();
+    if(m_tray.isSystemTrayAvailable()) {
+        QMenu *pTrayMenu = new QMenu();
 //        pTrayMenu->addAction("Add snippet", this, SLOT(onAddSnippet()),Qt::ControlModifier + Qt::Key_D);
 //        pTrayMenu->addAction("Search", this, SLOT(onSearch()),Qt::MetaModifier + Qt::Key_V);
 //        pTrayMenu->addSeparator();
 //        pTrayMenu->addAction("Save", this, SLOT(save()));
 //        pTrayMenu->addSeparator();
 //        pTrayMenu->addAction("Exit", this, SLOT(exit()));
-//        m_tray.setContextMenu(pTrayMenu);
-//        m_tray.show();
-//    }
+        m_tray.setContextMenu(pTrayMenu);
+        m_tray.show();
+    }
 }
 
 void MainWindow::createToolbars() {
@@ -171,9 +177,10 @@ QToolBar* MainWindow::createMediaBar() {
     connect(ptb, SIGNAL(visibilityChanged(bool)), this, SLOT(mediaVisibilityChanged(bool)));
     ptb -> setMinimumHeight(30);
 
-    ptb->addAction(QPixmap(QString(":/play")), "Play", this, SLOT(slotNoImpl()));
-    ptb->addAction(QPixmap(QString(":/pause")), "Pause", this, SLOT(slotNoImpl()));
-    ptb->addAction(QPixmap(QString(":/stop")), "Stop", this, SLOT(slotNoImpl()));
+
+    Player::setPlayButton(ptb->addAction(QPixmap(":/play"), "Play"));
+    Player::setPauseButton(ptb->addAction(QPixmap(":/pause"), "Pause"));
+    Player::setStopButton(ptb->addAction(QPixmap(":/stop"), "Stop"));
     ptb->addSeparator();
 
     QSlider * horizontalSlider = new QSlider();

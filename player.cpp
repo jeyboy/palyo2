@@ -16,6 +16,22 @@ ItemList * Player::currentPlaylist() const {
     return instance() -> playlist;
 }
 
+void Player::setPlayButton(QAction * playAction) {
+    instance() -> playButton = playAction;
+    instance() -> playButton -> setVisible(true);
+    connect((QObject *)playAction, SIGNAL(triggered(bool)), instance(), SLOT(play()));
+}
+void Player::setPauseButton(QAction * pauseAction) {
+    instance() -> pauseButton = pauseAction;
+    instance() -> pauseButton -> setVisible(false);
+    connect((QObject *)pauseAction, SIGNAL(triggered(bool)), instance(), SLOT(pause()));
+}
+void Player::setStopButton(QAction * stopAction) {
+    instance() -> stopButton = stopAction;
+    instance() -> stopButton -> setVisible(false);
+    connect((QObject *)instance() -> stopButton, SIGNAL(triggered(bool)), instance(), SLOT(stop()));
+}
+
 void Player::setPlaylist(ItemList * playlist) {
    instance() -> stop();
    instance() -> playlist = playlist;
@@ -26,7 +42,6 @@ void Player::setPlayedItemState(int state) {
     if (instance() -> played) {
         instance() -> played -> setState(state);
         instance() -> playlist -> model -> refreshItem(instance() -> played);
-//        instance() -> palylist -> repaint();
     }
 }
 
@@ -48,10 +63,9 @@ void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
 
     instance() -> setMedia(QUrl::fromLocalFile(item -> fullpath()));
 
-    instance() -> play();
     instance() -> played = item;
     instance() -> playlist = itemPlaylist;
-    setPlayedItemState(STATE_PLAYED);
+    instance() -> play();
 }
 
 void Player::playFile(QString uri) {
@@ -119,10 +133,23 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
             instance() -> slider -> blockSignals(true);
             instance() -> slider -> setMaximum(0);
             instance() -> slider -> blockSignals(false);
+
+            instance() -> playButton -> setVisible(true);
+            instance() -> pauseButton -> setVisible(false);
+            instance() -> stopButton -> setVisible(false);
         }
 
-        case PlayingState: { }
+        case PlayingState: {
+            setPlayedItemState(STATE_PLAYED);
+            instance() -> playButton -> setVisible(false);
+            instance() -> pauseButton -> setVisible(true);
+            instance() -> stopButton -> setVisible(true);
+        }
 
-        case PausedState: { }
+        case PausedState: {
+            instance() -> playButton -> setVisible(true);
+            instance() -> pauseButton -> setVisible(false);
+            instance() -> stopButton -> setVisible(true);
+        }
     }
 }

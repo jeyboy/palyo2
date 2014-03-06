@@ -33,6 +33,7 @@ public:
     QJsonObject toJSON(QString name);
 
     bool isRemoveFileWithItem();
+    bool isPlaylist();
 
     void proceedPrev();
     void proceedNext();
