@@ -234,7 +234,8 @@ void TreeModel::repaint() {
 void TreeModel::refreshItem(ModelItem * item) {
     QModelIndex ind = index(item);
     if (ind.isValid())
-        emit dataChanged(ind.parent(), ind);
+//        emit dataChanged(ind.parent(), ind);
+        emit dataChanged(ind, ind);
 }
 
 /////////////////////////////////////////////////////////

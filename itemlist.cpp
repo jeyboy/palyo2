@@ -28,6 +28,9 @@ ItemList::ItemList(QWidget *parent, QJsonObject * attrs) : QTreeView(parent){
 
     model = new TreeModel(attrs);
     setModel(model);
+//    setTreePosition(2);
+//    setRootIndex();
+//    setRowHidden(0, rootIndex(), true);
 
     expandAll();
 
@@ -393,14 +396,13 @@ void ItemList::updateTabCounter(QWidget * parentTab, QTabWidget * parentTabber) 
     parentTabber -> setTabText(i, oldText.split('(').first() + "(" + QString::number(model -> count) + ")");
 }
 
-// did not work
+// test needed / update need
 ModelItem * ItemList::nextItem(QModelIndex currIndex) {
     QModelIndex newIndex;
     ModelItem * item;
 
     while(true) {
         newIndex = currIndex.parent().child(currIndex.row()+1, 0); //indexBelow(currIndex);
-        qDebug() << currIndex.parent().data() << " | " << currIndex.row();
 
         if (newIndex.isValid()) {
             item = model -> getItem(newIndex);
@@ -435,7 +437,8 @@ ModelItem * ItemList::nextItem(ModelItem * curr) {
             if (item->getState() != STATE_UNPROCESSED) {
                 return item;
             } else {
-                item = item -> child(0);
+                curr = item;
+                item = curr -> child(0);
                 first_elem = true;
             }
         } else {
@@ -461,7 +464,8 @@ ModelItem * ItemList::prevItem(ModelItem * curr) {
             if (item->getState() != STATE_UNPROCESSED) {
                 return item;
             } else {
-                item = item -> child(item -> childCount() - 1);
+                curr = item;
+                item = curr -> child(item -> childCount() - 1);
                 last_elem = true;
             }
         } else {

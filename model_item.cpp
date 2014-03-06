@@ -230,8 +230,9 @@ int ModelItem::getState() {
 
 ////////////////////////////////////////////////////////
 
-bool ModelItem::play(ItemList * palylist) {
-    Player::playItem(palylist, this);
+bool ModelItem::play(ItemList * playlist) {
+    playlist -> scrollTo(playlist -> model -> index(this));
+    Player::playItem(playlist, this);
 }
 
 ///////////////////////////////////////////////////////
