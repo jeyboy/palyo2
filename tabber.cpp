@@ -4,15 +4,16 @@
 #include <QApplication>
 #include <QMessageBox>
 
+//TODO:// add tab position for each tab
+//    tabber->setTabPosition(TabPosition);
+
 void Tabber::handleTabCloseRequested(int index) {
-   QMessageBox::information(QApplication::activeWindow(), QString("Удаление"), QString("Удаление таба %1").arg(index));
+    Tab * del_tab = static_cast<Tab *>(tabber->widget(index));
+    if (Player::instance() -> currentPlaylist() == del_tab -> getList()) {
+        Player::instance() -> removePlaylist();
+    }
 
-//   QString("Целое %1 и дробное %2").arg(a).arg(b)
-
-//        QWidget *pWin = QApplication::activeWindow;
-//    //    QObjectList *pList = pWin->children();
-//        QTabWidget* tabber = pWin->findChild<QTabWidget*>("tabber");
-//        tabber -> addTab(tabber, QString('Hudo'));
+    tabber -> removeTab(index);
 }
 
 Tabber::Tabber(QTabWidget * container) {
@@ -28,7 +29,9 @@ Tabber::~Tabber() {
 }
 
 int Tabber::addTab(QString name, CBHash settings) {
-    return tabber -> addTab(new Tab(settings, tabber), name);
+    int index = tabber -> addTab(new Tab(settings, tabber), name);
+    tabber -> setCurrentIndex(index);
+    return index;
 }
 
 Tab * Tabber::currentTab() {

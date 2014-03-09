@@ -29,6 +29,7 @@ public:
     explicit Tab(QJsonObject json_attrs, QWidget * parent = 0);
     ~Tab();
 
+    ItemList * getList() const;
     void updateHeader(QTabWidget * parent = 0);
     QJsonObject toJSON(QString name);
 

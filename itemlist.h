@@ -43,8 +43,9 @@ public:
     bool isRemoveFileWithItem();
     bool isPlaylist();
 
+    TreeModel * getModel() const;
     void updateTabCounter(QWidget * parentTab = 0, QTabWidget * container = 0);
-    TreeModel * model;
+
 protected:
     ModelItem * activeItem(bool next = true);
     ModelItem * nextItem(QModelIndex currIndex);
@@ -73,6 +74,7 @@ private slots:
     void on_click(const QModelIndex &index);
     void on_doubleClick(const QModelIndex &index);
 private:
+    TreeModel * model;
     CBHash settings;
 
 //  QPixmap currentPixmap;

@@ -45,6 +45,10 @@ ItemList::~ItemList() {
 
 }
 
+TreeModel * ItemList::getModel() const {
+    return model;
+}
+
 void ItemList::keyPressEvent(QKeyEvent *event) {
     if (event ->key() == Qt::Key_Enter || event ->key() == Qt::Key_Return) {
         QModelIndexList list = selectedIndexes();

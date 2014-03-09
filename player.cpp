@@ -38,22 +38,36 @@ void Player::setPlaylist(ItemList * playlist) {
    instance() -> played = 0;
 }
 
+void Player::removePlaylist() {
+    switch(instance() -> state()) {
+        case PausedState:
+        case PlayingState: {
+            instance() -> stop();
+            break;
+        }
+        default: {}
+    }
+    instance() -> playlist = 0;
+    instance() -> played = 0;
+
+}
+
 void Player::setPlayedItemState(int state) {
     if (instance() -> played) {
         instance() -> played -> setState(state);
-        instance() -> playlist -> model -> refreshItem(instance() -> played);
+        instance() -> playlist -> getModel() -> refreshItem(instance() -> played);
     }
 }
 
 void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
     switch(instance() -> state()) {
-        case StoppedState: {}
+        case StoppedState: { break; }
 
+        case PausedState:
         case PlayingState: {
             instance() -> stop();
+            break;
         }
-
-        case PausedState: {}
     }
     setPlayedItemState(STATE_LISTENED);
 
@@ -67,13 +81,13 @@ void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
 
 void Player::playFile(QString uri) {
     switch(instance() -> state()) {
-        case StoppedState: { }
+        case StoppedState: { break; }
 
+        case PausedState:
         case PlayingState: {
             instance() -> stop();
+            break;
         }
-
-        case PausedState: { }
     }
 
     setPlayedItemState(STATE_LISTENED);
@@ -160,14 +174,9 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
 
 void Player::mediaStatusChanged(QMediaPlayer::MediaStatus status) {
     switch (status) {
-        case UnknownMediaStatus: {
+        case UnknownMediaStatus: { break; }
 
-            break;
-        }
-
-        case StalledMedia: {
-            break;
-        }
+        case StalledMedia: { break; }
 
         case EndOfMedia:
         case InvalidMedia: {

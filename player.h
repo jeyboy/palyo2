@@ -27,6 +27,7 @@ public:
     static void setTrackBar(QSlider * trackBar);
     static void setVideoOutput(QVideoWidget * container);
     static void setPlaylist(ItemList * playlist);
+    static void removePlaylist();
 
     ModelItem * playedItem() const;
     ItemList * currentPlaylist() const;

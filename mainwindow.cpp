@@ -328,16 +328,6 @@ QToolBar* MainWindow::createToolBar(QString name) {
     return ptb;
 }
 
-//void MainWindow::createMenus() {
-//    QMenu * mnCreateTab = new QMenu("Add Tab");
-//    QAction *msgAction = new QAction("Add Tab", mnCreateTab);
-//    connect(msgAction, SIGNAL(triggered()), this, SLOT(showAttTabDialog));
-//    mnCreateTab->addAction(msgAction);
-
-//    ui->menuBar->addMenu(mnCreateTab);
-//}
-
-
 void MainWindow::closeEvent(QCloseEvent *event) {
     settings-> clear();
 

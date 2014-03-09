@@ -29,6 +29,10 @@ Tab::~Tab() {
     delete list;
 }
 
+ItemList * Tab::getList() const {
+    return list;
+}
+
 void Tab::updateHeader(QTabWidget * parent) {
     list -> updateTabCounter(this, parent);
 }

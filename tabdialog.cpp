@@ -18,6 +18,8 @@ void TabDialog::setName(QString name) {
   ui -> tabName -> setText(name);
 }
 
+//TODO: add check on name uniqueness
+
 CBHash TabDialog::getSettings() {
   CBHash res;
   res.insert("d", ui -> deleteFile -> checkState() == Qt::Checked);
