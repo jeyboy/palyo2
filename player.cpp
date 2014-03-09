@@ -172,7 +172,7 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
     }
 }
 
-void Player::mediaStatusChanged(QMediaPlayer::MediaStatus status) {
+void Player::onMediaStatusChanged(QMediaPlayer::MediaStatus status) {
     switch (status) {
         case UnknownMediaStatus: { break; }
 
@@ -180,6 +180,7 @@ void Player::mediaStatusChanged(QMediaPlayer::MediaStatus status) {
 
         case EndOfMedia:
         case InvalidMedia: {
+            qDebug() << "Party time";
             if (instance() -> playlist) {
                 if (instance() -> playlist -> isPlaylist()) {
                     instance() -> playlist -> proceedNext();
@@ -187,6 +188,6 @@ void Player::mediaStatusChanged(QMediaPlayer::MediaStatus status) {
             }
             break;
         }
-        default: {}
+        default: { qDebug() << "Party def"; }
     }
 }

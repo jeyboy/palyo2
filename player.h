@@ -37,7 +37,7 @@ private slots:
     void setTrackbarValue(qint64);
     void setTrackbarMax(qint64);
     void onStateChanged(QMediaPlayer::State newState);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
 
 private:
     static void setPlayedItemState(int state);
@@ -53,7 +53,7 @@ private:
 
        setNotifyInterval(500);
        connect(this, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(onStateChanged(QMediaPlayer::State)));
-
+       connect(this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus)));
     }
 
     static Player * self;
