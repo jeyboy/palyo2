@@ -29,16 +29,19 @@ public:
     explicit Tab(QJsonObject json_attrs, QWidget * parent = 0);
     ~Tab();
 
+    QString getName() const;
+    void setName(QString newName);
+
     ItemList * getList() const;
-    void updateHeader(QTabWidget * parent = 0);
+    void updateHeader();
     QJsonObject toJSON(QString name);
 
-    void proceedPrev();
-    void proceedNext();
-    void deleteCurrentProceedNext();
+protected:
+    void setNameWithCount(QString name);
 
 private:
     ItemList * list;
+    QTabWidget * tabber;
 
 //private slots:
 //    void handleListClicked(const QModelIndex &index);

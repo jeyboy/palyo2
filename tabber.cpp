@@ -43,7 +43,7 @@ void Tabber::save() {
     store -> clear();
     for(int i = 0; i < tabber->count(); i++) {
         Tab * tab = (Tab*)(tabber -> widget(i));
-        store->write(QString::number(i) + "h", tab -> toJSON(tabber -> tabText(i)));
+        store->write(QString::number(i) + "h", tab -> toJSON(tab -> getName()));
     }
 
     store -> save();
@@ -57,7 +57,7 @@ void Tabber::load() {
             tab = store -> read(key).toObject();
             Tab * new_tab = new Tab(tab, tabber);
             tabber -> addTab(new_tab, tab["n"].toString());
-            new_tab -> updateHeader(tabber);
+            new_tab -> updateHeader();
         }
     }
 }

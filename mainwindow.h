@@ -40,8 +40,13 @@ public:
     void createToolbars();
     void addPanelButton(QString name, QString path, QToolBar * bar);
 
+protected:
+    bool isToolbarNameUniq(QString name);
+
 private slots:
-    void showAttTabDialog();
+    void showAttTabDialog(Tab * tab = 0);
+    void showAttCurrTabDialog();
+
     void mediaVisibilityChanged(bool visible);
     void mediaOrientationChanged(Qt::Orientation);
     void slotNoImpl();

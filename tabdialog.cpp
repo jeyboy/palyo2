@@ -28,7 +28,7 @@ CBHash TabDialog::getSettings() {
   return res;
 }
 
-void TabDialog::setSettings(CBHash & hash) {
+void TabDialog::setSettings(CBHash hash) {
   ui -> deleteFile -> setChecked(hash.value("d"));
   ui -> interactive -> setChecked(hash.value("i"));
   ui -> playlist -> setChecked(hash.value("p"));

@@ -27,7 +27,7 @@ public:
   void setName(QString name);
 
   CBHash getSettings();
-  void setSettings(CBHash & hash);
+  void setSettings(CBHash hash);
 
 private:
   Ui::TabDialog *ui;

@@ -2,6 +2,7 @@
 #include <QDebug>
 
 ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {
+    tab = (Tab *)parent;
     settings = settingsSet;
     setIndentation(10);
 
@@ -382,18 +383,12 @@ bool ItemList::isPlaylist() {
     return settings["p"];
 }
 
-void ItemList::updateTabCounter(QWidget * parentTab, QTabWidget * parentTabber) {
-    if (parentTabber == 0)
-        parentTabber = (QTabWidget *)(parent() -> parent());
 
-    if (parentTab == 0)
-        parentTab = (QWidget*)parent();
-
-    int i = parentTabber -> indexOf(parentTab);
-    qDebug() << i;
-    QString oldText = parentTabber -> tabText(i);
-    qDebug() << oldText;
-    parentTabber -> setTabText(i, oldText.split('(').first() + "(" + QString::number(model -> count) + ")");
+CBHash ItemList::getSettings() const {
+    return settings;
+}
+void ItemList::setSettings(CBHash newSettings) {
+    settings = newSettings;
 }
 
 // test needed / update need

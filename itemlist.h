@@ -44,13 +44,16 @@ public:
     bool isPlaylist();
 
     TreeModel * getModel() const;
-    void updateTabCounter(QWidget * parentTab = 0, QTabWidget * container = 0);
+
+    CBHash getSettings() const;
+    void setSettings(CBHash newSettings);
 
 protected:
     ModelItem * activeItem(bool next = true);
     ModelItem * nextItem(QModelIndex currIndex);
     ModelItem * nextItem(ModelItem * curr);
     ModelItem * prevItem(ModelItem * curr);
+    Tab * tab;
 
 
 //    void setModel(QAbstractItemModel *model);

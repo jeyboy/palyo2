@@ -298,7 +298,7 @@ QToolBar* MainWindow::createControlToolBar() {
 //    ptb -> setMinimumWidth(75);
 
     ptb->addAction(QPixmap(QString(":/add")), "Add new tab", this, SLOT(showAttTabDialog()));
-    ptb->addAction(QPixmap(QString(":/settings")), "Setting for current tab", this, SLOT(slotNoImpl()));
+    ptb->addAction(QPixmap(QString(":/settings")), "Setting for current tab", this, SLOT(showAttCurrTabDialog()));
     ptb -> adjustSize();
 
     return ptb;
@@ -402,18 +402,29 @@ void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {
     connect(button, SIGNAL(clicked()), this, SLOT(OpenFolderTriggered()));
 }
 
+bool MainWindow::isToolbarNameUniq(QString name) {
+    QList<QToolBar *> toolbars = this -> findChildren<QToolBar *>();
+
+    foreach(QToolBar * bar, toolbars) {
+        if (bar -> windowTitle() == name)
+            return false;
+    }
+
+    return true;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 ///SLOTS
 /////////////////////////////////////////////////////////////////////////////////////
 
 void MainWindow::nextItemTriggered() {
-   tabber -> currentTab() -> proceedNext();
+   tabber -> currentTab() -> getList() -> proceedNext();
 }
 void MainWindow::nextItemWithDelTriggered() {
-   tabber -> currentTab() -> deleteCurrentProceedNext();
+   tabber -> currentTab() -> getList() -> deleteCurrentProceedNext();
 }
 void MainWindow::prevItemTriggered() {
-   tabber -> currentTab() -> proceedPrev();
+   tabber -> currentTab() -> getList() -> proceedPrev();
 }
 
 void MainWindow::folderDropped(QString name, QString path) {
@@ -464,16 +475,37 @@ void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
     }
 }
 
-void MainWindow::showAttTabDialog() {
+void MainWindow::showAttTabDialog(Tab * tab) {
   TabDialog dialog(this);
+  if(tab) {
+      qDebug() << tab -> getName();
+      dialog.setSettings(tab -> getList() -> getSettings());
+      dialog.setName(tab -> getName());
 
-  if (dialog.exec() == QDialog::Accepted) {
-     tabber -> addTab(dialog.getName(), dialog.getSettings());
-     qDebug() << "Settings: " << dialog.getSettings();
-    }
+      while(true) {
+          if (dialog.exec() == QDialog::Accepted) {
+              if (isToolbarNameUniq(dialog.getName())) {
+                  tab -> setName(dialog.getName());
+                  tab -> getList() -> setSettings(dialog.getSettings());
+                  return;
+              }
+          } else return;
+      }
+  } else {
+      while(true) {
+          if (dialog.exec() == QDialog::Accepted) {
+              if (isToolbarNameUniq(dialog.getName())) {
+                  tabber -> addTab(dialog.getName(), dialog.getSettings());
+                  return;
+              }
+          } else return;
+      }
+  }
 }
 
-
+void MainWindow::showAttCurrTabDialog() {
+    emit showAttTabDialog(tabber -> currentTab());
+}
 
 
 
