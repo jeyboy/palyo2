@@ -178,6 +178,7 @@ QToolBar* MainWindow::createMediaBar() {
     QToolBar* ptb = new QToolBar("Media");
     ptb -> setObjectName("_Media");
     connect(ptb, SIGNAL(visibilityChanged(bool)), this, SLOT(mediaVisibilityChanged(bool)));
+    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
     ptb -> setMinimumHeight(30);
 
 
@@ -188,59 +189,96 @@ QToolBar* MainWindow::createMediaBar() {
 
     QSlider * horizontalSlider = new QSlider();
     horizontalSlider -> setOrientation(Qt::Horizontal);
-    horizontalSlider -> setMinimumSize(80, 25);
+    horizontalSlider -> setMinimumSize(30, 30);
+//    horizontalSlider -> setTracking(false); // send change value only on release slider
 
 //    setStyleSheet("QSlider::handle {image: url(:/resources/image.png);}");
     horizontalSlider -> setStyleSheet(QString(
-                                              "QSlider::groove:horizontal {"
+                                              "QSlider::groove {"
                                                 "border: 1px solid #bbb;"
                                                 "background: white;"
-                                                "height: 18px;"
                                                 "border-radius: 4px;"
                                               "}"
-                                              "QSlider::sub-page:horizontal {"
+
+                                              "QSlider::groove:horizontal {"
+                                                "height: 18px;"
+                                              "}"
+
+                                              "QSlider::groove:vertical {"
+                                                "width: 18px;"
+                                              "}"
+
+                                              "QSlider::sub-page {"
                                                 "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
                                                     "stop: 0 #66e, stop: 1 #bbf);"
                                                 "background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,"
                                                     "stop: 0 #bbf, stop: 1 #55f);"
                                                 "border: 1px solid #777;"
-                                                "height: 18px;"
                                                 "border-radius: 4px;"
                                               "}"
-                                              "QSlider::add-page:horizontal {"
+
+                                              "QSlider::sub-page:horizontal {"
+                                                "height: 18px;"
+                                              "}"
+
+                                              "QSlider::sub-page:vertical {"
+                                                "width: 18px;"
+                                              "}"
+
+                                              "QSlider::add-page {"
                                                 "background: #fff;"
                                                 "border: 1px solid #777;"
-                                                "height: 18px;"
                                                 "border-radius: 4px;"
                                               "}"
-                                              "QSlider::handle:horizontal {"
+
+                                              "QSlider::add-page:horizontal {"
+                                                "height: 18px;"
+                                              "}"
+
+                                              "QSlider::add-page:vertical {"
+                                                "width: 18px;"
+                                              "}"
+
+                                              "QSlider::handle {"
                                                 "background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
                                                     "stop:0 #eee, stop:1 #ccc);"
                                                 "border: 1px solid #777;"
-                                                "width: 12px;"
                                                 "margin: 0 -1px;"
                                                 "border-radius: 4px;"
                                               "}"
-                                              "QSlider::handle:horizontal:hover {"
+
+                                              "QSlider::handle:horizontal {"
+                                                "width: 12px;"
+                                              "}"
+
+                                              "QSlider::handle:vertical {"
+                                                "height: 12px;"
+                                              "}"
+
+                                              "QSlider::handle:hover {"
                                                 "background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
                                                     "stop:0 #fff, stop:1 #ddd);"
                                                 "border: 1px solid #444;"
                                                 "border-radius: 4px;"
                                               "}"
-                                              "QSlider::sub-page:horizontal:disabled {"
+
+                                              "QSlider::sub-page:disabled {"
                                                 "background: #bbb;"
                                                 "border-color: #999;"
                                               "}"
-                                              "QSlider::add-page:horizontal:disabled {"
+
+                                              "QSlider::add-page:disabled {"
                                                 "background: #eee;"
                                                 "border-color: #999;"
                                               "}"
-                                              "QSlider::handle:horizontal:disabled {"
+
+                                              "QSlider::handle:disabled {"
                                                 "background: #eee;"
                                                 "border: 1px solid #aaa;"
                                                 "border-radius: 4px;"
                                               "}"
     ));
+
 
     Player::setTrackBar(horizontalSlider);
 
@@ -423,6 +461,17 @@ void MainWindow::slotNoImpl() {
 void MainWindow::mediaVisibilityChanged(bool visible) {
   if (visible == false)
     ((QToolBar*)QObject::sender()) -> setVisible(true);
+}
+
+void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
+    QToolBar * bar = (QToolBar*)QObject::sender();
+
+    QList<QSlider *> orientables = bar -> findChildren<QSlider *>();
+
+    foreach(QSlider * orientable, orientables) {
+        orientable -> setOrientation(orientation);
+        orientable -> setInvertedAppearance(orientation == Qt::Vertical);
+    }
 }
 
 void MainWindow::showAttTabDialog() {

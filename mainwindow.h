@@ -43,6 +43,7 @@ public:
 private slots:
     void showAttTabDialog();
     void mediaVisibilityChanged(bool visible);
+    void mediaOrientationChanged(Qt::Orientation);
     void slotNoImpl();
 
     void addPanelTriggered();
