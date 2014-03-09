@@ -19,9 +19,13 @@ QIcon IconProvider::fileIcon(const QString filename, QString extension) {
             return instance()->icons->value(extension);
         } else {
             QFileInfo fileInfo(filename);
-            QIcon res = instance()->iconProvider.icon(fileInfo);
-            instance()->icons->insert(extension, res);
-            return res;
+            if (fileInfo.exists()) {
+                QIcon res = instance()->iconProvider.icon(fileInfo);
+                instance()->icons->insert(extension, res);
+                return res;
+            } else {
+                return QIcon(":file_error");
+            }
         }
     }
 }
