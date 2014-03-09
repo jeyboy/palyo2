@@ -48,6 +48,10 @@ QJsonValueRef DataStore::read(QString key) {
     return json[key];
 }
 
+void DataStore::write(QString key, double value) {
+    json[key] = value;
+}
+
 void DataStore::write(QString key, QJsonArray value) {
     json[key] = value;
 }

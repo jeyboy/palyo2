@@ -31,12 +31,12 @@ public:
     ModelItem * playedItem() const;
     ItemList * currentPlaylist() const;
 
-
 private slots:
     void changeTrackbarValue(int);
     void setTrackbarValue(qint64);
     void setTrackbarMax(qint64);
     void onStateChanged(QMediaPlayer::State newState);
+    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
 
 private:
     static void setPlayedItemState(int state);
@@ -63,6 +63,8 @@ private:
     QAction * playButton;
     QAction * pauseButton;
     QAction * stopButton;
+
+    int last_duration;
 
 
 //    int ref;

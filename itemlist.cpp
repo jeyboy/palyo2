@@ -1,7 +1,8 @@
 #include "itemlist.h"
 #include <QDebug>
 
-ItemList::ItemList(QWidget *parent, QJsonObject * attrs) : QTreeView(parent){
+ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {
+    settings = settingsSet;
     setIndentation(10);
 
 //    setStyleSheet(QString(
@@ -45,39 +46,7 @@ ItemList::~ItemList() {
 }
 
 void ItemList::keyPressEvent(QKeyEvent *event) {
-    if (event ->key() == Qt::Key_9) {
-
-        if (Player::instance() -> playedItem()) {
-            ModelItem * item = prevItem(Player::instance() -> playedItem());
-            if (item)
-                item -> play(this);
-        } else {
-            QModelIndexList list = selectedIndexes();
-
-            if (list.count() > 0) {
-                ModelItem * item = model -> getItem(list.first());
-                item = prevItem(item);
-                if (item)
-                    item -> play(this);
-            }
-        }
-    } else if (event ->key() == Qt::Key_0) {
-
-        if (Player::instance() -> playedItem()) {
-            ModelItem * item = nextItem(Player::instance() -> playedItem());
-            if (item)
-                item -> play(this);
-        } else {
-            QModelIndexList list = selectedIndexes();
-
-            if (list.count() > 0) {
-                ModelItem * item = model -> getItem(list.first());
-                item = nextItem(item);
-                if (item)
-                    item -> play(this);
-            }
-        }
-    } else if (event ->key() == Qt::Key_Enter || event ->key() == Qt::Key_Return) {
+    if (event ->key() == Qt::Key_Enter || event ->key() == Qt::Key_Return) {
         QModelIndexList list = selectedIndexes();
 
         qDebug() << list;
@@ -89,8 +58,7 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
     } else if (event ->key() == Qt::Key_Delete) {
         QModelIndexList list = selectedIndexes();
         QModelIndex modelIndex;
-        Tab * tab = (Tab*)parentWidget();
-        bool delFile = tab -> isRemoveFileWithItem();
+        bool delFile = isRemoveFileWithItem();
 
         QString delPath;
         for(int i = list.count() - 1; i >= 0; i--) {
@@ -106,7 +74,7 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
     } else { QTreeView::keyPressEvent(event); }
 }
 
-ModelItem * ItemList::activeItem() {
+ModelItem * ItemList::activeItem(bool next) {
     ModelItem * item = 0;
 
     if (Player::instance() -> currentPlaylist() == this) {
@@ -120,6 +88,19 @@ ModelItem * ItemList::activeItem() {
 
         if (list.count() > 0) {
             item = model -> getItem(list.first());
+
+            if (item -> getState() != STATE_UNPROCESSED) {
+                QModelIndex m;
+                if (next) {
+                    m = this -> indexAbove(list.first());
+                } else { m = this -> indexBelow(list.first()); }
+
+                if (m.isValid()) {
+                   item = model -> getItem(m);
+                } else {
+                   item = model -> getItem(list.first().parent());
+                }
+            }
         } else {
             item = model -> getItem(this ->rootIndex());
         }
@@ -130,7 +111,7 @@ ModelItem * ItemList::activeItem() {
 }
 
 void ItemList::proceedPrev() {
-    ModelItem * item = activeItem();
+    ModelItem * item = activeItem(false);
     if (item == 0) return;
 
     item = prevItem(item);
@@ -155,9 +136,7 @@ void ItemList::deleteCurrentProceedNext() {
 
     if (Player::instance() -> currentPlaylist() == this) {
         if (Player::instance() -> playedItem()) {
-
-            Tab * tab = (Tab*)parentWidget();
-            bool delFile = tab -> isRemoveFileWithItem();
+            bool delFile = isRemoveFileWithItem();
 
             QModelIndex modelIndex = model -> index(Player::instance() -> playedItem());
             if (delFile) {
@@ -379,7 +358,24 @@ void ItemList::on_doubleClick(const QModelIndex &index) {
 }
 
 QJsonObject ItemList::toJSON() {
-    return model -> getItem(rootIndex()) -> toJSON();
+    QJsonObject res = model -> getItem(rootIndex()) -> toJSON();
+    QJsonObject set = QJsonObject();
+
+
+    foreach(QString c, settings.keys()) {
+        set[c] = settings.value(c);
+    }
+
+    res["s"] = set;
+    return res;
+}
+
+bool ItemList::isRemoveFileWithItem() {
+    return settings["d"];
+}
+
+bool ItemList::isPlaylist() {
+    return settings["p"];
 }
 
 void ItemList::updateTabCounter(QWidget * parentTab, QTabWidget * parentTabber) {

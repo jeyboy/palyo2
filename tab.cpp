@@ -1,8 +1,8 @@
 #include "tab.h"
 #include <QDebug>
 
-void Tab::init(QJsonObject * attrs) {
-    list = new ItemList(this, attrs);
+void Tab::init(CBHash params, QJsonObject * attrs) {
+    list = new ItemList(this, params, attrs);
 //    list -> setResizeMode();
 
     this -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
@@ -11,8 +11,7 @@ void Tab::init(QJsonObject * attrs) {
 }
 
 Tab::Tab(CBHash params, QWidget * parent) : QWidget(parent) {
-    settings = params;
-    init();
+    init(params);
 }
 
 Tab::Tab(QJsonObject json_attrs, QWidget * parent) : QWidget(parent) {
@@ -23,20 +22,11 @@ Tab::Tab(QJsonObject json_attrs, QWidget * parent) : QWidget(parent) {
         params.insert(key, set[key].toBool());
     }
 
-    settings = params;
-    init(&json_attrs);
+    init(params, &json_attrs);
 }
 
 Tab::~Tab() {
     delete list;
-}
-
-bool Tab::isRemoveFileWithItem() {
-    return settings["d"];
-}
-
-bool Tab::isPlaylist() {
-    return settings["p"];
 }
 
 void Tab::updateHeader(QTabWidget * parent) {
@@ -45,14 +35,6 @@ void Tab::updateHeader(QTabWidget * parent) {
 
 QJsonObject Tab::toJSON(QString name) {
     QJsonObject res = list-> toJSON();
-    QJsonObject set = QJsonObject();
-
-
-    foreach(QString c, settings.keys()) {
-        set[c] = settings.value(c);
-    }
-
-    res["s"] = set;
     res["n"] = name;
     return res;
 }

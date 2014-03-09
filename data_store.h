@@ -16,6 +16,7 @@ public:
     bool save();
 
     QJsonValueRef read(QString key);
+    void write(QString key, double value);
     void write(QString key, QJsonArray value);
     void write(QString key, QJsonObject value);
     void write(QString key, QString value);

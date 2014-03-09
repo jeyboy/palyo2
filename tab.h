@@ -23,7 +23,7 @@ class ItemList;
 class Tab : public QWidget {
     Q_OBJECT
 public:
-    void init(QJsonObject * attrs = 0);
+    void init(CBHash params, QJsonObject * attrs = 0);
 
     explicit Tab(CBHash params, QWidget * parent = 0);
     explicit Tab(QJsonObject json_attrs, QWidget * parent = 0);
@@ -32,16 +32,12 @@ public:
     void updateHeader(QTabWidget * parent = 0);
     QJsonObject toJSON(QString name);
 
-    bool isRemoveFileWithItem();
-    bool isPlaylist();
-
     void proceedPrev();
     void proceedNext();
     void deleteCurrentProceedNext();
 
 private:
     ItemList * list;
-    CBHash settings;
 
 //private slots:
 //    void handleListClicked(const QModelIndex &index);

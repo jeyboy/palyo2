@@ -10,6 +10,7 @@
 #include <QMenu>
 #include <QDesktopServices>
 #include <QWidgetAction>
+#include <QSettings>
 
 #include "globalshortcut/qxtglobalshortcut.h"
 #include "tabber.h"

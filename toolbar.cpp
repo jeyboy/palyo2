@@ -3,6 +3,7 @@
 
 ToolBar::ToolBar(const QString &title, QWidget * parent) : QToolBar(title, parent) {
     setAcceptDrops(true);
+    setObjectName("tool_" + title);
 }
 
 ToolBar::~ToolBar() {

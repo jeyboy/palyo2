@@ -34,14 +34,23 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    ///////////////////////////////////////////////////////////
-    ///settings bla bla bla
-    ///////////////////////////////////////////////////////////
+    QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
+
+    QVariant geometryState = stateSettings.value("geometry");
+    QVariant objState = stateSettings.value("windowState");
+
     settings = new DataStore("settings.json");
-    int left = settings->read("left").toInt();
-    int top = settings->read("top").toInt();
+
+    if (geometryState.isValid())
+        restoreGeometry(geometryState.toByteArray());
+
+    ///////////////////////////////////////////////////////////
+    ///location correction (test needed)
+    ///////////////////////////////////////////////////////////
 
     QDesktopWidget *desktop = QApplication::desktop();
+    int left = x(), top = y();
+
 
     if (left >= desktop->width())
         left = desktop->width() - 50;
@@ -50,16 +59,13 @@ MainWindow::MainWindow(QWidget *parent) :
         top = desktop->height() - 50;
 
     move(left, top);
-    resize(settings->read("width").toInt(), settings->read("height").toInt());
 
-
-    //TODO: toolbars location glitches
     ///////////////////////////////////////////////////////////
     /// toolbars
     ///////////////////////////////////////////////////////////
-    ///
+
     underMouseBar = 0;
-    ///
+
     QJsonArray bars = settings -> read("bars").toArray();
 
     if (bars.count() > 0) {
@@ -79,14 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 curr_bar = createToolBar(barName);
             }
 
-            curr_bar -> setHidden(obj.value("hidden").toBool());
-            curr_bar -> setOrientation((Qt::Orientation)obj.value("orient").toInt());
-
             addToolBar((Qt::ToolBarArea)obj.value("area").toInt(), curr_bar);
-            if (obj.value("break").toBool())
-                insertToolBarBreak(curr_bar);
-
-            curr_bar -> move(obj.value("posx").toInt(), obj.value("posy").toInt());
 
             if (obj.contains("actions")) {
                 QJsonArray actions = obj.value("actions").toArray();
@@ -97,6 +96,9 @@ MainWindow::MainWindow(QWidget *parent) :
                 }
             }
         }
+
+        if (objState.isValid())
+            restoreState(objState.toByteArray());
     } else {
         createToolbars();
     }
@@ -174,6 +176,7 @@ QDockWidget * MainWindow::createDockWidget() {
 
 QToolBar* MainWindow::createMediaBar() {
     QToolBar* ptb = new QToolBar("Media");
+    ptb -> setObjectName("_Media");
     connect(ptb, SIGNAL(visibilityChanged(bool)), this, SLOT(mediaVisibilityChanged(bool)));
     ptb -> setMinimumHeight(30);
 
@@ -253,6 +256,7 @@ QToolBar* MainWindow::createMediaBar() {
 
 QToolBar* MainWindow::createControlToolBar() {
     QToolBar* ptb = new QToolBar("Controls");
+    ptb -> setObjectName("_Controls");
 //    ptb -> setMinimumWidth(75);
 
     ptb->addAction(QPixmap(QString(":/add")), "Add new tab", this, SLOT(showAttTabDialog()));
@@ -297,16 +301,10 @@ QToolBar* MainWindow::createToolBar(QString name) {
 
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-    QSize ws = size();
-    QPoint left_top = this -> mapToGlobal(QPoint(0,0));
-
     settings-> clear();
-    settings->write("left", left_top.x() - 8);
-    settings->write("top", left_top.y() - 30);
-    settings->write("width", ws.width());
-    settings->write("height", ws.height());
 
     QList<QToolBar *> toolbars = this -> findChildren<QToolBar *>();
+    qDebug() << toolbars.length();
 
     if (toolbars.length() > 0) {
         QJsonArray toolbar_array = QJsonArray();
@@ -318,11 +316,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
             curr_tab = QJsonObject();
 
             curr_tab.insert("area", toolBarArea(bar));
-            curr_tab.insert("break", toolBarBreak(bar));
-            curr_tab.insert("posx", bar -> pos().x());
-            curr_tab.insert("posy", bar -> pos().y());
-            curr_tab.insert("hidden", bar -> isHidden());
-            curr_tab.insert("orient", bar -> orientation());
             curr_tab.insert("title", bar -> windowTitle());
 
             if (bar -> windowTitle() != "Media" && bar -> windowTitle() != "Controls") {
@@ -334,7 +327,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
                     foreach(QAction * act, actions) {
                         if (QString(act -> metaObject() -> className()) == "QWidgetAction") {
                             curr_act = QJsonObject();
-                            button = (ToolbarButton*) bar -> widgetForAction(act);// (((QWidgetAction*)act) -> defaultWidget());
+                            button = (ToolbarButton*) bar -> widgetForAction(act);
 
                             curr_act.insert("path", button -> path);
                             curr_act.insert("name", button -> text());
@@ -356,6 +349,12 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     }
 
     settings -> save();
+
+    QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
+    stateSettings.setValue("geometry", saveGeometry());
+    stateSettings.setValue("windowState", saveState());
+    stateSettings.sync();
+
     tabber -> save();
 
     event ->accept();

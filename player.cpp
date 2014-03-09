@@ -29,7 +29,7 @@ void Player::setPauseButton(QAction * pauseAction) {
 void Player::setStopButton(QAction * stopAction) {
     instance() -> stopButton = stopAction;
     instance() -> stopButton -> setVisible(false);
-    connect((QObject *)instance() -> stopButton, SIGNAL(triggered(bool)), instance(), SLOT(stop()));
+    connect((QObject *)stopAction, SIGNAL(triggered(bool)), instance(), SLOT(stop()));
 }
 
 void Player::setPlaylist(ItemList * playlist) {
@@ -47,24 +47,21 @@ void Player::setPlayedItemState(int state) {
 
 void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
     switch(instance() -> state()) {
-        case StoppedState: {
-            setPlayedItemState(STATE_LISTENED);
-        }
+        case StoppedState: {}
 
         case PlayingState: {
             instance() -> stop();
-            setPlayedItemState(STATE_LISTENED);
         }
 
-        case PausedState: {
-            setPlayedItemState(STATE_LISTENED);
-        }
+        case PausedState: {}
     }
+    setPlayedItemState(STATE_LISTENED);
 
     instance() -> setMedia(QUrl::fromLocalFile(item -> fullpath()));
 
     instance() -> played = item;
     instance() -> playlist = itemPlaylist;
+    instance() -> last_duration = -1;
     instance() -> play();
 }
 
@@ -74,13 +71,14 @@ void Player::playFile(QString uri) {
 
         case PlayingState: {
             instance() -> stop();
-            setPlayedItemState(STATE_LISTENED);
         }
 
         case PausedState: { }
     }
 
+    setPlayedItemState(STATE_LISTENED);
     instance() -> setMedia(QUrl::fromLocalFile(uri));
+    instance() -> last_duration = -1;
     instance() -> play();
 }
 
@@ -119,6 +117,7 @@ void Player::setTrackbarMax(qint64 duration) {
     if (instance() -> slider) {
         instance() -> slider -> setDisabled(!instance() -> isSeekable());
         instance() -> slider -> setMaximum(duration);
+        instance() -> last_duration = duration;
     }
 }
 
@@ -137,19 +136,48 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
             instance() -> playButton -> setVisible(true);
             instance() -> pauseButton -> setVisible(false);
             instance() -> stopButton -> setVisible(false);
+            break;
         }
 
         case PlayingState: {
+            if (last_duration != -1)
+                instance() -> slider -> setMaximum(instance() -> last_duration);
             setPlayedItemState(STATE_PLAYED);
             instance() -> playButton -> setVisible(false);
             instance() -> pauseButton -> setVisible(true);
             instance() -> stopButton -> setVisible(true);
+            break;
         }
 
         case PausedState: {
             instance() -> playButton -> setVisible(true);
             instance() -> pauseButton -> setVisible(false);
             instance() -> stopButton -> setVisible(true);
+            break;
         }
+    }
+}
+
+void Player::mediaStatusChanged(QMediaPlayer::MediaStatus status) {
+    switch (status) {
+        case UnknownMediaStatus: {
+
+            break;
+        }
+
+        case StalledMedia: {
+            break;
+        }
+
+        case EndOfMedia:
+        case InvalidMedia: {
+            if (instance() -> playlist) {
+                if (instance() -> playlist -> isPlaylist()) {
+                    instance() -> playlist -> proceedNext();
+                }
+            }
+            break;
+        }
+        default: {}
     }
 }
