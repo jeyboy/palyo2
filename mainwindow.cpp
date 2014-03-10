@@ -193,6 +193,7 @@ QToolBar* MainWindow::createMediaBar() {
     timeLabel -> display("00:00");
     ptb -> addWidget(timeLabel);
     Player::instance() -> setTimePanel(timeLabel);
+    ptb->addSeparator();
 
     QSlider * horizontalSlider = new QSlider();
     horizontalSlider -> setOrientation(Qt::Horizontal);
