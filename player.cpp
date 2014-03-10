@@ -105,14 +105,40 @@ void Player::setTrackBar(QSlider * trackBar) {
     connect(trackBar, SIGNAL(valueChanged(int)), instance(), SLOT(changeTrackbarValue(int)));
 }
 
+void Player::setTimePanel(QLCDNumber * newTimePanel) {
+    instance() -> timePanel = newTimePanel;
+}
+
 void Player::setVideoOutput(QVideoWidget * container) {
-    setVideoOutput(container);
+    instance() -> setVideoOutput(container);
+}
+
+void Player::setTimePanelVal(int millis) {
+    if (instance() -> timePanel) {
+        instance() -> timePanel -> display(intToStr(millis - instance() -> last_duration));
+    }
+}
+
+QString Player::intToStr(int millis) {
+    int h = millis == 0 ? 0 : abs(millis / 1440000) % 24;
+    int m = millis == 0 ? 0 : abs(millis / 60000) % 60;
+    int s = millis == 0 ? 0 : abs(millis / 1000) % 60;
+//    int h = millis == 0 ? 0 : abs(millis / 3600000000l) % 24;
+//    int m = millis == 0 ? 0 : abs(millis / 60000000) % 60;
+//    int s = millis == 0 ? 0 : abs(millis / 1000000) % 60;
+
+    if (h > 0)
+        return QString().sprintf("%02d:%02d:%02d", h, m, s);
+    else
+        return QString().sprintf("%02d:%02d", m, s);
 }
 
 //////////////////////SLOTS/////////////////////////
 
 void Player::setTrackbarValue(qint64 pos) {
-//    qDebug() << pos;
+//    qDebug() << intToStr(pos);
+    instance() -> setTimePanelVal(pos);
+
     instance() -> slider -> blockSignals(true);
     instance() -> slider -> setValue(pos);
     instance() -> slider -> blockSignals(false);
@@ -145,6 +171,7 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
             setPlayedItemState(STATE_LISTENED);
             instance() -> slider -> blockSignals(true);
             instance() -> slider -> setMaximum(0);
+            instance() -> setTimePanelVal(0);
             instance() -> slider -> blockSignals(false);
 
             instance() -> playButton -> setVisible(true);

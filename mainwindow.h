@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QKeySequence>
 #include <QToolBar>
+#include <QLCDNumber>
 #include <QTimer>
 #include <QSystemTrayIcon>
 #include <QMenu>

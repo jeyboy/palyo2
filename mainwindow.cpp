@@ -187,6 +187,13 @@ QToolBar* MainWindow::createMediaBar() {
     Player::setStopButton(ptb->addAction(QPixmap(":/stop"), "Stop"));
     ptb->addSeparator();
 
+    QLCDNumber * timeLabel = new QLCDNumber();
+//    timeLabel -> setDigitCount(8);
+    timeLabel -> setSegmentStyle(QLCDNumber::Flat);
+    timeLabel -> display("00:00");
+    ptb -> addWidget(timeLabel);
+    Player::instance() -> setTimePanel(timeLabel);
+
     QSlider * horizontalSlider = new QSlider();
     horizontalSlider -> setOrientation(Qt::Horizontal);
     horizontalSlider -> setMinimumSize(30, 30);

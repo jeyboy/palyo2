@@ -4,7 +4,10 @@
 #include <QMediaPlayer>
 #include <QMediaMetaData>
 #include <QSlider>
+#include <QLCDNumber>
 #include <QAction>
+
+#include <QtCore/qmath.h>
 
 #include "model.h"
 #include "itemlist.h"
@@ -25,6 +28,7 @@ public:
     static void setStopButton(QAction * stopAction);
 
     static void setTrackBar(QSlider * trackBar);
+    static void setTimePanel(QLCDNumber * timePanel);
     static void setVideoOutput(QVideoWidget * container);
     static void setPlaylist(ItemList * playlist);
     static void removePlaylist();
@@ -41,9 +45,12 @@ private slots:
 
 private:
     static void setPlayedItemState(int state);
+    static QString intToStr(int val);
+    static void setTimePanelVal(int millis);
 
     Player() {
        slider = 0;
+       timePanel = 0;
        played = 0;
        playlist = 0;
 
@@ -58,6 +65,7 @@ private:
 
     static Player * self;
     QSlider * slider;
+    QLCDNumber * timePanel;
     ModelItem * played;
     ItemList * playlist;
 
