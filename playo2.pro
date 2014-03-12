@@ -42,6 +42,11 @@ SOURCES += main.cpp\
     dnd.cpp
 
 unix:!mac {
+        QT += gui-private
+        CONFIG += link_pkgconfig
+        PKGCONFIG += x11
+        LDFLAGS =- lX11
+        DEFINES += HAVE_X11
         SOURCES += globalshortcut/qxtglobalshortcut_x11.cpp
 }
 win32: {

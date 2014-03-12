@@ -10,6 +10,7 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QDesktopServices>
+#include <QDesktopWidget>
 #include <QWidgetAction>
 #include <QSettings>
 
@@ -20,6 +21,7 @@
 #include "player.h"
 #include "toolbar.h"
 #include "toolbarbutton.h"
+#include "library.h"
 
 namespace Ui {
   class MainWindow;

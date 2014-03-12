@@ -4,6 +4,8 @@
 ToolbarButtonDialog::ToolbarButtonDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::ToolbarButtonDialog) {
     ui->setupUi(this);
+
+    setWindowTitle("Toolbar button settings");
 }
 
 ToolbarButtonDialog::~ToolbarButtonDialog() {

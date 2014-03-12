@@ -4,6 +4,8 @@
 TabDialog::TabDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::TabDialog) {
   ui->setupUi(this);
+
+  setWindowTitle("Tab settings");
 }
 
 TabDialog::~TabDialog() {

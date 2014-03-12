@@ -4,9 +4,6 @@
 #include "toolbardialog.h"
 #include "toolbarbuttondialog.h"
 
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QDesktopWidget>
 #include <QDebug>
 
 
@@ -33,6 +30,12 @@ QMenu * MainWindow::createPopupMenu () {
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+
+    this -> setWindowTitle("Playo");
+
+    qDebug() << Library::prepareName("(16) [Jeckyll & Hyde] Break_It Down (Club Mix)");
+    qDebug() << Library::prepareName("(04) [Whitney Houston] It's Not Right But It's Okay (Thunderpuss 2000 Club Mix)");
+    qDebug() << Library::prepareName("andy moor, orkidea - orbithing (extended mix) (original mix) [exclusive-music-dj.com]");
 
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
 
@@ -111,6 +114,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(&autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
 //    autoSaveTimer.start(1000*60*5);//Every 5 minutes
     QApplication::setWindowIcon(QIcon(":icon"));
+
+//    Library::instance() -> getItemState("dido");
 }
 
 void MainWindow::registrateGlobalKeys() {
@@ -464,7 +469,7 @@ void MainWindow::OpenFolderTriggered() {
 }
 
 void MainWindow::slotNoImpl() {
-    QMessageBox::information(0, "Message", "Not implemented");
+//    QMessageBox::information(0, "Message", "Not implemented");
 }
 
 void MainWindow::mediaVisibilityChanged(bool visible) {

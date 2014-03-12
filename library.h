@@ -9,12 +9,22 @@
 class Library {
 public:
     static Library * instance();
-    static bool addItem(const QString filename, int state);
+    static bool proceedItem(const QString filename, int state, bool last = true);
+    static bool addItem(const QString filename, int state = 1);
     static int getItemState(const QString filename);
     static void setItemState(const QString filename, int state);
+    static QString prepareName(QString gipoTitle);
 
 private:
-    Library() { catalogs = new QHash<QChar,  QHash<QString, int> >(); }
+    static QString sitesFilter(QString title);
+    static QString forwardNumberPreFilter(QString title);
+    static QString spacesFilter(QString title);
+    static QString forwardNumberFilter(QString title);
+
+    Library() {
+        catalogs = new QHash<QChar,  QHash<QString, int> >();
+        catalogs_state = QList<QChar>();
+    }
 
     static Library *self;
     static QChar getCatalogName(QChar l);
@@ -23,6 +33,7 @@ private:
     static void save(const QChar letter);
 
     QHash<QChar, QHash<QString, int> > * catalogs;
+    QList<QChar> catalogs_state;
 };
 
 #endif // LIBRARY_H
