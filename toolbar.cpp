@@ -1,5 +1,5 @@
 #include "toolbar.h"
-#include <qDebug>
+#include <QDebug>
 
 ToolBar::ToolBar(const QString &title, QWidget * parent) : QToolBar(title, parent) {
     setAcceptDrops(true);

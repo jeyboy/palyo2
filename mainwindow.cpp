@@ -3,6 +3,7 @@
 #include "tabdialog.h"
 #include "toolbardialog.h"
 #include "toolbarbuttondialog.h"
+#include "mediainfo.h"
 
 #include <QDebug>
 
@@ -36,6 +37,9 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug() << Library::prepareName("(16) [Jeckyll & Hyde] Break_It Down (Club Mix)");
     qDebug() << Library::prepareName("(04) [Whitney Houston] It's Not Right But It's Okay (Thunderpuss 2000 Club Mix)");
     qDebug() << Library::prepareName("andy moor, orkidea - orbithing (extended mix) (original mix) [exclusive-music-dj.com]");
+    qDebug() << Library::prepareName("andy moor, orkidea - orbithing (extended mix) (original mix) [http://exclusive-music-dj.com]");
+    qDebug() << Library::prepareName("andy moor, orkidea - orbithing (extended mix) (original mix) [http://www.exclusive-music-dj.com]");
+    qDebug() << Library::prepareName("andy moor, orkidea - orbithing (extended mix) (original mix) [www.exclusive-music-dj.com]");
 
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
 
@@ -116,6 +120,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QApplication::setWindowIcon(QIcon(":icon"));
 
 //    Library::instance() -> getItemState("dido");
+    MediaInfo::instance() ->getInfo("C:\\Josh Whelchel - Demoninution.mp3");
 }
 
 void MainWindow::registrateGlobalKeys() {

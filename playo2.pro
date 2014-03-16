@@ -10,15 +10,20 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 QT       += multimedia multimediawidgets
 
-CONFIG += static
-
-#CONFIG += mobility
-#MOBILITY = multimedia
-
-
 TARGET = playo2
 TEMPLATE = app
 
+
+DEFINES += TAGLIB_NO_CONFIG
+#DEFINES += TAGLIB_STATIC=1
+
+INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/include)
+LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib-project.a)
+
+#INCLUDEPATH += -L"$$_PRO_FILE_PWD_/libs/include"
+#LIBS += -L"$$_PRO_FILE_PWD_/libs/" -lpsapi
+
+CONFIG += static
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -39,7 +44,8 @@ SOURCES += main.cpp\
     toolbarbuttondialog.cpp \
     toolbar.cpp \
     toolbarbutton.cpp \
-    dnd.cpp
+    dnd.cpp \
+    mediainfo.cpp \
 
 unix:!mac {
         QT += gui-private
@@ -77,7 +83,8 @@ HEADERS  += mainwindow.h \
     toolbarbuttondialog.h \
     toolbar.h \
     toolbarbutton.h \
-    dnd.h
+    dnd.h \
+    mediainfo.h
 
 FORMS    += mainwindow.ui \
     tabdialog.ui \

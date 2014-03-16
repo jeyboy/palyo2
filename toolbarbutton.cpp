@@ -1,5 +1,5 @@
 #include "toolbarbutton.h"
-#include <qDebug>
+#include <QDebug>
 
 ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent) : QToolButton(parent) {
     path = folderPath;
