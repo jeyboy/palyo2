@@ -4,19 +4,40 @@
 #include "taglib.h"
 #include "tag.h"
 #include "fileref.h"
+
 #include <QString>
 
 class MediaInfo {
 public:
-    static MediaInfo * instance();
-    static QString getInfo(QString filepath);
+    MediaInfo(QString filepath);
+    void initInfo();
 
+    QString getArtist() const;
+    QString getTitle() const;
+    QString getAlbum() const;
+    QString getGenre() const;
+
+    int getYear() const;
+    int getTrack() const;
+    int getChannels() const;
+    int getBitrate() const;
+    int getLength() const;
+    int getSampleRate() const;
 private:
-    MediaInfo() {
+    std::wstring fileName;
 
-    }
+    QString artist;
+    QString title;
+    QString album;
+    QString genre;
 
-    static MediaInfo * self;
+    int year;
+    int track;
+
+    int channels;
+    int bitrate;
+    int length;
+    int sampleRate;
 };
 
 #endif // MEDIAINFO_H

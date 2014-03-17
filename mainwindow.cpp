@@ -120,7 +120,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QApplication::setWindowIcon(QIcon(":icon"));
 
 //    Library::instance() -> getItemState("dido");
-    MediaInfo::instance() ->getInfo("C:\\Josh Whelchel - Demoninution.mp3");
+    MediaInfo m("C:\\Josh Whelchel - Demoninution.mp3");
+    m.initInfo();
 }
 
 void MainWindow::registrateGlobalKeys() {

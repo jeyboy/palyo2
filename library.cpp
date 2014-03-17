@@ -18,7 +18,7 @@ QString Library::spacesFilter(QString title) 			{ return title.remove(QRegExp("(
 QString Library::forwardNumberFilter(QString title)		{ return title.remove(QRegExp("\\A\\d{1,} ")); }
 
 QString Library::prepareName(QString gipoTitle) {
-    QString temp = sitesFilter(gipoTitle);
+    QString temp = sitesFilter(gipoTitle.toLower());
     return spacesFilter(forwardNumberPreFilter(temp));
 
 //    if (!titles.contains(temp)) titles.add(temp);
