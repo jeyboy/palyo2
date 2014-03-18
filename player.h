@@ -44,7 +44,8 @@ private slots:
     void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
 
 private:
-    static void setPlayedItemState(int state);
+    static void updateItemState(bool played);
+//    static void setPlayedItemState(int state);
     static QString intToStr(int val);
     static void setTimePanelVal(int millis);
 

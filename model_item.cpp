@@ -4,7 +4,7 @@
 /////////////////////////////////////////////////////////
 
 ModelItem::ModelItem() {
-    state = -1;
+    state = ItemState(STATE_UNPROCESSED);
     folders = new QHash<QString, ModelItem *>();
     parentItem = 0;
 
@@ -15,7 +15,7 @@ ModelItem::ModelItem() {
 }
 
 ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) {
-    state = -1;
+    state = ItemState(STATE_UNPROCESSED);
     folders = new QHash<QString, ModelItem *>();
     childItems = QList<ModelItem*>();
     parentItem = parent;
@@ -27,7 +27,7 @@ ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) 
             parent -> folders -> insert(name, this);
     } else {
         name = attrs -> value("n").toString();
-        state = attrs -> value("s").toInt();
+        state = ItemState(attrs -> value("s").toInt());
         extension = attrs -> value("e").toString();
         model -> count++;
     }
@@ -52,10 +52,10 @@ ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) 
 }
 
 ModelItem::ModelItem(TreeModel * model, QString file_path, ModelItem *parent, int init_state) {
-    state = init_state;
+    state = ItemState(init_state);
     parentItem = parent;
 
-    if (init_state != -1) {
+    if (!state.isUnprocessed()) {
         path = file_path.section('/', 0, -2);
         name = file_path.section('/', -1, -1);
         extension = name.section('.', -1, -1);
@@ -220,12 +220,8 @@ QString ModelItem::fullpath() const {
 
 //////////////////////////properties///////////////////////////////
 
-void ModelItem::setState(int new_state) {
-    if (state != STATE_LIKED && state != STATE_UNPROCESSED)
-        state = new_state;
-}
-int ModelItem::getState() {
-    return state;
+ItemState * ModelItem::getState() {
+    return &state;
 }
 
 ////////////////////////////////////////////////////////
@@ -249,11 +245,11 @@ QJsonObject ModelItem::toJSON() {
         root["c"] = ar;
     }
 
-    if (state == STATE_UNPROCESSED)
+    if (state.isUnprocessed())
         root["p"] = path;
     else {
         root["n"] = name;
-        root["s"] = state;
+        root["s"] = state.getFuncValue();
         root["e"] = extension;
     }
 

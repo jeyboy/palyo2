@@ -1,4 +1,5 @@
 #include "model_item_delegate.h"
+#include <QDebug>
 
 ModelItemDelegate::ModelItemDelegate(QObject* parent)
     : QStyledItemDelegate(parent) {
@@ -97,6 +98,7 @@ void ModelItemDelegate::paint(QPainter* painter,
   painter->save();
   painter->setRenderHint(QPainter::Antialiasing, true);
   int background_state = index.data(Qt::UserRole).toInt();
+//  qDebug() << background_state;
   bool elem_state = (option.state & (QStyle::State_Selected | QStyle::State_HasFocus) && background_state != STATE_UNPROCESSED);
 
   QLinearGradient fill_color;

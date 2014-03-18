@@ -46,6 +46,7 @@ SOURCES += main.cpp\
     toolbarbutton.cpp \
     dnd.cpp \
     mediainfo.cpp \
+    item_state.cpp
 
 unix:!mac {
         QT += gui-private
@@ -67,7 +68,6 @@ HEADERS  += mainwindow.h \
     tab.h \
     tab_element.h \
     icon_provider.h \
-    settings.h \
     globalshortcut/qxtglobal.h \
     globalshortcut/qxtglobalshortcut.h \
     globalshortcut/qxtglobalshortcut_p.h \
@@ -84,7 +84,8 @@ HEADERS  += mainwindow.h \
     toolbar.h \
     toolbarbutton.h \
     dnd.h \
-    mediainfo.h
+    mediainfo.h \
+    item_state.h
 
 FORMS    += mainwindow.ui \
     tabdialog.ui \

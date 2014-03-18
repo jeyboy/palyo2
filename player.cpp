@@ -52,12 +52,26 @@ void Player::removePlaylist() {
 
 }
 
-void Player::setPlayedItemState(int state) {
+void Player::updateItemState(bool played) {
     if (instance() -> played) {
-        instance() -> played -> setState(state);
-        instance() -> playlist -> getModel() -> refreshItem(instance() -> played);
+        qDebug() << instance() -> played -> getState() -> getValue();
+        if (played) {
+            instance() -> played -> getState() -> setListened();
+            instance() -> played -> getState() -> setPlayed();
+        } else {
+            instance() -> played -> getState() -> unsetPlayed();
+        }
+
+        qDebug() << instance() -> played -> getState() -> getValue();
     }
+
+    instance() -> playlist -> getModel() -> refreshItem(instance() -> played);
 }
+
+//void Player::setPlayedItemState(int state) {
+//    instance() -> played -> setState(state);
+//    instance() -> playlist -> getModel() -> refreshItem(instance() -> played);
+//}
 
 void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
     switch(instance() -> state()) {
@@ -69,7 +83,8 @@ void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
             break;
         }
     }
-    setPlayedItemState(STATE_LISTENED);
+
+//    setPlayedItemState(~STATE_PLAYED);
 
     instance() -> setMedia(QUrl::fromLocalFile(item -> fullpath()));
 
@@ -90,7 +105,8 @@ void Player::playFile(QString uri) {
         }
     }
 
-    setPlayedItemState(STATE_LISTENED);
+//    setPlayedItemState(~STATE_PLAYED);
+    instance() -> played = 0;
     instance() -> setMedia(QUrl::fromLocalFile(uri));
     instance() -> last_duration = -1;
     instance() -> play();
@@ -168,7 +184,9 @@ void Player::changeTrackbarValue(int pos) {
 void Player::onStateChanged(QMediaPlayer::State newState) {
     switch(newState) {
         case StoppedState: {
-            setPlayedItemState(STATE_LISTENED);
+
+            updateItemState(false);
+
             instance() -> slider -> blockSignals(true);
             instance() -> slider -> setMaximum(0);
             instance() -> setTimePanelVal(0);
@@ -183,7 +201,9 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
         case PlayingState: {
             if (last_duration != -1)
                 instance() -> slider -> setMaximum(instance() -> last_duration);
-            setPlayedItemState(STATE_PLAYED);
+
+            updateItemState(true);
+
             instance() -> playButton -> setVisible(false);
             instance() -> pauseButton -> setVisible(true);
             instance() -> stopButton -> setVisible(true);

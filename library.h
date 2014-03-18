@@ -6,6 +6,8 @@
 #include <QThread>
 #include <QApplication>
 
+#include "model_item.h"
+
 class Library {
 public:
     static Library * instance();
@@ -24,6 +26,7 @@ private:
     Library() {
         catalogs = new QHash<QChar,  QHash<QString, int> >();
         catalogs_state = QList<QChar>();
+        items = QList<ModelItem>();
     }
 
     static Library *self;
@@ -34,6 +37,8 @@ private:
 
     QHash<QChar, QHash<QString, int> > * catalogs;
     QList<QChar> catalogs_state;
+
+    QList<ModelItem> items;
 };
 
 #endif // LIBRARY_H

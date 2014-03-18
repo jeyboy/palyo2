@@ -9,6 +9,7 @@
 
 #include "model.h"
 #include "itemlist.h"
+#include "item_state.h"
 #include "player.h"
 
 #define NAMEUID 0
@@ -16,11 +17,7 @@
 #define PATHUID 2
 #define STATEID 3
 
-#define STATE_UNPROCESSED -1
-#define STATE_DEFAULT 0
-#define STATE_LISTENED 1
-#define STATE_LIKED 2
-#define STATE_PLAYED 3
+
 
 class TreeModel;
 
@@ -51,8 +48,7 @@ public:
 
     QString fullpath() const;
 
-    void setState(int new_state);
-    int getState();
+    ItemState * getState();
 
     bool play(ItemList * palylist);
 
@@ -66,7 +62,7 @@ private:
     QString path;
     QString name;
     QString extension;
-    int state;
+    ItemState state;
 };
 
 

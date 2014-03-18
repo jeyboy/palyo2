@@ -94,7 +94,7 @@ ModelItem * ItemList::activeItem(bool next) {
         if (list.count() > 0) {
             item = model -> getItem(list.first());
 
-            if (item -> getState() != STATE_UNPROCESSED) {
+            if (!item -> getState() -> isUnprocessed()) {
                 QModelIndex m;
                 if (next) {
                     m = this -> indexAbove(list.first());
@@ -347,7 +347,7 @@ void ItemList::startDrag(Qt::DropActions /*supportedActions*/) {
 void ItemList::on_click(const QModelIndex &index) {
     ModelItem * item = model->getItem(index);
 
-    if (item -> getState() == STATE_UNPROCESSED) {
+    if (item -> getState() -> isUnprocessed()) {
         if (isExpanded(index)) {
           collapse(index);
         } else { expand(index); }
@@ -357,7 +357,7 @@ void ItemList::on_click(const QModelIndex &index) {
 void ItemList::on_doubleClick(const QModelIndex &index) {
     ModelItem * item = model->getItem(index);
 
-    if (item -> getState() != STATE_UNPROCESSED) {
+    if (!item -> getState() -> isUnprocessed()) {
         item -> play(this);
     }
 }
@@ -402,7 +402,7 @@ ModelItem * ItemList::nextItem(QModelIndex currIndex) {
         if (newIndex.isValid()) {
             item = model -> getItem(newIndex);
             qDebug() << item -> data(0);
-            if (item->getState() != STATE_UNPROCESSED) {
+            if (!item->getState() -> isUnprocessed()) {
                 return item;
             } else {
                 currIndex = newIndex.child(0, 0);
@@ -429,7 +429,7 @@ ModelItem * ItemList::nextItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (item->getState() != STATE_UNPROCESSED) {
+            if (!item->getState() -> isUnprocessed()) {
                 return item;
             } else {
                 curr = item;
@@ -456,7 +456,7 @@ ModelItem * ItemList::prevItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (item->getState() != STATE_UNPROCESSED) {
+            if (!item->getState() -> isUnprocessed()) {
                 return item;
             } else {
                 curr = item;

@@ -35,14 +35,14 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const {
            //pixmap.fill(color);
            //QIcon icon(pixmap);
 
-           if (item -> getState() == STATE_UNPROCESSED)
+           if (item -> getState() -> isUnprocessed())
                return IconProvider::fileIcon("", "");
            else
                return IconProvider::fileIcon(item -> fullpath(), (item -> data(EXTENSIONUID).toString()));
         }
         case Qt::ToolTipRole:
             item = getItem(index);
-            return item -> data(EXTENSIONUID).toString() + " | " + QString::number(item -> getState());
+            return item -> data(EXTENSIONUID).toString();
         case Qt::SizeHintRole:
             return QSize(0, 18);
         case Qt::TextColorRole:
@@ -53,7 +53,8 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const {
             return QFont("Times New Roman", 10, QFont::Bold);
         case Qt::UserRole:
             item = getItem(index);
-            return item -> getState();
+//            qDebug() << item -> fullpath() << " | " << item -> getState().getValue() << " | " << item -> getState().getFuncValue();
+            return item -> getState() -> getFuncValue();
 
         default: return QVariant();
     }
@@ -181,7 +182,7 @@ bool TreeModel::removeRow(int row, const QModelIndex &parent) {
         ModelItem * parentItem = getItem(parent);
         ModelItem * item = parentItem -> child(row);
 
-        if (item -> getState() != STATE_UNPROCESSED) {
+        if (!item -> getState() -> isUnprocessed()) {
             beginRemoveRows(parent, row, row);
             if (parentItem -> removeChildren(row, 1)) {
                 count--;
