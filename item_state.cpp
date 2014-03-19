@@ -74,7 +74,7 @@ int ItemState::getFuncValue() {
 //////////// private /////////////////
 
 bool ItemState::bitIsSet(int val, int pos) {
-   return (val & pos) != 0;
+   return (val & pos) == pos;
 }
 
 int ItemState::setBit(int val, int pos) {

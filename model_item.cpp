@@ -12,6 +12,7 @@ ModelItem::ModelItem() {
     name = QString("--(O_o)--");
     extension = QString();
     childItems = QList<ModelItem*>();
+    qDebug() << state.getValue();
 }
 
 ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) {

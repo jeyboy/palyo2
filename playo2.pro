@@ -18,7 +18,6 @@ DEFINES += TAGLIB_NO_CONFIG
 #DEFINES += TAGLIB_STATIC=1
 
 INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/include)
-LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib-project.a)
 
 #INCLUDEPATH += -L"$$_PRO_FILE_PWD_/libs/include"
 #LIBS += -L"$$_PRO_FILE_PWD_/libs/" -lpsapi
@@ -55,9 +54,12 @@ unix:!mac {
         LDFLAGS =- lX11
         DEFINES += HAVE_X11
         SOURCES += globalshortcut/qxtglobalshortcut_x11.cpp
+
+        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib-project.a)
 }
 win32: {
         SOURCES += globalshortcut/qxtglobalshortcut_win.cpp
+        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib-project.dll)
 }
 mac: {
         SOURCES += globalshortcut/qxtglobalshortcut_mac.cpp

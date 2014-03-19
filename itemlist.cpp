@@ -107,16 +107,16 @@ ModelItem * ItemList::activeItem(bool next) {
                 }
             }
         } else {
-            item = model -> getItem(this ->rootIndex());
+            item = model -> getItem(this -> rootIndex());
         }
     }
 
-    qDebug() << item->data(0);
     return item;
 }
 
 void ItemList::proceedPrev() {
     ModelItem * item = activeItem(false);
+
     if (item == 0) return;
 
     item = prevItem(item);
@@ -418,7 +418,7 @@ ModelItem * ItemList::nextItem(QModelIndex currIndex) {
 }
 
 ModelItem * ItemList::nextItem(ModelItem * curr) {
-    ModelItem * item;
+    ModelItem * item = curr;
     bool first_elem = curr -> parent() == 0;
 
     while(true) {
@@ -429,7 +429,7 @@ ModelItem * ItemList::nextItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item->getState() -> isUnprocessed()) {
+            if (!item -> getState() -> isUnprocessed()) {
                 return item;
             } else {
                 curr = item;
@@ -445,7 +445,7 @@ ModelItem * ItemList::nextItem(ModelItem * curr) {
     }
 }
 ModelItem * ItemList::prevItem(ModelItem * curr) {
-    ModelItem * item;
+    ModelItem * item = curr;
     bool last_elem = false;
 
     while(true) {

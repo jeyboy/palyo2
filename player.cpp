@@ -221,9 +221,13 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
 
 void Player::onMediaStatusChanged(QMediaPlayer::MediaStatus status) {
     switch (status) {
-        case UnknownMediaStatus: { break; }
+        case UnknownMediaStatus: {
+        qDebug() << "unk";
+        break; }
 
-        case StalledMedia: { break; }
+        case StalledMedia: {
+        qDebug() << "sta";
+        break; }
 
         case EndOfMedia:
         case InvalidMedia: {

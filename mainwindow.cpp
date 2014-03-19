@@ -122,8 +122,6 @@ MainWindow::MainWindow(QWidget *parent) :
 //    Library::instance() -> getItemState("dido");
     MediaInfo m("C:\\Josh Whelchel - Demoninution.mp3");
     m.initInfo();
-
-    qDebug() << (250 & 0x7);
 }
 
 void MainWindow::registrateGlobalKeys() {
