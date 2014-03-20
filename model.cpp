@@ -26,6 +26,13 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const {
     switch(role) {
         case Qt::DisplayRole: {
            item = getItem(index);
+
+           if (!item -> getState() -> isProceed()) {
+               Library::instance() ->initItem(item);
+               qDebug() << item -> fullpath();
+           }
+
+
            return item -> data(index.column());
         }
         case Qt::DecorationRole: {

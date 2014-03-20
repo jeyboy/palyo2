@@ -4,20 +4,28 @@
 #include <QHash>
 #include <QFile>
 #include <QThread>
+#include <QtConcurrent/QtConcurrent>
 #include <QApplication>
 
 #include "model_item.h"
+#include "item_state.h"
+
+class ModelItem;
 
 class Library {
 public:
     static Library * instance();
+
+    static void initItem(ModelItem * item);
     static bool proceedItem(const QString filename, int state, bool last = true);
-    static bool addItem(const QString filename, int state = 1);
+    static bool addItem(const QString filename, int state = STATE_LISTENED);
     static int getItemState(const QString filename);
     static void setItemState(const QString filename, int state);
     static QString prepareName(QString gipoTitle);
 
 private:
+    void itemsInit();
+
     static QString sitesFilter(QString title);
     static QString forwardNumberPreFilter(QString title);
     static QString spacesFilter(QString title);
@@ -26,7 +34,8 @@ private:
     Library() {
         catalogs = new QHash<QChar,  QHash<QString, int> >();
         catalogs_state = QList<QChar>();
-        items = QList<ModelItem>();
+        items = QList<ModelItem *>();
+        itemsInitResult = QFuture<void>();
     }
 
     static Library *self;
@@ -38,7 +47,8 @@ private:
     QHash<QChar, QHash<QString, int> > * catalogs;
     QList<QChar> catalogs_state;
 
-    QList<ModelItem> items;
+    QList<ModelItem *> items;
+    QFuture<void> itemsInitResult;
 };
 
 #endif // LIBRARY_H

@@ -38,6 +38,12 @@ bool Library::proceedItem(const QString preparedName, int state, bool last) {
         return catState & proceedItem(forwardNumberFilter(preparedName), state);
 }
 
+void Library::initItem(ModelItem * item) {
+    instance() -> items.insert(0, item);
+    if (!instance() -> itemsInitResult.isRunning())
+        instance() -> itemsInitResult = QtConcurrent::run(instance(), &Library::itemsInit);
+}
+
 
 //default state - listened
 bool Library::addItem(const QString filename, int state) {
@@ -56,6 +62,16 @@ void Library::setItemState(const QString filename, int state) {
     QHash<QString, int> cat = getCatalog(filename);
     cat.insert(filename, state);
     instance() -> catalogs_state.append(getCatalogName(filename.at(0)));
+}
+
+void Library::itemsInit() {
+    ModelItem * temp;
+
+    while(!items.isEmpty()) {
+        temp = items.takeFirst();
+
+
+    }
 }
 
 QChar Library::getCatalogName(QChar l) {

@@ -3,22 +3,33 @@
 
 /////////////////////////////////////////////////////////
 
-ModelItem::ModelItem() {
-    state = ItemState(STATE_UNPROCESSED);
-    folders = new QHash<QString, ModelItem *>();
-    parentItem = 0;
+void ModelItem::init(bool isFolder) {
+    names = 0;
+    childItems = QList<ModelItem*>();
 
+    if (isFolder) {
+        state = ItemState(STATE_UNPROCESSED);
+        state.setProceed();
+        folders = new QHash<QString, ModelItem *>();
+    } else {
+        folders = 0;
+    }
+}
+
+void ModelItem::rootItemInit() {
     path = QString();
     name = QString("--(O_o)--");
     extension = QString();
-    childItems = QList<ModelItem*>();
-    qDebug() << state.getValue();
+}
+
+ModelItem::ModelItem() {
+    init(true);
+    rootItemInit();
+    parentItem = 0;
 }
 
 ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) {
-    state = ItemState(STATE_UNPROCESSED);
-    folders = new QHash<QString, ModelItem *>();
-    childItems = QList<ModelItem*>();
+    init(true);
     parentItem = parent;
 
     if (attrs -> contains("p")) {
@@ -46,9 +57,7 @@ ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) 
     if (parent != 0) {
         parent -> appendChild(this);
     } else {
-        path = QString();
-        name = QString("--(O_o)--");
-        extension = QString();
+        rootItemInit();
     }
 }
 
@@ -57,21 +66,20 @@ ModelItem::ModelItem(TreeModel * model, QString file_path, ModelItem *parent, in
     parentItem = parent;
 
     if (!state.isUnprocessed()) {
+        init(false);
         path = file_path.section('/', 0, -2);
         name = file_path.section('/', -1, -1);
         extension = name.section('.', -1, -1);
         name = name.section('.', 0, -2);
-        folders = 0;
         model -> count++;
     } else {
+        init(true);
         name = path = file_path;
-        extension = "";
-        folders = new QHash<QString, ModelItem *>();
+        extension = QString();
 
         if (parent != 0)
             parent -> folders -> insert(name, this);
     }
-    childItems = QList<ModelItem*>();
 
     if (parent != 0) { parent -> appendChild(this);}
 }

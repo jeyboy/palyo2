@@ -5,8 +5,10 @@
 #include <QModelIndex>
 #include <QFont>
 #include <QBrush>
+
 #include "model_item.h"
 #include "icon_provider.h"
+#include "library.h"
 
 
 //#ifndef MILIST

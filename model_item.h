@@ -55,9 +55,13 @@ public:
     QJsonObject toJSON();
 
     QHash<QString, ModelItem *> * folders;
+    QList<QString> * names;
 private:
+    void init(bool isFolder);
+    void rootItemInit();
+
     QList<ModelItem*> childItems;
-    ModelItem *parentItem;
+    ModelItem *parentItem;  
 
     QString path;
     QString name;
