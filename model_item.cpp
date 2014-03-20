@@ -86,8 +86,17 @@ ModelItem::ModelItem(TreeModel * model, QString file_path, ModelItem *parent, in
 
 ModelItem::~ModelItem() {
     qDeleteAll(childItems);
-    if (folders != 0)
+
+    if (folders != 0) {
+        qDebug() << folders;
         delete folders;
+    }
+
+    if (names != 0)
+        delete names;
+
+    if (parentItem != 0)
+        delete parentItem;
 }
 
 /////////////////////////////////////////////////////////

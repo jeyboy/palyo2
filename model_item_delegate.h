@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QStyleOption>
 #include <QLinearGradient>
+
 #include "model_item.h"
 
 class ModelItemDelegate : public QStyledItemDelegate {

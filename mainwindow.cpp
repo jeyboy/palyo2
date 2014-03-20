@@ -409,10 +409,14 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 MainWindow::~MainWindow() {
     delete ui;
+
     delete next;
     delete next_and_delete;
     delete prev;
+
     delete settings;
+    delete tabber;
+    delete underMouseBar;
 }
 
 void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {

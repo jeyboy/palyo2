@@ -43,7 +43,8 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
 }
 
 ItemList::~ItemList() {
-
+//    delete tab;
+    delete model;
 }
 
 TreeModel * ItemList::getModel() const {

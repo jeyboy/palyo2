@@ -28,6 +28,7 @@ Tab::Tab(QJsonObject json_attrs, QWidget * parent) : QWidget(parent) {
 
 Tab::~Tab() {
     delete list;
+//    delete tabber;
 }
 
 QString Tab::getName() const {

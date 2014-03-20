@@ -1,3 +1,5 @@
+//TODO: improve singleton and add destructor
+
 #ifndef ICON_PROVIDER_H
 #define ICON_PROVIDER_H
 

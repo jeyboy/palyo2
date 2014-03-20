@@ -1,3 +1,5 @@
+//TODO: improve singleton and add destructor
+
 #ifndef LIBRARY_H
 #define LIBRARY_H
 
@@ -22,6 +24,8 @@ public:
     static int getItemState(const QString filename);
     static void setItemState(const QString filename, int state);
     static QString prepareName(QString gipoTitle);
+
+    static QList<QString> * getNamesForItem(ModelItem * item);
 
 private:
     void itemsInit();

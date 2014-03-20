@@ -29,7 +29,6 @@ SOURCES += main.cpp\
     tabber.cpp \
     tab.cpp \
     icon_provider.cpp \
-    tab_element.cpp \
     globalshortcut/qxtglobalshortcut.cpp \
     tabdialog.cpp \
     itemlist.cpp \
@@ -68,7 +67,6 @@ mac: {
 HEADERS  += mainwindow.h \
     tabber.h \
     tab.h \
-    tab_element.h \
     icon_provider.h \
     globalshortcut/qxtglobal.h \
     globalshortcut/qxtglobalshortcut.h \

@@ -1,3 +1,5 @@
+//TODO: improve singleton and add destructor
+
 #ifndef PLAYER_H
 #define PLAYER_H
 

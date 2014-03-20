@@ -13,7 +13,7 @@ TreeModel::TreeModel(QJsonObject * attrs, QWidget *parent) : QAbstractItemModel(
 }
 
 TreeModel::~TreeModel() {
-    delete rootItem;
+//    delete rootItem;
 }
 /////////////////////////////////////////////////////////
 

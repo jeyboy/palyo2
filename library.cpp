@@ -39,6 +39,7 @@ bool Library::proceedItem(const QString preparedName, int state, bool last) {
 }
 
 void Library::initItem(ModelItem * item) {
+    item -> getState() -> setProceed();
     instance() -> items.insert(0, item);
     if (!instance() -> itemsInitResult.isRunning())
         instance() -> itemsInitResult = QtConcurrent::run(instance(), &Library::itemsInit);
@@ -64,13 +65,21 @@ void Library::setItemState(const QString filename, int state) {
     instance() -> catalogs_state.append(getCatalogName(filename.at(0)));
 }
 
+QList<QString> * Library::getNamesForItem(ModelItem * item) {
+    QList<QString> * res = new QList<QString>();
+
+
+
+    return res;
+}
+
 void Library::itemsInit() {
     ModelItem * temp;
 
     while(!items.isEmpty()) {
         temp = items.takeFirst();
 
-
+        temp -> names = getNamesForItem(temp);
     }
 }
 
