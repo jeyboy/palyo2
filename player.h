@@ -38,6 +38,10 @@ public:
     ModelItem * playedItem() const;
     ItemList * currentPlaylist() const;
 
+    static void close() {
+        delete self;
+    }
+
 private slots:
     void changeTrackbarValue(int);
     void setTrackbarValue(qint64);

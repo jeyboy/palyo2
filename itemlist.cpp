@@ -23,6 +23,9 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
     setSelectionMode(QAbstractItemView::SingleSelection);
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::MoveAction);
+
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
 //  setDragDropOverwriteMode(true);
 //  setMovement(QTreeView::Snap);
 

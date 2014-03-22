@@ -9,6 +9,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QApplication>
 
+#include "mediainfo.h"
 #include "model_item.h"
 #include "item_state.h"
 
@@ -17,23 +18,15 @@ class ModelItem;
 class Library {
 public:
     static Library * instance();
+    static void close() {
+        delete self;
+    }
 
-    static void initItem(ModelItem * item);
-    static bool proceedItem(const QString filename, int state, bool last = true);
-    static bool addItem(const QString filename, int state = STATE_LISTENED);
-    static int getItemState(const QString filename);
-    static void setItemState(const QString filename, int state);
-    static QString prepareName(QString gipoTitle);
-
-    static QList<QString> * getNamesForItem(ModelItem * item);
+    void initItem(ModelItem * item);
+    bool addItem(ModelItem * item, int state);
 
 private:
-    void itemsInit();
-
-    static QString sitesFilter(QString title);
-    static QString forwardNumberPreFilter(QString title);
-    static QString spacesFilter(QString title);
-    static QString forwardNumberFilter(QString title);
+    static Library *self;
 
     Library() {
         catalogs = new QHash<QChar,  QHash<QString, int> >();
@@ -42,11 +35,33 @@ private:
         itemsInitResult = QFuture<void>();
     }
 
-    static Library *self;
-    static QChar getCatalogName(QChar l);
-    static QHash<QString, int> getCatalog(QString name);
-    static QHash<QString, int> load(const QChar letter);
-    static void save(const QChar letter);
+    ~Library() {
+        delete catalogs;
+    }
+
+    void itemsInit();
+
+    QString sitesFilter(QString title);
+    QString forwardNumberPreFilter(QString title);
+    QString spacesFilter(QString title);
+    QString forwardNumberFilter(QString title);
+
+    QString prepareName(QString gipoTitle, bool additional = false);
+    bool proceedItemNames(QList<QString> * names, int state);
+
+    QChar getCatalogChar(QString name);
+//    QChar getCatalogChar(QChar l);
+
+    QHash<QString, int> getCatalog(QChar letter);
+    QHash<QString, int> getCatalog(QString name);
+
+    QList<QString> * getNamesForObject(QString path, QString name);
+    QList<QString> * getNamesForItem(ModelItem * item);
+    QList<QString> * getNamesForItem(QString path);
+
+    QHash<QString, int> load(const QChar letter);
+    void save(const QChar letter);
+
 
     QHash<QChar, QHash<QString, int> > * catalogs;
     QList<QChar> catalogs_state;

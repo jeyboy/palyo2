@@ -34,13 +34,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this -> setWindowTitle("Playo");
 
-    qDebug() << Library::prepareName("(16) [Jeckyll & Hyde] Break_It Down (Club Mix)");
-    qDebug() << Library::prepareName("(04) [Whitney Houston] It's Not Right But It's Okay (Thunderpuss 2000 Club Mix)");
-    qDebug() << Library::prepareName("andy moor, orkidea - orbithing (extended mix) (original mix) [exclusive-music-dj.com]");
-    qDebug() << Library::prepareName("andy moor, orkidea - orbithing (extended mix) (original mix) [http://exclusive-music-dj.com]");
-    qDebug() << Library::prepareName("andy moor, orkidea - orbithing (extended mix) (original mix) [http://www.exclusive-music-dj.com]");
-    qDebug() << Library::prepareName("andy moor, orkidea - orbithing (extended mix) (original mix) [www.exclusive-music-dj.com]");
-
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
 
     QVariant geometryState = stateSettings.value("geometry");
@@ -409,6 +402,15 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 MainWindow::~MainWindow() {
     delete ui;
+
+    ///////////////////////////////////////////////
+    /// close singletons
+    ///////////////////////////////////////////////
+        IconProvider::close();
+        Library::close();
+        Player::close();
+        DnD::close();
+    ///////////////////////////////////////////////
 
     delete next;
     delete next_and_delete;

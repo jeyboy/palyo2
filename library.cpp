@@ -1,41 +1,12 @@
 #include "library.h"
 #include "qdebug.h"
 
-//TODO: all funs require tests
-
 Library *Library::self = 0;
 
 Library *Library::instance() {
     if(!self)
         self = new Library();
     return self;
-}
-
-//QString Library::sitesFilter(QString title)				{ return title.remove(QRegExp("((http:\\/)?(www\\.)?[\\w-]+\\.(com|net))")); }
-QString Library::sitesFilter(QString title)				{ return title.remove(QRegExp("((http:\\/\\/)?(www\\.)?[\\w-]+\\.(com|net))")); }
-QString Library::forwardNumberPreFilter(QString title)	{ return title.remove(QRegExp("\\A\\d{1,}.|\\(\\w*\\d{1,}\\w*\\)")); }
-QString Library::spacesFilter(QString title) 			{ return title.remove(QRegExp("(\\W|[_])")); }
-QString Library::forwardNumberFilter(QString title)		{ return title.remove(QRegExp("\\A\\d{1,} ")); }
-
-QString Library::prepareName(QString gipoTitle) {
-    QString temp = sitesFilter(gipoTitle.toLower());
-    return spacesFilter(forwardNumberPreFilter(temp));
-
-//    if (!titles.contains(temp)) titles.add(temp);
-//    temp = forwardNumberFilter(temp);
-//    if (!titles.contains(temp)) titles.add(temp);
-}
-
-bool Library::proceedItem(const QString preparedName, int state, bool last) {
-    QHash<QString, int> cat = getCatalog(preparedName);
-    bool catState = !cat.contains(preparedName);
-    cat.insert(preparedName, state);
-    instance() -> catalogs_state.append(getCatalogName(preparedName.at(0)));
-
-    if (last)
-        return catState;
-    else
-        return catState & proceedItem(forwardNumberFilter(preparedName), state);
 }
 
 void Library::initItem(ModelItem * item) {
@@ -45,33 +16,33 @@ void Library::initItem(ModelItem * item) {
         instance() -> itemsInitResult = QtConcurrent::run(instance(), &Library::itemsInit);
 }
 
-
-//default state - listened
-bool Library::addItem(const QString filename, int state) {
-    return proceedItem(prepareName(filename), state, false);
-}
-
-int Library::getItemState(const QString filename) {
-    QHash<QString, int> cat = getCatalog(filename);
-    if (cat.contains(filename)) {
-        return cat.value(filename);
-    } else {
-        return -1;
+bool Library::addItem(ModelItem * item, int state) {
+    if (item -> names == 0) {
+        item -> names = getNamesForItem(item);
     }
-}
-void Library::setItemState(const QString filename, int state) {
-    QHash<QString, int> cat = getCatalog(filename);
-    cat.insert(filename, state);
-    instance() -> catalogs_state.append(getCatalogName(filename.at(0)));
+
+    return proceedItemNames(item -> names, state);
 }
 
-QList<QString> * Library::getNamesForItem(ModelItem * item) {
-    QList<QString> * res = new QList<QString>();
+//int Library::getItemState(const QString filename) {
+//    QHash<QString, int> cat = getCatalog(filename);
+//    if (cat.contains(filename)) {
+//        return cat.value(filename);
+//    } else {
+//        return -1;
+//    }
+//}
+
+//void Library::setItemState(const QString filename, int state) {
+//    QHash<QString, int> cat = getCatalog(filename);
+//    cat.insert(filename, state);
+//    instance() -> catalogs_state.append(getCatalogName(filename.at(0)));
+//}
 
 
-
-    return res;
-}
+//////////////////////////////////////////////////////////////////////
+/// privates
+//////////////////////////////////////////////////////////////////////
 
 void Library::itemsInit() {
     ModelItem * temp;
@@ -80,27 +51,99 @@ void Library::itemsInit() {
         temp = items.takeFirst();
 
         temp -> names = getNamesForItem(temp);
+        qDebug() << temp -> names;
     }
 }
 
-QChar Library::getCatalogName(QChar l) {
-    if (l >= (int)'a' && l <= (int)'z') return l;
-    if (l == (int)'ъ' || l == (int)'ё' || l == (int)'ь' || l == (int)'ы') return '_';
-    if (l >= (int)'а' && l <= (int)'я') return l;
-    return '_';
+QString Library::sitesFilter(QString title)				{ return title.remove(QRegExp("((http:\\/\\/)?(www\\.)?[\\w-]+\\.(com|net))")); }
+QString Library::forwardNumberPreFilter(QString title)	{ return title.remove(QRegExp("\\A\\d{1,}.|\\(\\w*\\d{1,}\\w*\\)")); }
+QString Library::spacesFilter(QString title) 			{ return title.remove(QRegExp("(\\W|[_])")); }
+QString Library::forwardNumberFilter(QString title)		{ return title.remove(QRegExp("\\A\\d{1,} ")); }
+
+QString Library::prepareName(QString gipoTitle, bool additional) {
+    if (additional)
+        return forwardNumberFilter(gipoTitle);
+    else {
+        QString temp = sitesFilter(gipoTitle.toLower());
+        return spacesFilter(forwardNumberPreFilter(temp));
+    }
+}
+
+bool Library::proceedItemNames(QList<QString> * names, int state) {
+    QHash<QString, int> cat;
+    QChar letter;
+    bool catState = false;
+    QString name;
+    QList<QString>::iterator i;
+
+    // test needed
+    for (i = names -> begin(); i != names -> end(); ++i) {
+        name = (*i);
+        qDebug() << "Name: " << name;
+        letter = getCatalogChar(name);
+        cat = getCatalog(letter);
+        catState = catState || !cat.contains(name);
+        cat.insert(name, state);
+        if (!instance() -> catalogs_state.contains(letter))
+            instance() -> catalogs_state.append(letter);
+    }
+
+    return catState;
+}
+
+QChar Library::getCatalogChar(QString name) {
+    if (name.length() == 0) return '_';
+    return name.at(0);
+}
+
+//QChar Library::getCatalogChar(QChar l) {
+//    if (l >= (int)'a' && l <= (int)'z') return l;
+//    if (l == (int)'ъ' || l == (int)'ё' || l == (int)'ь' || l == (int)'ы') return '_';
+//    if (l >= (int)'а' && l <= (int)'я') return l;
+//    return '_';
+//}
+
+QHash<QString, int> Library::getCatalog(QChar letter) {
+    if (instance() -> catalogs -> contains(letter)) {
+        return instance() -> catalogs -> value(letter);
+    } else {
+        QHash<QString, int> res = load(letter);
+        instance() -> catalogs -> insert(letter, res);
+        return res;
+    }
 }
 
 QHash<QString, int> Library::getCatalog(QString name) {
     if (name.length() == 0) return QHash<QString, int>();
 
-    QChar c = getCatalogName(name.at(0));
-    if (instance() -> catalogs -> contains(c)) {
-        return instance() -> catalogs -> value(c);
-    } else {
-        QHash<QString, int> res = load(c);
-        instance() -> catalogs -> insert(c, res);
-        return res;
-    }
+    QChar c = getCatalogChar(name);
+    return getCatalog(c);
+}
+
+QList<QString> * Library::getNamesForObject(QString path, QString name) {
+    QList<QString> * res = new QList<QString>();
+
+    res -> append(name);
+    res -> append(prepareName(name, true));
+
+    MediaInfo m(path);
+
+    res -> append((m.getArtist() + m.getTitle()).toLower());
+
+    return res;
+}
+
+QList<QString> * Library::getNamesForItem(ModelItem * item) {
+    QString name = prepareName(item -> data(NAMEUID).toString());
+
+    return getNamesForObject(item -> fullpath(), name);
+}
+
+QList<QString> * Library::getNamesForItem(QString path) {
+    QString name = path.section('/', -1, -1);
+    name = prepareName(name.section('.', 0, -2));
+
+    return getNamesForObject(path, name);
 }
 
 QHash<QString, int> Library::load(const QChar letter) {
@@ -128,12 +171,11 @@ QHash<QString, int> Library::load(const QChar letter) {
     return res;
 }
 
-void Library::save(const QChar letter) {
-    QChar c = getCatalogName(letter);
+void Library::save(const QChar c) {
     QHash<QString, int> res = instance() -> catalogs -> value(c);
 
     QString path = QCoreApplication::applicationDirPath() + "/library/cat_" + c;
-    qDebug() << letter << " :: " << path;
+//    qDebug() << letter << " :: " << path;
 
     QFile f(path);
     if (f.open(QIODevice::WriteOnly | QIODevice::Text)) {

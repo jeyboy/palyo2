@@ -9,6 +9,10 @@ public:
     QString listItems;
     static DnD * instance();
 
+    static void close() {
+        delete self;
+    }
+
 private:
     DnD(){
         files = "text/uri-list";
