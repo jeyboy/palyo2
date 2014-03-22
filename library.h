@@ -24,6 +24,7 @@ public:
 
     void initItem(ModelItem * item);
     bool addItem(ModelItem * item, int state);
+    void restoreItemState(ModelItem * item);
 
 private:
     static Library *self;

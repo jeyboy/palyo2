@@ -24,6 +24,34 @@ bool Library::addItem(ModelItem * item, int state) {
     return proceedItemNames(item -> names, state);
 }
 
+void Library::restoreItemState(ModelItem * item) {
+    QHash<QString, int> cat;
+    bool isListened = false;
+    int temp;
+    QString name;
+    QList<QString>::iterator i;
+
+    for (i = item -> names -> begin(); i != item -> names -> end(); ++i) {
+        name = (*i);
+        qDebug() << "Name: " << name;
+        cat = getCatalog(name);
+
+        if (cat.contains(name)) {
+            temp = cat.value(name);
+
+            if (cat.value(name) == 1) {
+                item -> getState() -> setLiked();
+                return;
+            }
+
+            isListened = isListened || (cat.value(name) == 0);
+        }
+    }
+
+    if (isListened)
+        item -> getState() -> setListened();
+}
+
 //int Library::getItemState(const QString filename) {
 //    QHash<QString, int> cat = getCatalog(filename);
 //    if (cat.contains(filename)) {
@@ -51,7 +79,7 @@ void Library::itemsInit() {
         temp = items.takeFirst();
 
         temp -> names = getNamesForItem(temp);
-        qDebug() << temp -> names;
+        restoreItemState(temp);
     }
 }
 
@@ -124,11 +152,15 @@ QList<QString> * Library::getNamesForObject(QString path, QString name) {
     QList<QString> * res = new QList<QString>();
 
     res -> append(name);
-    res -> append(prepareName(name, true));
+    QString temp = prepareName(name, true);
+    if (temp != name)
+        res -> append(temp);
 
     MediaInfo m(path);
 
-    res -> append((m.getArtist() + m.getTitle()).toLower());
+    QString temp2 = prepareName(m.getArtist() + m.getTitle());
+    if (!temp2.isEmpty() && temp2 != name && temp2 != temp)
+        res -> append(temp2);
 
     return res;
 }
