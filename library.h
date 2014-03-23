@@ -5,7 +5,8 @@
 
 #include <QHash>
 #include <QFile>
-#include <QThread>
+//#include <QThread>
+#include <QTimer>
 #include <QtConcurrent/QtConcurrent>
 #include <QApplication>
 
@@ -15,29 +16,41 @@
 
 class ModelItem;
 
-class Library {
+class Library : QObject {
+    Q_OBJECT
 public:
     static Library * instance();
     static void close() {
+        self -> timer -> stop();
+        self -> save();
         delete self;
     }
 
     void initItem(ModelItem * item);
     bool addItem(ModelItem * item, int state);
-    void restoreItemState(ModelItem * item);
+    void restoreItemState(ModelItem * item);  
+
+private slots:
+    void saveCatalogs();
 
 private:
     static Library *self;
 
-    Library() {
-        catalogs = new QHash<QChar,  QHash<QString, int> >();
+    Library() : QObject() {
+        catalogs = new QHash<QChar,  QHash<QString, int>* >();
         catalogs_state = QList<QChar>();
         items = QList<ModelItem *>();
         itemsInitResult = QFuture<void>();
+        catsSaveResult = QFuture<void>();
+
+        timer = new QTimer();
+        QObject::connect(timer, SIGNAL(timeout()), this, SLOT(saveCatalogs()));
+        timer -> start(10000);
     }
 
     ~Library() {
         delete catalogs;
+        delete timer;
     }
 
     void itemsInit();
@@ -53,22 +66,24 @@ private:
     QChar getCatalogChar(QString name);
 //    QChar getCatalogChar(QChar l);
 
-    QHash<QString, int> getCatalog(QChar letter);
-    QHash<QString, int> getCatalog(QString name);
+    QHash<QString, int> * getCatalog(QChar letter);
+    QHash<QString, int> * getCatalog(QString name);
 
     QList<QString> * getNamesForObject(QString path, QString name);
     QList<QString> * getNamesForItem(ModelItem * item);
     QList<QString> * getNamesForItem(QString path);
 
-    QHash<QString, int> load(const QChar letter);
-    void save(const QChar letter);
+    QHash<QString, int> * load(const QChar letter);
+    void save();
 
-
-    QHash<QChar, QHash<QString, int> > * catalogs;
+    QHash<QChar, QHash<QString, int>* > * catalogs;
     QList<QChar> catalogs_state;
 
     QList<ModelItem *> items;
+    QTimer *timer;
+
     QFuture<void> itemsInitResult;
+    QFuture<void> catsSaveResult;
 };
 
 #endif // LIBRARY_H

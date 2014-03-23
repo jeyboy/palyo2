@@ -11,9 +11,9 @@ Library *Library::instance() {
 
 void Library::initItem(ModelItem * item) {
     item -> getState() -> setProceed();
-    instance() -> items.insert(0, item);
-    if (!instance() -> itemsInitResult.isRunning())
-        instance() -> itemsInitResult = QtConcurrent::run(instance(), &Library::itemsInit);
+    items.insert(0, item);
+    if (!itemsInitResult.isRunning())
+        itemsInitResult = QtConcurrent::run(this, &Library::itemsInit);
 }
 
 bool Library::addItem(ModelItem * item, int state) {
@@ -21,11 +21,15 @@ bool Library::addItem(ModelItem * item, int state) {
         item -> names = getNamesForItem(item);
     }
 
+    if (state == STATE_LIKED)
+        state = 1;
+    else state = 0;
+
     return proceedItemNames(item -> names, state);
 }
 
 void Library::restoreItemState(ModelItem * item) {
-    QHash<QString, int> cat;
+    QHash<QString, int> * cat;
     bool isListened = false;
     int temp;
     QString name;
@@ -33,33 +37,23 @@ void Library::restoreItemState(ModelItem * item) {
 
     for (i = item -> names -> begin(); i != item -> names -> end(); ++i) {
         name = (*i);
-        qDebug() << "Name: " << name;
         cat = getCatalog(name);
 
-        if (cat.contains(name)) {
-            temp = cat.value(name);
+        if (cat -> contains(name)) {
+            temp = cat -> value(name);
 
-            if (cat.value(name) == 1) {
+            if (temp == 1) {
                 item -> getState() -> setLiked();
                 return;
             }
 
-            isListened = isListened || (cat.value(name) == 0);
+            isListened = isListened || (temp == 0);
         }
     }
 
     if (isListened)
         item -> getState() -> setListened();
 }
-
-//int Library::getItemState(const QString filename) {
-//    QHash<QString, int> cat = getCatalog(filename);
-//    if (cat.contains(filename)) {
-//        return cat.value(filename);
-//    } else {
-//        return -1;
-//    }
-//}
 
 //void Library::setItemState(const QString filename, int state) {
 //    QHash<QString, int> cat = getCatalog(filename);
@@ -71,6 +65,11 @@ void Library::restoreItemState(ModelItem * item) {
 //////////////////////////////////////////////////////////////////////
 /// privates
 //////////////////////////////////////////////////////////////////////
+
+void Library::saveCatalogs() {
+    if (!catsSaveResult.isRunning())
+        catsSaveResult = QtConcurrent::run(this, &Library::save);
+}
 
 void Library::itemsInit() {
     ModelItem * temp;
@@ -98,7 +97,7 @@ QString Library::prepareName(QString gipoTitle, bool additional) {
 }
 
 bool Library::proceedItemNames(QList<QString> * names, int state) {
-    QHash<QString, int> cat;
+    QHash<QString, int> * cat;
     QChar letter;
     bool catState = false;
     QString name;
@@ -110,10 +109,17 @@ bool Library::proceedItemNames(QList<QString> * names, int state) {
         qDebug() << "Name: " << name;
         letter = getCatalogChar(name);
         cat = getCatalog(letter);
-        catState = catState || !cat.contains(name);
-        cat.insert(name, state);
-        if (!instance() -> catalogs_state.contains(letter))
-            instance() -> catalogs_state.append(letter);
+
+        if (cat -> contains(name)) {
+            catState = catState || !cat -> contains(name);
+            if (cat -> value(name) > state)
+                cat -> insert(name, state);
+        } else {
+            cat -> insert(name, state);
+        }
+
+        if (!catalogs_state.contains(letter))
+            catalogs_state.append(letter);
     }
 
     return catState;
@@ -131,18 +137,18 @@ QChar Library::getCatalogChar(QString name) {
 //    return '_';
 //}
 
-QHash<QString, int> Library::getCatalog(QChar letter) {
-    if (instance() -> catalogs -> contains(letter)) {
-        return instance() -> catalogs -> value(letter);
+QHash<QString, int> * Library::getCatalog(QChar letter) {
+    if (catalogs -> contains(letter)) {
+        return catalogs -> value(letter);
     } else {
-        QHash<QString, int> res = load(letter);
-        instance() -> catalogs -> insert(letter, res);
+        QHash<QString, int> * res = load(letter);
+        catalogs -> insert(letter, res);
         return res;
     }
 }
 
-QHash<QString, int> Library::getCatalog(QString name) {
-    if (name.length() == 0) return QHash<QString, int>();
+QHash<QString, int> * Library::getCatalog(QString name) {
+    if (name.length() == 0) return new QHash<QString, int>();
 
     QChar c = getCatalogChar(name);
     return getCatalog(c);
@@ -178,8 +184,8 @@ QList<QString> * Library::getNamesForItem(QString path) {
     return getNamesForObject(path, name);
 }
 
-QHash<QString, int> Library::load(const QChar letter) {
-    QHash<QString, int> res = QHash<QString, int>();
+QHash<QString, int> * Library::load(const QChar letter) {
+    QHash<QString, int> * res = new QHash<QString, int>();
 
     QString path = QCoreApplication::applicationDirPath() + "/library/cat_" + letter;
 
@@ -193,7 +199,7 @@ QHash<QString, int> Library::load(const QChar letter) {
             ar = f.readLine();
             state = ar.mid(0, 1).toInt();
             name = QString(ar.mid(1, ar.length() - 3));
-            res.insert(name, state);
+            res -> insert(name, state);
             qDebug() << name << "\n" << state;
         }
 
@@ -203,20 +209,32 @@ QHash<QString, int> Library::load(const QChar letter) {
     return res;
 }
 
-void Library::save(const QChar c) {
-    QHash<QString, int> res = instance() -> catalogs -> value(c);
+// split cats on overwritten and appended
+void Library::save() {
+    QHash<QString, int> * res;
+    QString path;
+    QChar letter;
+    QList<QChar>::iterator i;
 
-    QString path = QCoreApplication::applicationDirPath() + "/library/cat_" + c;
-//    qDebug() << letter << " :: " << path;
+    for (i = catalogs_state.begin(); i != catalogs_state.end(); ++i) {
+        letter = (*i);
 
-    QFile f(path);
-    if (f.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&f);
+        res = catalogs -> value(letter);
 
-        foreach(QString key, res.keys()) {
-            out << QString::number(res.value(key)) + key + "\n";
+        path = QCoreApplication::applicationDirPath() + "/library/cat_" + letter;
+        qDebug() << " :: " << path;
+
+        QFile f(path);
+        if (f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qDebug() << " :: in " << path << " | " << res -> keys();
+            QTextStream out(&f);
+
+            foreach(QString key, res -> keys()) {
+                qDebug() << QString::number(res -> value(key)) + key + "\n";
+                out << QString::number(res -> value(key)) + key + "\n";
+            }
+
+            f.close();
         }
-
-        f.close();
     }
 }

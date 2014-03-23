@@ -9,17 +9,16 @@
 
 #include "model.h"
 #include "itemlist.h"
-#include "item_state.h"
 #include "player.h"
+#include "item_state.h"
 
 #define NAMEUID 0
 #define EXTENSIONUID 1
 #define PATHUID 2
 #define STATEID 3
 
-
-
 class TreeModel;
+class ItemState;
 
 class ModelItem {
 public:
@@ -66,7 +65,7 @@ private:
     QString path;
     QString name;
     QString extension;
-    ItemState state;
+    ItemState * state;
 };
 
 

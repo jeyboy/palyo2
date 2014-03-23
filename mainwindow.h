@@ -6,7 +6,7 @@
 #include <QKeySequence>
 #include <QToolBar>
 #include <QLCDNumber>
-#include <QTimer>
+//#include <QTimer>
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QDesktopServices>
@@ -74,7 +74,7 @@ protected:
 private:
     Ui::MainWindow *ui;
     Tabber * tabber;
-    QTimer autoSaveTimer;
+//    QTimer autoSaveTimer;
     QSystemTrayIcon m_tray;
     QToolBar * underMouseBar;
 

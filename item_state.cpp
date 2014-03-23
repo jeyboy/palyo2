@@ -30,19 +30,24 @@ bool ItemState::isUnprocessed() {
 void ItemState::setNone() {
     item_state = STATE_DEFAULT;
 }
-void ItemState::setListened() {
-    if (!isLiked() && !isUnprocessed())
+void ItemState::setListened(ModelItem * item) {
+    if (!isLiked() && !isUnprocessed()) {
 //        item_state = setBit(item_state, STATE_LISTENED);
     //    item_state = unsetBit(item_state, STATE_DEFAULT);
         item_state = setBit(STATE_LISTENED, item_state & 0x7); // get three first bits
+        if (item)
+            Library::instance() -> addItem(item, STATE_LISTENED);
+    }
 }
-void ItemState::setLiked() {
+void ItemState::setLiked(ModelItem * item) {
     if (isUnprocessed()) return;
 //    item_state = setBit(item_state, STATE_LIKED);
 //    item_state = unsetBit(item_state, STATE_LISTENED);
 //    item_state = unsetBit(item_state, STATE_DEFAULT);
 
     item_state = setBit(STATE_LIKED, item_state & 0x7); // get three first bits
+    if (item)
+        Library::instance() -> addItem(item, STATE_LIKED);
 }
 
 void ItemState::setPlayed() {
