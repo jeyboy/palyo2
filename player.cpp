@@ -62,9 +62,8 @@ void Player::updateItemState(bool played) {
         }
 
         qDebug() << instance() -> played -> getState() -> getValue();
+        instance() -> playlist -> getModel() -> refreshItem(instance() -> played);
     }
-
-    instance() -> playlist -> getModel() -> refreshItem(instance() -> played);
 }
 
 //void Player::setPlayedItemState(int state) {
@@ -83,7 +82,7 @@ void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
         }
     }
 
-//    setPlayedItemState(~STATE_PLAYED);
+    updateItemState(false);
 
     instance() -> setMedia(QUrl::fromLocalFile(item -> fullpath()));
 
@@ -104,7 +103,8 @@ void Player::playFile(QString uri) {
         }
     }
 
-//    setPlayedItemState(~STATE_PLAYED);
+    updateItemState(false);
+
     instance() -> played = 0;
     instance() -> setMedia(QUrl::fromLocalFile(uri));
     instance() -> last_duration = -1;
@@ -184,7 +184,7 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
     switch(newState) {
         case StoppedState: {
 
-            updateItemState(false);
+//            updateItemState(false);
 
             instance() -> slider -> blockSignals(true);
             instance() -> slider -> setMaximum(0);

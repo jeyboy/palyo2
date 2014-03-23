@@ -216,7 +216,7 @@ void Library::save() {
     QChar letter;
     QList<QChar>::iterator i;
 
-    for (i = catalogs_state.begin(); i != catalogs_state.end(); ++i) {
+    for (i = catalogs_state.begin(); i != catalogs_state.end(); ) {
         letter = (*i);
 
         res = catalogs -> value(letter);
@@ -235,6 +235,9 @@ void Library::save() {
             }
 
             f.close();
+            i = catalogs_state.erase(i);
+        } else {
+            i++;
         }
     }
 }
