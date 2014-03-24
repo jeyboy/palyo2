@@ -170,38 +170,38 @@ void ItemList::dragEnterEvent(QDragEnterEvent *event) {
    }
 }
 
-//void ItemList::dragMoveEvent(QDragMoveEvent * event) {
-//    event ->accept();
+void ItemList::dragMoveEvent(QDragMoveEvent * event) {
+    event ->accept();
 
-////  if (e->source() != this) {
-////      e->accept();
-////  } else {
-////      e->ignore();
-////  }
-
-
+//  if (e->source() != this) {
+//      e->accept();
+//  } else {
+//      e->ignore();
+//  }
 
 
-////    QListWidgetItem *item = dynamic_cast<ListWidgetItem *>(childAt(event->pos()));
-////    if(!item)
-////        return;
 
-////    itemList.append(item);
 
-////    foreach (ListWidgetItem *widget,itemList)
-////    {
-////        if (widget == item)
-////            widget->setStyleSheet("#ListWidget { border-top: 2px solid red; }");
-////        else
-////            widget->setStyleSheet("#ListWidget { border-top: 0px solid black; }");
-////    }
-////    if (event->mimeData()->hasFormat("application/x-QListView-DragAndDrop"))
-////    {
-////        event->setDropAction(Qt::MoveAction);
-////        event->accept();
-////    } else
-////        event->ignore();
-//}
+//    QListWidgetItem *item = dynamic_cast<ListWidgetItem *>(childAt(event->pos()));
+//    if(!item)
+//        return;
+
+//    itemList.append(item);
+
+//    foreach (ListWidgetItem *widget,itemList)
+//    {
+//        if (widget == item)
+//            widget->setStyleSheet("#ListWidget { border-top: 2px solid red; }");
+//        else
+//            widget->setStyleSheet("#ListWidget { border-top: 0px solid black; }");
+//    }
+//    if (event->mimeData()->hasFormat("application/x-QListView-DragAndDrop"))
+//    {
+//        event->setDropAction(Qt::MoveAction);
+//        event->accept();
+//    } else
+//        event->ignore();
+}
 
 
 //static QStringList nameFiltersFromString(const QString &nameFilter);
@@ -370,26 +370,26 @@ void ItemList::setSettings(CBHash newSettings) {
 //// Dnd
 ////////////////////////////////////////////////////////////
 
-//void ItemList::mousePressEvent(QMouseEvent *event) {
-//    if (event->button() == Qt::LeftButton) {
-//        dragStartPoint = event -> pos();
-//    }
+void ItemList::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton) {
+        dragStartPoint = event -> pos();
+    }
 
-//    QTreeView::mousePressEvent(event);
-//}
+    QTreeView::mousePressEvent(event);
+}
 
-//void ItemList::mouseMoveEvent(QMouseEvent * event) {
-//    if ((event -> buttons() == Qt::LeftButton) && (dragStartPoint - event -> pos()).manhattanLength() >= 5){
-//        QDrag * drag = new QDrag(this);
-//        QMimeData * mimeData = model -> mimeData(selectedIndexes());
-//        qDebug() << mimeData ->text().length();
-////        drag -> setPixmap(toolIcon);
-//        drag -> setMimeData(mimeData);
-//        drag -> exec(Qt::CopyAction, Qt::CopyAction);
-//    }
+void ItemList::mouseMoveEvent(QMouseEvent * event) {
+    if ((event -> buttons() == Qt::LeftButton) && (dragStartPoint - event -> pos()).manhattanLength() >= 5){
+        QDrag * drag = new QDrag(this);
+        QMimeData * mimeData = model -> mimeData(selectedIndexes());
+        qDebug() << mimeData ->text().length();
+//        drag -> setPixmap(toolIcon);
+        drag -> setMimeData(mimeData);
+        drag -> exec(Qt::CopyAction, Qt::CopyAction);
+    }
 
-//    QTreeView::mouseMoveEvent(event);
-//}
+    QTreeView::mouseMoveEvent(event);
+}
 
 void ItemList::markSelectedAsLiked() {
     ModelItem * temp;

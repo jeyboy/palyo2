@@ -293,36 +293,36 @@ ModelItem * TreeModel::addFolder(QString folder_name, ModelItem * parent) {
 
 /////////////////////////////////////////////////////////
 
-//Qt::DropActions TreeModel::supportedDropActions() const {
-//    return Qt::CopyAction;// | Qt::MoveAction;
-//}
+Qt::DropActions TreeModel::supportedDropActions() const {
+    return Qt::CopyAction | Qt::MoveAction;
+}
 
-//QStringList TreeModel::mimeTypes() const {
-//    QStringList types;
-//    types << DnD::instance() -> listItems;
-//    types << DnD::instance() -> files;
-//    return types;
-//}
+QStringList TreeModel::mimeTypes() const {
+    QStringList types;
+    types << DnD::instance() -> listItems;
+    types << DnD::instance() -> files;
+    return types;
+}
 
-//QMimeData * TreeModel::mimeData(const QModelIndexList &indexes) const {
-//    QMimeData *mimeData = new QMimeData();
-//    QByteArray encodedData, tempData;
-//    ModelItem * temp;
+QMimeData * TreeModel::mimeData(const QModelIndexList &indexes) const {
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData, tempData;
+    ModelItem * temp;
 
-//    foreach (const QModelIndex &index, indexes) {
-//        if (index.isValid()) {
-//            if (!encodedData.isEmpty())
-//                encodedData.append('\n');
+    foreach (const QModelIndex &index, indexes) {
+        if (index.isValid()) {
+            if (!encodedData.isEmpty())
+                encodedData.append('\n');
 
-//            temp = getItem(index);
-////            if (!temp -> getState() -> isUnprocessed())
-//            tempData = temp -> fullpath().toUtf8();
-//            encodedData.swap(tempData);
-//        }
-//    }
+            temp = getItem(index);
+//            if (!temp -> getState() -> isUnprocessed())
+            tempData = temp -> fullpath().toUtf8();
+            encodedData.swap(tempData);
+        }
+    }
 
-//    mimeData -> setData(DnD::instance() -> listItems, encodedData);
-//    qDebug() << encodedData;
-//    qDebug() << mimeData -> data(DnD::instance() -> listItems);
-//    return mimeData;
-//}
+    mimeData -> setData(DnD::instance() -> listItems, encodedData);
+    qDebug() << encodedData;
+    qDebug() << mimeData -> data(DnD::instance() -> listItems);
+    return mimeData;
+}

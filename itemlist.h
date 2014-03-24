@@ -48,8 +48,8 @@ public:
     CBHash getSettings() const;
     void setSettings(CBHash newSettings);
 
-//    void mousePressEvent(QMouseEvent *event);
-//    void mouseMoveEvent(QMouseEvent * event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent * event);
 
     void markSelectedAsLiked();
 
@@ -63,7 +63,7 @@ protected:
 
     void dragEnterEvent(QDragEnterEvent *event);
 
-//    void dragMoveEvent(QDragMoveEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
 
     void dropEvent(QDropEvent *event);
 
