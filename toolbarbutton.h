@@ -5,6 +5,7 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QFile>
+#include <QMessageBox>
 
 #include "dnd.h"
 #include "itemlist.h"

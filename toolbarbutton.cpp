@@ -63,5 +63,6 @@ void ToolbarButton::copyFile(QString copyPath) {
         QFile::remove(prepared_path);
     }
 
-    QFile::copy(path, prepared_path);
+    if (!QFile::copy(copyPath, prepared_path))
+        QMessageBox::warning(this, "Bla", "Permissions not enough");
 }

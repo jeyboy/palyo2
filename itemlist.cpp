@@ -178,29 +178,6 @@ void ItemList::dragMoveEvent(QDragMoveEvent * event) {
 //  } else {
 //      e->ignore();
 //  }
-
-
-
-
-//    QListWidgetItem *item = dynamic_cast<ListWidgetItem *>(childAt(event->pos()));
-//    if(!item)
-//        return;
-
-//    itemList.append(item);
-
-//    foreach (ListWidgetItem *widget,itemList)
-//    {
-//        if (widget == item)
-//            widget->setStyleSheet("#ListWidget { border-top: 2px solid red; }");
-//        else
-//            widget->setStyleSheet("#ListWidget { border-top: 0px solid black; }");
-//    }
-//    if (event->mimeData()->hasFormat("application/x-QListView-DragAndDrop"))
-//    {
-//        event->setDropAction(Qt::MoveAction);
-//        event->accept();
-//    } else
-//        event->ignore();
 }
 
 
