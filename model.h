@@ -60,6 +60,10 @@ public:
     ModelItem * addFolder(QString folder_name, ModelItem * parent);
     int count;
 
+//    Qt::DropActions supportedDropActions() const;
+//    QStringList mimeTypes() const;
+//    QMimeData * mimeData(const QModelIndexList &indexes) const;
+
 private:
     ModelItem *rootItem;
 };

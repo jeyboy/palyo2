@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include <QFileInfo>
 #include <QJsonObject>
+#include <QDrag>
 
 #include "model.h"
 #include "model_item.h"
@@ -39,7 +40,6 @@ public:
     void proceedNext();
     void deleteCurrentProceedNext();
 
-
     bool isRemoveFileWithItem();
     bool isPlaylist();
 
@@ -47,6 +47,11 @@ public:
 
     CBHash getSettings() const;
     void setSettings(CBHash newSettings);
+
+//    void mousePressEvent(QMouseEvent *event);
+//    void mouseMoveEvent(QMouseEvent * event);
+
+    void markSelectedAsLiked();
 
 protected:
     ModelItem * activeItem(bool next = true);
@@ -56,13 +61,9 @@ protected:
     Tab * tab;
 
 
-//    void setModel(QAbstractItemModel *model);
-
-//    void mousePressEvent(QMouseEvent *event);
-
     void dragEnterEvent(QDragEnterEvent *event);
 
-    void dragMoveEvent(QDragMoveEvent *event);
+//    void dragMoveEvent(QDragMoveEvent *event);
 
     void dropEvent(QDropEvent *event);
 
@@ -79,9 +80,7 @@ private slots:
 private:
     TreeModel * model;
     CBHash settings;
-
-//  QPixmap currentPixmap;
-//  QPoint dragPoint;
+    QPoint dragStartPoint;
 };
 
 #endif // ITEMLIST_H

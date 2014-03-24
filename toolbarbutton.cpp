@@ -3,6 +3,10 @@
 
 ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent) : QToolButton(parent) {
     path = folderPath;
+
+    if (!path.endsWith('/'))
+        path = path.append('/') ;
+
     setText(text);
     setStyleSheet(
                 "QToolButton {"
@@ -30,9 +34,16 @@ void ToolbarButton::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 void ToolbarButton::dropEvent(QDropEvent *event) {
-      if (event->mimeData()->hasFormat(DnD::instance() -> listItems)) {
+      if (event -> mimeData() -> hasFormat(DnD::instance() -> listItems)) {
+          QByteArray data = event -> mimeData() -> data(DnD::instance() -> listItems);
+          QStringList list = QString(data).split('\n');
 
-          event->accept();
+          foreach(QString str, list){
+              copyFile(str);
+          }
+
+          ((ItemList *)event -> source()) -> markSelectedAsLiked();
+          event -> accept();
       } else if (event->mimeData()->hasFormat(DnD::instance() -> files)) {
           if(event -> mimeData() -> hasUrls()) {
               QList<QUrl> list = event -> mimeData() -> urls();
@@ -43,4 +54,14 @@ void ToolbarButton::dropEvent(QDropEvent *event) {
 
           event->accept();
       } else {  event->ignore(); }
+}
+
+void ToolbarButton::copyFile(QString copyPath) {
+    QString prepared_path = path + copyPath.section('/', -1, -1);
+
+    if (QFile::exists(prepared_path)) {
+        QFile::remove(prepared_path);
+    }
+
+    QFile::copy(path, prepared_path);
 }

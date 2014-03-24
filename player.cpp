@@ -1,6 +1,10 @@
 #include "player.h"
 #include <QDebug>
 
+
+//"/home/user/dst.txt"
+
+
 Player * Player::self = 0;
 
 Player * Player::instance() {

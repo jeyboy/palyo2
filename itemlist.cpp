@@ -13,16 +13,18 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
 //                      ));
 
     setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     setDragEnabled(true);
     setAcceptDrops(true);
     setDropIndicatorShown(true);
+
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setDefaultDropAction(Qt::CopyAction);
 
     setExpandsOnDoubleClick(false);
 
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
-    setDragDropMode(QAbstractItemView::DragDrop);
-    setDefaultDropAction(Qt::MoveAction);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
@@ -46,7 +48,6 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
 }
 
 ItemList::~ItemList() {
-//    delete tab;
     delete model;
 }
 
@@ -160,77 +161,47 @@ void ItemList::deleteCurrentProceedNext() {
         item -> play(this);
 }
 
-//void ItemList::setModel(QAbstractItemModel *model)
-//{
-//    QListView::setModel(model);
-
-//    for (int i=0; i<model->rowCount(); i++)
-//    {
-//        QModelIndex index = model->index(i,0);
-//        ListWidgetItem *widget = new ListWidgetItem;
-//        widget->setIndex(i);;
-//        setIndexWidget(index,widget);
-//    }
-//}
-
-//void ItemList::mousePressEvent(QMouseEvent *event) {
-////    QModelIndex i = indexAt(event->pos());
-////    if (event->button() ==  Qt::LeftButton)
-////    {
-////        QListWidgetItem *item = dynamic_cast<QListWidgetItem *>(childAt(event->pos()));
-
-////        if (!item)
-////            return;
-
-//////        y = event->pos().y()-item->pos().y();
-
-////        QModelIndex indx = indexAt(event->pos());
-////        currentPixmap = QPixmap::grabWidget(item);
-////        dragPoint = event->pos();
-////        if (event->pos().x() < 25 && indx.row() >= 0)
-////            startDrag(Qt::MoveAction);
-////    }
-//}
-
 void ItemList::dragEnterEvent(QDragEnterEvent *event) {
    if (event->mimeData()->hasFormat(DnD::instance() -> listItems)
        || event->mimeData()->hasFormat(DnD::instance() -> files)){
-       event->accept();
+       event -> accept();
    } else {
-        event->ignore();
+        event -> ignore();
    }
 }
 
-void ItemList::dragMoveEvent(QDragMoveEvent * /*event*/) {
-//  if (e->source() != this) {
-//      e->accept();
-//  } else {
-//      e->ignore();
-//  }
+//void ItemList::dragMoveEvent(QDragMoveEvent * event) {
+//    event ->accept();
+
+////  if (e->source() != this) {
+////      e->accept();
+////  } else {
+////      e->ignore();
+////  }
 
 
 
 
-//    QListWidgetItem *item = dynamic_cast<ListWidgetItem *>(childAt(event->pos()));
-//    if(!item)
-//        return;
+////    QListWidgetItem *item = dynamic_cast<ListWidgetItem *>(childAt(event->pos()));
+////    if(!item)
+////        return;
 
-//    itemList.append(item);
+////    itemList.append(item);
 
-//    foreach (ListWidgetItem *widget,itemList)
-//    {
-//        if (widget == item)
-//            widget->setStyleSheet("#ListWidget { border-top: 2px solid red; }");
-//        else
-//            widget->setStyleSheet("#ListWidget { border-top: 0px solid black; }");
-//    }
-//    if (event->mimeData()->hasFormat("application/x-QListView-DragAndDrop"))
-//    {
-//        event->setDropAction(Qt::MoveAction);
-//        event->accept();
-//    } else
-//        event->ignore();
-}
+////    foreach (ListWidgetItem *widget,itemList)
+////    {
+////        if (widget == item)
+////            widget->setStyleSheet("#ListWidget { border-top: 2px solid red; }");
+////        else
+////            widget->setStyleSheet("#ListWidget { border-top: 0px solid black; }");
+////    }
+////    if (event->mimeData()->hasFormat("application/x-QListView-DragAndDrop"))
+////    {
+////        event->setDropAction(Qt::MoveAction);
+////        event->accept();
+////    } else
+////        event->ignore();
+//}
 
 
 //static QStringList nameFiltersFromString(const QString &nameFilter);
@@ -394,6 +365,48 @@ CBHash ItemList::getSettings() const {
 void ItemList::setSettings(CBHash newSettings) {
     settings = newSettings;
 }
+
+////////////////////////////////////////////////////////////
+//// Dnd
+////////////////////////////////////////////////////////////
+
+//void ItemList::mousePressEvent(QMouseEvent *event) {
+//    if (event->button() == Qt::LeftButton) {
+//        dragStartPoint = event -> pos();
+//    }
+
+//    QTreeView::mousePressEvent(event);
+//}
+
+//void ItemList::mouseMoveEvent(QMouseEvent * event) {
+//    if ((event -> buttons() == Qt::LeftButton) && (dragStartPoint - event -> pos()).manhattanLength() >= 5){
+//        QDrag * drag = new QDrag(this);
+//        QMimeData * mimeData = model -> mimeData(selectedIndexes());
+//        qDebug() << mimeData ->text().length();
+////        drag -> setPixmap(toolIcon);
+//        drag -> setMimeData(mimeData);
+//        drag -> exec(Qt::CopyAction, Qt::CopyAction);
+//    }
+
+//    QTreeView::mouseMoveEvent(event);
+//}
+
+void ItemList::markSelectedAsLiked() {
+    ModelItem * temp;
+
+    foreach (const QModelIndex &index, selectedIndexes()) {
+        if (index.isValid()) {
+            temp = model -> getItem(index);
+            if (!temp -> getState() -> isUnprocessed()) {
+                temp -> getState() -> setLiked(temp);
+                model -> refreshItem(temp);
+            }
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////
+
 
 // test needed / update need
 ModelItem * ItemList::nextItem(QModelIndex currIndex) {
