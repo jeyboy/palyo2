@@ -7,6 +7,8 @@ ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent)
     if (!path.endsWith('/'))
         path = path.append('/') ;
 
+    QFile::setPermissions(path, QFile::WriteUser | QFile::ReadUser);
+
     setText(text);
     setStyleSheet(
                 "QToolButton {"
@@ -25,34 +27,28 @@ ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent)
 }
 
 void ToolbarButton::dragEnterEvent(QDragEnterEvent *event) {
-   if (event->mimeData()->hasFormat(DnD::instance() -> listItems)
-           || event->mimeData()->hasFormat(DnD::instance() -> files)){
-       event->accept();
+   if (event -> mimeData() -> hasFormat("text/uri-list")) {
+       event -> accept();
    } else {
-        event->ignore();
+        event -> ignore();
    }
 }
 
 void ToolbarButton::dropEvent(QDropEvent *event) {
-      if (event -> mimeData() -> hasFormat(DnD::instance() -> listItems)) {
-          QByteArray data = event -> mimeData() -> data(DnD::instance() -> listItems);
-          QStringList list = QString(data).split('\n');
+      if (event -> mimeData() -> hasUrls()) {
+          QList<QUrl> list = event -> mimeData() -> urls();
 
-          foreach(QString str, list){
-              copyFile(str);
-          }
-
-          ((ItemList *)event -> source()) -> markSelectedAsLiked();
-          event -> accept();
-      } else if (event->mimeData()->hasFormat(DnD::instance() -> files)) {
-          if(event -> mimeData() -> hasUrls()) {
-              QList<QUrl> list = event -> mimeData() -> urls();
-              foreach(QUrl url, list) {
-                  qDebug() << url;
-              }
+          foreach(QUrl url, list) {
+              copyFile(url.toLocalFile());
           }
 
           event->accept();
+
+          if (QString(event -> source() -> metaObject() -> className()) == "ItemList")
+            ((ItemList *)event -> source()) -> markSelectedAsLiked();
+          else
+            "Out request";
+
       } else {  event->ignore(); }
 }
 
@@ -63,6 +59,10 @@ void ToolbarButton::copyFile(QString copyPath) {
         QFile::remove(prepared_path);
     }
 
-    if (!QFile::copy(copyPath, prepared_path))
-        QMessageBox::warning(this, "Bla", "Permissions not enough");
+    QFile f(copyPath);
+    if (!f.copy(prepared_path))
+        QMessageBox::warning(this, "Bla", f.errorString());
+
+//    if (!QFile::copy(copyPath, prepared_path))
+//        QMessageBox::warning(this, "Bla", "Permissions not enough");
 }

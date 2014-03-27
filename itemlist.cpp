@@ -162,22 +162,15 @@ void ItemList::deleteCurrentProceedNext() {
 }
 
 void ItemList::dragEnterEvent(QDragEnterEvent *event) {
-   if (event->mimeData()->hasFormat(DnD::instance() -> listItems)
-       || event->mimeData()->hasFormat(DnD::instance() -> files)){
-       event -> accept();
-   } else {
-        event -> ignore();
-   }
+    if (event -> source() != this && event -> mimeData() -> hasFormat("text/uri-list"))
+        event -> accept();
+    else event -> ignore();
 }
 
 void ItemList::dragMoveEvent(QDragMoveEvent * event) {
-    event ->accept();
-
-//  if (e->source() != this) {
-//      e->accept();
-//  } else {
-//      e->ignore();
-//  }
+    if (event -> source() != this && event -> mimeData() -> hasFormat("text/uri-list"))
+        event -> accept();
+    else event -> ignore();
 }
 
 
@@ -216,60 +209,17 @@ void ItemList::filesRoutine(ModelItem * index, QList<QUrl> list){
 }
 
 void ItemList::dropEvent(QDropEvent *event) {
-      if (event->mimeData()->hasFormat(DnD::instance() -> listItems)) {
+    if (event -> source() != this && event -> mimeData() -> hasUrls()) {
+        QList<QUrl> list = event -> mimeData() -> urls();
+        ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path()); // -> parent();
+        filesRoutine(index, list);
+        model -> repaint();
 
-          event->accept();
-      } else if (event->mimeData()->hasFormat(DnD::instance() -> files)) {
-          if(event -> mimeData() -> hasUrls()) {          
-              QList<QUrl> list = event -> mimeData() -> urls();
-              ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path()); // -> parent();
-//              model -> startRowInsertion(model->index(index));
-              filesRoutine(index, list);
-//              model -> endRowInsertion();
-              model -> repaint();
-
-              QModelIndex modelIndex = model -> index(index);
-              expand(modelIndex);
-              scrollTo(modelIndex);
-          }
-
-          event->accept();
-      } else {  event->ignore(); }
-
-
-
-//    if (event->mimeData()->hasFormat("application/x-QListView-DragAndDrop")) {
-//        QByteArray itemData = event->mimeData()->data("application/x-QListView-DragAndDrop");
-//        QDataStream dataStream(&itemData,QIODevice::ReadOnly);
-
-//        QPoint itemPoint;
-//        dataStream >> itemPoint;
-
-//        ListWidgetItem *item = dynamic_cast<ListWidgetItem *> (childAt(itemPoint));
-//        if(!item)
-//            return;
-
-//        QModelIndex index = indexAt(event->pos());
-//        int row = index.row();
-//        model()->insertRows(row,1);
-
-//        QModelIndex idx =model()->index(row,0);
-//        setIndexWidget(idx,item);
-
-//        if (event->source() == this) {
-//            event->setDropAction(Qt::MoveAction);
-//            foreach (ListWidgetItem *widget,itemList)
-//            {
-//                widget->setStyleSheet("#ListWidget { border-top: 0px solid black; }");
-//            }
-//            itemList.clear();
-////            model()->removeRow(n+1);
-
-//            event->accept();
-//        }
-//    } else{
-//        event->ignore();
-//    }
+        QModelIndex modelIndex = model -> index(index);
+        expand(modelIndex);
+        scrollTo(modelIndex);
+        event -> accept();
+    } else event -> ignore();
 }
 
 void ItemList::startDrag(Qt::DropActions /*supportedActions*/) {
@@ -362,7 +312,7 @@ void ItemList::mouseMoveEvent(QMouseEvent * event) {
         qDebug() << mimeData ->text().length();
 //        drag -> setPixmap(toolIcon);
         drag -> setMimeData(mimeData);
-        drag -> exec(Qt::CopyAction, Qt::CopyAction);
+        drag -> exec();//(Qt::CopyAction, Qt::CopyAction);
     }
 
     QTreeView::mouseMoveEvent(event);

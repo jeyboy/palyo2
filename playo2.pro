@@ -42,7 +42,6 @@ SOURCES += main.cpp\
     toolbarbuttondialog.cpp \
     toolbar.cpp \
     toolbarbutton.cpp \
-    dnd.cpp \
     mediainfo.cpp \
     item_state.cpp
 
@@ -83,7 +82,6 @@ HEADERS  += mainwindow.h \
     toolbarbuttondialog.h \
     toolbar.h \
     toolbarbutton.h \
-    dnd.h \
     mediainfo.h \
     item_state.h
 

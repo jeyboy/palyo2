@@ -6,8 +6,6 @@
 #include <QMouseEvent>
 #include <QFileInfo>
 
-#include "dnd.h"
-
 class ToolBar : public QToolBar {
     Q_OBJECT
 

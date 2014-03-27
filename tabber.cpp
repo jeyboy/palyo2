@@ -16,8 +16,20 @@ void Tabber::handleTabCloseRequested(int index) {
     tabber -> removeTab(index);
 }
 
+void Tabber::showContextMenu(const QPoint& pnt) {
+    QList<QAction *> actions;
+//    if (tabber -> indexAt(pnt).isValid()) {
+//        actions.append(m_addAction);
+//    }
+//    if (actions.count() > 0)
+    QMenu::exec(actions, tabber -> mapToGlobal(pnt));
+}
+
 Tabber::Tabber(QTabWidget * container) {
     tabber = container;
+    tabber -> setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(tabber, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &)));
     connect(tabber, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
     store = new DataStore("tabs.json");
     load();

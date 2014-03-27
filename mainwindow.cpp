@@ -7,19 +7,29 @@
 
 #include <QDebug>
 
-
 QMenu * MainWindow::createPopupMenu () {   
     QMenu *menu = QMainWindow::createPopupMenu();
 
     menu -> insertSeparator(menu->actions().first());
 
     QAction * addButtonAct = new QAction("Add button", menu);
-    QWidget * widget = this -> childAt(this -> mapFromGlobal(QCursor::pos()));
+    lastClickPoint = QCursor::pos();
+    QWidget * widget = this -> childAt(this -> mapFromGlobal(lastClickPoint));
+
+    QString widgetClassName = QString(widget -> metaObject() -> className());
+
     underMouseBar = ((ToolBar*)widget);
 
-    addButtonAct -> setEnabled(QString(widget -> metaObject() -> className()) == "ToolBar");
+    addButtonAct -> setEnabled(widgetClassName == "ToolBar");
     menu -> insertAction(menu->actions().first(), addButtonAct);
     connect(addButtonAct, SIGNAL(triggered(bool)), this, SLOT(addPanelButtonTriggered()));
+
+    if (widgetClassName == "ToolbarButton") {
+        underMouseButton = ((ToolbarButton*)widget);
+        QAction * removeButtonAct = new QAction("Remove button", menu);
+        menu -> insertAction(addButtonAct, removeButtonAct);
+        connect(removeButtonAct, SIGNAL(triggered(bool)), this, SLOT(removePanelButtonTriggered()));
+    }
 
     QAction * act = new QAction("Add panel", menu);
     connect(act, SIGNAL(triggered(bool)), this, SLOT(addPanelTriggered()));
@@ -65,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ///////////////////////////////////////////////////////////
 
     underMouseBar = 0;
+    underMouseButton = 0;
 
     QJsonArray bars = settings -> read("bars").toArray();
 
@@ -409,7 +420,6 @@ MainWindow::~MainWindow() {
         IconProvider::close();
         Library::close();
         Player::close();
-        DnD::close();
     ///////////////////////////////////////////////
 
     delete next;
@@ -473,6 +483,11 @@ void MainWindow::addPanelButtonTriggered() {
     if (dialog.exec() == QDialog::Accepted) {
         addPanelButton(dialog.getName(), dialog.getPath(), underMouseBar);
     }
+}
+
+void MainWindow::removePanelButtonTriggered() {
+    QToolBar * bar = (QToolBar *)underMouseButton -> parentWidget();
+    bar -> removeAction(bar -> actionAt(bar -> mapFromGlobal(lastClickPoint)));
 }
 
 void MainWindow::OpenFolderTriggered() {

@@ -7,7 +7,6 @@
 #include <QFile>
 #include <QMessageBox>
 
-#include "dnd.h"
 #include "itemlist.h"
 
 class ToolbarButton : public QToolButton {

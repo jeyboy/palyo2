@@ -56,6 +56,7 @@ private slots:
 
     void addPanelTriggered();
     void addPanelButtonTriggered();
+    void removePanelButtonTriggered();
     void OpenFolderTriggered();
     void folderDropped(QString name, QString path);
 
@@ -76,7 +77,10 @@ private:
     Tabber * tabber;
 //    QTimer autoSaveTimer;
     QSystemTrayIcon m_tray;
+
     QToolBar * underMouseBar;
+    ToolbarButton * underMouseButton;
+    QPoint lastClickPoint;
 
     QxtGlobalShortcut * next;
     QxtGlobalShortcut * next_and_delete;
