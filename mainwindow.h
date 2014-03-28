@@ -55,6 +55,7 @@ private slots:
     void slotNoImpl();
 
     void addPanelTriggered();
+    void removePanelTriggered();
     void addPanelButtonTriggered();
     void removePanelButtonTriggered();
     void OpenFolderTriggered();

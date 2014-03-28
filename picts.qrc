@@ -8,9 +8,22 @@
         <file alias="settings">icons/settings.png</file>
         <file alias="stop">icons/stop.png</file>
         <file alias="volume">icons/volume.png</file>
-        <file alias="volume_off">icons/volume_off.png</file>
         <file alias="add">icons/add.png</file>
         <file alias="icon">icons/tray.png</file>
         <file alias="file_error">icons/error.png</file>
+        <file alias="mute">icons/mute.png</file>
+        <file alias="block">icons/block.png</file>
+        <file alias="database">icons/database.png</file>
+        <file alias="drop_add">icons/drop-add.png</file>
+        <file alias="drop_remove">icons/drop-remove.png</file>
+        <file alias="drops">icons/drops.png</file>
+        <file alias="link">icons/link.png</file>
+        <file alias="open">icons/open.png</file>
+        <file alias="panel_add">icons/panel-add.png</file>
+        <file alias="panel_remove">icons/panel-close.png</file>
+        <file alias="panels">icons/panels.png</file>
+        <file alias="prev">icons/prev.png</file>
+        <file alias="remove">icons/remove.png</file>
+        <file alias="shuffle">icons/shuffle.png</file>
     </qresource>
 </RCC>

@@ -10,30 +10,43 @@
 QMenu * MainWindow::createPopupMenu () {   
     QMenu *menu = QMainWindow::createPopupMenu();
 
-    menu -> insertSeparator(menu->actions().first());
+//    menu -> insertSeparator(menu->actions().first());
+    menu -> insertSection(menu->actions().first(), "Panels list");
 
-    QAction * addButtonAct = new QAction("Add button", menu);
     lastClickPoint = QCursor::pos();
     QWidget * widget = this -> childAt(this -> mapFromGlobal(lastClickPoint));
-
     QString widgetClassName = QString(widget -> metaObject() -> className());
 
-    underMouseBar = ((ToolBar*)widget);
+    if (widgetClassName == "ToolbarButton") {
+        underMouseButton = ((ToolbarButton*)widget);
+        underMouseBar = ((ToolBar*)underMouseButton -> parentWidget());
+    } else {
+        underMouseBar = ((ToolBar*)widget);
+    }
 
+    QAction * removeButtonAct = new QAction(QIcon(":drop_remove"), "Remove drop point", menu);
+    removeButtonAct -> setEnabled(widgetClassName == "ToolbarButton");
+    menu -> insertAction(menu->actions().first(), removeButtonAct);
+    connect(removeButtonAct, SIGNAL(triggered(bool)), this, SLOT(removePanelButtonTriggered()));
+
+
+    QAction * addButtonAct = new QAction(QIcon(":drop_add"), "Add drop point", menu);
     addButtonAct -> setEnabled(widgetClassName == "ToolBar");
     menu -> insertAction(menu->actions().first(), addButtonAct);
     connect(addButtonAct, SIGNAL(triggered(bool)), this, SLOT(addPanelButtonTriggered()));
 
-    if (widgetClassName == "ToolbarButton") {
-        underMouseButton = ((ToolbarButton*)widget);
-        QAction * removeButtonAct = new QAction("Remove button", menu);
-        menu -> insertAction(addButtonAct, removeButtonAct);
-        connect(removeButtonAct, SIGNAL(triggered(bool)), this, SLOT(removePanelButtonTriggered()));
-    }
+    menu -> insertSection(menu->actions().first(), QIcon(":drops"),  "Drop points");
 
-    QAction * act = new QAction("Add panel", menu);
-    connect(act, SIGNAL(triggered(bool)), this, SLOT(addPanelTriggered()));
-    menu -> insertAction(menu->actions().first(), act);
+    QAction * removePanelAct = new QAction(QIcon(":panel_remove"), "Remove panel", menu);
+    removePanelAct -> setEnabled(widgetClassName == "ToolBar");
+    connect(removePanelAct, SIGNAL(triggered(bool)), this, SLOT(removePanelTriggered()));
+    menu -> insertAction(menu->actions().first(), removePanelAct);
+
+    QAction * addPanelAct = new QAction(QIcon(":panel_add"), "Add panel", menu);
+    connect(addPanelAct, SIGNAL(triggered(bool)), this, SLOT(addPanelTriggered()));
+    menu -> insertAction(menu->actions().first(), addPanelAct);
+
+    menu -> insertSection(menu->actions().first(), QIcon(":panels"), "Panel");
 
     return menu;
 }
@@ -476,6 +489,10 @@ void MainWindow::addPanelTriggered() {
     if (dialog.exec() == QDialog::Accepted) {
         addToolBar(Qt::BottomToolBarArea, createToolBar(dialog.getName()));
     }
+}
+
+void MainWindow::removePanelTriggered() {
+    removeToolBar(underMouseBar);
 }
 
 void MainWindow::addPanelButtonTriggered() {
