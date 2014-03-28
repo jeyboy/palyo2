@@ -493,6 +493,8 @@ void MainWindow::addPanelTriggered() {
 
 void MainWindow::removePanelTriggered() {
     removeToolBar(underMouseBar);
+    delete underMouseBar;
+    underMouseBar = 0;
 }
 
 void MainWindow::addPanelButtonTriggered() {
