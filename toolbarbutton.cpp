@@ -15,6 +15,8 @@ ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent)
                     "border: 1px solid #444;"
                     "border-radius: 4px;"
                     "font-weight: bold;"
+                    "height: 24px;"
+                    "margin: 0 2px;"
                 "}"
                 "QToolButton:hover {"
                     "color: #FFF;"

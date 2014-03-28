@@ -4,6 +4,7 @@
 ToolBar::ToolBar(const QString &title, QWidget * parent) : QToolBar(title, parent) {
     setAcceptDrops(true);
     setObjectName("tool_" + title);
+    setToolButtonStyle(Qt::ToolButtonFollowStyle);
 }
 
 ToolBar::~ToolBar() {
