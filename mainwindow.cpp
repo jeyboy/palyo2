@@ -123,6 +123,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    autoSaveTimer.start(1000*60*5);//Every 5 minutes
     QApplication::setWindowIcon(QIcon(":icon"));
 
+
 //    Library::instance() -> getItemState("dido");
     MediaInfo m("C:\\Josh Whelchel - Demoninution.mp3");
     m.initInfo();
