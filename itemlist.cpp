@@ -2,7 +2,6 @@
 #include <QDebug>
 
 ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {
-    tab = (Tab *)parent;
     settings = settingsSet;
     setIndentation(10);
 
@@ -63,7 +62,7 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
 
         if (list.count() > 0) {
             ModelItem * item = model -> getItem(list.first());
-            item -> play(this);
+            initItem(item);
         }
     } else if (event ->key() == Qt::Key_Delete) {
         QModelIndexList list = selectedIndexes();
@@ -125,8 +124,7 @@ void ItemList::proceedPrev() {
     if (item == 0) return;
 
     item = prevItem(item);
-    if (item)
-        item -> play(this);
+    initItem(item);
 }
 
 void ItemList::proceedNext() {
@@ -134,8 +132,7 @@ void ItemList::proceedNext() {
     if (item == 0) return;
 
     item = nextItem(item);
-    if (item)
-        item -> play(this);
+    initItem(item);
 }
 
 void ItemList::deleteCurrentProceedNext() {
@@ -157,8 +154,7 @@ void ItemList::deleteCurrentProceedNext() {
         }
     }
 
-    if (item)
-        item -> play(this);
+    initItem(item);
 }
 
 void ItemList::dragEnterEvent(QDragEnterEvent *event) {
@@ -260,7 +256,7 @@ void ItemList::on_doubleClick(const QModelIndex &index) {
     ModelItem * item = model->getItem(index);
 
     if (!item -> getState() -> isUnprocessed()) {
-        item -> play(this);
+        initItem(item);
     }
 }
 
@@ -329,6 +325,13 @@ void ItemList::markSelectedAsLiked() {
                 model -> refreshItem(temp);
             }
         }
+    }
+}
+
+void ItemList::initItem(ModelItem * item) {
+    if (item) {
+        scrollTo(model -> index(item));
+        Player::playItem(this, item);
     }
 }
 

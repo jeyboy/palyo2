@@ -70,6 +70,10 @@ int ItemState::getValue() const {
 }
 
 int ItemState::getFuncValue() {
+    return item_state & ((0<<4)-1) << 4;
+}
+
+int ItemState::currStateValue() {
     if (isPlayed())
         return STATE_PLAYED;
     else

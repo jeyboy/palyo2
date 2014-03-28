@@ -38,6 +38,7 @@ public:
 
     int getValue() const;
     int getFuncValue();
+    int currStateValue();
 
 private:
     bool bitIsSet(int val, int pos);

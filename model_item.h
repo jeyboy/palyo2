@@ -8,8 +8,6 @@
 #include <QJsonArray>
 
 #include "model.h"
-#include "itemlist.h"
-#include "player.h"
 #include "item_state.h"
 
 #define NAMEUID 0
@@ -48,8 +46,6 @@ public:
     QString fullpath() const;
 
     ItemState * getState();
-
-    bool play(ItemList * palylist);
 
     QJsonObject toJSON();
 

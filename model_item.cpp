@@ -243,13 +243,6 @@ ItemState * ModelItem::getState() {
     return state;
 }
 
-////////////////////////////////////////////////////////
-
-bool ModelItem::play(ItemList * playlist) {
-    playlist -> scrollTo(playlist -> getModel() -> index(this));
-    Player::playItem(playlist, this);
-}
-
 ///////////////////////////////////////////////////////
 
 QJsonObject ModelItem::toJSON() {

@@ -1,10 +1,9 @@
 #include "model.h"
-//#include <QtWidgets>
 #include <QDebug>
 
 /////////////////////////////////////////////////////////
 
-TreeModel::TreeModel(QJsonObject * attrs, QWidget *parent) : QAbstractItemModel(parent) {
+TreeModel::TreeModel(QJsonObject * attrs, QObject *parent) : QAbstractItemModel(parent) {
     count = 0;
     if (attrs != 0) {
         rootItem = new ModelItem(this, attrs);
@@ -61,7 +60,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const {
         case Qt::UserRole:
             item = getItem(index);
 //            qDebug() << item -> fullpath() << " | " << item -> getState() -> getValue() << " | " << item -> getState() -> getFuncValue();
-            return item -> getState() -> getFuncValue();
+            return item -> getState() -> currStateValue();
 
         default: return QVariant();
     }

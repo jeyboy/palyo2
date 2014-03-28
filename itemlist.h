@@ -9,15 +9,13 @@
 #include <QJsonObject>
 #include <QDrag>
 
+#include "player.h"
 #include "model.h"
 #include "model_item.h"
 #include "model_item_delegate.h"
-#include "tab.h"
 
 class TreeModel;
 class ModelItem;
-class ItemList;
-class Tab;
 
 #ifndef CBHASH
 #define CBHASH
@@ -52,13 +50,13 @@ public:
 
     void markSelectedAsLiked();
 
+    void initItem(ModelItem * item);
+
 protected:
     ModelItem * activeItem(bool next = true);
     ModelItem * nextItem(QModelIndex currIndex);
     ModelItem * nextItem(ModelItem * curr);
     ModelItem * prevItem(ModelItem * curr);
-    Tab * tab;
-
 
     void dragEnterEvent(QDragEnterEvent *event);
 
