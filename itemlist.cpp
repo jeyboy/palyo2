@@ -62,7 +62,7 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
 
         if (list.count() > 0) {
             ModelItem * item = model -> getItem(list.first());
-            initItem(item);
+            execItem(item);
         }
     } else if (event ->key() == Qt::Key_Delete) {
         QModelIndexList list = selectedIndexes();
@@ -124,7 +124,7 @@ void ItemList::proceedPrev() {
     if (item == 0) return;
 
     item = prevItem(item);
-    initItem(item);
+    execItem(item);
 }
 
 void ItemList::proceedNext() {
@@ -132,7 +132,7 @@ void ItemList::proceedNext() {
     if (item == 0) return;
 
     item = nextItem(item);
-    initItem(item);
+    execItem(item);
 }
 
 void ItemList::deleteCurrentProceedNext() {
@@ -154,7 +154,7 @@ void ItemList::deleteCurrentProceedNext() {
         }
     }
 
-    initItem(item);
+    execItem(item);
 }
 
 void ItemList::dragEnterEvent(QDragEnterEvent *event) {
@@ -253,10 +253,10 @@ void ItemList::on_click(const QModelIndex &index) {
 }
 
 void ItemList::on_doubleClick(const QModelIndex &index) {
-    ModelItem * item = model->getItem(index);
+    ModelItem * item = model -> getItem(index);
 
     if (!item -> getState() -> isUnprocessed()) {
-        initItem(item);
+        execItem(item);
     }
 }
 
@@ -328,7 +328,7 @@ void ItemList::markSelectedAsLiked() {
     }
 }
 
-void ItemList::initItem(ModelItem * item) {
+void ItemList::execItem(ModelItem * item) {
     if (item) {
         scrollTo(model -> index(item));
         Player::playItem(this, item);

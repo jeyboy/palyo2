@@ -142,27 +142,6 @@ int TreeModel::columnCount(const QModelIndex &parent) const {
     else
         return rootItem->columnCount();
 }
-bool TreeModel::insertColumns(int position, int columns, const QModelIndex &parent) {
-    bool success;
-
-    beginInsertColumns(parent, position, position + columns - 1);
-    success = rootItem->insertColumns(position, columns);
-    endInsertColumns();
-
-    return success;
-}
-bool TreeModel::removeColumns(int position, int columns, const QModelIndex &parent) {
-    bool success;
-
-    beginRemoveColumns(parent, position, position + columns - 1);
-    success = rootItem->removeColumns(position, columns);
-    endRemoveColumns();
-
-    if (rootItem->columnCount() == 0)
-        removeRows(0, rowCount());
-
-    return success;
-}
 
 /////////////////////////////////////////////////////////
 
@@ -201,25 +180,6 @@ bool TreeModel::removeRow(int row, const QModelIndex &parent) {
     return false;
 }
 
-void TreeModel::startRowInsertion(const QModelIndex &parent, int position) {
-    if (position == -1)
-        position = getItem(parent) -> childCount() - 1;
-    beginInsertRows(parent, position, position);
-}
-void TreeModel::endRowInsertion() {
-    endInsertRows();
-}
-
-bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent){
-    ModelItem *parentItem = getItem(parent);
-    bool success;
-
-    beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, rootItem->columnCount());
-    endInsertRows();
-
-    return success;
-}
 bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent) {
     ModelItem *parentItem = getItem(parent);
     bool success = true;

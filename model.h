@@ -39,15 +39,10 @@ public:
     QModelIndex index(ModelItem * item) const;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
-    bool insertColumns(int position, int columns, const QModelIndex &parent = QModelIndex());
-    bool removeColumns(int position, int columns, const QModelIndex &parent = QModelIndex());
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    void startRowInsertion(const QModelIndex &parent, int position = -1);
-    void endRowInsertion();
     void appendRow(QString path, ModelItem * parent);
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
-    bool insertRows(int position, int rows, const QModelIndex &parent = QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
     void repaint();
