@@ -41,7 +41,9 @@ QVariant Model::data(const QModelIndex &index, int role) const {
            //pixmap.fill(color);
            //QIcon icon(pixmap);
 
-           if (item -> getState() -> isUnprocessed())
+           if (item -> getState() -> isNotExist())
+               return IconProvider::missedIcon();
+           else if (item -> getState() -> isUnprocessed())
                return IconProvider::fileIcon("", "");
            else
                return IconProvider::fileIcon(item -> fullpath(), (item -> data(EXTENSIONUID).toString()));

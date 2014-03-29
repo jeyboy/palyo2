@@ -24,10 +24,14 @@ QIcon IconProvider::fileIcon(const QString filename, QString extension) {
                 instance()->icons->insert(extension, res);
                 return res;
             } else {
-                return QIcon(":file_error");
+                return missedIcon();
             }
         }
     }
+}
+
+QIcon IconProvider::missedIcon() {
+    return QIcon(":file_error");
 }
 
 QIcon IconProvider::dirIcon() {

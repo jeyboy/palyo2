@@ -8,6 +8,7 @@
 
 #define STATE_PLAYED 8
 
+#define STATE_NOT_EXIST 2
 #define STATE_LIST_PROCEED 1
 
 class ModelItemState {
@@ -21,6 +22,7 @@ public:
 
     bool isPlayed();
     bool isProceed();
+    bool isNotExist();
     bool isUnprocessed();
 
     bool setNone();
@@ -29,6 +31,10 @@ public:
 
     bool setPlayed();
     bool unsetPlayed();
+
+    bool setNotExist();
+    bool unsetNotExist();
+
     bool setProceed();
     bool setUnprocessed();
 

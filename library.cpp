@@ -77,8 +77,12 @@ void Library::itemsInit() {
     while(!items.isEmpty()) {
         temp = items.takeFirst();
 
-        temp -> item() -> names = getNamesForItem(temp -> item());
-        restoreItemState(temp);
+        if (QFile::exists(temp -> item() -> fullpath())) {
+            temp -> item() -> names = getNamesForItem(temp -> item());
+            restoreItemState(temp);
+        } else {
+            temp -> refresh(STATE_NOT_EXIST);
+        }
     }
 }
 

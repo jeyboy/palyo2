@@ -17,6 +17,7 @@ public:
     static IconProvider * instance();
     static QIcon fileIcon(const QString filename, QString extension);
     static QIcon dirIcon();
+    static QIcon missedIcon();
     static void close() {
         delete self;
     }

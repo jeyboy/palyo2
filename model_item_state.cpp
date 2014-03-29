@@ -23,6 +23,9 @@ bool ModelItemState::isPlayed() {
 bool ModelItemState::isProceed() {
     return bitIsSet(item_state, STATE_LIST_PROCEED);
 }
+bool ModelItemState::isNotExist() {
+    return bitIsSet(item_state, STATE_NOT_EXIST);
+}
 bool ModelItemState::isUnprocessed() {
     return bitIsSet(item_state, STATE_UNPROCESSED);
 }
@@ -33,6 +36,10 @@ bool ModelItemState::setBit(int val) {
     if (val < 0) {
         if (bitIsSet(val, STATE_PLAYED)) {
            result_state &= unsetPlayed();
+        }
+
+        if (bitIsSet(val, STATE_NOT_EXIST)) {
+           result_state &= unsetNotExist();
         }
     } else {
         if (bitIsSet(val, STATE_LISTENED)) {
@@ -45,6 +52,10 @@ bool ModelItemState::setBit(int val) {
 
         if (bitIsSet(val, STATE_PLAYED)) {
             result_state &= setPlayed();
+        }
+
+        if (bitIsSet(val, STATE_NOT_EXIST)) {
+           result_state &= setNotExist();
         }
 
         if (bitIsSet(val, STATE_LIST_PROCEED)) {
@@ -80,6 +91,18 @@ bool ModelItemState::setPlayed() {
 }
 bool ModelItemState::unsetPlayed() {
     item_state = unsetBit(item_state, STATE_PLAYED);
+    return true;
+}
+
+
+
+bool ModelItemState::setNotExist() {
+    if (isUnprocessed()) return false;
+    item_state = setBit(item_state, STATE_NOT_EXIST);
+    return true;
+}
+bool ModelItemState::unsetNotExist() {
+    item_state = unsetBit(item_state, STATE_NOT_EXIST);
     return true;
 }
 

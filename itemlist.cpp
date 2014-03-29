@@ -331,7 +331,12 @@ void ItemList::markSelectedAsLiked() {
 void ItemList::execItem(ModelItem * item) {
     if (item) {
         scrollTo(model -> index(item));
-        Player::playItem(this, item);
+        if (QFile::exists(item -> fullpath()))
+            Player::playItem(this, item);
+        else {
+            item -> getState() -> setNotExist();
+            model -> refreshItem(item);
+        }
     }
 }
 
