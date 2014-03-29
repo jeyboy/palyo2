@@ -15,7 +15,6 @@
 #include "itemlist.h"
 
 class ItemList;
-class ModelItem;
 
 class Player : public QMediaPlayer {
     Q_OBJECT
