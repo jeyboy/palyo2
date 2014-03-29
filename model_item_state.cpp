@@ -1,33 +1,33 @@
-#include "item_state.h"
+#include "model_item_state.h"
 #include <QDebug>
 
-ItemState::ItemState() {
+ModelItemState::ModelItemState() {
     item_state = STATE_DEFAULT;
 }
-ItemState::ItemState(int state) {
+ModelItemState::ModelItemState(int state) {
     item_state = state;
 }
 
-bool ItemState::isNone() {
+bool ModelItemState::isNone() {
     return bitIsSet(item_state, STATE_DEFAULT);
 }
-bool ItemState::isListened() {
+bool ModelItemState::isListened() {
     return bitIsSet(item_state, STATE_LISTENED);
 }
-bool ItemState::isLiked() {
+bool ModelItemState::isLiked() {
     return bitIsSet(item_state, STATE_LIKED);
 }
-bool ItemState::isPlayed() {
+bool ModelItemState::isPlayed() {
     return bitIsSet(item_state, STATE_PLAYED);
 }
-bool ItemState::isProceed() {
+bool ModelItemState::isProceed() {
     return bitIsSet(item_state, STATE_LIST_PROCEED);
 }
-bool ItemState::isUnprocessed() {
+bool ModelItemState::isUnprocessed() {
     return bitIsSet(item_state, STATE_UNPROCESSED);
 }
 
-bool ItemState::setBit(int val) {
+bool ModelItemState::setBit(int val) {
     bool result_state = true;
 
     if (val < 0) {
@@ -55,52 +55,52 @@ bool ItemState::setBit(int val) {
     return result_state;
 }
 
-bool ItemState::setNone() {
+bool ModelItemState::setNone() {
     item_state = STATE_DEFAULT;
     return true;
 }
-bool ItemState::setListened() {
+bool ModelItemState::setListened() {
     if (!isLiked() && !isUnprocessed()) {
         item_state = setBit(STATE_LISTENED, item_state & 0x7); // get three first bits
         return true;
     }
     return false;
 }
-bool ItemState::setLiked() {
+bool ModelItemState::setLiked() {
     if (isUnprocessed()) return false;
 
     item_state = setBit(STATE_LIKED, item_state & 0x7); // get three first bits
     return true;
 }
 
-bool ItemState::setPlayed() {
+bool ModelItemState::setPlayed() {
     if (isUnprocessed()) return false;
     item_state = setBit(item_state, STATE_PLAYED);
     return true;
 }
-bool ItemState::unsetPlayed() {
+bool ModelItemState::unsetPlayed() {
     item_state = unsetBit(item_state, STATE_PLAYED);
     return true;
 }
 
-bool ItemState::setProceed() {
+bool ModelItemState::setProceed() {
     item_state = setBit(item_state, STATE_LIST_PROCEED);
     return true;
 }
-bool ItemState::setUnprocessed() {
+bool ModelItemState::setUnprocessed() {
     item_state = setBit(item_state, STATE_UNPROCESSED);
     return true;
 }
 
-int ItemState::getValue() const {
+int ModelItemState::getValue() const {
     return item_state;
 }
 
-int ItemState::getFuncValue() {
+int ModelItemState::getFuncValue() {
     return item_state & ((0<<4)-1) << 4;
 }
 
-int ItemState::currStateValue() {
+int ModelItemState::currStateValue() {
     if (isPlayed())
         return STATE_PLAYED;
     else
@@ -109,13 +109,13 @@ int ItemState::currStateValue() {
 
 //////////// private /////////////////
 
-bool ItemState::bitIsSet(int val, int pos) {
+bool ModelItemState::bitIsSet(int val, int pos) {
    return (val & pos) == pos;
 }
 
-int ItemState::setBit(int val, int pos) {
+int ModelItemState::setBit(int val, int pos) {
    return val | pos;
 }
-int ItemState::unsetBit(int val, int pos) {
+int ModelItemState::unsetBit(int val, int pos) {
    return val & (~(pos + 1));
 }

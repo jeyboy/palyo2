@@ -9,24 +9,17 @@
 #include "model_item.h"
 #include "icon_provider.h"
 #include "library.h"
-
-
-//#ifndef MILIST
-//#define MILIST
-
-//  #include <QList>
-//  typedef QList<ModelItem> MIList;
-//  Q_DECLARE_METATYPE(MIList);
-//#endif // MILIST
+#include "library_item.h"
 
 class ModelItem;
+class LibraryItem;
 
-class TreeModel : public QAbstractItemModel {
+class Model : public QAbstractItemModel {
     Q_OBJECT
 
 public:
-    TreeModel(QJsonObject * attrs = 0, QObject *parent = 0);
-    ~TreeModel();
+    Model(QJsonObject * attrs = 0, QObject *parent = 0);
+    ~Model();
 
     QVariant data(const QModelIndex &index, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);

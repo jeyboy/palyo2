@@ -8,7 +8,7 @@ void ModelItem::init(bool isFolder) {
     childItems = QList<ModelItem*>();
 
     if (isFolder) {
-        state = new ItemState(STATE_UNPROCESSED);
+        state = new ModelItemState(STATE_UNPROCESSED);
         state -> setProceed();
         folders = new QHash<QString, ModelItem *>();
     } else {
@@ -39,7 +39,7 @@ ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
             parent -> folders -> insert(name, this);
     } else {
         name = attrs -> value("n").toString();
-        state = new ItemState(attrs -> value("s").toInt());
+        state = new ModelItemState(attrs -> value("s").toInt());
         extension = attrs -> value("e").toString();
     }
 
@@ -61,7 +61,7 @@ ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
 }
 
 ModelItem::ModelItem(QString file_path, ModelItem *parent, int init_state) {
-    state = new ItemState(init_state);
+    state = new ModelItemState(init_state);
     parentItem = parent;
 
     if (!state -> isUnprocessed()) {
@@ -237,12 +237,12 @@ QString ModelItem::fullpath() const {
 
 //////////////////////////properties///////////////////////////////
 
-ItemState * ModelItem::getState() const {
+ModelItemState * ModelItem::getState() const {
     return state;
 }
 
-void ModelItem::setState(int new_state) {
-    if (state -> setBit(new_state)) {
+void ModelItem::setState(int new_state, bool append_to_library) {
+    if (state -> setBit(new_state) && append_to_library) {
         if (state -> isListened())
             Library::instance() -> addItem(this, STATE_LISTENED);
         else if (state -> isLiked())

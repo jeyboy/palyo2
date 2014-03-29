@@ -37,7 +37,7 @@ public:
     bool isRemoveFileWithItem();
     bool isPlaylist();
 
-    TreeModel * getModel() const;
+    Model * getModel() const;
 
     CBHash getSettings() const;
     void setSettings(CBHash newSettings);
@@ -72,7 +72,7 @@ private slots:
     void on_click(const QModelIndex &index);
     void on_doubleClick(const QModelIndex &index);
 private:
-    TreeModel * model;
+    Model * model;
     CBHash settings;
     QPoint dragStartPoint;
 };

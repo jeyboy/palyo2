@@ -32,7 +32,7 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
 
 //  setFlow(QListView::TopToBottom);
 
-    model = new TreeModel(attrs);
+    model = new Model(attrs);
     setModel(model);
 //    setTreePosition(2);
 //    setRootIndex();
@@ -50,7 +50,7 @@ ItemList::~ItemList() {
     delete model;
 }
 
-TreeModel * ItemList::getModel() const {
+Model * ItemList::getModel() const {
     return model;
 }
 

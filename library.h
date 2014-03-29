@@ -5,16 +5,17 @@
 
 #include <QHash>
 #include <QFile>
-//#include <QThread>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrent>
 #include <QApplication>
 
 #include "mediainfo.h"
 #include "model_item.h"
-#include "item_state.h"
+#include "model_item_state.h"
+#include "library_item.h"
 
 class ModelItem;
+class LibraryItem;
 
 class Library : QObject {
     Q_OBJECT
@@ -26,9 +27,9 @@ public:
         delete self;
     }
 
-    void initItem(ModelItem * item);
+    void initItem(LibraryItem * item);
     bool addItem(ModelItem * item, int state);
-    void restoreItemState(ModelItem * item);  
+    void restoreItemState(LibraryItem * item);
 
 private slots:
     void saveCatalogs();
@@ -39,7 +40,7 @@ private:
     Library() : QObject() {
         catalogs = new QHash<QChar,  QHash<QString, int>* >();
         catalogs_state = QList<QChar>();
-        items = QList<ModelItem *>();
+        items = QList<LibraryItem *>();
         itemsInitResult = QFuture<void>();
         catsSaveResult = QFuture<void>();
 
@@ -80,7 +81,7 @@ private:
     QHash<QChar, QHash<QString, int>* > * catalogs;
     QList<QChar> catalogs_state;
 
-    QList<ModelItem *> items;
+    QList<LibraryItem *> items;
     QTimer *timer;
 
     QFuture<void> itemsInitResult;

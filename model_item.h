@@ -7,7 +7,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "item_state.h"
+#include "model_item_state.h"
 #include "library.h"
 
 #define NAMEUID 0
@@ -42,8 +42,8 @@ public:
 
     QString fullpath() const;
 
-    ItemState * getState() const;
-    void setState(int new_state);
+    ModelItemState * getState() const;
+    void setState(int new_state, bool append_to_library = true);
 
     QJsonObject toJSON();
 
@@ -59,7 +59,7 @@ private:
     QString path;
     QString name;
     QString extension;
-    ItemState * state;
+    ModelItemState * state;
 };
 
 

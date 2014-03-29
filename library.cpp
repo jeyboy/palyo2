@@ -9,9 +9,9 @@ Library *Library::instance() {
     return self;
 }
 
-void Library::initItem(ModelItem * item) {
-    item -> getState() -> setProceed();
-    items.insert(0, item);
+void Library::initItem(LibraryItem * libItem) {
+    libItem -> item() -> getState() -> setProceed();
+    items.insert(0, libItem);
     if (!itemsInitResult.isRunning())
         itemsInitResult = QtConcurrent::run(this, &Library::itemsInit);
 }
@@ -28,14 +28,14 @@ bool Library::addItem(ModelItem * item, int state) {
     return proceedItemNames(item -> names, state);
 }
 
-void Library::restoreItemState(ModelItem * item) {
+void Library::restoreItemState(LibraryItem * libItem) {
     QHash<QString, int> * cat;
     bool isListened = false;
     int temp;
     QString name;
     QList<QString>::iterator i;
 
-    for (i = item -> names -> begin(); i != item -> names -> end(); ++i) {
+    for (i = libItem -> item() -> names -> begin(); i != libItem -> item() -> names -> end(); ++i) {
         name = (*i);
         cat = getCatalog(name);
 
@@ -43,7 +43,7 @@ void Library::restoreItemState(ModelItem * item) {
             temp = cat -> value(name);
 
             if (temp == 1) {
-                item -> getState() -> setLiked();
+                libItem -> refresh(STATE_LIKED);
                 return;
             }
 
@@ -52,7 +52,7 @@ void Library::restoreItemState(ModelItem * item) {
     }
 
     if (isListened)
-        item -> getState() -> setListened();
+        libItem -> refresh(STATE_LISTENED);
 }
 
 //void Library::setItemState(const QString filename, int state) {
@@ -72,12 +72,12 @@ void Library::saveCatalogs() {
 }
 
 void Library::itemsInit() {
-    ModelItem * temp;
+    LibraryItem * temp;
 
     while(!items.isEmpty()) {
         temp = items.takeFirst();
 
-        temp -> names = getNamesForItem(temp);
+        temp -> item() -> names = getNamesForItem(temp -> item());
         restoreItemState(temp);
     }
 }

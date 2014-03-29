@@ -1,5 +1,5 @@
-#ifndef ITEM_STATE_H
-#define ITEM_STATE_H
+#ifndef MODEL_ITEM_STATE_H
+#define MODEL_ITEM_STATE_H
 
 #define STATE_UNPROCESSED 128
 #define STATE_DEFAULT 64
@@ -10,10 +10,10 @@
 
 #define STATE_LIST_PROCEED 1
 
-class ItemState {
+class ModelItemState {
 public:
-    ItemState();
-    ItemState(int state);
+    ModelItemState();
+    ModelItemState(int state);
 
     bool isNone();
     bool isListened();
@@ -47,4 +47,4 @@ private:
 };
 
 
-#endif // ITEM_STATE_H
+#endif // MODEL_ITEM_STATE_H

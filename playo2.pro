@@ -43,7 +43,8 @@ SOURCES += main.cpp\
     toolbar.cpp \
     toolbarbutton.cpp \
     mediainfo.cpp \
-    item_state.cpp
+    model_item_state.cpp \
+    library_item.cpp
 
 unix:!mac {
         QT += gui-private
@@ -83,7 +84,8 @@ HEADERS  += mainwindow.h \
     toolbar.h \
     toolbarbutton.h \
     mediainfo.h \
-    item_state.h
+    model_item_state.h \
+    library_item.h
 
 FORMS    += mainwindow.ui \
     tabdialog.ui \
