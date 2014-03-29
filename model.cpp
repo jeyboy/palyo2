@@ -6,7 +6,7 @@
 TreeModel::TreeModel(QJsonObject * attrs, QObject *parent) : QAbstractItemModel(parent) {
     count = 0;
     if (attrs != 0) {
-        rootItem = new ModelItem(this, attrs);
+        rootItem = new ModelItem(attrs);
     } else
         rootItem = new ModelItem();
 }
@@ -177,7 +177,7 @@ int TreeModel::rowCount(const QModelIndex &parent) const {
 void TreeModel::appendRow(QString filepath, ModelItem * parentItem) {
 //    int position = parentItem -> childCount();
 //    beginInsertRows(index(parentItem), position, position);
-    new ModelItem(this, filepath, parentItem);
+    new ModelItem(filepath, parentItem);
 //    endInsertRows();
 
 //    emit dataChanged(parent, parent);
@@ -271,7 +271,7 @@ ModelItem * TreeModel::buildPath(QString path) {
         if (curr -> folders -> contains(piece)) {
             curr = curr -> folders -> value(piece);
         } else {
-            curr = new ModelItem(this, piece, curr, STATE_UNPROCESSED);
+            curr = new ModelItem(piece, curr, STATE_UNPROCESSED);
         }
     }
 
@@ -284,7 +284,7 @@ ModelItem * TreeModel::addFolder(QString folder_name, ModelItem * parent) {
     if (curr -> folders -> contains(folder_name)) {
         curr = curr -> folders -> value(folder_name);
     } else {
-        curr = new ModelItem(this, folder_name, curr, STATE_UNPROCESSED);
+        curr = new ModelItem(folder_name, curr, STATE_UNPROCESSED);
     }
 
     return curr;

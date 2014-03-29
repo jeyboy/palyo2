@@ -46,6 +46,7 @@ private:
         timer = new QTimer();
         QObject::connect(timer, SIGNAL(timeout()), this, SLOT(saveCatalogs()));
         timer -> start(10000);
+        //TODO: create library folder if it does not exist
     }
 
     ~Library() {

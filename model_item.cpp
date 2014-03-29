@@ -28,7 +28,7 @@ ModelItem::ModelItem() {
     parentItem = 0;
 }
 
-ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) {
+ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
     init(true);
     parentItem = parent;
 
@@ -41,7 +41,6 @@ ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) 
         name = attrs -> value("n").toString();
         state = new ItemState(attrs -> value("s").toInt());
         extension = attrs -> value("e").toString();
-        model -> count++;
     }
 
     if (attrs -> contains("c")) {
@@ -50,7 +49,7 @@ ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) 
 
         foreach(QJsonValue obj, ar) {
             iter_obj = obj.toObject();
-            new ModelItem(model, &iter_obj, this);
+            new ModelItem(&iter_obj, this);
         }
     }
 
@@ -61,7 +60,7 @@ ModelItem::ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent) 
     }
 }
 
-ModelItem::ModelItem(TreeModel * model, QString file_path, ModelItem *parent, int init_state) {
+ModelItem::ModelItem(QString file_path, ModelItem *parent, int init_state) {
     state = new ItemState(init_state);
     parentItem = parent;
 
@@ -71,7 +70,6 @@ ModelItem::ModelItem(TreeModel * model, QString file_path, ModelItem *parent, in
         name = file_path.section('/', -1, -1);
         extension = name.section('.', -1, -1);
         name = name.section('.', 0, -2);
-        model -> count++;
     } else {
         init(true);
         name = path = file_path;
@@ -127,7 +125,7 @@ bool ModelItem::insertChildren(int position, int count, int /*columns*/) {
     for (int row = 0; row < count; ++row) {
 //        QVector<QVariant> data(columns);
 //        ModelItem *item = new ModelItem(data, this);
-        ModelItem *item = new ModelItem(0, QString("BLA"), this);
+        ModelItem *item = new ModelItem(QString("BLA"), this);
         childItems.insert(position, item);
     }
 

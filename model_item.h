@@ -7,21 +7,19 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "model.h"
 #include "item_state.h"
+#include "library.h"
 
 #define NAMEUID 0
 #define EXTENSIONUID 1
 #define PATHUID 2
 #define STATEID 3
 
-class TreeModel;
-
 class ModelItem {
 public:
     ModelItem();
-    ModelItem(TreeModel * model, QJsonObject * attrs, ModelItem *parent = 0);
-    ModelItem(TreeModel * model, const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
+    ModelItem(QJsonObject * attrs, ModelItem *parent = 0);
+    ModelItem(const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
     ~ModelItem();
 
     ModelItem *parent();
