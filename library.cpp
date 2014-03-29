@@ -87,6 +87,10 @@ QString Library::forwardNumberPreFilter(QString title)	{ return title.remove(QRe
 QString Library::spacesFilter(QString title) 			{ return title.remove(QRegExp("(\\W|[_])")); }
 QString Library::forwardNumberFilter(QString title)		{ return title.remove(QRegExp("\\A\\d{1,} ")); }
 
+QString Library::libraryPath() {
+    return QCoreApplication::applicationDirPath() + "/library/";
+}
+
 QString Library::prepareName(QString gipoTitle, bool additional) {
     if (additional)
         return forwardNumberFilter(gipoTitle);
@@ -187,7 +191,7 @@ QList<QString> * Library::getNamesForItem(QString path) {
 QHash<QString, int> * Library::load(const QChar letter) {
     QHash<QString, int> * res = new QHash<QString, int>();
 
-    QString path = QCoreApplication::applicationDirPath() + "/library/cat_" + letter;
+    QString path = libraryPath() + "cat_" + letter;
 
     QFile f(path);
     if (f.open(QIODevice::ReadOnly)) {
@@ -221,7 +225,7 @@ void Library::save() {
 
         res = catalogs -> value(letter);
 
-        path = QCoreApplication::applicationDirPath() + "/library/cat_" + letter;
+        path = libraryPath() + "cat_" + letter;
         qDebug() << " :: " << path;
 
         QFile f(path);

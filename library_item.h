@@ -3,7 +3,6 @@
 
 #include "model.h"
 #include "model_item.h"
-//#include "item_state.h"
 
 class Model;
 class ModelItem;

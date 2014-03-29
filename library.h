@@ -47,7 +47,11 @@ private:
         timer = new QTimer();
         QObject::connect(timer, SIGNAL(timeout()), this, SLOT(saveCatalogs()));
         timer -> start(10000);
-        //TODO: create library folder if it does not exist
+
+        QDir dir(libraryPath());
+        if (!dir.exists()) {
+            dir.mkpath(".");
+        }
     }
 
     ~Library() {
@@ -61,6 +65,8 @@ private:
     QString forwardNumberPreFilter(QString title);
     QString spacesFilter(QString title);
     QString forwardNumberFilter(QString title);
+
+    QString libraryPath();
 
     QString prepareName(QString gipoTitle, bool additional = false);
     bool proceedItemNames(QList<QString> * names, int state);
