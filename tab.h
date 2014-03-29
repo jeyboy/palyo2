@@ -18,8 +18,6 @@
   Q_DECLARE_METATYPE(CBHash);
 #endif // CBHASH
 
-class ItemList;
-
 class Tab : public QWidget {
     Q_OBJECT
 public:

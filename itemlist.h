@@ -14,9 +14,6 @@
 #include "model_item.h"
 #include "model_item_delegate.h"
 
-class TreeModel;
-class ModelItem;
-
 #ifndef CBHASH
 #define CBHASH
 
