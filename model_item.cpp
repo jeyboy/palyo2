@@ -239,8 +239,17 @@ QString ModelItem::fullpath() const {
 
 //////////////////////////properties///////////////////////////////
 
-ItemState * ModelItem::getState() {
+ItemState * ModelItem::getState() const {
     return state;
+}
+
+void ModelItem::setState(int new_state) {
+    if (state -> setBit(new_state)) {
+        if (state -> isListened())
+            Library::instance() -> addItem(this, STATE_LISTENED);
+        else if (state -> isLiked())
+            Library::instance() -> addItem(this, STATE_LIKED);
+    }
 }
 
 ///////////////////////////////////////////////////////

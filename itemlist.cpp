@@ -321,7 +321,7 @@ void ItemList::markSelectedAsLiked() {
         if (index.isValid()) {
             temp = model -> getItem(index);
             if (!temp -> getState() -> isUnprocessed()) {
-                temp -> getState() -> setLiked(temp);
+                temp -> setState(STATE_LIKED);
                 model -> refreshItem(temp);
             }
         }

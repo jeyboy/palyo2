@@ -16,7 +16,6 @@
 #define STATEID 3
 
 class TreeModel;
-class ItemState;
 
 class ModelItem {
 public:
@@ -45,7 +44,8 @@ public:
 
     QString fullpath() const;
 
-    ItemState * getState();
+    ItemState * getState() const;
+    void setState(int new_state);
 
     QJsonObject toJSON();
 

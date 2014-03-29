@@ -59,10 +59,9 @@ void Player::removePlaylist() {
 void Player::updateItemState(bool played) {
     if (instance() -> played) {
         if (played) {
-            instance() -> played -> getState() -> setListened(instance() -> played);
-            instance() -> played -> getState() -> setPlayed();
+            instance() -> played -> setState(STATE_LISTENED | STATE_PLAYED);
         } else {
-            instance() -> played -> getState() -> unsetPlayed();
+            instance() -> played -> setState(-STATE_PLAYED);
         }
 
         qDebug() << instance() -> played -> getState() -> getValue();

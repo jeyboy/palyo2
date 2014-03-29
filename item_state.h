@@ -10,10 +10,6 @@
 
 #define STATE_LIST_PROCEED 1
 
-#include "model_item.h"
-
-class ModelItem;
-
 class ItemState {
 public:
     ItemState();
@@ -27,14 +23,16 @@ public:
     bool isProceed();
     bool isUnprocessed();
 
-    void setNone();
-    void setListened(ModelItem * item = 0);
-    void setLiked(ModelItem * item = 0);
+    bool setNone();
+    bool setListened();
+    bool setLiked();
 
-    void setPlayed();
-    void unsetPlayed();
-    void setProceed();
-    void setUnprocessed();
+    bool setPlayed();
+    bool unsetPlayed();
+    bool setProceed();
+    bool setUnprocessed();
+
+    bool setBit(int val);
 
     int getValue() const;
     int getFuncValue();
