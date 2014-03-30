@@ -85,7 +85,8 @@ HEADERS  += mainwindow.h \
     toolbarbutton.h \
     mediainfo.h \
     model_item_state.h \
-    library_item.h
+    library_item.h \
+    slider_style.h
 
 FORMS    += mainwindow.ui \
     tabdialog.ui \

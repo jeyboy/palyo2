@@ -223,13 +223,14 @@ QToolBar* MainWindow::createMediaBar() {
     Player::instance() -> setTimePanel(timeLabel);
     ptb->addSeparator();
 
-    QSlider * horizontalSlider = new QSlider();
-    horizontalSlider -> setOrientation(Qt::Horizontal);
-    horizontalSlider -> setMinimumSize(30, 30);
-//    horizontalSlider -> setTracking(false); // send change value only on release slider
+    QSlider * slider = new QSlider();
+    slider -> setStyle(new SliderStyle());
+    slider -> setOrientation(Qt::Horizontal);
+    slider -> setMinimumSize(30, 30);
+//    slider -> setTracking(false); // send change value only on release slider
 
 //    setStyleSheet("QSlider::handle {image: url(:/resources/image.png);}");
-    horizontalSlider -> setStyleSheet(QString(
+    slider -> setStyleSheet(QString(
                                               "QSlider::groove {"
                                                 "border: 1px solid #bbb;"
                                                 "background: white;"
@@ -316,9 +317,9 @@ QToolBar* MainWindow::createMediaBar() {
     ));
 
 
-    Player::instance() -> setTrackBar(horizontalSlider);
+    Player::instance() -> setTrackBar(slider);
 
-    ptb -> addWidget(horizontalSlider);
+    ptb -> addWidget(slider);
 
     ptb -> addSeparator();
     ptb -> addAction(QPixmap(QString(":/like")), "Liked", this, SLOT(slotNoImpl()));

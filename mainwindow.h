@@ -22,6 +22,7 @@
 #include "toolbar.h"
 #include "toolbarbutton.h"
 #include "library.h"
+#include "slider_style.h"
 
 namespace Ui {
   class MainWindow;
