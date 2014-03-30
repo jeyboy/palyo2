@@ -337,7 +337,7 @@ void ItemList::execItem(ModelItem * item) {
     if (item) {
         scrollTo(model -> index(item));
         if (QFile::exists(item -> fullpath()))
-            Player::playItem(this, item);
+            Player::instance() -> playItem(this, item);
         else {
             item -> getState() -> setNotExist();
             model -> refreshItem(item);
@@ -396,7 +396,7 @@ ModelItem * ItemList::nextItem(ModelItem * curr) {
         } else {
             curr = curr -> parent();
 
-            if (curr -> parent() == 0)
+            if (curr == 0 || curr -> parent() == 0)
                 return 0;
         }
     }

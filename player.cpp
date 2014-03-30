@@ -14,132 +14,126 @@ Player * Player::instance() {
 }
 
 ModelItem * Player::playedItem() const {
-    return instance() -> played;
+    return played;
 }
 ItemList * Player::currentPlaylist() const {
-    return instance() -> playlist;
+    return playlist;
 }
 
-void Player::setActivePlaylist(ItemList * activePlaylist) {
-    qDebug() << " active playlist";
-    instance() -> activePlaylist = activePlaylist;
+void Player::setActivePlaylist(ItemList * newActivePlaylist) {
+    activePlaylist = newActivePlaylist;
 }
 
 void Player::setPlayButton(QAction * playAction) {
-    instance() -> playButton = playAction;
-    instance() -> playButton -> setVisible(true);
+    playButton = playAction;
+    playButton -> setVisible(true);
 //    connect((QObject *)playAction, SIGNAL(triggered(bool)), instance(), SLOT(play()));
-    connect((QObject *)playAction, SIGNAL(triggered(bool)), instance(), SLOT(start()));
+    connect((QObject *)playAction, SIGNAL(triggered(bool)), this, SLOT(start()));
 }
 void Player::setPauseButton(QAction * pauseAction) {
-    instance() -> pauseButton = pauseAction;
-    instance() -> pauseButton -> setVisible(false);
-    connect((QObject *)pauseAction, SIGNAL(triggered(bool)), instance(), SLOT(pause()));
+    pauseButton = pauseAction;
+    pauseButton -> setVisible(false);
+    connect((QObject *)pauseAction, SIGNAL(triggered(bool)), this, SLOT(pause()));
 }
 void Player::setStopButton(QAction * stopAction) {
-    instance() -> stopButton = stopAction;
-    instance() -> stopButton -> setVisible(false);
-    connect((QObject *)stopAction, SIGNAL(triggered(bool)), instance(), SLOT(stop()));
+    stopButton = stopAction;
+    stopButton -> setVisible(false);
+    connect((QObject *)stopAction, SIGNAL(triggered(bool)), this, SLOT(stop()));
 }
 
 void Player::setPlaylist(ItemList * playlist) {
-   instance() -> stop();
-   instance() -> playlist = playlist;
-   instance() -> played = 0;
+   stop();
+   playlist = playlist;
+   played = 0;
 }
 
 void Player::removePlaylist() {
-    switch(instance() -> state()) {
+    switch(state()) {
         case PausedState:
         case PlayingState: {
-            instance() -> stop();
+            stop();
             break;
         }
         default: {}
     }
-    instance() -> playlist = 0;
-    instance() -> played = 0;
-
+    playlist = 0;
+    played = 0;
 }
 
-void Player::updateItemState(bool played) {
-    if (instance() -> played) {
-        if (played) {
-            instance() -> played -> setState(STATE_LISTENED | STATE_PLAYED);
+void Player::updateItemState(bool isPlayed) {
+    if (played) {
+        if (isPlayed) {
+            played -> setState(STATE_LISTENED | STATE_PLAYED);
         } else {
-            instance() -> played -> setState(-STATE_PLAYED);
+            played -> setState(-STATE_PLAYED);
         }
 
-        qDebug() << instance() -> played -> getState() -> getValue();
-        instance() -> playlist -> getModel() -> refreshItem(instance() -> played);
+        playlist -> getModel() -> refreshItem(played);
     }
 }
 
-//void Player::setPlayedItemState(int state) {
-//    instance() -> played -> setState(state);
-//    instance() -> playlist -> getModel() -> refreshItem(instance() -> played);
-//}
-
 void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
-    switch(instance() -> state()) {
+    switch(state()) {
         case StoppedState: { break; }
 
         case PausedState:
         case PlayingState: {
-            instance() -> stop();
+            stop();
             break;
         }
     }
 
     updateItemState(false);
 
-    instance() -> setMedia(QUrl::fromLocalFile(item -> fullpath()));
+    setMedia(QUrl::fromLocalFile(item -> fullpath()));
 
-    instance() -> played = item;
-    instance() -> playlist = itemPlaylist;
-    instance() -> last_duration = -1;
-    instance() -> play();
+    played = item;
+    playlist = itemPlaylist;
+    last_duration = -1;
+    play();
 }
 
 void Player::playFile(QString uri) {
-    switch(instance() -> state()) {
+    switch(state()) {
         case StoppedState: { break; }
 
         case PausedState:
         case PlayingState: {
-            instance() -> stop();
+            stop();
             break;
         }
     }
 
     updateItemState(false);
 
-    instance() -> played = 0;
-    instance() -> setMedia(QUrl::fromLocalFile(uri));
-    instance() -> last_duration = -1;
-    instance() -> play();
+    played = 0;
+    setMedia(QUrl::fromLocalFile(uri));
+    last_duration = -1;
+    play();
 }
 
 void Player::setTrackBar(QSlider * trackBar) {
-    instance() -> slider = trackBar;
-    instance() -> slider -> setMinimum(0);
-    instance() -> slider -> setMaximum(0);
-    connect(instance(), SIGNAL(positionChanged(qint64)), instance(), SLOT(setTrackbarValue(qint64)));
-    connect(instance(), SIGNAL(durationChanged(qint64)), instance(), SLOT(setTrackbarMax(qint64)));
-    connect(trackBar, SIGNAL(valueChanged(int)), instance(), SLOT(changeTrackbarValue(int)));
+    slider = trackBar;
+    slider -> setMinimum(0);
+    slider -> setMaximum(0);
+
+    //TODO: remove custom methods
+    connect(this, SIGNAL(positionChanged(qint64)), this, SLOT(setTrackbarValue(qint64)));
+    connect(this, SIGNAL(durationChanged(qint64)), this, SLOT(setTrackbarMax(qint64)));
+    connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(changeTrackbarValue(int)));
 }
 
 void Player::setTimePanel(QLCDNumber * newTimePanel) {
-    instance() -> timePanel = newTimePanel;
+    timePanel = newTimePanel;
 }
 
 void Player::setVideoOutput(QVideoWidget * container) {
-    instance() -> setVideoOutput(container);
+    setVideoOutput(container);
 }
 
 void Player::setTimePanelVal(int millis) {
-    if (instance() -> timePanel) {
-        instance() -> timePanel -> display(intToStr(millis - instance() -> last_duration));
+    if (timePanel) {
+        timePanel -> display(intToStr(millis - last_duration));
     }
 }
 
@@ -160,17 +154,14 @@ QString Player::intToStr(int millis) {
 //////////////////////SLOTS/////////////////////////
 
 void Player::setTrackbarValue(qint64 pos) {
-//    qDebug() << intToStr(pos);
-    instance() -> setTimePanelVal(pos);
+    setTimePanelVal(pos);
 
-    instance() -> slider -> blockSignals(true);
-    instance() -> slider -> setValue(pos);
-    instance() -> slider -> blockSignals(false);
+    slider -> blockSignals(true);
+    slider -> setValue(pos);
+    slider -> blockSignals(false);
 }
 
 void Player::setTrackbarMax(qint64 duration) {
-    qDebug() << metaData("Size") << " | " << duration;
-    qDebug() << availableMetaData();
 //    max = instance() -> metaData("Duration").toFloat();
 //    climax = duration;
 
@@ -178,17 +169,17 @@ void Player::setTrackbarMax(qint64 duration) {
 
     // TODO: duration is wrong in some case
 
-    if (instance() -> slider) {
-        instance() -> slider -> setDisabled(!instance() -> isSeekable());
-        instance() -> slider -> setMaximum(duration);
-        instance() -> last_duration = duration;
+    if (slider) {
+        slider -> setDisabled(!isSeekable());
+        slider -> setMaximum(duration);
+        last_duration = duration;
     }
 }
 
 void Player::start() {
-    if (instance() -> playedItem() == 0) {
-        instance() -> playlist = instance() -> activePlaylist;
-        instance() -> activePlaylist -> proceedNext();
+    if (playedItem() == 0 && activePlaylist != 0) {
+        playlist = activePlaylist;
+        activePlaylist -> proceedNext();
     } else play();
 }
 
@@ -202,33 +193,33 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
 
 //            updateItemState(false);
 
-            instance() -> slider -> blockSignals(true);
-            instance() -> slider -> setMaximum(0);
-            instance() -> setTimePanelVal(0);
-            instance() -> slider -> blockSignals(false);
+            slider -> blockSignals(true);
+            slider -> setMaximum(0);
+            setTimePanelVal(0);
+            slider -> blockSignals(false);
 
-            instance() -> playButton -> setVisible(true);
-            instance() -> pauseButton -> setVisible(false);
-            instance() -> stopButton -> setVisible(false);
+            playButton -> setVisible(true);
+            pauseButton -> setVisible(false);
+            stopButton -> setVisible(false);
             break;
         }
 
         case PlayingState: {
             if (last_duration != -1)
-                instance() -> slider -> setMaximum(instance() -> last_duration);
+                slider -> setMaximum(last_duration);
 
             updateItemState(true);
 
-            instance() -> playButton -> setVisible(false);
-            instance() -> pauseButton -> setVisible(true);
-            instance() -> stopButton -> setVisible(true);
+            playButton -> setVisible(false);
+            pauseButton -> setVisible(true);
+            stopButton -> setVisible(true);
             break;
         }
 
         case PausedState: {
-            instance() -> playButton -> setVisible(true);
-            instance() -> pauseButton -> setVisible(false);
-            instance() -> stopButton -> setVisible(true);
+            playButton -> setVisible(true);
+            pauseButton -> setVisible(false);
+            stopButton -> setVisible(true);
             break;
         }
     }
@@ -247,9 +238,9 @@ void Player::onMediaStatusChanged(QMediaPlayer::MediaStatus status) {
         case EndOfMedia:
         case InvalidMedia: {
             qDebug() << "Party time";
-            if (instance() -> playlist) {
-                if (instance() -> playlist -> isPlaylist()) {
-                    instance() -> playlist -> proceedNext();
+            if (playlist) {
+                if (playlist -> isPlaylist()) {
+                    playlist -> proceedNext();
                 }
             }
             break;

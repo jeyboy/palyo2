@@ -210,9 +210,9 @@ QToolBar* MainWindow::createMediaBar() {
     ptb -> setMinimumHeight(30);
 
 
-    Player::setPlayButton(ptb->addAction(QPixmap(":/play"), "Play"));
-    Player::setPauseButton(ptb->addAction(QPixmap(":/pause"), "Pause"));
-    Player::setStopButton(ptb->addAction(QPixmap(":/stop"), "Stop"));
+    Player::instance() -> setPlayButton(ptb->addAction(QPixmap(":/play"), "Play"));
+    Player::instance() -> setPauseButton(ptb->addAction(QPixmap(":/pause"), "Pause"));
+    Player::instance() -> setStopButton(ptb->addAction(QPixmap(":/stop"), "Stop"));
     ptb->addSeparator();
 
     QLCDNumber * timeLabel = new QLCDNumber();
@@ -316,7 +316,7 @@ QToolBar* MainWindow::createMediaBar() {
     ));
 
 
-    Player::setTrackBar(horizontalSlider);
+    Player::instance() -> setTrackBar(horizontalSlider);
 
     ptb -> addWidget(horizontalSlider);
 

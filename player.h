@@ -21,19 +21,19 @@ class Player : public QMediaPlayer {
 public:
 
     static Player * instance();
-    static void playItem(ItemList * itemPlaylist, ModelItem * item);
-    static void playFile(QString uri);
+    void playItem(ItemList * itemPlaylist, ModelItem * item);
+    void playFile(QString uri);
 
-    static void setActivePlaylist(ItemList * itemPlaylist);
-    static void setPlayButton(QAction * playAction);
-    static void setPauseButton(QAction * pauseAction);
-    static void setStopButton(QAction * stopAction);
+    void setActivePlaylist(ItemList * itemPlaylist);
+    void setPlayButton(QAction * playAction);
+    void setPauseButton(QAction * pauseAction);
+    void setStopButton(QAction * stopAction);
 
-    static void setTrackBar(QSlider * trackBar);
-    static void setTimePanel(QLCDNumber * timePanel);
-    static void setVideoOutput(QVideoWidget * container);
-    static void setPlaylist(ItemList * playlist);
-    static void removePlaylist();
+    void setTrackBar(QSlider * trackBar);
+    void setTimePanel(QLCDNumber * timePanel);
+    void setVideoOutput(QVideoWidget * container);
+    void setPlaylist(ItemList * playlist);
+    void removePlaylist();
 
     ModelItem * playedItem() const;
     ItemList * currentPlaylist() const;
@@ -52,10 +52,10 @@ private slots:
     void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
 
 private:
-    static void updateItemState(bool played);
+    void updateItemState(bool played);
 //    static void setPlayedItemState(int state);
-    static QString intToStr(int val);
-    static void setTimePanelVal(int millis);
+    QString intToStr(int val);
+    void setTimePanelVal(int millis);
 
     Player() {
        slider = 0;
