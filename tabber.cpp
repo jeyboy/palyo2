@@ -8,15 +8,23 @@
 //    tabber->setTabPosition(TabPosition);
 
 void Tabber::handleCurrentChanged(int index) {
-    Tab * new_tab = static_cast<Tab *>(tabber -> widget(index));
+    if (index == -1) {
+        Player::instance() -> setActivePlaylist(0);
+    } else {
+        Tab * new_tab = static_cast<Tab *>(tabber -> widget(index));
 
-    Player::instance() -> setActivePlaylist(const_cast<ItemList *>(new_tab -> getList()));
+        Player::instance() -> setActivePlaylist(const_cast<ItemList *>(new_tab -> getList()));
+    }
 }
 
 void Tabber::handleTabCloseRequested(int index) {
     Tab * del_tab = static_cast<Tab *>(tabber -> widget(index));
     if (Player::instance() -> currentPlaylist() == del_tab -> getList()) {
         Player::instance() -> removePlaylist();
+    }
+
+    if (Player::instance() -> currentActivePlaylist() == del_tab -> getList()) {
+        Player::instance() -> setActivePlaylist(0);
     }
 
     tabber -> removeTab(index);

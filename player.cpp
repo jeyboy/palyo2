@@ -19,6 +19,10 @@ ModelItem * Player::playedItem() const {
 ItemList * Player::currentPlaylist() const {
     return playlist;
 }
+ItemList * Player::currentActivePlaylist() const {
+    return playlist;
+}
+
 
 void Player::setActivePlaylist(ItemList * newActivePlaylist) {
     activePlaylist = newActivePlaylist;

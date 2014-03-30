@@ -37,6 +37,7 @@ public:
 
     ModelItem * playedItem() const;
     ItemList * currentPlaylist() const;
+    ItemList * currentActivePlaylist() const;
 
     static void close() {
         delete self;
