@@ -31,8 +31,10 @@ public:
     void setName(QString newName);
 
     ItemList * getList() const;
-    void updateHeader();
     QJsonObject toJSON(QString name);
+
+public slots:
+    void updateHeader(int new_count = -1);
 
 protected:
     void setNameWithCount(QString name);

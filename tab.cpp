@@ -43,13 +43,13 @@ ItemList * Tab::getList() const {
     return list;
 }
 
-void Tab::updateHeader() {
+void Tab::updateHeader(int new_count) {
     setNameWithCount(getName());
 }
 
 void Tab::setNameWithCount(QString name) {
     int i = tabber -> indexOf((QWidget*)this);
-    tabber -> setTabText(i, name + "(" + QString::number(list -> getModel() -> count) + ")");
+    tabber -> setTabText(i, name + "(" + QString::number(list -> getModel() -> itemsCount()) + ")");
 }
 
 QJsonObject Tab::toJSON(QString name) {

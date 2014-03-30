@@ -7,6 +7,7 @@ Model::Model(QJsonObject * attrs, QObject *parent) : QAbstractItemModel(parent) 
     count = 0;
     if (attrs != 0) {
         rootItem = new ModelItem(attrs);
+        count = attrs ->value("l").toInt();
     } else
         rootItem = new ModelItem();
 }
@@ -138,11 +139,17 @@ QModelIndex Model::index(ModelItem * item) const {
 
 /////////////////////////////////////////////////////////
 
+int Model::itemsCount() const {
+    return count;
+}
+
+/////////////////////////////////////////////////////////
+
 int Model::columnCount(const QModelIndex &parent) const {
     if (parent.isValid())
-        return static_cast<ModelItem*>(parent.internalPointer())->columnCount();
+        return static_cast<ModelItem *>(parent.internalPointer()) -> columnCount();
     else
-        return rootItem->columnCount();
+        return rootItem -> columnCount();
 }
 
 /////////////////////////////////////////////////////////
@@ -152,13 +159,14 @@ int Model::rowCount(const QModelIndex &parent) const {
         return 0;
 
     ModelItem *parentItem = getItem(parent);
-    return parentItem->childCount();
+    return parentItem -> childCount();
 }
 
 void Model::appendRow(QString filepath, ModelItem * parentItem) {
 //    int position = parentItem -> childCount();
 //    beginInsertRows(index(parentItem), position, position);
     new ModelItem(filepath, parentItem);
+    emit itemsCountChanged(++count);
 //    endInsertRows();
 
 //    emit dataChanged(parent, parent);
@@ -175,6 +183,9 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
                 count--;
             }
             endRemoveRows();
+
+            emit itemsCountChanged(count);
+
             return true;
         }
     }
@@ -187,8 +198,11 @@ bool Model::removeRows(int position, int rows, const QModelIndex &parent) {
     bool success = true;
 
     beginRemoveRows(parent, position, position + rows - 1);
-    success = parentItem->removeChildren(position, rows);
+    success = parentItem -> removeChildren(position, rows);
     endRemoveRows();
+
+    if (success)
+        emit itemsCountChanged((count -= rows));
 
     return success;
 }

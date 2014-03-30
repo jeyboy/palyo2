@@ -31,6 +31,8 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex index(ModelItem * item) const;
 
+    int itemsCount() const;
+
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -46,13 +48,16 @@ public:
 
     ModelItem * buildPath(QString path);
     ModelItem * addFolder(QString folder_name, ModelItem * parent);
-    int count;
 
     Qt::DropActions supportedDropActions() const;
     QStringList mimeTypes() const;
     QMimeData * mimeData(const QModelIndexList &indexes) const;
 
+signals:
+    void itemsCountChanged(int newCount);
+
 private:
+    int count;
     ModelItem *rootItem;
 };
 

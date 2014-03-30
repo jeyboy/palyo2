@@ -22,9 +22,11 @@ class Library : QObject {
 public:
     static Library * instance();
     static void close() {
-        self -> timer -> stop();
-        self -> save();
-        delete self;
+        if (self != 0) {
+            self -> timer -> stop();
+            self -> save();
+            delete self;
+        }
     }
 
     void initItem(LibraryItem * item);
