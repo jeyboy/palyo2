@@ -87,15 +87,9 @@ ModelItem::~ModelItem() {
 
     delete state;
 
-    if (folders != 0) {
-        delete folders;
-    }
+    delete folders;
 
-    if (names != 0)
-        delete names;
-
-    if (parentItem != 0)
-        delete parentItem;
+    delete names;
 }
 
 /////////////////////////////////////////////////////////
