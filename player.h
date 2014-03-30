@@ -24,6 +24,7 @@ public:
     static void playItem(ItemList * itemPlaylist, ModelItem * item);
     static void playFile(QString uri);
 
+    static void setActivePlaylist(ItemList * itemPlaylist);
     static void setPlayButton(QAction * playAction);
     static void setPauseButton(QAction * pauseAction);
     static void setStopButton(QAction * stopAction);
@@ -42,6 +43,8 @@ public:
     }
 
 private slots:
+    void start();
+
     void changeTrackbarValue(int);
     void setTrackbarValue(qint64);
     void setTrackbarMax(qint64);
@@ -64,6 +67,8 @@ private:
        pauseButton = 0;
        stopButton = 0;
 
+       activePlaylist = 0;
+
        setNotifyInterval(500);
        connect(this, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(onStateChanged(QMediaPlayer::State)));
        connect(this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus)));
@@ -74,6 +79,8 @@ private:
     QLCDNumber * timePanel;
     ModelItem * played;
     ItemList * playlist;
+
+    ItemList * activePlaylist;
 
     QAction * playButton;
     QAction * pauseButton;

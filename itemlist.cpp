@@ -45,6 +45,9 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
     connect(this, SIGNAL(clicked(const QModelIndex&)), this, SLOT(on_click(const QModelIndex&)));   
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(on_doubleClick(const QModelIndex&)));
     connect(model, SIGNAL(itemsCountChanged(int)), parent, SLOT(updateHeader(int)));
+
+    header() -> setSectionResizeMode(0, QHeaderView::Interactive);
+//    header()->setStretchLastSection(false);
 }
 
 ItemList::~ItemList() {

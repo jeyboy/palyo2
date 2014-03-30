@@ -7,8 +7,14 @@
 //TODO:// add tab position for each tab
 //    tabber->setTabPosition(TabPosition);
 
+void Tabber::handleCurrentChanged(int index) {
+    Tab * new_tab = static_cast<Tab *>(tabber -> widget(index));
+
+    Player::instance() -> setActivePlaylist(const_cast<ItemList *>(new_tab -> getList()));
+}
+
 void Tabber::handleTabCloseRequested(int index) {
-    Tab * del_tab = static_cast<Tab *>(tabber->widget(index));
+    Tab * del_tab = static_cast<Tab *>(tabber -> widget(index));
     if (Player::instance() -> currentPlaylist() == del_tab -> getList()) {
         Player::instance() -> removePlaylist();
     }
@@ -31,6 +37,8 @@ Tabber::Tabber(QTabWidget * container) {
 
     connect(tabber, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &)));
     connect(tabber, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
+    connect(tabber, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
+
     store = new DataStore("tabs.json");
     load();
 }

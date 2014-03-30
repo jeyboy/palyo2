@@ -20,10 +20,16 @@ ItemList * Player::currentPlaylist() const {
     return instance() -> playlist;
 }
 
+void Player::setActivePlaylist(ItemList * activePlaylist) {
+    qDebug() << " active playlist";
+    instance() -> activePlaylist = activePlaylist;
+}
+
 void Player::setPlayButton(QAction * playAction) {
     instance() -> playButton = playAction;
     instance() -> playButton -> setVisible(true);
-    connect((QObject *)playAction, SIGNAL(triggered(bool)), instance(), SLOT(play()));
+//    connect((QObject *)playAction, SIGNAL(triggered(bool)), instance(), SLOT(play()));
+    connect((QObject *)playAction, SIGNAL(triggered(bool)), instance(), SLOT(start()));
 }
 void Player::setPauseButton(QAction * pauseAction) {
     instance() -> pauseButton = pauseAction;
@@ -177,6 +183,13 @@ void Player::setTrackbarMax(qint64 duration) {
         instance() -> slider -> setMaximum(duration);
         instance() -> last_duration = duration;
     }
+}
+
+void Player::start() {
+    if (instance() -> playedItem() == 0) {
+        instance() -> playlist = instance() -> activePlaylist;
+        instance() -> activePlaylist -> proceedNext();
+    } else play();
 }
 
 void Player::changeTrackbarValue(int pos) {

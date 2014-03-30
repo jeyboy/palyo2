@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QJsonObject>
 #include <QDrag>
+#include <QHeaderView>
 
 #include "player.h"
 #include "model.h"
