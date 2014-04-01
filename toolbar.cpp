@@ -25,7 +25,7 @@ void ToolBar::dropEvent(QDropEvent *event) {
             if (url.isLocalFile()) {
                 QFileInfo file = QFileInfo(url.toLocalFile());
                 if (file.isDir()) {
-                    emit folderDropped(file.baseName(), file.filePath());
+                    emit folderDropped((file.baseName().isEmpty() ? file.filePath() : file.baseName()), file.filePath());
                 }
             }
         }

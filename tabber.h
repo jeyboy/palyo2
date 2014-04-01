@@ -29,7 +29,6 @@ private:
 private slots:
     void handleCurrentChanged(int index);
     void handleTabCloseRequested(int index);
-    void showContextMenu(const QPoint &);
 
 //public:
 //    explicit MainWindow(QWidget *parent = 0);

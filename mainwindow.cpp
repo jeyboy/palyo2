@@ -452,7 +452,7 @@ MainWindow::~MainWindow() {
 void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {
     ToolbarButton * button = new ToolbarButton(name, path);
     bar -> addWidget(button);
-    connect(button, SIGNAL(clicked()), this, SLOT(OpenFolderTriggered()));
+    connect(button, SIGNAL(clicked()), this, SLOT(openFolderTriggered()));
 }
 
 bool MainWindow::isToolbarNameUniq(QString name) {
@@ -514,7 +514,7 @@ void MainWindow::removePanelButtonTriggered() {
     bar -> removeAction(bar -> actionAt(bar -> mapFromGlobal(lastClickPoint)));
 }
 
-void MainWindow::OpenFolderTriggered() {
+void MainWindow::openFolderTriggered() {
     ToolbarButton * button = (ToolbarButton*)QObject::sender();
     QDesktopServices::openUrl(QUrl::fromLocalFile(button -> path));
 }

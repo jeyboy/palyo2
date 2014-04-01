@@ -9,6 +9,8 @@
 #include <QJsonObject>
 #include <QDrag>
 #include <QHeaderView>
+#include <QDesktopServices>
+#include <QMenu>
 
 #include "player.h"
 #include "model.h"
@@ -73,6 +75,9 @@ protected:
 private slots:
     void on_click(const QModelIndex &index);
     void on_doubleClick(const QModelIndex &index);
+    void showContextMenu(const QPoint &);
+    void openLocation();
+
 private:
     Model * model;
     CBHash settings;

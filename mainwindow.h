@@ -59,7 +59,7 @@ private slots:
     void removePanelTriggered();
     void addPanelButtonTriggered();
     void removePanelButtonTriggered();
-    void OpenFolderTriggered();
+    void openFolderTriggered();
     void folderDropped(QString name, QString path);
 
     void nextItemTriggered();

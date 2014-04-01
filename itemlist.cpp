@@ -44,9 +44,12 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
 
     setItemDelegate(new ModelItemDelegate(this));
 
+    setContextMenuPolicy(Qt::CustomContextMenu);
+
     connect(this, SIGNAL(clicked(const QModelIndex&)), this, SLOT(on_click(const QModelIndex&)));   
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(on_doubleClick(const QModelIndex&)));
     connect(model, SIGNAL(itemsCountChanged(int)), parent, SLOT(updateHeader(int)));
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &)));
 
     header() -> setSectionResizeMode(0, QHeaderView::Interactive);
 //    header()->setStretchLastSection(false);
@@ -248,6 +251,27 @@ void ItemList::on_doubleClick(const QModelIndex &index) {
     if (!item -> getState() -> isUnprocessed()) {
         execItem(item);
     }
+}
+
+void ItemList::showContextMenu(const QPoint& pnt) {
+    QList<QAction *> actions;
+
+    if (indexAt(pnt).isValid()) {
+        QAction * openAct = new QAction(QIcon(":/open"), "Open location", this);
+        connect(openAct, SIGNAL(triggered(bool)), this, SLOT(openLocation()));
+        actions.append(openAct);
+    }
+
+    if (actions.count() > 0)
+        QMenu::exec(actions, mapToGlobal(pnt));
+}
+
+void ItemList::openLocation() {
+    ModelItem * item = model -> getItem(this -> currentIndex());
+    if (item -> getState() -> isUnprocessed())
+        QDesktopServices::openUrl(QUrl::fromLocalFile(item -> fullpath()));
+    else
+        QDesktopServices::openUrl(QUrl::fromLocalFile(item -> parent() -> fullpath()));
 }
 
 QJsonObject ItemList::toJSON() {
