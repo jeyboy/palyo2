@@ -181,8 +181,7 @@ void Player::setTrackbarMax(qint64 duration) {
 }
 
 void Player::start() {
-    if (playedItem() == 0 && activePlaylist != 0) {
-        playlist = activePlaylist;
+    if ((played == 0 || playlist != activePlaylist) && activePlaylist != 0) {
         activePlaylist -> proceedNext();
     } else play();
 }
