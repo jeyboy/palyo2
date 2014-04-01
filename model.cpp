@@ -180,11 +180,9 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
         if (!item -> getState() -> isUnprocessed()) {
             beginRemoveRows(parent, row, row);
             if (parentItem -> removeChildren(row, 1)) {
-                count--;
+                emit itemsCountChanged(--count);
             }
             endRemoveRows();
-
-            emit itemsCountChanged(count);
 
             return true;
         }

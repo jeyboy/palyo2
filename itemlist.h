@@ -49,6 +49,7 @@ public:
     void markSelectedAsLiked();
 
     void execItem(ModelItem * item);
+    void removeItem(ModelItem * item);
 
 protected:
     ModelItem * activeItem(bool next = true);

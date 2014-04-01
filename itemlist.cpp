@@ -1,6 +1,8 @@
 #include "itemlist.h"
 #include <QDebug>
 
+//TODO: before remove file - stop playing and delete row
+
 ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {
     settings = settingsSet;
     setIndentation(10);
@@ -62,8 +64,6 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
     if (event ->key() == Qt::Key_Enter || event ->key() == Qt::Key_Return) {
         QModelIndexList list = selectedIndexes();
 
-        qDebug() << list;
-
         if (list.count() > 0) {
             ModelItem * item = model -> getItem(list.first());
             execItem(item);
@@ -71,18 +71,10 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
     } else if (event ->key() == Qt::Key_Delete) {
         QModelIndexList list = selectedIndexes();
         QModelIndex modelIndex;
-        bool delFile = isRemoveFileWithItem();
 
-        QString delPath;
         for(int i = list.count() - 1; i >= 0; i--) {
             modelIndex = list.at(i);
-
-            if (delFile) {
-                delPath = model -> getItem(modelIndex) -> fullpath();
-                QFile::remove(delPath);
-            }
-
-            model -> removeRow(modelIndex.row(), modelIndex.parent());
+            removeItem(model -> getItem(modelIndex));
         }
     } else { QTreeView::keyPressEvent(event); }
 }
@@ -145,16 +137,10 @@ void ItemList::deleteCurrentProceedNext() {
 
     item = nextItem(item);
 
+    // check logic !!!
     if (Player::instance() -> currentPlaylist() == this) {
         if (Player::instance() -> playedItem()) {
-            bool delFile = isRemoveFileWithItem();
-
-            QModelIndex modelIndex = model -> index(Player::instance() -> playedItem());
-            if (delFile) {
-                QString delPath = Player::instance() -> playedItem() -> fullpath();
-                QFile::remove(delPath);
-            }
-            model -> removeRow(modelIndex.row(), modelIndex.parent());
+            removeItem(Player::instance() -> playedItem());
         }
     }
 
@@ -333,6 +319,8 @@ void ItemList::markSelectedAsLiked() {
     }
 }
 
+////////////////////////////////////////////////////////////
+
 void ItemList::execItem(ModelItem * item) {
     if (item) {
         scrollTo(model -> index(item));
@@ -341,6 +329,21 @@ void ItemList::execItem(ModelItem * item) {
         else {
             item -> getState() -> setNotExist();
             model -> refreshItem(item);
+        }
+    }
+}
+
+void ItemList::removeItem(ModelItem * item) {
+    QModelIndex modelIndex = model -> index(item);
+    QString delPath = item -> fullpath();
+
+    if (Player::instance() -> playedItem() == item) {
+        Player::instance() -> removePlaylist();
+    }
+
+    if (model -> removeRow(modelIndex.row(), modelIndex.parent())) {
+        if (isRemoveFileWithItem()) {
+            QFile::remove(delPath);
         }
     }
 }

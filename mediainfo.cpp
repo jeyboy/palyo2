@@ -5,12 +5,14 @@ MediaInfo::MediaInfo(QString filepath) {
     fileName = filepath.toStdWString();
     TagLib::FileRef f(fileName.c_str(), false, TagLib::AudioProperties::Fast);
 
-    artist = QString::fromStdWString(f.tag() -> artist().toWString());
-    title = QString::fromStdWString(f.tag() -> title().toWString());
-    album = QString::fromStdWString(f.tag() -> album().toWString());
-    genre = QString::fromStdWString(f.tag() -> genre().toWString());
-    year = f.tag() -> year();
-    track = f.tag() -> track();
+    if (!f.isNull()) {
+        artist = QString::fromStdWString(f.tag() -> artist().toWString());
+        title = QString::fromStdWString(f.tag() -> title().toWString());
+        album = QString::fromStdWString(f.tag() -> album().toWString());
+        genre = QString::fromStdWString(f.tag() -> genre().toWString());
+        year = f.tag() -> year();
+        track = f.tag() -> track();
+    }
 }
 
 void MediaInfo::initInfo() {
