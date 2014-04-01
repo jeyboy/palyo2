@@ -25,5 +25,6 @@
         <file alias="prev">icons/prev.png</file>
         <file alias="remove">icons/remove.png</file>
         <file alias="shuffle">icons/shuffle.png</file>
+        <file alias="progress">icons/progress.png</file>
     </qresource>
 </RCC>

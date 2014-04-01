@@ -229,6 +229,15 @@ QToolBar* MainWindow::createMediaBar() {
     slider -> setMinimumSize(30, 30);
 //    slider -> setTracking(false); // send change value only on release slider
 
+//    "QSlider::sub-page {"
+//      "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+//          "stop: 0 #66e, stop: 1 #bbf);"
+//      "background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,"
+//          "stop: 0 #bbf, stop: 1 #55f);"
+//      "border: 1px solid #777;"
+//      "border-radius: 4px;"
+//    "}"
+
 //    setStyleSheet("QSlider::handle {image: url(:/resources/image.png);}");
     slider -> setStyleSheet(QString(
                                               "QSlider::groove {"
@@ -246,10 +255,7 @@ QToolBar* MainWindow::createMediaBar() {
                                               "}"
 
                                               "QSlider::sub-page {"
-                                                "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                                                    "stop: 0 #66e, stop: 1 #bbf);"
-                                                "background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,"
-                                                    "stop: 0 #bbf, stop: 1 #55f);"
+                                                "background-image: url(:/progress);"
                                                 "border: 1px solid #777;"
                                                 "border-radius: 4px;"
                                               "}"
@@ -277,8 +283,7 @@ QToolBar* MainWindow::createMediaBar() {
                                               "}"
 
                                               "QSlider::handle {"
-                                                "background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-                                                    "stop:0 #eee, stop:1 #ccc);"
+                                                "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);"
                                                 "border: 1px solid #777;"
                                                 "margin: 0 -1px;"
                                                 "border-radius: 4px;"
@@ -293,8 +298,7 @@ QToolBar* MainWindow::createMediaBar() {
                                               "}"
 
                                               "QSlider::handle:hover {"
-                                                "background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
-                                                    "stop:0 #fff, stop:1 #ddd);"
+                                                "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #fff, stop:1 #ddd);"
                                                 "border: 1px solid #444;"
                                                 "border-radius: 4px;"
                                               "}"
