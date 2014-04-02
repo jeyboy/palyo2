@@ -41,7 +41,7 @@ private:
 
     Library() : QObject() {
         catalogs = new QHash<QChar,  QHash<QString, int>* >();
-        catalogs_state = QList<QChar>();
+        catalogs_state = QHash<QChar, int>();
         items = QList<LibraryItem *>();
         itemsInitResult = QFuture<void>();
         catsSaveResult = QFuture<void>();
@@ -87,8 +87,7 @@ private:
     void save();
 
     QHash<QChar, QHash<QString, int>* > * catalogs;
-    QList<QChar> catalogs_state;
-//    QHash<QChar, int> catalogs_state;
+    QHash<QChar, int> catalogs_state;
 
     QList<LibraryItem *> items;
     QTimer *timer;

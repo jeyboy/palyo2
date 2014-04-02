@@ -107,27 +107,30 @@ QString Library::prepareName(QString gipoTitle, bool additional) {
 bool Library::proceedItemNames(QList<QString> * names, int state) {
     QHash<QString, int> * cat;
     QChar letter;
-    bool catState = false;
+    bool catState = false, catalog_has_item, catalog_state_has_item;
     QString name;
     QList<QString>::iterator i;
 
-    // test needed
     for (i = names -> begin(); i != names -> end(); ++i) {
         name = (*i);
-        qDebug() << "Name: " << name;
         letter = getCatalogChar(name);
         cat = getCatalog(letter);
 
-        if (cat -> contains(name)) {
-            catState = catState || !cat -> contains(name);
-            if (cat -> value(name) > state)
-                cat -> insert(name, state);
-        } else {
-            cat -> insert(name, state);
-        }
+        catalog_has_item = cat -> contains(name);
+        qDebug() << "proceed Name " << name;
 
-        if (!catalogs_state.contains(letter))
-            catalogs_state.append(letter);
+        if (!catalog_has_item || (catalog_has_item && cat -> value(name) > state)) {
+            qDebug() << "insert Name " << name;
+            cat -> insert(name, state);
+
+            catalog_state_has_item = catalogs_state.contains(letter);
+
+            if (catalog_has_item) {
+                catalogs_state.insert(letter, -1);
+            } else {
+                catalogs_state.insert(letter, cat -> count() - 2); // on loop start added +1
+            }
+        }
     }
 
     return catState;
@@ -219,23 +222,31 @@ QHash<QString, int> * Library::load(const QChar letter) {
 // split cats on overwritten and appended
 void Library::save() {
     QHash<QString, int> * res;
-    QString path;
-    QChar letter;
-    QList<QChar>::iterator i;
+    QString path, val;
+    QHash<QChar, int>::iterator i = catalogs_state.begin();
+    QFlags<QIODevice::OpenModeFlag> openFlags;
+    QList<QString>::iterator cat_i;
 
-    for (i = catalogs_state.begin(); i != catalogs_state.end(); ) {
-        letter = (*i);
+    while(i != catalogs_state.end()) {
+        res = catalogs -> value(i.key());
+        path = libraryPath() + "cat_" + i.key();
 
-        res = catalogs -> value(letter);
-
-        path = libraryPath() + "cat_" + letter;
+        openFlags = QIODevice::WriteOnly | QIODevice::Text;
+        if (i.value() != -1)
+            openFlags |= QIODevice::Append;
 
         QFile f(path);
-        if (f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        if (f.open(openFlags)) {
             QTextStream out(&f);
 
-            foreach(QString key, res -> keys()) {
-                out << QString::number(res -> value(key)) + key + "\n";
+            cat_i = res -> keys().begin();
+            cat_i += (i.value() + 1);
+
+            while(cat_i != res -> keys().end()) {
+                val = *cat_i;
+                qDebug() << val;
+                out << QString::number(res -> value(val)) + val + "\n";
+                cat_i++;
             }
 
             f.close();
