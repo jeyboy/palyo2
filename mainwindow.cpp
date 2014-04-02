@@ -238,11 +238,14 @@ QToolBar* MainWindow::createMediaBar() {
 //      "border-radius: 4px;"
 //    "}"
 
+//    "background-image: url(:/progress);"
+
 //    setStyleSheet("QSlider::handle {image: url(:/resources/image.png);}");
     slider -> setStyleSheet(QString(
                                               "QSlider::groove {"
                                                 "border: 1px solid #bbb;"
-                                                "background: white;"
+                                                "background-image: url(:/slideback);"
+                                                "background-position: center center;"
                                                 "border-radius: 4px;"
                                               "}"
 
@@ -254,8 +257,12 @@ QToolBar* MainWindow::createMediaBar() {
                                                 "width: 18px;"
                                               "}"
 
+                                              "QSlider::add-page {"
+                                                "background-color: rgba(255, 255, 255, 100%);"
+                                              "}"
+
                                               "QSlider::sub-page {"
-                                                "background-image: url(:/progress);"
+                                                "background-color: rgba(255, 255, 255, 30%);"
                                                 "border: 1px solid #777;"
                                                 "border-radius: 4px;"
                                               "}"

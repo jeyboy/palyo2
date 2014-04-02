@@ -208,7 +208,6 @@ QHash<QString, int> * Library::load(const QChar letter) {
             state = ar.mid(0, 1).toInt();
             name = QString(ar.mid(1, ar.length() - 3));
             res -> insert(name, state);
-            qDebug() << name << "\n" << state;
         }
 
         f.close();
@@ -230,15 +229,12 @@ void Library::save() {
         res = catalogs -> value(letter);
 
         path = libraryPath() + "cat_" + letter;
-        qDebug() << " :: " << path;
 
         QFile f(path);
         if (f.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qDebug() << " :: in " << path << " | " << res -> keys();
             QTextStream out(&f);
 
             foreach(QString key, res -> keys()) {
-                qDebug() << QString::number(res -> value(key)) + key + "\n";
                 out << QString::number(res -> value(key)) + key + "\n";
             }
 

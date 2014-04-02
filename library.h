@@ -88,6 +88,7 @@ private:
 
     QHash<QChar, QHash<QString, int>* > * catalogs;
     QList<QChar> catalogs_state;
+//    QHash<QChar, int> catalogs_state;
 
     QList<LibraryItem *> items;
     QTimer *timer;
