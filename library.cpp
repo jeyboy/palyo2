@@ -25,6 +25,8 @@ bool Library::addItem(ModelItem * item, int state) {
         state = 1;
     else state = 0;
 
+    qDebug() << item -> fullpath();
+
     return proceedItemNames(item -> names, state);
 }
 
@@ -117,10 +119,9 @@ bool Library::proceedItemNames(QList<QString> * names, int state) {
         cat = getCatalog(letter);
 
         catalog_has_item = cat -> contains(name);
-        qDebug() << "proceed Name " << name;
 
-        if (!catalog_has_item || (catalog_has_item && cat -> value(name) > state)) {
-            qDebug() << "insert Name " << name;
+        if (!catalog_has_item || (catalog_has_item && cat -> value(name) < state)) {
+            qDebug() << "********************************** insert Name " << name;
             cat -> insert(name, state);
 
             catalog_state_has_item = catalogs_state.contains(letter);
@@ -128,7 +129,10 @@ bool Library::proceedItemNames(QList<QString> * names, int state) {
             if (catalog_has_item) {
                 catalogs_state.insert(letter, -1);
             } else {
-                catalogs_state.insert(letter, cat -> count() - 2); // on loop start added +1
+                if (!catalog_state_has_item) {
+                    qDebug() << "--------------------" << cat -> keys();
+                    catalogs_state.insert(letter, cat -> count() - 2); // on loop start added +1
+                }
             }
         }
     }

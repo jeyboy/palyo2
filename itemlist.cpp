@@ -331,7 +331,7 @@ void ItemList::mouseMoveEvent(QMouseEvent * event) {
 
 void ItemList::markSelectedAsLiked() {
     ModelItem * temp;
-
+    // add library update
     foreach (const QModelIndex &index, selectedIndexes()) {
         if (index.isValid()) {
             temp = model -> getItem(index);
