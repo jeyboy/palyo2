@@ -25,8 +25,6 @@ bool Library::addItem(ModelItem * item, int state) {
         state = 1;
     else state = 0;
 
-    qDebug() << item -> fullpath();
-
     return proceedItemNames(item -> names, state);
 }
 
@@ -111,6 +109,7 @@ bool Library::proceedItemNames(QList<QString> * names, int state) {
     QChar letter;
     bool catState = false, catalog_has_item, catalog_state_has_item;
     QString name;
+    QList<QString> * saveList = 0;
     QList<QString>::iterator i;
 
     for (i = names -> begin(); i != names -> end(); ++i) {
@@ -125,14 +124,22 @@ bool Library::proceedItemNames(QList<QString> * names, int state) {
             cat -> insert(name, state);
 
             catalog_state_has_item = catalogs_state.contains(letter);
+            if (catalog_state_has_item)
+                saveList = catalogs_state.value(letter);
 
             if (catalog_has_item) {
-                catalogs_state.insert(letter, -1);
+                if (saveList)
+                    delete saveList;
+                catalogs_state.insert(letter, 0);
             } else {
                 if (!catalog_state_has_item) {
-                    qDebug() << "--------------------" << cat -> keys();
-                    catalogs_state.insert(letter, cat -> count() - 2); // on loop start added +1
+                    if (saveList == 0) {
+                        saveList = new QList<QString>();
+                    }
                 }
+
+                saveList -> append(name);
+                catalogs_state.insert(letter, saveList);
             }
         }
     }
@@ -223,30 +230,33 @@ QHash<QString, int> * Library::load(const QChar letter) {
     return res;
 }
 
-// split cats on overwritten and appended
 void Library::save() {
     QHash<QString, int> * res;
     QString path, val;
-    QHash<QChar, int>::iterator i = catalogs_state.begin();
+    QHash<QChar, QList<QString> *>::iterator i = catalogs_state.begin();
     QFlags<QIODevice::OpenModeFlag> openFlags;
-    QList<QString>::iterator cat_i;
+    QList<QString>::iterator cat_i, end_point;
 
     while(i != catalogs_state.end()) {
         res = catalogs -> value(i.key());
         path = libraryPath() + "cat_" + i.key();
 
         openFlags = QIODevice::WriteOnly | QIODevice::Text;
-        if (i.value() != -1)
+        if (i.value() != 0) {
             openFlags |= QIODevice::Append;
+            cat_i = i.value() -> begin();
+            end_point = i.value() -> end();
+        } else {
+            cat_i = res -> keys().begin();
+            end_point = res -> keys().end();
+        }
 
         QFile f(path);
         if (f.open(openFlags)) {
             QTextStream out(&f);
 
-            cat_i = res -> keys().begin();
-            cat_i += (i.value() + 1);
-
-            while(cat_i != res -> keys().end()) {
+            // some bug with first value - in some cases it empty :(
+            while(cat_i != end_point) {
                 val = *cat_i;
                 qDebug() << val;
                 out << QString::number(res -> value(val)) + val + "\n";
@@ -254,6 +264,10 @@ void Library::save() {
             }
 
             f.close();
+
+            if (i.value() != 0)
+                delete i.value();
+
             i = catalogs_state.erase(i);
         } else {
             i++;
