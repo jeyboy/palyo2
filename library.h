@@ -85,6 +85,7 @@ private:
 
     QHash<QString, int> * load(const QChar letter);
     void save();
+    bool fileDump(QChar key, QList<QString> & keysList, QFlags<QIODevice::OpenModeFlag> openFlags);
 
     QHash<QChar, QHash<QString, int>* > * catalogs;
     QHash<QChar, QList<QString> *> catalogs_state;

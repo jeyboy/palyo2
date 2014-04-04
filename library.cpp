@@ -232,45 +232,52 @@ QHash<QString, int> * Library::load(const QChar letter) {
 
 void Library::save() {
     QHash<QString, int> * res;
-    QString path, val;
     QHash<QChar, QList<QString> *>::iterator i = catalogs_state.begin();
-    QFlags<QIODevice::OpenModeFlag> openFlags;
-    QList<QString>::iterator cat_i, end_point;
+    bool result;
 
     while(i != catalogs_state.end()) {
         res = catalogs -> value(i.key());
-        path = libraryPath() + "cat_" + i.key();
 
-        openFlags = QIODevice::WriteOnly | QIODevice::Text;
-        if (i.value() != 0) {
-            openFlags |= QIODevice::Append;
-            cat_i = i.value() -> begin();
-            end_point = i.value() -> end();
+        if (i.value()) {
+            result = fileDump(i.key(), *i.value(), QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
+
+            if(res)
+              delete i.value();
         } else {
-            cat_i = res -> keys().begin();
-            end_point = res -> keys().end();
+            QList<QString> keys = res -> keys();
+            result = fileDump(i.key(), keys, QIODevice::WriteOnly | QIODevice::Text);
         }
 
-        QFile f(path);
-        if (f.open(openFlags)) {
-            QTextStream out(&f);
-
-            // some bug with first value - in some cases it empty :(
-            while(cat_i != end_point) {
-                val = *cat_i;
-                qDebug() << val;
-                out << QString::number(res -> value(val)) + val + "\n";
-                cat_i++;
-            }
-
-            f.close();
-
-            if (i.value() != 0)
-                delete i.value();
-
+        if (result) {
             i = catalogs_state.erase(i);
         } else {
             i++;
         }
     }
+}
+
+bool Library::fileDump(QChar key, QList<QString> & keysList, QFlags<QIODevice::OpenModeFlag> openFlags) {
+    QString path, val;
+    QList<QString>::iterator cat_i = keysList.begin();
+    QHash<QString, int> * res = catalogs -> value(key);
+
+    path = libraryPath() + "cat_" + key;
+
+    QFile f(path);
+    if (f.open(openFlags)) {
+        QTextStream out(&f);
+
+        while(cat_i != keysList.end()) {
+            val = *cat_i;
+            qDebug() << "Curr val " << val;
+            out << QString::number(res -> value(val)) + val + "\n";
+            cat_i++;
+        }
+
+        f.close();
+
+        return true;
+    }
+
+    return false;
 }
