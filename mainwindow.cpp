@@ -334,7 +334,8 @@ QToolBar* MainWindow::createMediaBar() {
 
     ptb -> addSeparator();
     ptb -> addAction(QPixmap(QString(":/like")), "Liked", this, SLOT(slotNoImpl()));
-    ptb -> addAction(QPixmap(QString(":/next")), "Next track", this, SLOT(slotNoImpl()));
+    ptb -> addAction(QPixmap(QString(":/prev")), "Prev track", this, SLOT(prevItemTriggered()));
+    ptb -> addAction(QPixmap(QString(":/next")), "Next track", this, SLOT(nextItemTriggered()));
     ptb -> adjustSize();
 
     return ptb;
