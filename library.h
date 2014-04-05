@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QtConcurrent/QtConcurrent>
 #include <QApplication>
+#include <QVector>
 
 #include "mediainfo.h"
 #include "model_item.h"
@@ -42,8 +43,6 @@ private:
     Library() : QObject() {
         catalogs = new QHash<QChar,  QHash<QString, int>* >();
         catalogs_state = QHash<QChar, QList<QString> *>();
-        items = QList<LibraryItem *>();
-        itemsInitResult = QFuture<void>();
         catsSaveResult = QFuture<void>();
 
         timer = new QTimer();
@@ -61,7 +60,7 @@ private:
         delete timer;
     }
 
-    void itemsInit();
+    void itemsInit(LibraryItem * libItem);
 
     QString sitesFilter(QString title);
     QString forwardNumberPreFilter(QString title);
@@ -90,10 +89,8 @@ private:
     QHash<QChar, QHash<QString, int>* > * catalogs;
     QHash<QChar, QList<QString> *> catalogs_state;
 
-    QList<LibraryItem *> items;
     QTimer *timer;
 
-    QFuture<void> itemsInitResult;
     QFuture<void> catsSaveResult;
 };
 

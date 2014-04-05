@@ -11,9 +11,7 @@ Library *Library::instance() {
 
 void Library::initItem(LibraryItem * libItem) {
     libItem -> item() -> getState() -> setProceed();
-    items.insert(0, libItem);
-    if (!itemsInitResult.isRunning())
-        itemsInitResult = QtConcurrent::run(this, &Library::itemsInit);
+    QtConcurrent::run(this, &Library::itemsInit, libItem);
 }
 
 bool Library::addItem(ModelItem * item, int state) {
@@ -71,18 +69,12 @@ void Library::saveCatalogs() {
         catsSaveResult = QtConcurrent::run(this, &Library::save);
 }
 
-void Library::itemsInit() {
-    LibraryItem * temp;
-
-    while(!items.isEmpty()) {
-        temp = items.takeFirst();
-
-        if (QFile::exists(temp -> item() -> fullpath())) {
-            temp -> item() -> names = getNamesForItem(temp -> item());
-            restoreItemState(temp);
-        } else {
-            temp -> refresh(STATE_NOT_EXIST);
-        }
+void Library::itemsInit(LibraryItem * libItem) {
+    if (libItem -> item() -> isExist()) {
+        libItem -> item() -> names = getNamesForItem(libItem -> item());
+        restoreItemState(libItem);
+    } else {
+        libItem -> refresh(STATE_NOT_EXIST);
     }
 }
 
@@ -220,7 +212,7 @@ QHash<QString, int> * Library::load(const QChar letter) {
         while(!f.atEnd()) {
             ar = f.readLine();
             state = ar.mid(0, 1).toInt();
-            name = QString(ar.mid(1, ar.length() - 3));
+            name = QString::fromLocal8Bit(ar.mid(1, ar.length() - 3));
             res -> insert(name, state);
         }
 

@@ -32,7 +32,6 @@ QVariant Model::data(const QModelIndex &index, int role) const {
                qDebug() << item -> fullpath();
            }
 
-
            return item -> data(index.column());
         }
         case Qt::DecorationRole: {
@@ -62,7 +61,6 @@ QVariant Model::data(const QModelIndex &index, int role) const {
             return QFont("Times New Roman", 10, QFont::Bold);
         case Qt::UserRole:
             item = getItem(index);
-//            qDebug() << item -> fullpath() << " | " << item -> getState() -> getValue() << " | " << item -> getState() -> getFuncValue();
             return item -> getState() -> currStateValue();
 
         default: return QVariant();

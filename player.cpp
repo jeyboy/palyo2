@@ -240,7 +240,7 @@ void Player::onMediaStatusChanged(QMediaPlayer::MediaStatus status) {
 
         case EndOfMedia:
         case InvalidMedia: {
-            qDebug() << "Party time";
+            qDebug() << "Piza time";
             if (playlist) {
                 if (playlist -> isPlaylist()) {
                     playlist -> proceedNext();

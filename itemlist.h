@@ -50,7 +50,7 @@ public:
 
     void markSelectedAsLiked();
 
-    void execItem(ModelItem * item);
+    bool execItem(ModelItem * item);
     void removeItem(ModelItem * item);
 
 protected:

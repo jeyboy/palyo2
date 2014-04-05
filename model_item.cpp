@@ -229,6 +229,10 @@ QString ModelItem::fullpath() const {
     return path_buff.mid(1) + name + '.' + extension;
 }
 
+bool ModelItem::isExist() {
+    return QFile::exists(fullpath());
+}
+
 //////////////////////////properties///////////////////////////////
 
 ModelItemState * ModelItem::getState() const {

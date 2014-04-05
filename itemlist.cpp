@@ -345,16 +345,20 @@ void ItemList::markSelectedAsLiked() {
 
 ////////////////////////////////////////////////////////////
 
-void ItemList::execItem(ModelItem * item) {
+bool ItemList::execItem(ModelItem * item) {
     if (item) {
         scrollTo(model -> index(item));
-        if (QFile::exists(item -> fullpath()))
+        if (item -> isExist()) {
             Player::instance() -> playItem(this, item);
+            return true;
+        }
         else {
             item -> getState() -> setNotExist();
             model -> refreshItem(item);
         }
-    }
+    } else return true;
+
+    return false;
 }
 
 void ItemList::removeItem(ModelItem * item) {

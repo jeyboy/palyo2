@@ -1,6 +1,7 @@
 #ifndef MODEL_ITEM_H
 #define MODEL_ITEM_H
 
+#include <QFile>
 #include <QDir>
 #include <QVariant>
 #include <QAbstractItemModel>
@@ -46,6 +47,8 @@ public:
     void setState(int new_state, bool append_to_library = true);
 
     QJsonObject toJSON();
+
+    bool isExist();
 
     QHash<QString, ModelItem *> * folders;
     QList<QString> * names;
