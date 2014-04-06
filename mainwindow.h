@@ -41,6 +41,7 @@ public:
     QToolBar* createToolBar(QString name);
     QToolBar* createMediaBar();
     QToolBar* createAdditionalMediaBar();
+    QToolBar* createPositionMediaBar();
     QToolBar* createControlToolBar();
     void createToolbars();
     void addPanelButton(QString name, QString path, QToolBar * bar);
@@ -90,6 +91,8 @@ private:
     QxtGlobalShortcut * prev;
 
     DataStore * settings;
+
+    QPalette pal;
 };
 
 #endif // MAINWINDOW_H

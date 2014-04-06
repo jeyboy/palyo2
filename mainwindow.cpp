@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this -> setWindowTitle("Playo");
+    pal.setColor(QPalette::Button, QColor("#E1E0E0"));
 
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
 
@@ -105,6 +106,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 curr_bar = createMediaBar();
             } else if (barName == "Media+") {
                 curr_bar = createAdditionalMediaBar();
+            } else if (barName == "Media+Position") {
+                curr_bar = createPositionMediaBar();
             } else if (barName == "Controls") {
                 curr_bar = createControlToolBar();
             } else {
@@ -184,6 +187,7 @@ void MainWindow::createToolbars() {
 //  addDockWidget
 
   addToolBar(Qt::TopToolBarArea, createMediaBar());
+  addToolBar(Qt::TopToolBarArea, createPositionMediaBar());
   addToolBarBreak();
   addToolBar(Qt::TopToolBarArea, createAdditionalMediaBar());
   addToolBar(Qt::TopToolBarArea, createControlToolBar());
@@ -209,8 +213,12 @@ QDockWidget * MainWindow::createDockWidget() {
 QToolBar* MainWindow::createMediaBar() {
     QToolBar* ptb = new QToolBar("Media");
     ptb -> setObjectName("_Media");
+
+    ptb -> setAutoFillBackground(true);
+    ptb -> setPalette(pal);
+
     connect(ptb, SIGNAL(visibilityChanged(bool)), this, SLOT(mediaVisibilityChanged(bool)));
-    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
+//    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
     ptb -> setMinimumHeight(30);
 
 
@@ -225,7 +233,18 @@ QToolBar* MainWindow::createMediaBar() {
     timeLabel -> display("00:00");
     ptb -> addWidget(timeLabel);
     Player::instance() -> setTimePanel(timeLabel);
-    ptb->addSeparator();
+    ptb -> adjustSize();
+
+    return ptb;
+}
+
+QToolBar* MainWindow::createPositionMediaBar() {
+    QToolBar* ptb = new QToolBar("Media+Position");
+    ptb -> setObjectName("_Media+Position");
+    ptb -> setAutoFillBackground(true);
+    ptb -> setPalette(pal);
+    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
+    ptb -> setMinimumHeight(30);
 
     QSlider * slider = new QSlider();
     slider -> setStyle(new SliderStyle());
@@ -343,6 +362,8 @@ QToolBar* MainWindow::createMediaBar() {
 QToolBar* MainWindow::createAdditionalMediaBar() {
     QToolBar* ptb = new QToolBar("Media+");
     ptb -> setObjectName("_Media+");
+    ptb -> setAutoFillBackground(true);
+    ptb -> setPalette(pal);
 //    connect(ptb, SIGNAL(visibilityChanged(bool)), this, SLOT(mediaVisibilityChanged(bool)));
 //    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
     ptb -> setMinimumHeight(30);
@@ -358,6 +379,8 @@ QToolBar* MainWindow::createAdditionalMediaBar() {
 QToolBar* MainWindow::createControlToolBar() {
     QToolBar* ptb = new QToolBar("Controls");
     ptb -> setObjectName("_Controls");
+    ptb -> setAutoFillBackground(true);
+    ptb -> setPalette(pal);
 //    ptb -> setMinimumWidth(75);
 
     ptb->addAction(QPixmap(QString(":/add")), "Add new tab", this, SLOT(showAttTabDialog()));
@@ -409,7 +432,11 @@ void MainWindow::closeEvent(QCloseEvent *event) {
             curr_tab.insert("area", toolBarArea(bar));
             curr_tab.insert("title", bar -> windowTitle());
 
-            if (bar -> windowTitle() != "Media" && bar -> windowTitle() != "Media+" && bar -> windowTitle() != "Controls") {
+            if (bar -> windowTitle() != "Media"
+                    && bar -> windowTitle() != "Media+"
+                    && bar -> windowTitle() != "Media+Position"
+                    && bar -> windowTitle() != "Controls"
+               ) {
                 actions = bar -> actions();
                 if (actions.length() > 0) {
                     QJsonArray action_array = QJsonArray();
