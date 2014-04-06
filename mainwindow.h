@@ -40,6 +40,7 @@ public:
     QDockWidget * createDockWidget();
     QToolBar* createToolBar(QString name);
     QToolBar* createMediaBar();
+    QToolBar* createAdditionalMediaBar();
     QToolBar* createControlToolBar();
     void createToolbars();
     void addPanelButton(QString name, QString path, QToolBar * bar);

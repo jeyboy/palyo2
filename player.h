@@ -28,6 +28,7 @@ public:
     void setPlayButton(QAction * playAction);
     void setPauseButton(QAction * pauseAction);
     void setStopButton(QAction * stopAction);
+    void setLikeButton(QAction * likeAction);
 
     void setTrackBar(QSlider * trackBar);
     void setTimePanel(QLCDNumber * timePanel);
@@ -45,6 +46,7 @@ public:
 
 private slots:
     void start();
+    void like();
 
     void changeTrackbarValue(int);
     void setTrackbarValue(qint64);
@@ -67,6 +69,7 @@ private:
        playButton = 0;
        pauseButton = 0;
        stopButton = 0;
+       likeButton = 0;
 
        activePlaylist = 0;
 
@@ -86,6 +89,7 @@ private:
     QAction * playButton;
     QAction * pauseButton;
     QAction * stopButton;
+    QAction * likeButton;
 
     int last_duration;
 

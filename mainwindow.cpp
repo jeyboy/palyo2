@@ -103,6 +103,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
             if (barName == "Media") {
                 curr_bar = createMediaBar();
+            } else if (barName == "Media+") {
+                curr_bar = createAdditionalMediaBar();
             } else if (barName == "Controls") {
                 curr_bar = createControlToolBar();
             } else {
@@ -182,6 +184,8 @@ void MainWindow::createToolbars() {
 //  addDockWidget
 
   addToolBar(Qt::TopToolBarArea, createMediaBar());
+  addToolBarBreak();
+  addToolBar(Qt::TopToolBarArea, createAdditionalMediaBar());
   addToolBar(Qt::TopToolBarArea, createControlToolBar());
   addToolBar(Qt::BottomToolBarArea, createToolBar("Folder linker 1"));
 }
@@ -331,11 +335,21 @@ QToolBar* MainWindow::createMediaBar() {
     Player::instance() -> setTrackBar(slider);
 
     ptb -> addWidget(slider);
+    ptb -> adjustSize();
 
-    ptb -> addSeparator();
-    ptb -> addAction(QPixmap(QString(":/like")), "Liked", this, SLOT(slotNoImpl()));
-    ptb -> addAction(QPixmap(QString(":/prev")), "Prev track", this, SLOT(prevItemTriggered()));
-    ptb -> addAction(QPixmap(QString(":/next")), "Next track", this, SLOT(nextItemTriggered()));
+    return ptb;
+}
+
+QToolBar* MainWindow::createAdditionalMediaBar() {
+    QToolBar* ptb = new QToolBar("Media+");
+    ptb -> setObjectName("_Media+");
+//    connect(ptb, SIGNAL(visibilityChanged(bool)), this, SLOT(mediaVisibilityChanged(bool)));
+//    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
+    ptb -> setMinimumHeight(30);
+
+    ptb -> addAction(QPixmap(":/prev"), "Prev track", this, SLOT(prevItemTriggered()));
+    Player::instance() -> setLikeButton(ptb -> addAction(QPixmap(":/like"), "Liked"));
+    ptb -> addAction(QPixmap(":/next"), "Next track", this, SLOT(nextItemTriggered()));
     ptb -> adjustSize();
 
     return ptb;
@@ -395,7 +409,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
             curr_tab.insert("area", toolBarArea(bar));
             curr_tab.insert("title", bar -> windowTitle());
 
-            if (bar -> windowTitle() != "Media" && bar -> windowTitle() != "Controls") {
+            if (bar -> windowTitle() != "Media" && bar -> windowTitle() != "Media+" && bar -> windowTitle() != "Controls") {
                 actions = bar -> actions();
                 if (actions.length() > 0) {
                     QJsonArray action_array = QJsonArray();
@@ -479,13 +493,16 @@ bool MainWindow::isToolbarNameUniq(QString name) {
 /////////////////////////////////////////////////////////////////////////////////////
 
 void MainWindow::nextItemTriggered() {
-   tabber -> currentTab() -> getList() -> proceedNext();
+    if (tabber -> currentTab())
+        tabber -> currentTab() -> getList() -> proceedNext();
 }
 void MainWindow::nextItemWithDelTriggered() {
-   tabber -> currentTab() -> getList() -> deleteCurrentProceedNext();
+    if (tabber -> currentTab())
+        tabber -> currentTab() -> getList() -> deleteCurrentProceedNext();
 }
 void MainWindow::prevItemTriggered() {
-   tabber -> currentTab() -> getList() -> proceedPrev();
+    if (tabber -> currentTab())
+        tabber -> currentTab() -> getList() -> proceedPrev();
 }
 
 void MainWindow::folderDropped(QString name, QString path) {

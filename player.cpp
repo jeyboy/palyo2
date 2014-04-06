@@ -45,6 +45,12 @@ void Player::setStopButton(QAction * stopAction) {
     connect((QObject *)stopAction, SIGNAL(triggered(bool)), this, SLOT(stop()));
 }
 
+void  Player::setLikeButton(QAction * likeAction) {
+    likeButton = likeAction;
+    likeButton -> setVisible(false);
+    connect((QObject *)likeAction, SIGNAL(triggered(bool)), this, SLOT(like()));
+}
+
 void Player::setPlaylist(ItemList * playlist) {
    stop();
    playlist = playlist;
@@ -186,6 +192,10 @@ void Player::start() {
     } else play();
 }
 
+void Player::like() {
+    played -> setState(STATE_LIKED);
+}
+
 void Player::changeTrackbarValue(int pos) {
     emit setPosition(pos);
 }
@@ -204,6 +214,7 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
             playButton -> setVisible(true);
             pauseButton -> setVisible(false);
             stopButton -> setVisible(false);
+            likeButton -> setVisible(false);
             break;
         }
 
@@ -216,6 +227,7 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
             playButton -> setVisible(false);
             pauseButton -> setVisible(true);
             stopButton -> setVisible(true);
+            likeButton -> setVisible(true);
             break;
         }
 
@@ -223,6 +235,7 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
             playButton -> setVisible(true);
             pauseButton -> setVisible(false);
             stopButton -> setVisible(true);
+            likeButton -> setVisible(true);
             break;
         }
     }
