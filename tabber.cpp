@@ -7,6 +7,17 @@
 //TODO:// add tab position for each tab
 //    tabber->setTabPosition(TabPosition);
 
+void Tabber::setNoTabsStyle() {
+    tabber -> setStyleSheet(
+        "QTabWidget::pane {"
+            "border-top: 1px solid #C2C7CB;"
+            "background-image: url(:/tab_back);"
+            "background-position: center center;"
+            "background-repeat: no-repeat;"
+        "}"
+    );
+}
+
 void Tabber::handleCurrentChanged(int index) {
     if (index == -1) {
         Player::instance() -> setActivePlaylist(0);
@@ -28,10 +39,20 @@ void Tabber::handleTabCloseRequested(int index) {
     }
 
     tabber -> removeTab(index);
+
+    if (tabber -> count() == 0) {
+        setNoTabsStyle();
+    }
 }
 
 Tabber::Tabber(QTabWidget * container) {
     tabber = container;
+
+
+    setNoTabsStyle();
+//    if (tabber -> count() == 0) {
+//        setNoTabsStyle();
+//    }
 
     connect(tabber, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
     connect(tabber, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
@@ -48,6 +69,7 @@ Tabber::~Tabber() {
 int Tabber::addTab(QString name, CBHash settings) {
     int index = tabber -> addTab(new Tab(settings, tabber), name);
     tabber -> setCurrentIndex(index);
+    tabber -> setStyleSheet("");
     return index;
 }
 

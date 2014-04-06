@@ -23,6 +23,8 @@ public:
     void save();
 
 private:
+    void setNoTabsStyle();
+
     QTabWidget * tabber;
     DataStore * store;
 

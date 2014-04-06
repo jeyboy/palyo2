@@ -108,6 +108,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 curr_bar = createAdditionalMediaBar();
             } else if (barName == "Media+Position") {
                 curr_bar = createPositionMediaBar();
+            } else if (barName == "Media+Time") {
+                curr_bar = createTimeMediaBar();
             } else if (barName == "Controls") {
                 curr_bar = createControlToolBar();
             } else {
@@ -187,6 +189,7 @@ void MainWindow::createToolbars() {
 //  addDockWidget
 
   addToolBar(Qt::TopToolBarArea, createMediaBar());
+  addToolBar(Qt::TopToolBarArea, createTimeMediaBar());
   addToolBar(Qt::TopToolBarArea, createPositionMediaBar());
   addToolBarBreak();
   addToolBar(Qt::TopToolBarArea, createAdditionalMediaBar());
@@ -225,7 +228,19 @@ QToolBar* MainWindow::createMediaBar() {
     Player::instance() -> setPlayButton(ptb->addAction(QPixmap(":/play"), "Play"));
     Player::instance() -> setPauseButton(ptb->addAction(QPixmap(":/pause"), "Pause"));
     Player::instance() -> setStopButton(ptb->addAction(QPixmap(":/stop"), "Stop"));
-    ptb->addSeparator();
+
+    ptb -> adjustSize();
+
+    return ptb;
+}
+
+QToolBar* MainWindow::createTimeMediaBar() {
+    QToolBar* ptb = new QToolBar("Media+Time");
+    ptb -> setObjectName("_Media+Time");
+
+    ptb -> setAutoFillBackground(true);
+    ptb -> setPalette(pal);
+    ptb -> setMinimumHeight(30);
 
     QLCDNumber * timeLabel = new QLCDNumber();
 //    timeLabel -> setDigitCount(8);
@@ -435,6 +450,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
             if (bar -> windowTitle() != "Media"
                     && bar -> windowTitle() != "Media+"
                     && bar -> windowTitle() != "Media+Position"
+                    && bar -> windowTitle() != "Media+Time"
                     && bar -> windowTitle() != "Controls"
                ) {
                 actions = bar -> actions();
