@@ -3,7 +3,7 @@
 
 //TODO: before remove file - stop playing and delete row
 
-ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {
+ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {   
     settings = settingsSet;
     setIndentation(10);
 

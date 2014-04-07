@@ -8,6 +8,8 @@
 #include <QDebug>
 
 QMenu * MainWindow::createPopupMenu () {   
+    //TODO: add label with name on panel
+    //TODO: add panel highlight on mouse over in menu
     QMenu *menu = QMainWindow::createPopupMenu();
 
 //    menu -> insertSeparator(menu->actions().first());
