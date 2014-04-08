@@ -7,12 +7,14 @@
 #include "bass.h"
 #include "notify_timer.h"
 
-void __stdcall syncFunc(HSYNC handle, DWORD channel, DWORD data, void * user);
+void __stdcall endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);
 
 class AudioPlayer : public QThread {
     Q_OBJECT
 
     void run();
+    int openChannel(QString path);
+
 public:
     enum State {
         StoppedState,
@@ -36,15 +38,14 @@ public:
     int getNotifyInterval();
     void setNotifyInterval(signed int milis);
 
-    void setMedia(QUrl);
+    void setMedia(QUrl mediaPath);
 
 signals:
     void stateChanged(AudioPlayer::State);
     void mediaStatusChanged(AudioPlayer::MediaStatus);
 
-
-    void endOfPlayback();
-    void curPos(double Position, double Total);
+    void positionChanged(int);
+    void durationChanged(int);
 
 private slots:
     void started();
@@ -56,6 +57,7 @@ public slots:
     void pause();
     void resume();
     void stop();
+    void endOfPlayback();
 
     void changePosition(int position);
 
@@ -67,7 +69,7 @@ private:
     bool close;
 
     bool playing;
-    bool endOfMusic;
+    bool paused;
 
     unsigned long chan;
     NotifyTimer * notifyTimer;
