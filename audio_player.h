@@ -1,7 +1,7 @@
 #ifndef AUDIO_PLAYER_H
 #define AUDIO_PLAYER_H
 
-#include <QThread>
+#include <QObject>
 #include <QUrl>
 
 #include "bass.h"
@@ -9,20 +9,23 @@
 
 void __stdcall endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);
 
-class AudioPlayer : public QThread {
+class AudioPlayer : public QObject {
     Q_OBJECT
 
-    void run();
+    Q_ENUMS(MediaStateFlags)
+    Q_ENUMS(MediaStatusFlags)
+
     int openChannel(QString path);
 
 public:
-    enum State {
+    enum MediaStateFlags {
         StoppedState,
         PlayingState,
         PausedState
     };
+    typedef QFlags<MediaStateFlags> MediaState;
 
-    enum MediaStatus {
+    enum MediaStatusFlags {
         UnknownMediaStatus,
         NoMedia,
         LoadingMedia,
@@ -31,6 +34,7 @@ public:
         EndOfMedia,
         InvalidMedia
     };
+    typedef QFlags<MediaStatusFlags> MediaStatus;
 
     explicit AudioPlayer(QObject *parent = 0);
     ~AudioPlayer();
@@ -40,9 +44,12 @@ public:
 
     void setMedia(QUrl mediaPath);
 
+    MediaState state() const;
+
 signals:
-    void stateChanged(AudioPlayer::State);
-    void mediaStatusChanged(AudioPlayer::MediaStatus);
+    void playbackEnded();
+    void stateChanged(MediaState);
+    void mediaStatusChanged(MediaStatus);
 
     void positionChanged(int);
     void durationChanged(int);
@@ -59,17 +66,14 @@ public slots:
     void stop();
     void endOfPlayback();
 
-    void changePosition(int position);
+    void setPosition(int position);
 
 private:
     QUrl mediaUri;
 
     int notifyInterval;
 
-    bool close;
-
-    bool playing;
-    bool paused;
+    MediaState currentState;
 
     unsigned long chan;
     NotifyTimer * notifyTimer;

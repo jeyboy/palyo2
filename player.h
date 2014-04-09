@@ -3,8 +3,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <QMediaPlayer>
-#include <QMediaMetaData>
+//#include <QMediaPlayer>
+//#include <QMediaMetaData>
 #include <QSlider>
 #include <QLCDNumber>
 #include <QAction>
@@ -13,10 +13,11 @@
 
 #include "model.h"
 #include "itemlist.h"
+#include "audio_player.h"
 
 class ItemList;
 
-class Player : public QMediaPlayer {
+class Player : public AudioPlayer {
     Q_OBJECT
 public:
 
@@ -32,7 +33,7 @@ public:
 
     void setTrackBar(QSlider * trackBar);
     void setTimePanel(QLCDNumber * timePanel);
-    void setVideoOutput(QVideoWidget * container);
+//    void setVideoOutput(QVideoWidget * container);
     void setPlaylist(ItemList * playlist);
     void removePlaylist();
 
@@ -49,10 +50,11 @@ private slots:
     void like();
 
     void changeTrackbarValue(int);
-    void setTrackbarValue(qint64);
-    void setTrackbarMax(qint64);
-    void onStateChanged(QMediaPlayer::State newState);
-    void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
+    void setTrackbarValue(int);
+    void setTrackbarMax(int);
+
+    void onStateChanged(MediaState newState);
+    void onMediaStatusChanged(MediaStatus status);
 
 private:
     void updateItemState(bool played);
@@ -74,8 +76,8 @@ private:
        activePlaylist = 0;
 
        setNotifyInterval(500);
-       connect(this, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(onStateChanged(QMediaPlayer::State)));
-       connect(this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus)));
+       connect(this, SIGNAL(stateChanged(MediaState)), this, SLOT(onStateChanged(MediaState)));
+       connect(this, SIGNAL(mediaStatusChanged(MediaStatus)), this, SLOT(onMediaStatusChanged(MediaStatus)));
     }
 
     static Player * self;
@@ -99,19 +101,3 @@ private:
 };
 
 #endif // PLAYER_H
-
-
-//QString directory = QFileDialog::getExistingDirectory(this,tr("Select dir for files to import"));
-//if(directory.isEmpty())
-//    return;
-//QDir dir(directory);
-//QStringList files = dir.entryList(QStringList() << "*.mp3",QDir::Files);
-//QList<QMediaContent> content;
-//for(const QString& f:files)
-//{
-//    content.push_back(QUrl::fromLocalFile(dir.path()+"/" + f));
-//    QFileInfo fi(f);
-//    ui->listWidget->addItem(fi.fileName());
-//}
-//playlist->addMedia(content);
-//ui->listWidget->setCurrentRow(playlist->currentIndex() != -1? playlist->currentIndex():0);

@@ -6,15 +6,19 @@ void endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user) {
 //    BASS_ChannelStop(channel);
 
     AudioPlayer * player = static_cast<AudioPlayer *>(user);
-    player -> endOfPlayback();
+    emit player -> playbackEnded();
 }
 
-AudioPlayer::AudioPlayer(QObject * parent) : QThread(parent)	{
+AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
+    qRegisterMetaType<AudioPlayer::MediaStatus>("MediaStatus");
+    qRegisterMetaType<AudioPlayer::MediaState>("MediaState");
+
+    // cheat for cross treadhing
+    connect(this, SIGNAL(playbackEnded()), this, SLOT(endOfPlayback()));
+
     notifyInterval = 100;
 
-    close = false;
-    playing = false;
-    paused = false;
+    currentState = StoppedState;
 
     if (HIWORD(BASS_GetVersion()) != BASSVERSION) {
         throw "An incorrect version of BASS.DLL was loaded";
@@ -28,11 +32,9 @@ AudioPlayer::AudioPlayer(QObject * parent) : QThread(parent)	{
     connect(notifyTimer, SIGNAL(timeout()), this, SLOT(signalUpdate()));
     connect(notifyTimer, SIGNAL(started()), this, SLOT(started()));
     connect(notifyTimer, SIGNAL(stoped()), this, SLOT(stoped()));
-    run();
 }
 
 AudioPlayer::~AudioPlayer() {
-    close = true;
     notifyTimer -> stop();
     delete notifyTimer;
 }
@@ -46,19 +48,23 @@ void AudioPlayer::setNotifyInterval(signed int milis) {
         notifyTimer -> setInterval(notifyInterval);
 }
 
+void AudioPlayer::setMedia(QUrl mediaPath) {
+    mediaUri = mediaPath;
+}
+
+
+AudioPlayer::MediaState AudioPlayer::state() const {
+    return currentState;
+}
 
 ////////////////////////////////////////////////////////////////////////
 /// PRIVATE
 ////////////////////////////////////////////////////////////////////////
 
-void AudioPlayer::run() {
-    while (!close);
-}
-
 int AudioPlayer::openChannel(QString path) {
     BASS_ChannelStop(chan);
     if (!(chan = BASS_StreamCreateFile(false, path.toLatin1(), 0, 0, BASS_SAMPLE_LOOP))
-        && !(chan = BASS_MusicLoad(false, path.toLatin1(), 0, 0, BASS_MUSIC_RAMP | BASS_SAMPLE_LOOP | BASS_MUSIC_STOPBACK, 1)))
+        && !(chan = BASS_MusicLoad(false, path.toLatin1(), 0, 0, BASS_MUSIC_RAMP | BASS_SAMPLE_LOOP | BASS_MUSIC_STOPBACK | BASS_STREAM_PRESCAN, 1)))
             qDebug() << "Can't play file";
     return chan;
 }
@@ -68,14 +74,12 @@ int AudioPlayer::openChannel(QString path) {
 ////////////////////////////////////////////////////////////////////////
 
 void AudioPlayer::started() {
-    paused = !(playing = true);
+    currentState = PlayingState;
     emit stateChanged(PlayingState);
 }
 
 void AudioPlayer::stoped() {
-    playing = false;
-    paused = false;
-    emit stateChanged(StoppedState);
+    currentState = StoppedState;
 }
 
 void AudioPlayer::signalUpdate() {
@@ -85,7 +89,7 @@ void AudioPlayer::signalUpdate() {
 ////////////////////////////////////////////////////////////////////////
 
 void AudioPlayer::play() {
-    if (paused) {
+    if (currentState == PausedState) {
         resume();
     } else {
         if (mediaUri.isEmpty()) {
@@ -104,10 +108,10 @@ void AudioPlayer::play() {
 }
 
 void AudioPlayer::pause() {
-    BASS_ChannelPause(chan);
     notifyTimer -> stop();
+    BASS_ChannelPause(chan);
     emit stateChanged(PausedState);
-    paused = true;
+    currentState = PausedState;
 }
 
 void AudioPlayer::resume() {
@@ -130,6 +134,6 @@ void AudioPlayer::endOfPlayback() {
     stop();
 }
 
-void AudioPlayer::changePosition(int position) {
-    BASS_ChannelSetPosition(chan, BASS_ChannelSeconds2Bytes(chan, position), BASS_POS_BYTE);
+void AudioPlayer::setPosition(int position) {
+    BASS_ChannelSetPosition(chan, BASS_ChannelSeconds2Bytes(chan, position / 1000.0), BASS_POS_BYTE);
 }

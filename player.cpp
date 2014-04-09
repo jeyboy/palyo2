@@ -128,8 +128,8 @@ void Player::setTrackBar(QSlider * trackBar) {
     slider -> setMaximum(0);
 
     //TODO: remove custom methods
-    connect(this, SIGNAL(positionChanged(qint64)), this, SLOT(setTrackbarValue(qint64)));
-    connect(this, SIGNAL(durationChanged(qint64)), this, SLOT(setTrackbarMax(qint64)));
+    connect(this, SIGNAL(positionChanged(int)), this, SLOT(setTrackbarValue(int)));
+    connect(this, SIGNAL(durationChanged(int)), this, SLOT(setTrackbarMax(int)));
     connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(changeTrackbarValue(int)));
 }
 
@@ -137,9 +137,9 @@ void Player::setTimePanel(QLCDNumber * newTimePanel) {
     timePanel = newTimePanel;
 }
 
-void Player::setVideoOutput(QVideoWidget * container) {
-    setVideoOutput(container);
-}
+//void Player::setVideoOutput(QVideoWidget * container) {
+//    setVideoOutput(container);
+//}
 
 void Player::setTimePanelVal(int millis) {
     if (timePanel) {
@@ -163,7 +163,7 @@ QString Player::intToStr(int millis) {
 
 //////////////////////SLOTS/////////////////////////
 
-void Player::setTrackbarValue(qint64 pos) {
+void Player::setTrackbarValue(int pos) {
     setTimePanelVal(pos);
 
     slider -> blockSignals(true);
@@ -171,7 +171,7 @@ void Player::setTrackbarValue(qint64 pos) {
     slider -> blockSignals(false);
 }
 
-void Player::setTrackbarMax(qint64 duration) {
+void Player::setTrackbarMax(int duration) {
 //    max = instance() -> metaData("Duration").toFloat();
 //    climax = duration;
 
@@ -180,7 +180,7 @@ void Player::setTrackbarMax(qint64 duration) {
     // TODO: duration is wrong in some case
 
     if (slider) {
-        slider -> setDisabled(!isSeekable());
+//        slider -> setDisabled(!isSeekable());
         slider -> setMaximum(duration);
         last_duration = duration;
     }
@@ -200,7 +200,7 @@ void Player::changeTrackbarValue(int pos) {
     emit setPosition(pos);
 }
 
-void Player::onStateChanged(QMediaPlayer::State newState) {
+void Player::onStateChanged(MediaState newState) {
     switch(newState) {
         case StoppedState: {
 
@@ -241,7 +241,7 @@ void Player::onStateChanged(QMediaPlayer::State newState) {
     }
 }
 
-void Player::onMediaStatusChanged(QMediaPlayer::MediaStatus status) {
+void Player::onMediaStatusChanged(MediaStatus status) {
     switch (status) {
         case UnknownMediaStatus: {
         qDebug() << "unk";
