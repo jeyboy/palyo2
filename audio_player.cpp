@@ -28,6 +28,23 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
         qDebug() << "Init error: " << BASS_ErrorGetCode();
 //        throw "Cannot initialize device";
 
+    ///////////////////////////////////////////////
+    /// load plugins
+    ///////////////////////////////////////////////
+        //TODO: add loading of plugins
+
+//        #ifdef _WIN32 // Windows/CE
+//            BASS_PluginLoad("bassflac.dll", 0);
+//        #elif defined(__linux__) // Linux
+//            BASS_PluginLoad("libbassflac.so", 0);
+//        #elif defined(TARGET_OS_IPHONE) // iOS
+//            extern void BASSFLACplugin;
+//            BASS_PluginLoad(&BASSFLACplugin, 0);
+//        #else // OSX
+//            BASS_PluginLoad("libbassflac.dylib", 0);
+//        #endif
+    ///////////////////////////////////////////////
+
     notifyTimer = new NotifyTimer(this);
     connect(notifyTimer, SIGNAL(timeout()), this, SLOT(signalUpdate()));
     connect(notifyTimer, SIGNAL(started()), this, SLOT(started()));
@@ -35,6 +52,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
 }
 
 AudioPlayer::~AudioPlayer() {
+    BASS_PluginFree(0);
     notifyTimer -> stop();
     delete notifyTimer;
 }
