@@ -414,7 +414,7 @@ ModelItem * ItemList::nextItem(ModelItem * curr) {
         if (first_elem) {
             first_elem = false;
         } else {
-            item = curr -> parent() -> child(curr -> row() + 1);
+            item = item -> parent() -> child(item -> row() + 1);
         }
 
         if (item != 0) {
@@ -426,10 +426,11 @@ ModelItem * ItemList::nextItem(ModelItem * curr) {
                 first_elem = true;
             }
         } else {
-            curr = curr -> parent();
-
-            if (curr == 0 || curr -> parent() == 0)
+            if (curr -> parent() == 0)
                 return 0;
+
+            item = curr;
+            curr = curr -> parent();
         }
     }
 }
@@ -441,7 +442,7 @@ ModelItem * ItemList::prevItem(ModelItem * curr) {
         if (last_elem) {
             last_elem = false;
         } else {
-            item = curr -> parent() -> child(curr -> row() - 1);
+            item = item -> parent() -> child(item -> row() - 1);
         }
 
         if (item != 0) {
@@ -453,10 +454,11 @@ ModelItem * ItemList::prevItem(ModelItem * curr) {
                 last_elem = true;
             }
         } else {
-            curr = curr -> parent();
-
             if (curr -> parent() == 0)
                 return 0;
+
+            item = curr;
+            curr = curr -> parent();
         }
     }
 }
