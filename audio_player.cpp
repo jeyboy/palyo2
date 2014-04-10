@@ -2,8 +2,8 @@
 #include <QDebug>
 
 void endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user) {
+    BASS_ChannelStop(channel);
     BASS_ChannelRemoveSync(channel, handle);
-//    BASS_ChannelStop(channel);
 
     AudioPlayer * player = static_cast<AudioPlayer *>(user);
     emit player -> playbackEnded();
@@ -31,18 +31,16 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     ///////////////////////////////////////////////
     /// load plugins
     ///////////////////////////////////////////////
-        //TODO: add loading of plugins
+    QFileInfoList list = QDir(QCoreApplication::applicationDirPath() + "/libs/bass/plugins").entryInfoList(QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
 
-//        #ifdef _WIN32 // Windows/CE
-//            BASS_PluginLoad("bassflac.dll", 0);
-//        #elif defined(__linux__) // Linux
-//            BASS_PluginLoad("libbassflac.so", 0);
-//        #elif defined(TARGET_OS_IPHONE) // iOS
-//            extern void BASSFLACplugin;
-//            BASS_PluginLoad(&BASSFLACplugin, 0);
-//        #else // OSX
-//            BASS_PluginLoad("libbassflac.dylib", 0);
-//        #endif
+    foreach(QFileInfo file, list) {
+        int res = BASS_PluginLoad(file.filePath().toLatin1(), 0);
+
+        if (res == 0)
+            qDebug() << file.filePath() << BASS_ErrorGetCode();
+        else
+            qDebug() << file.filePath() << res;
+    }
     ///////////////////////////////////////////////
 
     notifyTimer = new NotifyTimer(this);
@@ -148,8 +146,8 @@ void AudioPlayer::stop() {
 }
 
 void AudioPlayer::endOfPlayback() {
-    emit mediaStatusChanged(EndOfMedia);
     stop();
+    emit mediaStatusChanged(EndOfMedia);
 }
 
 void AudioPlayer::setPosition(int position) {

@@ -130,6 +130,7 @@ void ItemList::proceedNext() {
     ModelItem * item = activeItem();
     if (item == 0) return;
 
+    //TODO: has some troubles with elem search
     item = nextItem(item);
     execItem(item);
 }

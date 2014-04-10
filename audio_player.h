@@ -1,8 +1,10 @@
 #ifndef AUDIO_PLAYER_H
 #define AUDIO_PLAYER_H
 
+#include <QApplication>
 #include <QObject>
 #include <QUrl>
+#include <QDir>
 
 #include "bass.h"
 #include "notify_timer.h"
