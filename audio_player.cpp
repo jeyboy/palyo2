@@ -79,9 +79,9 @@ AudioPlayer::MediaState AudioPlayer::state() const {
 
 int AudioPlayer::openChannel(QString path) {
     BASS_ChannelStop(chan);
-    if (!(chan = BASS_StreamCreateFile(false, path.toLatin1(), 0, 0, BASS_SAMPLE_LOOP))
-        && !(chan = BASS_MusicLoad(false, path.toLatin1(), 0, 0, BASS_MUSIC_RAMP | BASS_SAMPLE_LOOP | BASS_MUSIC_STOPBACK | BASS_STREAM_PRESCAN, 1)))
-            qDebug() << "Can't play file";
+    if (!(chan = BASS_StreamCreateFile(false, path.toStdWString().c_str(), 0, 0, BASS_SAMPLE_LOOP))
+        && !(chan = BASS_MusicLoad(false, path.toStdWString().c_str(), 0, 0, BASS_MUSIC_RAMP | BASS_MUSIC_POSRESET | BASS_MUSIC_STOPBACK | BASS_STREAM_PRESCAN | BASS_MUSIC_AUTOFREE, 1)))
+        qDebug() << "Can't play file " <<  BASS_ErrorGetCode() << path.toUtf8();
     return chan;
 }
 
@@ -108,6 +108,7 @@ void AudioPlayer::play() {
     if (currentState == PausedState) {
         resume();
     } else {
+        BASS_MusicFree(chan);
         if (mediaUri.isEmpty()) {
             emit mediaStatusChanged(NoMedia);
         } else {
@@ -147,6 +148,7 @@ void AudioPlayer::stop() {
 
 void AudioPlayer::endOfPlayback() {
     stop();
+//    BASS_MusicFree(chan);
     emit mediaStatusChanged(EndOfMedia);
 }
 
