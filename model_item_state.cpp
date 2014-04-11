@@ -35,7 +35,9 @@ bool ModelItemState::setBit(int val) {
 
     if (val < 0) {
         if (bitIsSet(val, STATE_PLAYED)) {
-           result_state &= unsetPlayed();
+            qDebug() << "Unset before " << item_state;
+            result_state &= unsetPlayed();
+            qDebug() << "Unset after " << item_state;
         }
 
         if (bitIsSet(val, STATE_NOT_EXIST)) {
@@ -140,5 +142,5 @@ int ModelItemState::setBit(int val, int pos) {
    return val | pos;
 }
 int ModelItemState::unsetBit(int val, int pos) {
-   return val & (~(pos + 1));
+    return val & (~(pos));
 }

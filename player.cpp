@@ -73,9 +73,11 @@ void Player::removePlaylist() {
 void Player::updateItemState(bool isPlayed) {
     if (played) {
         if (isPlayed) {
+            qDebug() << "+lp " << played -> fullpath();
             played -> setState(STATE_LISTENED | STATE_PLAYED);
         } else {
-            played -> setState(-STATE_PLAYED);
+            qDebug() << "-p " << played -> fullpath();
+            played -> setState(-STATE_PLAYED, false);
         }
 
         playlist -> getModel() -> refreshItem(played);

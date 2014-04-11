@@ -236,8 +236,6 @@ void Library::save() {
         while(i != catalogs_state.end()) {
             res = catalogs -> value(i.key());
 
-            qDebug() << "1 " << i.key();
-
             if (i.value()) {
                 result = fileDump(i.key(), *i.value(), QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
 

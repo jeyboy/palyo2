@@ -212,9 +212,11 @@ void Model::repaint() {
 
 void Model::refreshItem(ModelItem * item) {
     QModelIndex ind = index(item);
-    if (ind.isValid())
+    if (ind.isValid()) {
+        qDebug() << "STATE " << item -> getState() -> getValue();
 //        emit dataChanged(ind.parent(), ind);
         emit dataChanged(ind, ind);
+    }
 }
 
 /////////////////////////////////////////////////////////
