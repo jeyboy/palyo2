@@ -65,14 +65,18 @@ void Library::restoreItemState(LibraryItem * libItem) {
 //////////////////////////////////////////////////////////////////////
 
 void Library::saveCatalogs() {
-    if (!catsSaveResult.isRunning())
+    if (!catsSaveResult.isRunning()) {
         catsSaveResult = QtConcurrent::run(this, &Library::save);
+    }
 }
 
 void Library::itemsInit(LibraryItem * libItem) {
     if (libItem -> item() -> isExist()) {
-        libItem -> item() -> names = getNamesForItem(libItem -> item());
-        restoreItemState(libItem);
+        if (saveBlock.tryLock(-1)) {
+            libItem -> item() -> names = getNamesForItem(libItem -> item());
+            restoreItemState(libItem);
+            saveBlock.unlock();
+        }
     } else {
         libItem -> refresh(STATE_NOT_EXIST);
     }
@@ -81,7 +85,7 @@ void Library::itemsInit(LibraryItem * libItem) {
 QString Library::sitesFilter(QString title)				{ return title.remove(QRegExp("((http:\\/\\/)?(www\\.)?[\\w-]+\\.(\\w+)(\\.(\\w+))?)")); }
 QString Library::forwardNumberPreFilter(QString title)	{ return title.remove(QRegExp("\\A\\d{1,}.|\\(\\w*\\d{1,}\\w*\\)")); }
 QString Library::spacesFilter(QString title) 			{ return title.remove(QRegExp("(\\W|[_])")); }
-QString Library::forwardNumberFilter(QString title)		{ return title.remove(QRegExp("\\A\\d{1,} ")); }
+QString Library::forwardNumberFilter(QString title)		{ return title.remove(QRegExp("\\A\\d{1,}")); }
 
 QString Library::libraryPath() {
     return QCoreApplication::applicationDirPath() + "/library/";
@@ -223,34 +227,43 @@ QHash<QString, int> * Library::load(const QChar letter) {
 }
 
 void Library::save() {
-    QHash<QString, int> * res;
-    QHash<QChar, QList<QString> *>::iterator i = catalogs_state.begin();
-    bool result;
+    if (saveBlock.tryLock(-1)) {
+        QHash<QString, int> * res;
+        QHash<QChar, QList<QString> *>::iterator i = catalogs_state.begin();
 
-    while(i != catalogs_state.end()) {
-        res = catalogs -> value(i.key());
+        bool result;
 
-        if (i.value()) {
-            result = fileDump(i.key(), *i.value(), QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
+        while(i != catalogs_state.end()) {
+            res = catalogs -> value(i.key());
 
-            if(res)
-              delete i.value();
-        } else {
-            QList<QString> keys = res -> keys();
-            result = fileDump(i.key(), keys, QIODevice::WriteOnly | QIODevice::Text);
+            qDebug() << "1 " << i.key();
+
+            if (i.value()) {
+                result = fileDump(i.key(), *i.value(), QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
+
+                if(result) {
+                    delete i.value();
+                    catalogs_state.insert(i.key(), 0);
+                }
+            } else {
+                QList<QString> keys = res -> keys();
+                result = fileDump(i.key(), keys, QIODevice::WriteOnly | QIODevice::Text);
+            }
+
+            if (result) {
+                i = catalogs_state.erase(i);
+            } else {
+                i++;
+            }
         }
 
-        if (result) {
-            i = catalogs_state.erase(i);
-        } else {
-            i++;
-        }
+        saveBlock.unlock();
     }
 }
 
-bool Library::fileDump(QChar key, QList<QString> & keysList, QFlags<QIODevice::OpenModeFlag> openFlags) {
+bool Library::fileDump(QChar key, QList<QString> &keysList, QFlags<QIODevice::OpenModeFlag> openFlags) {
     QString path, val;
-    QList<QString>::iterator cat_i = keysList.begin();
+    QList<QString>::const_iterator cat_i = keysList.cbegin();
     QHash<QString, int> * res = catalogs -> value(key);
 
     path = libraryPath() + "cat_" + key;
@@ -259,7 +272,7 @@ bool Library::fileDump(QChar key, QList<QString> & keysList, QFlags<QIODevice::O
     if (f.open(openFlags)) {
         QTextStream out(&f);
 
-        while(cat_i != keysList.end()) {
+        while(cat_i != keysList.cend()) {
             val = *cat_i;
             qDebug() << "Curr val " << val;
             out << QString::number(res -> value(val)) + val + "\n";

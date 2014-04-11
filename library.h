@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrent>
+#include <QMutex>
 #include <QApplication>
 #include <QVector>
 
@@ -90,6 +91,7 @@ private:
     QHash<QChar, QList<QString> *> catalogs_state;
 
     QTimer *timer;
+    QMutex saveBlock;
 
     QFuture<void> catsSaveResult;
 };

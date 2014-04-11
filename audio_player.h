@@ -18,7 +18,7 @@ class AudioPlayer : public QObject {
     Q_ENUMS(MediaStatusFlags)
 
     int openChannel(QString path);
-
+    void closeChannel();
 public:
     enum MediaStateFlags {
         StoppedState,
@@ -78,6 +78,7 @@ private:
     MediaState currentState;
 
     unsigned long chan;
+    HSYNC syncHandle;
     NotifyTimer * notifyTimer;
 };
 

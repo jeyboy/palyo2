@@ -2,9 +2,8 @@
 #include <QDebug>
 
 void endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user) {
-    BASS_ChannelStop(channel);
-    BASS_ChannelRemoveSync(channel, handle);
-
+//    BASS_ChannelStop(channel);
+//    BASS_ChannelRemoveSync(channel, handle);
     AudioPlayer * player = static_cast<AudioPlayer *>(user);
     emit player -> playbackEnded();
 }
@@ -85,6 +84,12 @@ int AudioPlayer::openChannel(QString path) {
     return chan;
 }
 
+void AudioPlayer::closeChannel() {
+    BASS_ChannelStop(chan);
+    BASS_ChannelRemoveSync(chan, syncHandle);
+    BASS_MusicFree(chan);
+}
+
 ////////////////////////////////////////////////////////////////////////
 /// SLOTS
 ////////////////////////////////////////////////////////////////////////
@@ -108,7 +113,7 @@ void AudioPlayer::play() {
     if (currentState == PausedState) {
         resume();
     } else {
-        BASS_MusicFree(chan);
+        closeChannel();
         if (mediaUri.isEmpty()) {
             emit mediaStatusChanged(NoMedia);
         } else {
@@ -116,7 +121,7 @@ void AudioPlayer::play() {
                 durationChanged(BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000);
                 BASS_ChannelPlay(chan, true);
                 notifyTimer -> start(notifyInterval);
-                BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
+                syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
             } else {
                 qDebug() << "Can't play file";
             }
@@ -148,7 +153,7 @@ void AudioPlayer::stop() {
 
 void AudioPlayer::endOfPlayback() {
     stop();
-//    BASS_MusicFree(chan);
+    closeChannel();
     emit mediaStatusChanged(EndOfMedia);
 }
 

@@ -6,6 +6,7 @@ MediaInfo::MediaInfo(QString filepath) {
     TagLib::FileRef f(fileName.c_str(), false, TagLib::AudioProperties::Fast);
 
     if (!f.isNull()) {
+        qDebug() << "In media info";
         artist = QString::fromStdWString(f.tag() -> artist().toWString());
         title = QString::fromStdWString(f.tag() -> title().toWString());
         album = QString::fromStdWString(f.tag() -> album().toWString());
