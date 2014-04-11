@@ -1,8 +1,6 @@
 #include "itemlist.h"
 #include <QDebug>
 
-//TODO: before remove file - stop playing and delete row
-
 ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {   
     settings = settingsSet;
     setIndentation(10);
@@ -130,7 +128,6 @@ void ItemList::proceedNext() {
     ModelItem * item = activeItem();
     if (item == 0) return;
 
-    //TODO: has some troubles with elem search
     item = nextItem(item);
     execItem(item);
 }

@@ -555,13 +555,13 @@ void MainWindow::folderDropped(QString name, QString path) {
 }
 
 void MainWindow::addPanelTriggered() {
-//    ((QAction*)QObject::sender()) -> userData(0);
-//    qDebug() << QObject::sender();
-
     ToolbarDialog dialog(this);
 
-    if (dialog.exec() == QDialog::Accepted) {
-        addToolBar(Qt::BottomToolBarArea, createToolBar(dialog.getName()));
+    while (dialog.exec() == QDialog::Accepted) {
+        if (isToolbarNameUniq(dialog.getName())) {
+            addToolBar(Qt::BottomToolBarArea, createToolBar(dialog.getName()));
+            return;
+        }
     }
 }
 

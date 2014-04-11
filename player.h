@@ -58,7 +58,6 @@ private slots:
 
 private:
     void updateItemState(bool played);
-//    static void setPlayedItemState(int state);
     QString intToStr(int val);
     void setTimePanelVal(int millis);
 
@@ -94,10 +93,6 @@ private:
     QAction * likeButton;
 
     int last_duration;
-
-
-//    int ref;
-//    float max, climax;
 };
 
 #endif // PLAYER_H

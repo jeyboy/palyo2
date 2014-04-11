@@ -127,7 +127,6 @@ void Player::setTrackBar(QSlider * trackBar) {
     slider -> setMinimum(0);
     slider -> setMaximum(0);
 
-    //TODO: remove custom methods
     connect(this, SIGNAL(positionChanged(int)), this, SLOT(setTrackbarValue(int)));
     connect(this, SIGNAL(durationChanged(int)), this, SLOT(setTrackbarMax(int)));
     connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(changeTrackbarValue(int)));
@@ -172,13 +171,6 @@ void Player::setTrackbarValue(int pos) {
 }
 
 void Player::setTrackbarMax(int duration) {
-//    max = instance() -> metaData("Duration").toFloat();
-//    climax = duration;
-
-//    ref = (duration - max) / (max/ instance() ->notifyInterval());
-
-    // TODO: duration is wrong in some case
-
     if (slider) {
 //        slider -> setDisabled(!isSeekable());
         slider -> setMaximum(duration);

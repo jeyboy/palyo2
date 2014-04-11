@@ -76,6 +76,15 @@ AudioPlayer::MediaState AudioPlayer::state() const {
 /// PRIVATE
 ////////////////////////////////////////////////////////////////////////
 
+int AudioPlayer::openRemoteChannel(QString path) {
+    BASS_ChannelStop(chan);
+    chan = BASS_StreamCreateURL(path.toStdWString().c_str(), 0, 0, NULL, 0);
+
+    if (!chan)
+        qDebug() << "Can't play stream" <<  BASS_ErrorGetCode() << path.toUtf8();
+    return chan;
+}
+
 int AudioPlayer::openChannel(QString path) {
     BASS_ChannelStop(chan);
     if (!(chan = BASS_StreamCreateFile(false, path.toStdWString().c_str(), 0, 0, BASS_SAMPLE_LOOP))

@@ -251,7 +251,6 @@ void ModelItem::setState(int new_state, bool append_to_library) {
 ///////////////////////////////////////////////////////
 
 QJsonObject ModelItem::toJSON() {
-    // TODO: logic build needed
     QJsonObject root = QJsonObject();
 
     if (childItems.length() > 0) {

@@ -18,6 +18,7 @@ class AudioPlayer : public QObject {
     Q_ENUMS(MediaStatusFlags)
 
     int openChannel(QString path);
+    int openRemoteChannel(QString path);
     void closeChannel();
 public:
     enum MediaStateFlags {
