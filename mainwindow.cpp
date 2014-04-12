@@ -141,13 +141,7 @@ MainWindow::MainWindow(QWidget *parent) :
     registrateGlobalKeys();
     registrateTray();
 
-//    connect(&autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
-//    autoSaveTimer.start(1000*60*5);//Every 5 minutes
     QApplication::setWindowIcon(QIcon(":icon"));
-
-
-//    MediaInfo m("C:\\Josh Whelchel - Demoninution.mp3");
-//    m.initInfo();
 }
 
 void MainWindow::registrateGlobalKeys() {
@@ -244,10 +238,8 @@ QToolBar* MainWindow::createTimeMediaBar() {
     ptb -> setPalette(pal);
     ptb -> setMinimumHeight(30);
 
-    QLCDNumber * timeLabel = new QLCDNumber();
-//    timeLabel -> setDigitCount(8);
-    timeLabel -> setSegmentStyle(QLCDNumber::Flat);
-    timeLabel -> display("00:00");
+    QLabel * timeLabel = new QLabel("00:00");
+    timeLabel -> setStyleSheet("QLabel { font-weight: bold; font-size: 16px; }");
     ptb -> addWidget(timeLabel);
     Player::instance() -> setTimePanel(timeLabel);
     ptb -> adjustSize();
@@ -269,23 +261,9 @@ QToolBar* MainWindow::createPositionMediaBar() {
     slider -> setMinimumSize(30, 30);
 //    slider -> setTracking(false); // send change value only on release slider
 
-//    "QSlider::sub-page {"
-//      "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-//          "stop: 0 #66e, stop: 1 #bbf);"
-//      "background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,"
-//          "stop: 0 #bbf, stop: 1 #55f);"
-//      "border: 1px solid #777;"
-//      "border-radius: 4px;"
-//    "}"
-
-//    "background-image: url(:/progress);"
-
-//    setStyleSheet("QSlider::handle {image: url(:/resources/image.png);}");
-    slider -> setStyleSheet(QString(
+    slider -> setStyleSheet(QString(                               
                                               "QSlider::groove {"
                                                 "border: 1px solid #bbb;"
-                                                "background-image: url(:/slideback);"
-                                                "background-position: center center;"
                                                 "border-radius: 4px;"
                                               "}"
 
@@ -302,7 +280,7 @@ QToolBar* MainWindow::createPositionMediaBar() {
                                               "}"
 
                                               "QSlider::sub-page {"
-                                                "background-color: rgba(255, 255, 255, 30%);"
+                                                "background-image: url(:/progress);"
                                                 "border: 1px solid #777;"
                                                 "border-radius: 4px;"
                                               "}"

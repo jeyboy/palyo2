@@ -5,8 +5,6 @@
 #include <QKeyEvent>
 #include <QKeySequence>
 #include <QToolBar>
-#include <QLCDNumber>
-//#include <QTimer>
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QDesktopServices>
@@ -80,7 +78,6 @@ protected:
 private:
     Ui::MainWindow *ui;
     Tabber * tabber;
-//    QTimer autoSaveTimer;
     QSystemTrayIcon m_tray;
 
     QToolBar * underMouseBar;

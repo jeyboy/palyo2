@@ -8,14 +8,6 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setOrganizationDomain("bigbug.sos");
     QCoreApplication::setApplicationName("Playo");
 
-//    QStringList paths = QCoreApplication::libraryPaths();
-////    paths.append(".");
-////    paths.append("imageformats");
-////    paths.append("platforms");
-////    paths.append("sqldrivers");
-//    paths.append(QCoreApplication::applicationDirPath() + "/plugins");
-//    QCoreApplication::setLibraryPaths(paths);
-
     QApplication a(argc, argv);
 
     MainWindow w;

@@ -64,6 +64,8 @@ win32: {
         SOURCES += globalshortcut/qxtglobalshortcut_win.cpp
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib/taglib-project.dll)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass.lib)
+        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass_fx.lib)
+        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bassmix.lib)
 }
 mac: {
         SOURCES += globalshortcut/qxtglobalshortcut_mac.cpp

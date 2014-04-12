@@ -3,11 +3,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-//#include <QMediaPlayer>
-//#include <QMediaMetaData>
 #include <QSlider>
-#include <QLCDNumber>
 #include <QAction>
+#include <QLabel>
 
 #include <QtCore/qmath.h>
 
@@ -32,7 +30,7 @@ public:
     void setLikeButton(QAction * likeAction);
 
     void setTrackBar(QSlider * trackBar);
-    void setTimePanel(QLCDNumber * timePanel);
+    void setTimePanel(QLabel * timePanel);
 //    void setVideoOutput(QVideoWidget * container);
     void setPlaylist(ItemList * playlist);
     void removePlaylist();
@@ -81,7 +79,7 @@ private:
 
     static Player * self;
     QSlider * slider;
-    QLCDNumber * timePanel;
+    QLabel * timePanel;
     ModelItem * played;
     ItemList * playlist;
 

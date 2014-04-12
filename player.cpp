@@ -132,7 +132,7 @@ void Player::setTrackBar(QSlider * trackBar) {
     connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(changeTrackbarValue(int)));
 }
 
-void Player::setTimePanel(QLCDNumber * newTimePanel) {
+void Player::setTimePanel(QLabel * newTimePanel) {
     timePanel = newTimePanel;
 }
 
@@ -142,7 +142,7 @@ void Player::setTimePanel(QLCDNumber * newTimePanel) {
 
 void Player::setTimePanelVal(int millis) {
     if (timePanel) {
-        timePanel -> display(intToStr(millis - last_duration));
+        timePanel -> setText(intToStr(millis - last_duration));
     }
 }
 

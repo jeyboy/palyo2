@@ -23,6 +23,11 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
         throw "An incorrect version of BASS.DLL was loaded";
     }
 
+    if (HIWORD(BASS_FX_GetVersion()) != BASSVERSION) {
+        throw "An incorrect version of BASS_FX.DLL was loaded";
+    }
+
+
     if (!BASS_Init(-1, 44100, 0, NULL, NULL))
         qDebug() << "Init error: " << BASS_ErrorGetCode();
 //        throw "Cannot initialize device";
@@ -80,6 +85,11 @@ int AudioPlayer::openRemoteChannel(QString path) {
     BASS_ChannelStop(chan);
     chan = BASS_StreamCreateURL(path.toStdWString().c_str(), 0, 0, NULL, 0);
 
+//    BASS_Encode_Start(channel, "output.wav", BASS_ENCODE_PCM, NULL, 0);
+
+//    BASS_Encode_StartCAFile(channel, 'mp4f', 'aac ', 0, 128000, "output.mp4"); // only macos
+//    BASS_Encode_StartCAFile(channel, 'm4af', 'alac', 0, 0, "output.m4a"); // only macos
+
     if (!chan)
         qDebug() << "Can't play stream" <<  BASS_ErrorGetCode() << path.toUtf8();
     return chan;
@@ -130,6 +140,7 @@ void AudioPlayer::play() {
                 durationChanged(BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000);
                 BASS_ChannelPlay(chan, true);
                 notifyTimer -> start(notifyInterval);
+                //TODO: remove sync and check end of file by timer
                 syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
             } else {
                 qDebug() << "Can't play file";

@@ -7,6 +7,8 @@
 #include <QDir>
 
 #include "bass.h"
+#include "bass_fx.h"
+#include "bassmix.h"
 #include "notify_timer.h"
 
 void __stdcall endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);
