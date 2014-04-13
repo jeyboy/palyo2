@@ -175,6 +175,7 @@ void Player::setTrackbarMax(int duration) {
 //        slider -> setDisabled(!isSeekable());
         slider -> setMaximum(duration);
         last_duration = duration;
+        setTimePanelVal(duration);
     }
 }
 

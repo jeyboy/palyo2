@@ -7,6 +7,8 @@
 
 #include <QDebug>
 
+//TODO: output file info on root element in tree
+
 QMenu * MainWindow::createPopupMenu () {   
     //TODO: add label with name on panel
     //TODO: add panel highlight on mouse over in menu
@@ -239,7 +241,7 @@ QToolBar* MainWindow::createTimeMediaBar() {
     ptb -> setMinimumHeight(30);
 
     QLabel * timeLabel = new QLabel("00:00");
-    timeLabel -> setStyleSheet("QLabel { font-weight: bold; font-size: 16px; }");
+    timeLabel -> setStyleSheet("QLabel { font-weight: bold; font-size: 14px; }");
     ptb -> addWidget(timeLabel);
     Player::instance() -> setTimePanel(timeLabel);
     ptb -> adjustSize();
