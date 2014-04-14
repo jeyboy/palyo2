@@ -105,10 +105,11 @@ bool Library::proceedItemNames(QList<QString> * names, int state) {
     QChar letter;
     bool catState = false, catalog_has_item, catalog_state_has_item;
     QString name;
-    QList<QString> * saveList = 0;
+    QList<QString> * saveList;
     QList<QString>::iterator i;
 
     for (i = names -> begin(); i != names -> end(); ++i) {
+        saveList = 0;
         name = (*i);
         letter = getCatalogChar(name);
         cat = getCatalog(letter);
@@ -120,12 +121,15 @@ bool Library::proceedItemNames(QList<QString> * names, int state) {
             cat -> insert(name, state);
 
             catalog_state_has_item = catalogs_state.contains(letter);
-            if (catalog_state_has_item)
+            if (catalog_state_has_item) {
                 saveList = catalogs_state.value(letter);
+                qDebug() << "LLL: " << letter << " Libb: " << (*saveList);
+            }
 
             if (catalog_has_item) {
-                if (saveList)
+                if (saveList) {
                     delete saveList;
+                }
                 catalogs_state.insert(letter, 0);
             } else {
                 if (!catalog_state_has_item) {
@@ -234,13 +238,14 @@ void Library::save() {
         bool result;
 
         while(i != catalogs_state.end()) {
+            qDebug() << i.key();
             res = catalogs -> value(i.key());
 
             if (i.value()) {
                 result = fileDump(i.key(), *i.value(), QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
 
                 if(result) {
-                    delete i.value();
+                    delete catalogs_state.value(i.key());
                     catalogs_state.insert(i.key(), 0);
                 }
             } else {
@@ -265,6 +270,7 @@ bool Library::fileDump(QChar key, QList<QString> &keysList, QFlags<QIODevice::Op
     QHash<QString, int> * res = catalogs -> value(key);
 
     path = libraryPath() + "cat_" + key;
+    qDebug() << "SSave list "<< keysList;
 
     QFile f(path);
     if (f.open(openFlags)) {
