@@ -44,6 +44,8 @@ public:
     explicit AudioPlayer(QObject *parent = 0);
     ~AudioPlayer();
 
+    int getDuration() const;
+
     int getNotifyInterval();
     void setNotifyInterval(signed int milis);
 
@@ -77,6 +79,7 @@ private:
     QUrl mediaUri;
 
     int notifyInterval;
+    int duration;
 
     MediaState currentState;
 

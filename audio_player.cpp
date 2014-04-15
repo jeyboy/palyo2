@@ -15,6 +15,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     // cheat for cross treadhing
     connect(this, SIGNAL(playbackEnded()), this, SLOT(endOfPlayback()));
 
+    duration = -1;
     notifyInterval = 100;
 
     currentState = StoppedState;
@@ -57,6 +58,10 @@ AudioPlayer::~AudioPlayer() {
     BASS_PluginFree(0);
     notifyTimer -> stop();
     delete notifyTimer;
+}
+
+int AudioPlayer::getDuration() const {
+    return duration;
 }
 
 int AudioPlayer::getNotifyInterval() {
@@ -123,7 +128,11 @@ void AudioPlayer::stoped() {
 }
 
 void AudioPlayer::signalUpdate() {
-    emit positionChanged(BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetPosition(chan, BASS_POS_BYTE)) * 1000);
+    int curr_pos = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetPosition(chan, BASS_POS_BYTE)) * 1000;
+
+    emit positionChanged(curr_pos);
+    if (duration - curr_pos < 500)
+        endOfPlayback();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -137,7 +146,8 @@ void AudioPlayer::play() {
             emit mediaStatusChanged(NoMedia);
         } else {
             if (openChannel(mediaUri.toLocalFile())) {
-                durationChanged(BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000);
+                duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
+                durationChanged(duration);
                 BASS_ChannelPlay(chan, true);
                 notifyTimer -> start(notifyInterval);
                 //TODO: remove sync and check end of file by timer

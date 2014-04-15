@@ -51,6 +51,8 @@ private slots:
     void setTrackbarValue(int);
     void setTrackbarMax(int);
 
+    void invertTimeCountdown();
+
     void onStateChanged(MediaState newState);
     void onMediaStatusChanged(MediaStatus status);
 
@@ -60,21 +62,23 @@ private:
     void setTimePanelVal(int millis);
 
     Player() {
-       slider = 0;
-       timePanel = 0;
-       played = 0;
-       playlist = 0;
+        time_forward = true;
 
-       playButton = 0;
-       pauseButton = 0;
-       stopButton = 0;
-       likeButton = 0;
+        slider = 0;
+        timePanel = 0;
+        played = 0;
+        playlist = 0;
 
-       activePlaylist = 0;
+        playButton = 0;
+        pauseButton = 0;
+        stopButton = 0;
+        likeButton = 0;
 
-       setNotifyInterval(500);
-       connect(this, SIGNAL(stateChanged(MediaState)), this, SLOT(onStateChanged(MediaState)));
-       connect(this, SIGNAL(mediaStatusChanged(MediaStatus)), this, SLOT(onMediaStatusChanged(MediaStatus)));
+        activePlaylist = 0;
+
+        setNotifyInterval(500);
+        connect(this, SIGNAL(stateChanged(MediaState)), this, SLOT(onStateChanged(MediaState)));
+        connect(this, SIGNAL(mediaStatusChanged(MediaStatus)), this, SLOT(onMediaStatusChanged(MediaStatus)));
     }
 
     static Player * self;
@@ -90,7 +94,7 @@ private:
     QAction * stopButton;
     QAction * likeButton;
 
-    int last_duration;
+    bool time_forward;
 };
 
 #endif // PLAYER_H

@@ -239,7 +239,8 @@ QToolBar* MainWindow::createTimeMediaBar() {
     ptb -> setMinimumHeight(30);
 
     QLabel * timeLabel = new QLabel("00:00");
-    timeLabel -> setStyleSheet("QLabel { font-weight: bold; font-size: 14px; }");
+//    connect(timeLabel, SIGNAL(mousePressEvent(QMouseEvent *ev)), Player::instance(), SLOT(invertTimeCountdown()));
+    timeLabel -> setStyleSheet("QLabel { font-weight: bold; font-size: 12px; }");
     ptb -> addWidget(timeLabel);
     Player::instance() -> setTimePanel(timeLabel);
     ptb -> adjustSize();

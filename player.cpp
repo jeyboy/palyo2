@@ -99,7 +99,6 @@ void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
 
     played = item;
     playlist = itemPlaylist;
-    last_duration = -1;
     play();
 }
 
@@ -118,7 +117,6 @@ void Player::playFile(QString uri) {
 
     played = 0;
     setMedia(QUrl::fromLocalFile(uri));
-    last_duration = -1;
     play();
 }
 
@@ -142,7 +140,16 @@ void Player::setTimePanel(QLabel * newTimePanel) {
 
 void Player::setTimePanelVal(int millis) {
     if (timePanel) {
-        timePanel -> setText(intToStr(millis - last_duration));
+        int val;
+
+        if (time_forward) {
+            val = millis;
+        } else {
+            val = getDuration() - millis;
+        }
+
+
+        timePanel -> setText(intToStr(val) + "\n" + intToStr(getDuration()));
     }
 }
 
@@ -163,6 +170,10 @@ QString Player::intToStr(int millis) {
 
 //////////////////////SLOTS/////////////////////////
 
+void Player::invertTimeCountdown() {
+    time_forward = !time_forward;
+}
+
 void Player::setTrackbarValue(int pos) {
     setTimePanelVal(pos);
 
@@ -175,7 +186,6 @@ void Player::setTrackbarMax(int duration) {
     if (slider) {
 //        slider -> setDisabled(!isSeekable());
         slider -> setMaximum(duration);
-        last_duration = duration;
     }
 }
 
@@ -212,8 +222,8 @@ void Player::onStateChanged(MediaState newState) {
         }
 
         case PlayingState: {
-            if (last_duration != -1)
-                slider -> setMaximum(last_duration);
+            if (getDuration() != -1)
+                slider -> setMaximum(getDuration());
 
             updateItemState(true);
 
