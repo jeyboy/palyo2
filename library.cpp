@@ -123,7 +123,8 @@ bool Library::proceedItemNames(QList<QString> * names, int state) {
             catalog_state_has_item = catalogs_state.contains(letter);
             if (catalog_state_has_item) {
                 saveList = catalogs_state.value(letter);
-                qDebug() << "LLL: " << letter << " Libb: " << (*saveList);
+                if (saveList != 0)
+                    qDebug() << "LLL: " << letter << " Libb: " << (*saveList);
             }
 
             if (catalog_has_item) {

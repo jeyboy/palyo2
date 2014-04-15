@@ -147,7 +147,8 @@ void Player::setTimePanelVal(int millis) {
 }
 
 QString Player::intToStr(int millis) {
-    int h = millis == 0 ? 0 : abs(millis / 1440000) % 24;
+    //TODO: check time on ofra haza.wma
+    int h = millis == 0 ? 0 : abs(millis / 3600000) % 24;
     int m = millis == 0 ? 0 : abs(millis / 60000) % 60;
     int s = millis == 0 ? 0 : abs(millis / 1000) % 60;
 //    int h = millis == 0 ? 0 : abs(millis / 3600000000l) % 24;
