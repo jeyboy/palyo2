@@ -130,8 +130,9 @@ void Player::setTrackBar(QSlider * trackBar) {
     connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(changeTrackbarValue(int)));
 }
 
-void Player::setTimePanel(QLabel * newTimePanel) {
+void Player::setTimePanel(ClickableLabel * newTimePanel) {
     timePanel = newTimePanel;
+    connect(timePanel, SIGNAL(clicked()), this, SLOT(invertTimeCountdown()));
 }
 
 //void Player::setVideoOutput(QVideoWidget * container) {

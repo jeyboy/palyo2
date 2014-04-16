@@ -5,13 +5,13 @@
 
 #include <QSlider>
 #include <QAction>
-#include <QLabel>
 
 #include <QtCore/qmath.h>
 
 #include "model.h"
 #include "itemlist.h"
 #include "audio_player.h"
+#include "clickable_label.h"
 
 class ItemList;
 
@@ -30,7 +30,7 @@ public:
     void setLikeButton(QAction * likeAction);
 
     void setTrackBar(QSlider * trackBar);
-    void setTimePanel(QLabel * timePanel);
+    void setTimePanel(ClickableLabel * timePanel);
 //    void setVideoOutput(QVideoWidget * container);
     void setPlaylist(ItemList * playlist);
     void removePlaylist();
@@ -87,7 +87,7 @@ private:
 
     static Player * self;
     QSlider * slider;
-    QLabel * timePanel;
+    ClickableLabel * timePanel;
     ModelItem * played;
     ItemList * playlist;
 

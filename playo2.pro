@@ -47,7 +47,8 @@ SOURCES += main.cpp\
     model_item_state.cpp \
     library_item.cpp \
     audio_player.cpp \
-    notify_timer.cpp
+    notify_timer.cpp \
+    clickable_label.cpp
 
 unix:!mac {
         QT += gui-private
@@ -96,7 +97,8 @@ HEADERS  += mainwindow.h \
     library_item.h \
     slider_style.h \
     audio_player.h \
-    notify_timer.h
+    notify_timer.h \
+    clickable_label.h
 
 FORMS    += mainwindow.ui \
     tabdialog.ui \
