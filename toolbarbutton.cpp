@@ -13,7 +13,8 @@ ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent)
     setStyleSheet(
                 "QToolButton {"
                     "border: 1px solid #444;"
-                    "border-radius: 4px;"
+                    "background-color: #F7E488;"
+                    "border-radius: 8px;"
                     "font-weight: bold;"
                     "height: 24px;"
                     "min-width: 24px;"

@@ -140,32 +140,41 @@ void Player::setTimePanel(QLabel * newTimePanel) {
 
 void Player::setTimePanelVal(int millis) {
     if (timePanel) {
-        int val;
+        QString val, total;
 
         if (time_forward) {
-            val = millis;
+            val = intToStr(millis);
         } else {
-            val = getDuration() - millis;
+            val = intToStr(getDuration() - millis);
         }
 
-
-        timePanel -> setText(intToStr(val) + "\n" + intToStr(getDuration()));
+        total = intToStr(getDuration());
+        timePanel -> setText(val + "\n" + total);
     }
 }
 
-QString Player::intToStr(int millis) {
-    //TODO: check time on ofra haza.wma
+void Player::initFormat(int millis) {
     int h = millis == 0 ? 0 : abs(millis / 3600000) % 24;
+    extended_format = h > 0;
+}
+
+QString Player::intToStr(int millis) {
     int m = millis == 0 ? 0 : abs(millis / 60000) % 60;
     int s = millis == 0 ? 0 : abs(millis / 1000) % 60;
-//    int h = millis == 0 ? 0 : abs(millis / 3600000000l) % 24;
-//    int m = millis == 0 ? 0 : abs(millis / 60000000) % 60;
-//    int s = millis == 0 ? 0 : abs(millis / 1000000) % 60;
 
-    if (h > 0)
+    if (extended_format) {
+        int h = millis == 0 ? 0 : abs(millis / 3600000) % 24;
         return QString().sprintf("%02d:%02d:%02d", h, m, s);
-    else
+    } else {
         return QString().sprintf("%02d:%02d", m, s);
+    }
+}
+
+void Player::updateControls(bool played, bool paused, bool stopped) {
+    playButton -> setVisible(played);
+    pauseButton -> setVisible(paused);
+    stopButton -> setVisible(stopped);
+    likeButton -> setVisible(!(played && !stopped && !paused));
 }
 
 //////////////////////SLOTS/////////////////////////
@@ -184,6 +193,7 @@ void Player::setTrackbarValue(int pos) {
 
 void Player::setTrackbarMax(int duration) {
     if (slider) {
+        initFormat(duration);
 //        slider -> setDisabled(!isSeekable());
         slider -> setMaximum(duration);
     }
@@ -206,18 +216,12 @@ void Player::changeTrackbarValue(int pos) {
 void Player::onStateChanged(MediaState newState) {
     switch(newState) {
         case StoppedState: {
-
-//            updateItemState(false);
-
             slider -> blockSignals(true);
             slider -> setMaximum(0);
             setTimePanelVal(0);
             slider -> blockSignals(false);
 
-            playButton -> setVisible(true);
-            pauseButton -> setVisible(false);
-            stopButton -> setVisible(false);
-            likeButton -> setVisible(false);
+            updateControls(true, false, false);
             break;
         }
 
@@ -226,19 +230,12 @@ void Player::onStateChanged(MediaState newState) {
                 slider -> setMaximum(getDuration());
 
             updateItemState(true);
-
-            playButton -> setVisible(false);
-            pauseButton -> setVisible(true);
-            stopButton -> setVisible(true);
-            likeButton -> setVisible(true);
+            updateControls(false, true, true);
             break;
         }
 
         case PausedState: {
-            playButton -> setVisible(true);
-            pauseButton -> setVisible(false);
-            stopButton -> setVisible(true);
-            likeButton -> setVisible(true);
+            updateControls(true, false, true);
             break;
         }
     }

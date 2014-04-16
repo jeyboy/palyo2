@@ -58,11 +58,15 @@ private slots:
 
 private:
     void updateItemState(bool played);
-    QString intToStr(int val);
+    void initFormat(int millis);
+    QString intToStr(int millis);
+    void updateControls(bool played, bool paused, bool stopped);
+
     void setTimePanelVal(int millis);
 
     Player() {
         time_forward = true;
+        extended_format = true;
 
         slider = 0;
         timePanel = 0;
@@ -95,6 +99,7 @@ private:
     QAction * likeButton;
 
     bool time_forward;
+    bool extended_format;
 };
 
 #endif // PLAYER_H
