@@ -70,9 +70,12 @@ bool ModelItemState::setNone() {
     item_state = STATE_DEFAULT;
     return true;
 }
+
+
+//TODO: setListened and setLiked lost played state
 bool ModelItemState::setListened() {
     if (!isLiked() && !isUnprocessed()) {
-        item_state = setBit(STATE_LISTENED, item_state & 0x7); // get three first bits
+        item_state = setBit(STATE_LISTENED, item_state & 15); // get four first bits
         return true;
     }
     return false;
@@ -80,7 +83,7 @@ bool ModelItemState::setListened() {
 bool ModelItemState::setLiked() {
     if (isUnprocessed()) return false;
 
-    item_state = setBit(STATE_LIKED, item_state & 0x7); // get three first bits
+    item_state = setBit(STATE_LIKED, item_state & 15); // get four first bits
     return true;
 }
 

@@ -15,7 +15,7 @@ TEMPLATE = app
 
 
 DEFINES += TAGLIB_NO_CONFIG
-DEFINES += TAGLIB_STATIC=1
+#DEFINES += TAGLIB_STATIC=1
 
 INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/taglib/include)
 INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/bass/include)
