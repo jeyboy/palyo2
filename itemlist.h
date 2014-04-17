@@ -73,7 +73,6 @@ protected:
     void keyPressEvent(QKeyEvent *event);
 
 private slots:
-    void on_click(const QModelIndex &index);
     void on_doubleClick(const QModelIndex &index);
     void showContextMenu(const QPoint &);
     void openLocation();

@@ -28,13 +28,10 @@ public:
     ModelItem *child(int row);
     int childCount() const;
     void appendChild(ModelItem *child);
-    bool insertChildren(int position, int count, int columns);
     bool removeChildren(int position, int count);
 
     int column() const;
     int columnCount() const;
-    bool insertColumns(int position, int columns);
-    bool removeColumns(int position, int columns);
 
     int row() const;
 

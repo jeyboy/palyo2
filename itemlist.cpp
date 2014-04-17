@@ -20,7 +20,7 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::CopyAction);
 
-    setExpandsOnDoubleClick(false);
+    setExpandsOnDoubleClick(true);
 
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
@@ -43,8 +43,8 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
     setItemDelegate(new ModelItemDelegate(this));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
+    setIconSize(QSize(0,0));
 
-    connect(this, SIGNAL(clicked(const QModelIndex&)), this, SLOT(on_click(const QModelIndex&)));   
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(on_doubleClick(const QModelIndex&)));
     connect(model, SIGNAL(itemsCountChanged(int)), parent, SLOT(updateHeader(int)));
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &)));
@@ -230,17 +230,6 @@ void ItemList::startDrag(Qt::DropActions /*supportedActions*/) {
 //     {
 //        model()->removeRow(indx.row());
 //     }
-}
-
-
-void ItemList::on_click(const QModelIndex &index) {
-    ModelItem * item = model->getItem(index);
-
-    if (item -> getState() -> isUnprocessed()) {
-        if (isExpanded(index)) {
-          collapse(index);
-        } else { expand(index); }
-    }
 }
 
 void ItemList::on_doubleClick(const QModelIndex &index) {

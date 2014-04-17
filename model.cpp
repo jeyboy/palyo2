@@ -44,7 +44,8 @@ QVariant Model::data(const QModelIndex &index, int role) const {
            if (item -> getState() -> isNotExist())
                return IconProvider::missedIcon();
            else if (item -> getState() -> isUnprocessed())
-               return IconProvider::fileIcon("", "");
+               return QVariant();
+//               return IconProvider::fileIcon("", "");
            else
                return IconProvider::fileIcon(item -> fullpath(), (item -> data(EXTENSIONUID).toString()));
         }
@@ -175,15 +176,14 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
         ModelItem * parentItem = getItem(parent);
         ModelItem * item = parentItem -> child(row);
 
-        if (!item -> getState() -> isUnprocessed()) {
-            beginRemoveRows(parent, row, row);
-            if (parentItem -> removeChildren(row, 1)) {
+        beginRemoveRows(parent, row, row);
+        if (parentItem -> removeChildren(row, 1)) {
+            if (!item -> getState() -> isUnprocessed())
                 emit itemsCountChanged(--count);
-            }
-            endRemoveRows();
-
-            return true;
         }
+        endRemoveRows();
+
+        return true;
     }
 
     return false;

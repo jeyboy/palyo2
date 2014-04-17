@@ -112,20 +112,6 @@ void ModelItem::appendChild(ModelItem *item) {
     childItems.append(item);
 }
 
-bool ModelItem::insertChildren(int position, int count, int /*columns*/) {
-    if (position < 0 || position > childItems.size())
-        return false;
-
-    for (int row = 0; row < count; ++row) {
-//        QVector<QVariant> data(columns);
-//        ModelItem *item = new ModelItem(data, this);
-        ModelItem *item = new ModelItem(QString("BLA"), this);
-        childItems.insert(position, item);
-    }
-
-    return true;
-}
-
 bool ModelItem::removeChildren(int position, int count)
 {
     if (position < 0 || position + count > childItems.size())
@@ -145,36 +131,6 @@ int ModelItem::column() const {
 
 int ModelItem::columnCount() const {
      return 1;
-//    if (parentItem == 0)
-//        return 0;
-//    else
-//        return 1;
-}
-
-bool ModelItem::removeColumns(int /*position*/, int /*columns*/) {
-//    if (position < 0 || position + columns > itemData.size())
-//        return false;
-
-//    for (int column = 0; column < columns; ++column)
-//        itemData.remove(position);
-
-//    foreach (TreeItem *child, childItems)
-//        child->removeColumns(position, columns);
-
-    return true;
-}
-
-bool ModelItem::insertColumns(int /*position*/, int /*columns*/) {
-//    if (position < 0 || position > itemData.size())
-//        return false;
-
-//    for (int column = 0; column < columns; ++column)
-//        itemData.insert(position, QVariant());
-
-//    foreach (TreeItem *child, childItems)
-//        child->insertColumns(position, columns);
-
-    return true;
 }
 
 /////////////////////////////////////////////////////////
