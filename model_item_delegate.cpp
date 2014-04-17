@@ -181,8 +181,8 @@ void ModelItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
     QVariant iconVal = index.model() -> data(index, Qt::DecorationRole);
 
     if (iconVal.isValid()) {
-        QPoint topLeft(x - 8, option.rect.y() + 1);
-        QPoint bottomRight(topLeft.rx() + iconSize, option.rect.bottom() - 1);
+        QPoint topLeft(x - 7, option.rect.y() + 1);
+        QPoint bottomRight(topLeft.rx() + iconSize - 1, option.rect.bottom() - 1);
 
         icon =  qvariant_cast<QIcon>(iconVal);
 //        icon.paint(painter, QRect(topLeft, bottomRight));

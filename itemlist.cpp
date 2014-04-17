@@ -3,7 +3,7 @@
 
 ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {   
     settings = settingsSet;
-    setIndentation(10);
+    setIndentation(8);
 
 //    setStyleSheet(QString(
 //                      "QTreeView {"
