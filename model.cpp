@@ -176,21 +176,22 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
         int removeCount = 1;
         ModelItem * parentItem = getItem(parent);
         ModelItem * item = parentItem -> child(row);
+        QString folderName;
         bool isUnprocessed = item -> getState() -> isUnprocessed();
 
         if (isUnprocessed) {
             removeCount = item -> childTreeCount();
+            folderName = item -> data(NAMEUID).toString();
+            qDebug() << "1";
         }
 
         beginRemoveRows(parent, row, row);
         if (parentItem -> removeChildren(row, 1)) {
-            if (parentItem -> childCount() == 0)
-                removeRow(parent.row(), parent.parent());
-            else if (isUnprocessed) {
-                // have some troubles with folders list after deletion
-                qDebug() << "Folder before " << parentItem -> folders -> keys();
-                parentItem -> folders -> remove(item -> data(NAMEUID).toString());
-                qDebug() << "Folder after " << parentItem -> folders -> keys();
+            qDebug() << "3";
+
+            if (isUnprocessed) {
+                qDebug() << "4";
+                parentItem -> folders -> remove(folderName);
             }
 
             qDebug() << "Remove count " << removeCount;
@@ -198,6 +199,11 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
                 emit itemsCountChanged(count -= removeCount);
         }
         endRemoveRows();
+
+        if (parentItem -> childCount() == 0) {
+            qDebug() << "2";
+            removeRow(parent.row(), parent.parent());
+        }
 
         return true;
     }
