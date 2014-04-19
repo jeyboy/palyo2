@@ -80,7 +80,13 @@ ModelItem::ModelItem(QString file_path, ModelItem *parent, int init_state) {
             parent -> folders -> insert(name, this);
     }
 
-    if (parent != 0) { parent -> appendChild(this);}
+    if (parent != 0) {
+        if (!state -> isUnprocessed()) {
+            parent -> insertChild(0, this);
+        } else {
+            parent -> appendChild(this);
+        }
+    }
 }
 
 ModelItem::~ModelItem() {
@@ -119,6 +125,10 @@ int ModelItem::childTreeCount() const {
 
 int ModelItem::childCount() const {
     return childItems.count();
+}
+
+void ModelItem::insertChild(int pos, ModelItem *item) {
+    childItems.insert(pos, item);
 }
 
 void ModelItem::appendChild(ModelItem *item) {
