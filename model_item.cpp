@@ -29,15 +29,16 @@ ModelItem::ModelItem() {
 }
 
 ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
-    init(true);
     parentItem = parent;
 
     if (attrs -> contains("p")) {
+        init(true);
         name = path = attrs -> value("p").toString();
 
         if (parent != 0)
             parent -> folders -> insert(name, this);
     } else {
+        init(false);
         name = attrs -> value("n").toString();
         state = new ModelItemState(attrs -> value("s").toInt());
         extension = attrs -> value("e").toString();
@@ -102,6 +103,18 @@ ModelItem *ModelItem::parent() {
 
 ModelItem *ModelItem::child(int row) {
     return childItems.value(row);
+}
+
+int ModelItem::childTreeCount() const {
+    int ret = 0;
+    foreach(ModelItem * childItem, childItems) {
+        if (childItem -> folders == 0) // not is unprocessed
+            ret += 1;
+        else
+            ret += childItem -> childTreeCount();
+    }
+
+    return ret;
 }
 
 int ModelItem::childCount() const {

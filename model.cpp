@@ -173,13 +173,29 @@ void Model::appendRow(QString filepath, ModelItem * parentItem) {
 
 bool Model::removeRow(int row, const QModelIndex &parent) {
     if (parent.isValid()) {
+        int removeCount = 1;
         ModelItem * parentItem = getItem(parent);
         ModelItem * item = parentItem -> child(row);
+        bool isUnprocessed = item -> getState() -> isUnprocessed();
+
+        if (isUnprocessed) {
+            removeCount = item -> childTreeCount();
+        }
 
         beginRemoveRows(parent, row, row);
         if (parentItem -> removeChildren(row, 1)) {
-            if (!item -> getState() -> isUnprocessed())
-                emit itemsCountChanged(--count);
+            if (parentItem -> childCount() == 0)
+                removeRow(parent.row(), parent.parent());
+            else if (isUnprocessed) {
+                // have some troubles with folders list after deletion
+                qDebug() << "Folder before " << parentItem -> folders -> keys();
+                parentItem -> folders -> remove(item -> data(NAMEUID).toString());
+                qDebug() << "Folder after " << parentItem -> folders -> keys();
+            }
+
+            qDebug() << "Remove count " << removeCount;
+            if (removeCount > 0)
+                emit itemsCountChanged(count -= removeCount);
         }
         endRemoveRows();
 

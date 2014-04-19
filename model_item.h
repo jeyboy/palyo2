@@ -26,6 +26,7 @@ public:
     ModelItem *parent();
 
     ModelItem *child(int row);
+    int childTreeCount() const;
     int childCount() const;
     void appendChild(ModelItem *child);
     bool removeChildren(int position, int count);
