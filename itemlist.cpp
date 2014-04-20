@@ -89,6 +89,7 @@ ModelItem * ItemList::activeItem(bool next) {
         }
     }
 
+    // has some bug on unprocessed select
     if (item == 0) {
         QModelIndexList list = selectedIndexes();
 
@@ -397,7 +398,7 @@ ModelItem * ItemList::nextItem(QModelIndex currIndex) {
 
 ModelItem * ItemList::nextItem(ModelItem * curr) {
     ModelItem * item = curr;
-    bool first_elem = curr -> parent() == 0;
+    bool first_elem = curr -> parent() == 0 || curr -> getState() -> isUnprocessed();
 
     while(true) {
         if (first_elem) {
