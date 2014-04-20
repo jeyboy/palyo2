@@ -92,6 +92,8 @@ private:
     QxtGlobalShortcut * next;
     QxtGlobalShortcut * next_and_delete;
     QxtGlobalShortcut * prev;
+    QxtGlobalShortcut * play;
+    QxtGlobalShortcut * stop;
 
     DataStore * settings;
 

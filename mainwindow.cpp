@@ -155,6 +155,12 @@ void MainWindow::registrateGlobalKeys() {
 
    prev = new QxtGlobalShortcut(QKeySequence("Ctrl+Up"));
    connect(prev, SIGNAL(activated()), this, SLOT(prevItemTriggered()));
+
+   play = new QxtGlobalShortcut(QKeySequence(Qt::Key_MediaPlay));
+   connect(play, SIGNAL(activated()), Player::instance(), SLOT(playPause()));
+
+   stop = new QxtGlobalShortcut(QKeySequence(Qt::Key_MediaStop));
+   connect(stop, SIGNAL(activated()), Player::instance(), SLOT(stop()));
 }
 
 //TODO: menu finish needed
@@ -492,6 +498,8 @@ MainWindow::~MainWindow() {
     delete next;
     delete next_and_delete;
     delete prev;
+    delete play;
+    delete stop;
 
     delete settings;
     delete tabber;

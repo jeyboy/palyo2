@@ -200,6 +200,13 @@ void Player::setTrackbarMax(int duration) {
     }
 }
 
+void Player::playPause() {
+    if (state() == PlayingState)
+        pause();
+    else
+        start();
+}
+
 void Player::start() {
     if ((played == 0 || playlist != activePlaylist) && activePlaylist != 0) {
         activePlaylist -> proceedNext();
