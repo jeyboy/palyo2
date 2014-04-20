@@ -43,6 +43,9 @@ public:
         delete self;
     }
 
+public slots:
+    void playPause();
+
 private slots:
     void start();
     void like();
