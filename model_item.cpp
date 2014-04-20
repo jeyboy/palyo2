@@ -205,7 +205,10 @@ QString ModelItem::fullpath() const {
         curr = curr -> parentItem;
     }
 
-    return path_buff.mid(1) + name + '.' + extension;
+    if (extension.isEmpty())
+        return path_buff.mid(1) + name;
+    else
+        return path_buff.mid(1) + name + '.' + extension;
 }
 
 bool ModelItem::isExist() {

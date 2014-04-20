@@ -352,8 +352,9 @@ void ItemList::removeItem(ModelItem * item) {
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullpath();
 
-    if (Player::instance() -> playedItem() == item) {
-        Player::instance() -> removePlaylist();
+    if (Player::instance() -> playedItem()) {
+        if (Player::instance() -> playedItem() -> fullpath().startsWith(delPath))
+            Player::instance() -> removePlaylist();
     }
 
     if (model -> removeRow(modelIndex.row(), modelIndex.parent())) {
