@@ -186,26 +186,21 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
     if (isUnprocessed) {
         removeCount = item -> childTreeCount();
         folderName = item -> data(NAMEUID).toString();
-        qDebug() << "1";
     }
 
     beginRemoveRows(parentIndex, row, row);
     if (parentItem -> removeChildren(row, 1)) {
-        qDebug() << "3";
 
         if (isUnprocessed) {
-            qDebug() << "4";
             parentItem -> removeFolder(folderName);
         }
 
-        qDebug() << "Remove count " << removeCount;
         if (removeCount > 0)
             emit itemsCountChanged(count -= removeCount);
     }
     endRemoveRows();
 
     if (parentItem -> childCount() == 0 && parentItem -> parent() != 0) {
-        qDebug() << "2";
         removeRow(parentIndex.row(), parentIndex.parent());
     }
 
