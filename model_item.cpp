@@ -160,7 +160,7 @@ int ModelItem::columnCount() const {
 
 int ModelItem::row() const {
      if (parentItem)
-         return parentItem->childItems.indexOf(const_cast<ModelItem*>(this));
+         return parentItem -> childItems.indexOf(const_cast<ModelItem*>(this));
 
      return 0;
 }

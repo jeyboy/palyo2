@@ -172,43 +172,44 @@ void Model::appendRow(QString filepath, ModelItem * parentItem) {
 }
 
 bool Model::removeRow(int row, const QModelIndex &parent) {
-    if (parent.isValid()) {
-        int removeCount = 1;
-        ModelItem * parentItem = getItem(parent);
-        ModelItem * item = parentItem -> child(row);
-        QString folderName;
-        bool isUnprocessed = item -> getState() -> isUnprocessed();
-
-        if (isUnprocessed) {
-            removeCount = item -> childTreeCount();
-            folderName = item -> data(NAMEUID).toString();
-            qDebug() << "1";
-        }
-
-        beginRemoveRows(parent, row, row);
-        if (parentItem -> removeChildren(row, 1)) {
-            qDebug() << "3";
-
-            if (isUnprocessed) {
-                qDebug() << "4";
-                parentItem -> folders -> remove(folderName);
-            }
-
-            qDebug() << "Remove count " << removeCount;
-            if (removeCount > 0)
-                emit itemsCountChanged(count -= removeCount);
-        }
-        endRemoveRows();
-
-        if (parentItem -> childCount() == 0) {
-            qDebug() << "2";
-            removeRow(parent.row(), parent.parent());
-        }
-
-        return true;
+    QModelIndex parentIndex = parent;
+    if (!parentIndex.isValid()) {
+        parentIndex = index(rootItem);
     }
 
-    return false;
+    int removeCount = 1;
+    ModelItem * parentItem = getItem(parentIndex);
+    ModelItem * item = parentItem -> child(row);
+    QString folderName;
+    bool isUnprocessed = item -> getState() -> isUnprocessed();
+
+    if (isUnprocessed) {
+        removeCount = item -> childTreeCount();
+        folderName = item -> data(NAMEUID).toString();
+        qDebug() << "1";
+    }
+
+    beginRemoveRows(parentIndex, row, row);
+    if (parentItem -> removeChildren(row, 1)) {
+        qDebug() << "3";
+
+        if (isUnprocessed) {
+            qDebug() << "4";
+            parentItem -> folders -> remove(folderName);
+        }
+
+        qDebug() << "Remove count " << removeCount;
+        if (removeCount > 0)
+            emit itemsCountChanged(count -= removeCount);
+    }
+    endRemoveRows();
+
+    if (parentItem -> childCount() == 0 && parentItem -> parent() != 0) {
+        qDebug() << "2";
+        removeRow(parentIndex.row(), parentIndex.parent());
+    }
+
+    return true;
 }
 
 bool Model::removeRows(int position, int rows, const QModelIndex &parent) {
