@@ -127,6 +127,13 @@ bool ModelItemState::setProceed() {
     item_state = setBit(item_state, STATE_LIST_PROCEED);
     return true;
 }
+
+bool ModelItemState::unsetProceed() {
+    item_state = unsetBit(item_state, STATE_LIST_PROCEED);
+    return true;
+}
+
+
 bool ModelItemState::setUnprocessed() {
     item_state = setBit(item_state, STATE_UNPROCESSED);
     return true;

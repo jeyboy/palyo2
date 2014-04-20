@@ -216,6 +216,13 @@ bool ModelItem::setData(int column, const QVariant &value) {
     return true;
 }
 
+void ModelItem::dropExpandProceedFlags() {
+    foreach(ModelItem * item, folders -> values()) {
+        item -> getState() -> unsetProceed();
+        item -> dropExpandProceedFlags();
+    }
+}
+
 /////////////////////////////////////////////////////////
 
 QString ModelItem::fullpath() const {

@@ -41,6 +41,8 @@ public:
     bool unsetNotExist();
 
     bool setProceed();
+    bool unsetProceed();
+
     bool setUnprocessed();
 
     bool setBit(int val);

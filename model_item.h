@@ -46,6 +46,8 @@ public:
     ModelItemState * getState() const;
     void setState(int new_state, bool append_to_library = true);
 
+    void dropExpandProceedFlags();
+
     QJsonObject toJSON();
 
     bool isExist();
