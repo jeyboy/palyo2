@@ -57,6 +57,8 @@ private slots:
     void mediaOrientationChanged(Qt::Orientation);
     void slotNoImpl();
 
+    void removePanelHighlight();
+    void panelHighlight(QAction *action = 0);
     void addPanelTriggered();
     void removePanelTriggered();
     void addPanelButtonTriggered();
@@ -80,6 +82,8 @@ private:
     Ui::MainWindow *ui;
     Tabber * tabber;
     QSystemTrayIcon m_tray;
+
+    QWidget * highlighted;
 
     QToolBar * underMouseBar;
     ToolbarButton * underMouseButton;

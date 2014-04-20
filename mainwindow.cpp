@@ -11,6 +11,12 @@ QMenu * MainWindow::createPopupMenu () {
     //TODO: add label with name on panel
     //TODO: add panel highlight on mouse over in menu
     QMenu *menu = QMainWindow::createPopupMenu();
+    connect(menu, SIGNAL(hovered(QAction *)), this, SLOT(panelHighlight(QAction *)));
+    connect(menu, SIGNAL(aboutToHide()), this, SLOT(removePanelHighlight()));
+
+//    foreach (QAction * act, menu -> actions()) {
+//        connect(act, SIGNAL(hovered()), this, SLOT(panelHighlight()));
+//    }
 
 //    menu -> insertSeparator(menu->actions().first());
     menu -> insertSection(menu->actions().first(), "Panels list");
@@ -59,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this -> setWindowTitle("Playo");
     pal.setColor(QPalette::Button, QColor("#E1E0E0"));
+    highlighted = 0;
 
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
 
@@ -532,6 +539,29 @@ void MainWindow::prevItemTriggered() {
 
 void MainWindow::folderDropped(QString name, QString path) {
     addPanelButton(name, path, (QToolBar*)QObject::sender());
+}
+
+void MainWindow::panelHighlight(QAction *action) {
+    QString widgetClassName = QString(action -> parentWidget() -> metaObject() -> className());
+
+    if (highlighted != 0)
+        emit removePanelHighlight();
+
+    if (widgetClassName == "ToolBar" || widgetClassName == "QToolBar") {
+        highlighted = action -> parentWidget();
+        highlighted -> setStyleSheet(
+                    "QToolBar {"
+                      "border: 2px solid red;"
+                    "}"
+                   );
+    }
+}
+
+void MainWindow::removePanelHighlight() {
+    if (highlighted != 0) {
+        highlighted -> setStyleSheet("");
+        highlighted = 0;
+    }
 }
 
 void MainWindow::addPanelTriggered() {
