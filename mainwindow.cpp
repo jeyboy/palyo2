@@ -9,14 +9,9 @@
 
 QMenu * MainWindow::createPopupMenu () {   
     //TODO: add label with name on panel
-    //TODO: add panel highlight on mouse over in menu
     QMenu *menu = QMainWindow::createPopupMenu();
     connect(menu, SIGNAL(hovered(QAction *)), this, SLOT(panelHighlight(QAction *)));
     connect(menu, SIGNAL(aboutToHide()), this, SLOT(removePanelHighlight()));
-
-//    foreach (QAction * act, menu -> actions()) {
-//        connect(act, SIGNAL(hovered()), this, SLOT(panelHighlight()));
-//    }
 
 //    menu -> insertSeparator(menu->actions().first());
     menu -> insertSection(menu->actions().first(), "Panels list");
