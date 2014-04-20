@@ -113,7 +113,7 @@ QModelIndex Model::parent(const QModelIndex &index) const {
     ModelItem *childItem = getItem(index);
     ModelItem *parentItem = childItem->parent();
 
-    if (parentItem == rootItem)
+    if (parentItem == rootItem || parentItem == 0)
         return QModelIndex();
 
 //    return createIndex(parentItem->row(), index.column(), parentItem);

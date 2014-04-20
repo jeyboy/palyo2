@@ -357,7 +357,11 @@ void ItemList::removeItem(ModelItem * item) {
 
     if (model -> removeRow(modelIndex.row(), modelIndex.parent())) {
         if (isRemoveFileWithItem()) {
-            QFile::remove(delPath);
+            if (item -> getState() -> isUnprocessed()) {
+                QDir(delPath).removeRecursively();
+            } else {
+                QFile::remove(delPath);
+            }
         }
     }
 }
