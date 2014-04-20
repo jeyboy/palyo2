@@ -195,7 +195,7 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
 
         if (isUnprocessed) {
             qDebug() << "4";
-            parentItem -> folders -> remove(folderName);
+            parentItem -> removeFolder(folderName);
         }
 
         qDebug() << "Remove count " << removeCount;
@@ -208,6 +208,9 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
         qDebug() << "2";
         removeRow(parentIndex.row(), parentIndex.parent());
     }
+
+    if (parentItem == rootItem)
+        repaint(); // monkey patch for first level node deletion // some troubles with index tree
 
     return true;
 }
@@ -264,8 +267,8 @@ ModelItem * Model::buildPath(QString path) {
     ModelItem * curr = rootItem;
 
     foreach(QString piece, list) {
-        if (curr -> folders -> contains(piece)) {
-            curr = curr -> folders -> value(piece);
+        if (curr -> foldersList() -> contains(piece)) {
+            curr = curr -> foldersList() -> value(piece);
         } else {
             curr = new ModelItem(piece, curr, STATE_UNPROCESSED);
         }
@@ -277,8 +280,8 @@ ModelItem * Model::buildPath(QString path) {
 ModelItem * Model::addFolder(QString folder_name, ModelItem * parent) {
     ModelItem * curr = parent;
 
-    if (curr -> folders -> contains(folder_name)) {
-        curr = curr -> folders -> value(folder_name);
+    if (curr -> foldersList() -> contains(folder_name)) {
+        curr = curr -> foldersList() -> value(folder_name);
     } else {
         curr = new ModelItem(folder_name, curr, STATE_UNPROCESSED);
     }

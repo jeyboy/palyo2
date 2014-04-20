@@ -135,8 +135,7 @@ void ModelItem::appendChild(ModelItem *item) {
     childItems.append(item);
 }
 
-bool ModelItem::removeChildren(int position, int count)
-{
+bool ModelItem::removeChildren(int position, int count) {
     if (position < 0 || position + count > childItems.size())
         return false;
 
@@ -213,6 +212,13 @@ QString ModelItem::fullpath() const {
 
 bool ModelItem::isExist() {
     return QFile::exists(fullpath());
+}
+
+QHash<QString, ModelItem *> * ModelItem::foldersList() const {
+    return folders;
+}
+int ModelItem::removeFolder(QString name) {
+    return folders -> remove(name);
 }
 
 //////////////////////////properties///////////////////////////////

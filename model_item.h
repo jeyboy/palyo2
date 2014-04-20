@@ -49,11 +49,15 @@ public:
 
     bool isExist();
 
-    QHash<QString, ModelItem *> * folders;
+    QHash<QString, ModelItem *> * foldersList() const;
+    int removeFolder(QString name);
+
     QList<QString> * names;
 private:
     void init(bool isFolder);
     void rootItemInit();
+
+    QHash<QString, ModelItem *> * folders;
 
     QList<ModelItem*> childItems;
     ModelItem *parentItem;  
