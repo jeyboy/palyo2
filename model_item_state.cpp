@@ -29,6 +29,9 @@ bool ModelItemState::isNotExist() {
 bool ModelItemState::isUnprocessed() {
     return bitIsSet(item_state, STATE_UNPROCESSED);
 }
+bool ModelItemState::isExpanded() {
+    return bitIsSet(item_state, STATE_EXPANDED);
+}
 
 bool ModelItemState::setBit(int val) {
     bool result_state = true;
@@ -87,6 +90,7 @@ bool ModelItemState::setLiked() {
     return true;
 }
 
+
 bool ModelItemState::setPlayed() {
     if (isUnprocessed()) return false;
     item_state = setBit(item_state, STATE_PLAYED);
@@ -94,6 +98,16 @@ bool ModelItemState::setPlayed() {
 }
 bool ModelItemState::unsetPlayed() {
     item_state = unsetBit(item_state, STATE_PLAYED);
+    return true;
+}
+
+bool ModelItemState::setExpanded() {
+    if (!isUnprocessed()) return false;
+    item_state = setBit(item_state, STATE_EXPANDED);
+    return true;
+}
+bool ModelItemState::unsetExpanded() {
+    item_state = unsetBit(item_state, STATE_EXPANDED);
     return true;
 }
 
@@ -123,14 +137,14 @@ int ModelItemState::getValue() const {
 }
 
 int ModelItemState::getFuncValue() {
-    return item_state & ((0<<4)-1) << 4;
+    return item_state & ((0 << 5) - 1) << 3;
 }
 
 int ModelItemState::currStateValue() {
     if (isPlayed())
         return STATE_PLAYED;
     else
-        return item_state & ((0<<4)-1) << 4;
+        return item_state & ((0 << 4) - 1) << 4;
 }
 
 //////////// private /////////////////

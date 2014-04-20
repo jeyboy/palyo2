@@ -29,6 +29,12 @@ QVariant Model::data(const QModelIndex &index, int role) const {
 
            if (!item -> getState() -> isProceed()) {
                Library::instance() -> initItem(new LibraryItem(this, item));
+
+               if (item -> getState() -> isExpanded()) {
+                   emit expandNeeded(index);
+                   qDebug() << " emit expand ";
+               }
+
                qDebug() << item -> fullpath();
            }
 
@@ -261,6 +267,20 @@ ModelItem * Model::addFolder(QString folder_name, ModelItem * parent) {
     }
 
     return curr;
+}
+
+//////////////////////// slots //////////////////////////
+
+void Model::expanded(const QModelIndex &index) {
+    ModelItem * item = getItem(index);
+    qDebug() << " Set expand: " << item -> getState()->isExpanded();
+    item -> getState() -> setExpanded();
+    qDebug() << " Set expand: " << item -> getState()->isExpanded();
+}
+void Model::collapsed(const QModelIndex &index) {
+    ModelItem * item = getItem(index);
+    item -> getState() -> unsetExpanded();
+    qDebug() << " Set collaps";
 }
 
 /////////////////////////////////////////////////////////

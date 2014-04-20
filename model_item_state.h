@@ -6,7 +6,8 @@
 #define STATE_LISTENED 32
 #define STATE_LIKED 16
 
-#define STATE_PLAYED 8
+#define STATE_EXPANDED 8
+#define STATE_PLAYED 4
 
 #define STATE_NOT_EXIST 2
 #define STATE_LIST_PROCEED 1
@@ -24,10 +25,14 @@ public:
     bool isProceed();
     bool isNotExist();
     bool isUnprocessed();
+    bool isExpanded();
 
     bool setNone();
     bool setListened();
     bool setLiked();
+
+    bool setExpanded();
+    bool unsetExpanded();
 
     bool setPlayed();
     bool unsetPlayed();

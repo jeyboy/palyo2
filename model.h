@@ -55,6 +55,11 @@ public:
 
 signals:
     void itemsCountChanged(int newCount);
+    void expandNeeded(const QModelIndex &index) const;
+
+public slots:
+    void expanded(const QModelIndex &index);
+    void collapsed(const QModelIndex &index);
 
 private:
     int count;

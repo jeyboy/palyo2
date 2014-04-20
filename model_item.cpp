@@ -39,9 +39,10 @@ ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
             parent -> folders -> insert(name, this);
     } else {
         name = attrs -> value("n").toString();
-        state = new ModelItemState(attrs -> value("s").toInt());
         extension = attrs -> value("e").toString();
     }
+
+    state = new ModelItemState(attrs -> value("s").toInt());
 
     if (attrs -> contains("c")) {
         QJsonArray ar = attrs -> value("c").toArray();
@@ -261,11 +262,12 @@ QJsonObject ModelItem::toJSON() {
         root["c"] = ar;
     }
 
+    root["s"] = state -> getFuncValue();
+
     if (state -> isUnprocessed())
         root["p"] = path;
     else {
         root["n"] = name;
-        root["s"] = state -> getFuncValue();
         root["e"] = extension;
     }
 
