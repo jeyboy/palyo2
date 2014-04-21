@@ -285,6 +285,7 @@ QJsonObject ItemList::toJSON() {
         set[c] = settings.value(c);
     }
 
+    res["p"] = QString();
     res["s"] = set;
     res["l"] = model -> itemsCount();
     return res;

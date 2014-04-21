@@ -53,7 +53,7 @@ void Tab::setNameWithCount(QString name) {
 }
 
 QJsonObject Tab::toJSON(QString name) {
-    QJsonObject res = list-> toJSON();
+    QJsonObject res = list -> toJSON();
     res["n"] = name;
     return res;
 }
