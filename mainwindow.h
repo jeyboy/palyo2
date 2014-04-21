@@ -55,7 +55,6 @@ private slots:
 
     void mediaVisibilityChanged(bool visible);
     void mediaOrientationChanged(Qt::Orientation);
-    void slotNoImpl();
 
     void removePanelHighlight();
     void panelHighlight(QAction *action = 0);

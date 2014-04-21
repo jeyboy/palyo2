@@ -153,13 +153,6 @@ QChar Library::getCatalogChar(QString name) {
     return name.at(0);
 }
 
-//QChar Library::getCatalogChar(QChar l) {
-//    if (l >= (int)'a' && l <= (int)'z') return l;
-//    if (l == (int)'ъ' || l == (int)'ё' || l == (int)'ь' || l == (int)'ы') return '_';
-//    if (l >= (int)'а' && l <= (int)'я') return l;
-//    return '_';
-//}
-
 QHash<QString, int> * Library::getCatalog(QChar letter) {
     if (catalogs -> contains(letter)) {
         return catalogs -> value(letter);
