@@ -69,7 +69,10 @@ ModelItem::ModelItem(QString file_path, ModelItem *parent, int init_state) {
         path = file_path.section('/', 0, -2);
         name = file_path.section('/', -1, -1);
         extension = name.section('.', -1, -1);
-        name = name.section('.', 0, -2);
+        if (extension != name)
+            name = name.section('.', 0, -2);
+        else extension = QString();
+
     } else {
         init(true);
         name = path = file_path;
