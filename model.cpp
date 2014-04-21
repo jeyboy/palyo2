@@ -59,7 +59,8 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case Qt::TextAlignmentRole:
             return Qt::AlignLeft;
         case Qt::FontRole:
-            return QFont("Times New Roman", 10, QFont::Bold);
+            return QFont("Arial", 9, QFont::Black);
+//            return QFont("Times New Roman", 10, QFont::Bold);
         case Qt::UserRole:
             item = getItem(index);
             return item -> getState() -> currStateValue();
