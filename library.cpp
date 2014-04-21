@@ -221,7 +221,7 @@ QHash<QString, int> * Library::load(const QChar letter) {
         while(!f.atEnd()) {
             ar = f.readLine();
             state = ar.mid(0, 1).toInt();
-            name = QString::fromLocal8Bit(ar.mid(1, ar.length() - 3));
+            name = QString::fromUtf8(ar.mid(1, ar.length() - 3));
             res -> insert(name, state);
         }
 
@@ -276,11 +276,12 @@ bool Library::fileDump(QChar key, QList<QString> &keysList, QFlags<QIODevice::Op
     QFile f(path);
     if (f.open(openFlags)) {
         QTextStream out(&f);
+        out.setCodec("UTF-8");
 
         while(cat_i != keysList.cend()) {
             val = *cat_i;
             qDebug() << "Curr val " << val;
-            out << QString::number(res -> value(val)) + val + "\n";
+            out << QString::number(res -> value(val)) << val.toUtf8() << "\n";
             cat_i++;
         }
 

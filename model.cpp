@@ -29,7 +29,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
 
            if (!item -> getState() -> isProceed()) {
                Library::instance() -> initItem(new LibraryItem(this, item));
-               qDebug() << item -> fullpath();
+               qDebug() << item -> fullpath().normalized(QString::NormalizationForm_KD);
            }
 
            return item -> data(index.column());
