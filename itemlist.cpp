@@ -321,7 +321,7 @@ void ItemList::mouseMoveEvent(QMouseEvent * event) {
         qDebug() << mimeData ->text().length();
 //        drag -> setPixmap(toolIcon);
         drag -> setMimeData(mimeData);
-        drag -> exec();//(Qt::CopyAction, Qt::CopyAction);
+        drag -> exec(Qt::CopyAction, Qt::CopyAction);
     }
 
     QTreeView::mouseMoveEvent(event);
