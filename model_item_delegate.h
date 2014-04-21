@@ -30,15 +30,13 @@ public:
                const QModelIndex &index) const;
 
 private:
-    static const int offset = 20;
-    static const int padding = 5;
-
-    static QPainterPath roundRectPath(const QRect &rect);
+    static QPainterPath roundRectPath(const QRect &rect, int offset);
+    static QLinearGradient buildGradient(QRect rect, QColor color, bool dark);
     static QLinearGradient defaultState(QRect rect, bool dark);
     static QLinearGradient listenedState(QRect rect, bool dark);
     static QLinearGradient likedState(QRect rect, bool dark);
     static QLinearGradient playedState(QRect rect, bool dark);
-
+    static QLinearGradient unprocessedState(QRect rect, bool dark);
 };
 
 #endif // MODEL_ITEM_DELEGATE_H

@@ -26,15 +26,14 @@ public:
     ModelItem *parent();
 
     ModelItem *child(int row);
+    int childTreeCount() const;
     int childCount() const;
+    void insertChild(int pos, ModelItem *item);
     void appendChild(ModelItem *child);
-    bool insertChildren(int position, int count, int columns);
     bool removeChildren(int position, int count);
 
     int column() const;
     int columnCount() const;
-    bool insertColumns(int position, int columns);
-    bool removeColumns(int position, int columns);
 
     int row() const;
 
@@ -52,11 +51,15 @@ public:
 
     bool isExist();
 
-    QHash<QString, ModelItem *> * folders;
+    QHash<QString, ModelItem *> * foldersList() const;
+    int removeFolder(QString name);
+
     QList<QString> * names;
 private:
     void init(bool isFolder);
     void rootItemInit();
+
+    QHash<QString, ModelItem *> * folders;
 
     QList<ModelItem*> childItems;
     ModelItem *parentItem;  

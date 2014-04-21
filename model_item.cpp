@@ -29,15 +29,16 @@ ModelItem::ModelItem() {
 }
 
 ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
-    init(true);
     parentItem = parent;
 
     if (attrs -> contains("p")) {
+        init(true);
         name = path = attrs -> value("p").toString();
 
         if (parent != 0)
             parent -> folders -> insert(name, this);
     } else {
+        init(false);
         name = attrs -> value("n").toString();
         extension = attrs -> value("e").toString();
     }
@@ -80,7 +81,13 @@ ModelItem::ModelItem(QString file_path, ModelItem *parent, int init_state) {
             parent -> folders -> insert(name, this);
     }
 
-    if (parent != 0) { parent -> appendChild(this);}
+    if (parent != 0) {
+        if (!state -> isUnprocessed()) {
+            parent -> insertChild(0, this);
+        } else {
+            parent -> appendChild(this);
+        }
+    }
 }
 
 ModelItem::~ModelItem() {
@@ -105,30 +112,31 @@ ModelItem *ModelItem::child(int row) {
     return childItems.value(row);
 }
 
+int ModelItem::childTreeCount() const {
+    int ret = 0;
+    foreach(ModelItem * childItem, childItems) {
+        if (childItem -> folders == 0) // not is unprocessed
+            ret += 1;
+        else
+            ret += childItem -> childTreeCount();
+    }
+
+    return ret;
+}
+
 int ModelItem::childCount() const {
     return childItems.count();
+}
+
+void ModelItem::insertChild(int pos, ModelItem *item) {
+    childItems.insert(pos, item);
 }
 
 void ModelItem::appendChild(ModelItem *item) {
     childItems.append(item);
 }
 
-bool ModelItem::insertChildren(int position, int count, int /*columns*/) {
-    if (position < 0 || position > childItems.size())
-        return false;
-
-    for (int row = 0; row < count; ++row) {
-//        QVector<QVariant> data(columns);
-//        ModelItem *item = new ModelItem(data, this);
-        ModelItem *item = new ModelItem(QString("BLA"), this);
-        childItems.insert(position, item);
-    }
-
-    return true;
-}
-
-bool ModelItem::removeChildren(int position, int count)
-{
+bool ModelItem::removeChildren(int position, int count) {
     if (position < 0 || position + count > childItems.size())
         return false;
 
@@ -146,43 +154,13 @@ int ModelItem::column() const {
 
 int ModelItem::columnCount() const {
      return 1;
-//    if (parentItem == 0)
-//        return 0;
-//    else
-//        return 1;
-}
-
-bool ModelItem::removeColumns(int /*position*/, int /*columns*/) {
-//    if (position < 0 || position + columns > itemData.size())
-//        return false;
-
-//    for (int column = 0; column < columns; ++column)
-//        itemData.remove(position);
-
-//    foreach (TreeItem *child, childItems)
-//        child->removeColumns(position, columns);
-
-    return true;
-}
-
-bool ModelItem::insertColumns(int /*position*/, int /*columns*/) {
-//    if (position < 0 || position > itemData.size())
-//        return false;
-
-//    for (int column = 0; column < columns; ++column)
-//        itemData.insert(position, QVariant());
-
-//    foreach (TreeItem *child, childItems)
-//        child->insertColumns(position, columns);
-
-    return true;
 }
 
 /////////////////////////////////////////////////////////
 
 int ModelItem::row() const {
      if (parentItem)
-         return parentItem->childItems.indexOf(const_cast<ModelItem*>(this));
+         return parentItem -> childItems.indexOf(const_cast<ModelItem*>(this));
 
      return 0;
 }
@@ -234,11 +212,21 @@ QString ModelItem::fullpath() const {
         curr = curr -> parentItem;
     }
 
-    return path_buff.mid(1) + name + '.' + extension;
+    if (extension.isEmpty())
+        return path_buff.mid(1) + name;
+    else
+        return path_buff.mid(1) + name + '.' + extension;
 }
 
 bool ModelItem::isExist() {
     return QFile::exists(fullpath());
+}
+
+QHash<QString, ModelItem *> * ModelItem::foldersList() const {
+    return folders;
+}
+int ModelItem::removeFolder(QString name) {
+    return folders -> remove(name);
 }
 
 //////////////////////////properties///////////////////////////////

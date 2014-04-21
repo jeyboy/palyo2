@@ -289,7 +289,8 @@ QToolBar* MainWindow::createPositionMediaBar() {
                                               "}"
 
                                               "QSlider::sub-page {"
-                                                "background-image: url(:/progress);"
+                                                "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #000, stop: 1 #777);"
+                                                "background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 1, stop: 0 #777, stop: 1 #fff);"
                                                 "border: 1px solid #777;"
                                                 "border-radius: 4px;"
                                               "}"

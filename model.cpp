@@ -50,7 +50,8 @@ QVariant Model::data(const QModelIndex &index, int role) const {
            if (item -> getState() -> isNotExist())
                return IconProvider::missedIcon();
            else if (item -> getState() -> isUnprocessed())
-               return IconProvider::fileIcon("", "");
+               return QVariant();
+//               return IconProvider::fileIcon("", "");
            else
                return IconProvider::fileIcon(item -> fullpath(), (item -> data(EXTENSIONUID).toString()));
         }
@@ -64,7 +65,8 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case Qt::TextAlignmentRole:
             return Qt::AlignLeft;
         case Qt::FontRole:
-            return QFont("Times New Roman", 10, QFont::Bold);
+            return QFont("Arial", 9, QFont::Black);
+//            return QFont("Times New Roman", 10, QFont::Bold);
         case Qt::UserRole:
             item = getItem(index);
             return item -> getState() -> currStateValue();
@@ -118,7 +120,7 @@ QModelIndex Model::parent(const QModelIndex &index) const {
     ModelItem *childItem = getItem(index);
     ModelItem *parentItem = childItem->parent();
 
-    if (parentItem == rootItem)
+    if (parentItem == rootItem || parentItem == 0)
         return QModelIndex();
 
 //    return createIndex(parentItem->row(), index.column(), parentItem);
@@ -177,22 +179,42 @@ void Model::appendRow(QString filepath, ModelItem * parentItem) {
 }
 
 bool Model::removeRow(int row, const QModelIndex &parent) {
-    if (parent.isValid()) {
-        ModelItem * parentItem = getItem(parent);
-        ModelItem * item = parentItem -> child(row);
-
-        if (!item -> getState() -> isUnprocessed()) {
-            beginRemoveRows(parent, row, row);
-            if (parentItem -> removeChildren(row, 1)) {
-                emit itemsCountChanged(--count);
-            }
-            endRemoveRows();
-
-            return true;
-        }
+    QModelIndex parentIndex = parent;
+    if (!parentIndex.isValid()) {
+        parentIndex = index(rootItem);
     }
 
-    return false;
+    int removeCount = 1;
+    ModelItem * parentItem = getItem(parentIndex);
+    ModelItem * item = parentItem -> child(row);
+    QString folderName;
+    bool isUnprocessed = item -> getState() -> isUnprocessed();
+
+    if (isUnprocessed) {
+        removeCount = item -> childTreeCount();
+        folderName = item -> data(NAMEUID).toString();
+    }
+
+    beginRemoveRows(parentIndex, row, row);
+    if (parentItem -> removeChildren(row, 1)) {
+
+        if (isUnprocessed) {
+            parentItem -> removeFolder(folderName);
+        }
+
+        if (removeCount > 0)
+            emit itemsCountChanged(count -= removeCount);
+    }
+    endRemoveRows();
+
+    if (parentItem -> childCount() == 0 && parentItem -> parent() != 0) {
+        removeRow(parentIndex.row(), parentIndex.parent());
+    }
+
+    if (parentItem == rootItem)
+        repaint(); // monkey patch for first level node deletion // some troubles with index tree
+
+    return true;
 }
 
 bool Model::removeRows(int position, int rows, const QModelIndex &parent) {
@@ -247,8 +269,8 @@ ModelItem * Model::buildPath(QString path) {
     ModelItem * curr = rootItem;
 
     foreach(QString piece, list) {
-        if (curr -> folders -> contains(piece)) {
-            curr = curr -> folders -> value(piece);
+        if (curr -> foldersList() -> contains(piece)) {
+            curr = curr -> foldersList() -> value(piece);
         } else {
             curr = new ModelItem(piece, curr, STATE_UNPROCESSED);
         }
@@ -260,8 +282,8 @@ ModelItem * Model::buildPath(QString path) {
 ModelItem * Model::addFolder(QString folder_name, ModelItem * parent) {
     ModelItem * curr = parent;
 
-    if (curr -> folders -> contains(folder_name)) {
-        curr = curr -> folders -> value(folder_name);
+    if (curr -> foldersList() -> contains(folder_name)) {
+        curr = curr -> foldersList() -> value(folder_name);
     } else {
         curr = new ModelItem(folder_name, curr, STATE_UNPROCESSED);
     }

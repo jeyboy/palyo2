@@ -3,7 +3,7 @@
 
 ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {   
     settings = settingsSet;
-    setIndentation(10);
+    setIndentation(8);
 
 //    setStyleSheet(QString(
 //                      "QTreeView {"
@@ -20,7 +20,7 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::CopyAction);
 
-    setExpandsOnDoubleClick(false);
+    setExpandsOnDoubleClick(true);
 
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
@@ -43,8 +43,8 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
     setItemDelegate(new ModelItemDelegate(this));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
+    setIconSize(QSize(0,0));
 
-    connect(this, SIGNAL(clicked(const QModelIndex&)), this, SLOT(on_click(const QModelIndex&)));   
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(on_doubleClick(const QModelIndex&)));
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &)));
     connect(this, SIGNAL(expanded(const QModelIndex &)), model, SLOT(expanded(const QModelIndex &)));
@@ -93,6 +93,7 @@ ModelItem * ItemList::activeItem(bool next) {
         }
     }
 
+    // has some bug on unprocessed select
     if (item == 0) {
         QModelIndexList list = selectedIndexes();
 
@@ -236,17 +237,6 @@ void ItemList::startDrag(Qt::DropActions /*supportedActions*/) {
 //     }
 }
 
-
-void ItemList::on_click(const QModelIndex &index) {
-    ModelItem * item = model->getItem(index);
-
-    if (item -> getState() -> isUnprocessed()) {
-        if (isExpanded(index)) {
-          collapse(index);
-        } else { expand(index); }
-    }
-}
-
 void ItemList::on_doubleClick(const QModelIndex &index) {
     ModelItem * item = model -> getItem(index);
 
@@ -367,13 +357,18 @@ void ItemList::removeItem(ModelItem * item) {
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullpath();
 
-    if (Player::instance() -> playedItem() == item) {
-        Player::instance() -> removePlaylist();
+    if (Player::instance() -> playedItem()) {
+        if (Player::instance() -> playedItem() -> fullpath().startsWith(delPath))
+            Player::instance() -> removePlaylist();
     }
 
     if (model -> removeRow(modelIndex.row(), modelIndex.parent())) {
         if (isRemoveFileWithItem()) {
-            QFile::remove(delPath);
+            if (item -> getState() -> isUnprocessed()) {
+                QDir(delPath).removeRecursively();
+            } else {
+                QFile::remove(delPath);
+            }
         }
     }
 }
@@ -409,7 +404,7 @@ ModelItem * ItemList::nextItem(QModelIndex currIndex) {
 
 ModelItem * ItemList::nextItem(ModelItem * curr) {
     ModelItem * item = curr;
-    bool first_elem = curr -> parent() == 0;
+    bool first_elem = curr -> parent() == 0 || curr -> getState() -> isUnprocessed();
 
     while(true) {
         if (first_elem) {
