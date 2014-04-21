@@ -153,13 +153,6 @@ QChar Library::getCatalogChar(QString name) {
     return name.at(0);
 }
 
-//QChar Library::getCatalogChar(QChar l) {
-//    if (l >= (int)'a' && l <= (int)'z') return l;
-//    if (l == (int)'ъ' || l == (int)'ё' || l == (int)'ь' || l == (int)'ы') return '_';
-//    if (l >= (int)'а' && l <= (int)'я') return l;
-//    return '_';
-//}
-
 QHash<QString, int> * Library::getCatalog(QChar letter) {
     if (catalogs -> contains(letter)) {
         return catalogs -> value(letter);
@@ -221,7 +214,7 @@ QHash<QString, int> * Library::load(const QChar letter) {
         while(!f.atEnd()) {
             ar = f.readLine();
             state = ar.mid(0, 1).toInt();
-            name = QString::fromLocal8Bit(ar.mid(1, ar.length() - 3));
+            name = QString::fromUtf8(ar.mid(1, ar.length() - 3));
             res -> insert(name, state);
         }
 
@@ -276,11 +269,12 @@ bool Library::fileDump(QChar key, QList<QString> &keysList, QFlags<QIODevice::Op
     QFile f(path);
     if (f.open(openFlags)) {
         QTextStream out(&f);
+        out.setCodec("UTF-8");
 
         while(cat_i != keysList.cend()) {
             val = *cat_i;
             qDebug() << "Curr val " << val;
-            out << QString::number(res -> value(val)) + val + "\n";
+            out << QString::number(res -> value(val)) << val.toUtf8() << "\n";
             cat_i++;
         }
 

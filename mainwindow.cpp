@@ -603,10 +603,6 @@ void MainWindow::openFolderTriggered() {
     QDesktopServices::openUrl(QUrl::fromLocalFile(button -> path));
 }
 
-void MainWindow::slotNoImpl() {
-//    QMessageBox::information(0, "Message", "Not implemented");
-}
-
 void MainWindow::mediaVisibilityChanged(bool visible) {
   if (visible == false)
     ((QToolBar*)QObject::sender()) -> setVisible(true);
@@ -654,97 +650,3 @@ void MainWindow::showAttTabDialog(Tab * tab) {
 void MainWindow::showAttCurrTabDialog() {
     emit showAttTabDialog(tabber -> currentTab());
 }
-
-
-
-
-
-
-
-
-//void MainWindow::initMedia() {
-
-////        sourceFile.setFileName("/tmp/test.raw");
-////        sourceFile.open(QIODevice::ReadOnly);
-
-////        QAudioFormat format;
-////        // Set up the format, eg.
-////        format.setSampleRate(8000);
-////        format.setChannelCount(1);
-////        format.setSampleSize(8);
-////        format.setCodec("audio/pcm");
-////        format.setByteOrder(QAudioFormat::LittleEndian);
-////        format.setSampleType(QAudioFormat::UnSignedInt);
-
-////        QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-////        if (!info.isFormatSupported(format)) {
-////            qWarning() << "Raw audio format not supported by backend, cannot play audio.";
-////            return;
-////        }
-
-////    audio = new QAudioOutput(format, this);
-
-//    audio = new QMediaPlayer();
-//    QObject::connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
-//}
-
-//void MainWindow::handleStateChanged(QAudio::State newState)
-//{
-//    switch (newState) {
-//        case QAudio::IdleState:
-//            // Finished playing (no more data)
-//            audio -> stop();
-////            sourceFile.close();
-//            delete audio;
-//            break;
-
-//        case QAudio::StoppedState:
-//            // Stopped for other reasons
-//            if (audio -> error() != QAudio::NoError) {
-//                // Error handling
-//            }
-//            break;
-
-//        default:
-//            // ... other cases as appropriate
-//            break;
-//    }
-//}
-
-//void MainWindow::on_pushButton_clicked(){
-////player->setMedia(QUrl::fromLocalFile("/Users/me/Music/coolsong.mp3"));
-
-
-////    playlist = new QMediaPlaylist;
-////    playlist->addMedia(QUrl("http://example.com/movie1.mp4"));
-////    playlist->addMedia(QUrl("http://example.com/movie2.mp4"));
-////    playlist->addMedia(QUrl("http://example.com/movie3.mp4"));
-////    playlist->setCurrentIndex(1);
-
-////    player = new QMediaPlayer;
-////    player->setPlaylist(playlist);
-
-////    videoWidget = new QVideoWidget;
-////    player->setVideoOutput(videoWidget);
-////    videoWidget->show();
-
-////    player->play();
-
-
-
-////    QString path = QFileDialog::getOpenFileName(this, tr("Choose file"));
-////    player = new QMediaPlayer();
-////////    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-////    player -> setMedia(QUrl::fromLocalFile(path));
-////    player -> play();
-//}
-
-//void MainWindow::on_tabWidget_tabCloseRequested(int index) {
-////   QMessageBox::information(this, tr("Удаление"), QString("Удаление таба %1").arg(index));
-////   QString("Целое %1 и дробное %2").arg(a).arg(b)
-
-////    QWidget *pWin = QApplication::activeWindow;
-//////    QObjectList *pList = pWin->children();
-////    QTabWidget* tabber = pWin->findChild<QTabWidget*>("tabber");
-////    tabber -> addTab(tabber, QString('Hudo'));
-//}

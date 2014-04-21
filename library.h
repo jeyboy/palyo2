@@ -1,5 +1,3 @@
-//TODO: improve singleton and add destructor
-
 #ifndef LIBRARY_H
 #define LIBRARY_H
 

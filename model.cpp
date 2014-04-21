@@ -32,7 +32,6 @@ QVariant Model::data(const QModelIndex &index, int role) const {
 
                if (item -> getState() -> isExpanded()) {
                    emit expandNeeded(index);
-                   qDebug() << " emit expand ";
                }
 
                qDebug() << item -> fullpath();
