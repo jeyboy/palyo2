@@ -175,6 +175,7 @@ QVariant ModelItem::data(int column) const {
         case NAMEUID: return name;
         case EXTENSIONUID: return extension;
         case PATHUID: return path;
+        case FOLDERID: return state -> isUnprocessed(); // is folder
         default: return QVariant();
     }
 }

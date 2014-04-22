@@ -53,9 +53,18 @@ public:
     bool execItem(ModelItem * item);
     void removeItem(ModelItem * item);
 
+public slots:
+//    void changeSelection(const QModelIndex & index);
+    void updateSelection();
+
+private slots:
+    void on_doubleClick(const QModelIndex &index);
+    void showContextMenu(const QPoint &);
+    void openLocation();
+
 protected:
     ModelItem * activeItem(bool next = true);
-    ModelItem * nextItem(QModelIndex currIndex);
+//    ModelItem * nextItem(QModelIndex currIndex);
     ModelItem * nextItem(ModelItem * curr);
     ModelItem * prevItem(ModelItem * curr);
 
@@ -71,11 +80,6 @@ protected:
     void filesRoutine(ModelItem * index, QList<QUrl> list);
 
     void keyPressEvent(QKeyEvent *event);
-
-private slots:
-    void on_doubleClick(const QModelIndex &index);
-    void showContextMenu(const QPoint &);
-    void openLocation();
 
 private:
     Model * model;

@@ -52,6 +52,8 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
 
     connect(model, SIGNAL(expandNeeded(const QModelIndex &)), this, SLOT(expand(const QModelIndex &)));
     connect(model, SIGNAL(itemsCountChanged(int)), parent, SLOT(updateHeader(int)));
+//    connect(model, SIGNAL(selectionChangeNeeded(const QModelIndex &index)), this, SLOT(changeSelection(const QModelIndex &index)));
+    connect(model, SIGNAL(selectionUpdateNeeded()), this, SLOT(updateSelection()));
 
     header() -> setSectionResizeMode(0, QHeaderView::Interactive);
 //    header()->setStretchLastSection(false);
@@ -84,7 +86,7 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
     } else { QTreeView::keyPressEvent(event); }
 }
 
-ModelItem * ItemList::activeItem(bool next) {
+ModelItem * ItemList::activeItem(bool next) {     
     ModelItem * item = 0;
 
     if (Player::instance() -> currentPlaylist() == this) {
@@ -93,7 +95,6 @@ ModelItem * ItemList::activeItem(bool next) {
         }
     }
 
-    // has some bug on unprocessed select
     if (item == 0) {
         QModelIndexList list = selectedIndexes();
 
@@ -237,6 +238,23 @@ void ItemList::startDrag(Qt::DropActions /*supportedActions*/) {
 //     }
 }
 
+void ItemList::updateSelection() {
+    QModelIndexList list = selectedIndexes();
+
+    if (list.count() > 0) {
+        ModelItem * item = getModel() -> getItem(list.first());
+
+        if (item -> getState() -> isUnprocessed()) {
+            if ((item = nextItem(item)))
+              setCurrentIndex(getModel() -> index(item));
+        }
+    }
+}
+
+//void ItemList::changeSelection(const QModelIndex & index) {
+//    emit selectionChanged(index, currentIndex());
+//}
+
 void ItemList::on_doubleClick(const QModelIndex &index) {
     ModelItem * item = model -> getItem(index);
 
@@ -376,31 +394,31 @@ void ItemList::removeItem(ModelItem * item) {
 ////////////////////////////////////////////////////////////
 
 
-// test needed / update need
-ModelItem * ItemList::nextItem(QModelIndex currIndex) {
-    QModelIndex newIndex;
-    ModelItem * item;
+//// test needed / update need
+//ModelItem * ItemList::nextItem(QModelIndex currIndex) {
+//    QModelIndex newIndex;
+//    ModelItem * item;
 
-    while(true) {
-        newIndex = currIndex.parent().child(currIndex.row()+1, 0); //indexBelow(currIndex);
+//    while(true) {
+//        newIndex = currIndex.parent().child(currIndex.row()+1, 0); //indexBelow(currIndex);
 
-        if (newIndex.isValid()) {
-            item = model -> getItem(newIndex);
-            qDebug() << item -> data(0);
-            if (!item->getState() -> isUnprocessed()) {
-                return item;
-            } else {
-                currIndex = newIndex.child(0, 0);
-            }
-        } else {
-            currIndex = currIndex.parent();
-            item = model -> getItem(newIndex);
+//        if (newIndex.isValid()) {
+//            item = model -> getItem(newIndex);
+//            qDebug() << item -> data(0);
+//            if (!item->getState() -> isUnprocessed()) {
+//                return item;
+//            } else {
+//                currIndex = newIndex.child(0, 0);
+//            }
+//        } else {
+//            currIndex = currIndex.parent();
+//            item = model -> getItem(newIndex);
 
-            if (!currIndex.isValid())
-                return model -> root();
-        }
-    }
-}
+//            if (!currIndex.isValid())
+//                return model -> root();
+//        }
+//    }
+//}
 
 ModelItem * ItemList::nextItem(ModelItem * curr) {
     ModelItem * item = curr;

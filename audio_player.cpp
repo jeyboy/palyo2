@@ -39,12 +39,12 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     QFileInfoList list = QDir(QCoreApplication::applicationDirPath() + "/libs/bass/plugins").entryInfoList(QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
 
     foreach(QFileInfo file, list) {
-        int res = BASS_PluginLoad(file.filePath().toLatin1(), 0);
+        /*int res = */BASS_PluginLoad(file.filePath().toLatin1(), 0);
 
-        if (res == 0)
-            qDebug() << file.filePath() << BASS_ErrorGetCode();
-        else
-            qDebug() << file.filePath() << res;
+//        if (res == 0)
+//            qDebug() << file.filePath() << BASS_ErrorGetCode();
+//        else
+//            qDebug() << file.filePath() << res;
     }
     ///////////////////////////////////////////////
 

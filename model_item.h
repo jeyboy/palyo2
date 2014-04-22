@@ -14,7 +14,8 @@
 #define NAMEUID 0
 #define EXTENSIONUID 1
 #define PATHUID 2
-#define STATEID 3
+#define FOLDERID 3
+#define STATEID 4
 
 class ModelItem {
 public:

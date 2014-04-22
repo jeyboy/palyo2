@@ -56,6 +56,8 @@ public:
 signals:
     void itemsCountChanged(int newCount);
     void expandNeeded(const QModelIndex &index) const;
+//    void selectionChangeNeeded(const QModelIndex &index);
+    void selectionUpdateNeeded();
 
 public slots:
     void expanded(const QModelIndex &index);

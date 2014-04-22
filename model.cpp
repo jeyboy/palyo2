@@ -126,7 +126,8 @@ QModelIndex Model::parent(const QModelIndex &index) const {
     return createIndex(parentItem->row(), 0, parentItem);
 }
 QModelIndex Model::index(int row, int column, const QModelIndex &parent) const {
-    if (parent.isValid() && parent.column() != 0)
+//    if (parent.isValid() && parent.column() != 0)
+    if (!hasIndex(row, column, parent))
         return QModelIndex();
 
     ModelItem *parentItem = getItem(parent);
@@ -210,8 +211,18 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
         removeRow(parentIndex.row(), parentIndex.parent());
     }
 
-    if (parentItem == rootItem)
+    if (isUnprocessed) {
+        emit selectionUpdateNeeded();
+    } else {
+        QModelIndex next = parentIndex.child(row, 0);
+        if (!next.isValid() || (next.isValid() && !next.data(FOLDERID).toBool()))
+            emit selectionUpdateNeeded();
+    }
+
+    if (parentItem == rootItem) {
+        rootItem -> dropExpandProceedFlags();
         repaint(); // monkey patch for first level node deletion // some troubles with index tree
+    }
 
     return true;
 }
@@ -294,14 +305,11 @@ ModelItem * Model::addFolder(QString folder_name, ModelItem * parent) {
 
 void Model::expanded(const QModelIndex &index) {
     ModelItem * item = getItem(index);
-    qDebug() << " Set expand: " << item -> getState()->isExpanded();
     item -> getState() -> setExpanded();
-    qDebug() << " Set expand: " << item -> getState()->isExpanded();
 }
 void Model::collapsed(const QModelIndex &index) {
     ModelItem * item = getItem(index);
     item -> getState() -> unsetExpanded();
-    qDebug() << " Set collaps";
 }
 
 /////////////////////////////////////////////////////////
