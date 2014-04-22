@@ -1,10 +1,12 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <QApplication>
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QFont>
 #include <QBrush>
+#include <QMessageBox>
 
 #include "model_item.h"
 #include "icon_provider.h"

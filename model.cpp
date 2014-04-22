@@ -190,9 +190,18 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
     QString folderName;
     bool isUnprocessed = item -> getState() -> isUnprocessed();
 
-    if (isUnprocessed) {
+    if (isUnprocessed) {      
         removeCount = item -> childTreeCount();
         folderName = item -> data(NAMEUID).toString();
+
+        if (removeCount > 0) {
+            if (QMessageBox::warning(
+                        QApplication::activeWindow(),
+                        "Folder deletion",
+                        "Are you shure what you want remove the not empty folder ?",
+                        QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Cancel)
+                return false;
+        }
     }
 
     beginRemoveRows(parentIndex, row, row);
