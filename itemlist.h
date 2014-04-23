@@ -74,8 +74,6 @@ protected:
 
     void dropEvent(QDropEvent *event);
 
-    void startDrag(Qt::DropActions supportedActions);
-
     void filesRoutine(ModelItem * index, QFileInfoList list);
     void filesRoutine(ModelItem * index, QList<QUrl> list);
 

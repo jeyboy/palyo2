@@ -273,7 +273,7 @@ QToolBar* MainWindow::createPositionMediaBar() {
     slider -> setStyleSheet(QString(                               
                                               "QSlider::groove {"
                                                 "border: 1px solid #bbb;"
-                                                "border-radius: 4px;"
+                                                "border-radius: 2px;"
                                               "}"
 
                                               "QSlider::groove:horizontal {"
@@ -292,36 +292,20 @@ QToolBar* MainWindow::createPositionMediaBar() {
                                                 "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #000, stop: 1 #777);"
                                                 "background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 1, stop: 0 #777, stop: 1 #fff);"
                                                 "border: 1px solid #777;"
-                                                "border-radius: 4px;"
-                                              "}"
-
-                                              "QSlider::sub-page:horizontal {"
-                                                "height: 18px;"
-                                              "}"
-
-                                              "QSlider::sub-page:vertical {"
-                                                "width: 18px;"
+                                                "border-radius: 2px;"
                                               "}"
 
                                               "QSlider::add-page {"
                                                 "background: #fff;"
                                                 "border: 1px solid #777;"
-                                                "border-radius: 4px;"
-                                              "}"
-
-                                              "QSlider::add-page:horizontal {"
-                                                "height: 18px;"
-                                              "}"
-
-                                              "QSlider::add-page:vertical {"
-                                                "width: 18px;"
+                                                "border-radius: 2px;"
                                               "}"
 
                                               "QSlider::handle {"
                                                 "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);"
                                                 "border: 1px solid #777;"
                                                 "margin: 0 -1px;"
-                                                "border-radius: 4px;"
+                                                "border-radius: 2px;"
                                               "}"
 
                                               "QSlider::handle:horizontal {"
@@ -335,7 +319,7 @@ QToolBar* MainWindow::createPositionMediaBar() {
                                               "QSlider::handle:hover {"
                                                 "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #fff, stop:1 #ddd);"
                                                 "border: 1px solid #444;"
-                                                "border-radius: 4px;"
+                                                "border-radius: 2px;"
                                               "}"
 
                                               "QSlider::sub-page:disabled {"
@@ -351,7 +335,7 @@ QToolBar* MainWindow::createPositionMediaBar() {
                                               "QSlider::handle:disabled {"
                                                 "background: #eee;"
                                                 "border: 1px solid #aaa;"
-                                                "border-radius: 4px;"
+                                                "border-radius: 2px;"
                                               "}"
     ));
 

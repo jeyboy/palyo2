@@ -215,29 +215,6 @@ void ItemList::dropEvent(QDropEvent *event) {
     } else event -> ignore();
 }
 
-void ItemList::startDrag(Qt::DropActions /*supportedActions*/) {
-//    QByteArray itemData;
-//    QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-
-//    ListWidgetItem *item = dynamic_cast<ListWidgetItem *>(childAt(dragPoint));
-
-//    dataStream << dragPoint;
-
-//    QMimeData *mimeData = new QMimeData;
-//    mimeData->setData("application/x-QListView-DragAndDrop", itemData);
-
-//    drag = new QDrag(this);
-//    drag->setMimeData(mimeData);
-//    drag->setHotSpot(mapToParent(QPoint(item->x(),y)));
-//    drag->setPixmap(currentPixmap);
-
-//    QModelIndex indx = indexAt(dragPoint);
-//    if (drag->exec(Qt::MoveAction | Qt::CopyAction) == Qt::MoveAction)
-//     {
-//        model()->removeRow(indx.row());
-//     }
-}
-
 void ItemList::updateSelection() {
     QModelIndexList list = selectedIndexes();
 
