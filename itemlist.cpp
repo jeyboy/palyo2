@@ -351,6 +351,7 @@ bool ItemList::execItem(ModelItem * item) {
 void ItemList::removeItem(ModelItem * item) {
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullpath();
+    bool isFolder = item -> getState() -> isUnprocessed();
 
     if (Player::instance() -> playedItem()) {
         if (Player::instance() -> playedItem() -> fullpath().startsWith(delPath))
@@ -359,8 +360,11 @@ void ItemList::removeItem(ModelItem * item) {
 
     if (model -> removeRow(modelIndex.row(), modelIndex.parent())) {
         if (isRemoveFileWithItem()) {
-            if (item -> getState() -> isUnprocessed()) {
-                QDir(delPath).removeRecursively();
+            if (isFolder) {
+                QDir delDir(delPath);
+                if (delPath.split('/').length() >= 2) {
+                    delDir.removeRecursively();
+                }
             } else {
                 QFile::remove(delPath);
             }

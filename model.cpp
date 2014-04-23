@@ -222,6 +222,7 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
     }
 
     if (isUnprocessed) {
+        if (parentItem == rootItem && rootItem -> childCount() == 0) return true; // monkey patch for first level node deletion // some troubles with index tree
         emit selectionUpdateNeeded();
     } else {
         QModelIndex next = parentIndex.child(row, 0);
