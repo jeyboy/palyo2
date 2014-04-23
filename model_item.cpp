@@ -30,20 +30,24 @@ ModelItem::ModelItem() {
 
 ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
     parentItem = parent;
+    state = new ModelItemState(attrs -> value("s").toInt());
+    init(attrs -> contains("p") || parent == 0);
+
+    if (parent != 0) {
+        parent -> appendChild(this);
+    } else {
+        rootItemInit();
+    }
 
     if (attrs -> contains("p")) {
-        init(true);
         name = path = attrs -> value("p").toString();
 
         if (parent != 0)
             parent -> folders -> insert(name, this);
     } else {
-        init(false);
         name = attrs -> value("n").toString();
         extension = attrs -> value("e").toString();
     }
-
-    state = new ModelItemState(attrs -> value("s").toInt());
 
     if (attrs -> contains("c")) {
         QJsonArray ar = attrs -> value("c").toArray();
@@ -53,12 +57,6 @@ ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
             iter_obj = obj.toObject();
             new ModelItem(&iter_obj, this);
         }
-    }
-
-    if (parent != 0) {
-        parent -> appendChild(this);
-    } else {
-        rootItemInit();
     }
 }
 
