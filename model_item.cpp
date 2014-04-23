@@ -32,13 +32,6 @@ ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
     init(attrs -> contains("p"));
     state = new ModelItemState(attrs -> value("s").toInt());
 
-    if (parent != 0) {
-        parent -> appendChild(this);
-    } else {
-        rootItemInit();
-        state -> setExpanded();
-    }
-
     if (attrs -> contains("p")) {
         name = path = attrs -> value("p").toString();
 
@@ -57,6 +50,12 @@ ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
             iter_obj = obj.toObject();
             new ModelItem(&iter_obj, this);
         }
+    }
+
+    if (parent != 0) {
+        parent -> appendChild(this);
+    } else {
+        rootItemInit();
     }
 }
 

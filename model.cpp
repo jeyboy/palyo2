@@ -65,8 +65,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case Qt::TextAlignmentRole:
             return Qt::AlignLeft;
         case Qt::FontRole:
-            return QFont("Arial", 9, QFont::Black);
-//            return QFont("Times New Roman", 10, QFont::Bold);
+            return QFont("Arial", 9, QFont::Normal);
         case Qt::UserRole:
             item = getItem(index);
             return item -> getState() -> currStateValue();
@@ -192,10 +191,9 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
     bool isUnprocessed = item -> getState() -> isUnprocessed();
 
     if (isUnprocessed) {      
-        removeCount = item -> childTreeCount();
         folderName = item -> data(NAMEUID).toString();
 
-        if (removeCount > 0) {
+        if (item -> childCount() > 0) {
             if (QMessageBox::warning(
                         QApplication::activeWindow(),
                         "Folder deletion",
@@ -203,6 +201,9 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
                         QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Cancel)
                 return false;
         }
+
+        removeCount = 0;
+        markBranchAsDeleted(item);
     }
 
     beginRemoveRows(parentIndex, row, row);
@@ -230,12 +231,20 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
             emit selectionUpdateNeeded();
     }
 
-    if (parentItem == rootItem) {
-        rootItem -> dropExpandProceedFlags();
-        repaint(); // monkey patch for first level node deletion // some troubles with index tree
-    }
+//    if (parentItem == rootItem) {
+//        rootItem -> dropExpandProceedFlags();
+//        repaint(); // monkey patch for first level node deletion // some troubles with index tree
+//    }
 
     return true;
+}
+
+void Model::markBranchAsDeleted(ModelItem * parentItem) {
+    foreach(ModelItem * item, parentItem -> foldersList() -> values()) {
+        markBranchAsDeleted(item);
+    }
+    count += parentItem -> foldersList() -> count(); // patch // compensation removing  of folders
+    removeRows(0, parentItem -> childCount(), index(parentItem));
 }
 
 bool Model::removeRows(int position, int rows, const QModelIndex &parent) {

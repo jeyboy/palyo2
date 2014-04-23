@@ -301,17 +301,22 @@ void ItemList::mousePressEvent(QMouseEvent *event) {
         dragStartPoint = event -> pos();
     }
 
-    QTreeView::mousePressEvent(event);
+    if (getModel() -> root() -> childCount() > 0) //patch // in some cases after folder deletion errors thrown
+        QTreeView::mousePressEvent(event);
 }
 
 void ItemList::mouseMoveEvent(QMouseEvent * event) {
     if ((event -> buttons() == Qt::LeftButton) && (dragStartPoint - event -> pos()).manhattanLength() >= 5){
-        QDrag * drag = new QDrag(this);
-        QMimeData * mimeData = model -> mimeData(selectedIndexes());
-        qDebug() << mimeData ->text().length();
-//        drag -> setPixmap(toolIcon);
-        drag -> setMimeData(mimeData);
-        drag -> exec(Qt::CopyAction, Qt::CopyAction);
+        if (selectedIndexes().length() > 0) {
+            qDebug() << selectedIndexes().first().row();
+            qDebug() << getModel() -> getItem(selectedIndexes().first()) -> fullpath();
+            qDebug() << "Index count " << selectedIndexes().length();
+            QDrag * drag = new QDrag(this);
+            QMimeData * mimeData = model -> mimeData(selectedIndexes());
+    //        drag -> setPixmap(toolIcon);
+            drag -> setMimeData(mimeData);
+            drag -> exec(Qt::CopyAction, Qt::CopyAction);
+        }
     }
 
     QTreeView::mouseMoveEvent(event);
@@ -352,6 +357,7 @@ void ItemList::removeItem(ModelItem * item) {
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullpath();
     bool isFolder = item -> getState() -> isUnprocessed();
+    clearSelection(); // patch // selection did not cleaned after remove in some case
 
     if (Player::instance() -> playedItem()) {
         if (Player::instance() -> playedItem() -> fullpath().startsWith(delPath))

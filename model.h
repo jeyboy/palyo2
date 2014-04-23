@@ -66,6 +66,8 @@ public slots:
     void collapsed(const QModelIndex &index);
 
 private:
+    void markBranchAsDeleted(ModelItem * parentItem);
+
     int count;
     ModelItem *rootItem;
 };
