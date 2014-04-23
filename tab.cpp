@@ -16,7 +16,7 @@ Tab::Tab(CBHash params, QWidget * parent) : QWidget(parent) {
 }
 
 Tab::Tab(QJsonObject json_attrs, QWidget * parent) : QWidget(parent) {
-    QJsonObject set = json_attrs["s"].toObject();
+    QJsonObject set = json_attrs["set"].toObject();
     CBHash params = CBHash();
 
     foreach(QString key, set.keys()) {

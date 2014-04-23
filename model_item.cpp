@@ -8,8 +8,6 @@ void ModelItem::init(bool isFolder) {
     childItems = QList<ModelItem*>();
 
     if (isFolder) {
-        state = new ModelItemState(STATE_UNPROCESSED);
-        state -> setProceed();
         folders = new QHash<QString, ModelItem *>();
     } else {
         folders = 0;
@@ -24,19 +22,21 @@ void ModelItem::rootItemInit() {
 
 ModelItem::ModelItem() {
     init(true);
+    state = new ModelItemState(STATE_UNPROCESSED);
     rootItemInit();
     parentItem = 0;
 }
 
 ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
     parentItem = parent;
+    init(attrs -> contains("p"));
     state = new ModelItemState(attrs -> value("s").toInt());
-    init(attrs -> contains("p") || parent == 0);
 
     if (parent != 0) {
         parent -> appendChild(this);
     } else {
         rootItemInit();
+        state -> setExpanded();
     }
 
     if (attrs -> contains("p")) {

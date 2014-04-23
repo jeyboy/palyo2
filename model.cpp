@@ -31,6 +31,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
                Library::instance() -> initItem(new LibraryItem(this, item));
 
                if (item -> getState() -> isExpanded()) {
+                   qDebug() << "expand";
                    emit expandNeeded(index);
                }
 

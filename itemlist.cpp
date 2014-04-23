@@ -294,7 +294,7 @@ QJsonObject ItemList::toJSON() {
     }
 
     res["p"] = QString();
-    res["s"] = set;
+    res["set"] = set;
     res["l"] = model -> itemsCount();
     return res;
 }

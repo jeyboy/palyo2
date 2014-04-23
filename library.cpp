@@ -11,7 +11,8 @@ Library *Library::instance() {
 
 void Library::initItem(LibraryItem * libItem) {
     libItem -> item() -> getState() -> setProceed();
-    QtConcurrent::run(this, &Library::itemsInit, libItem);
+    if (!libItem -> item() -> getState() -> isUnprocessed())
+        QtConcurrent::run(this, &Library::itemsInit, libItem);
 }
 
 bool Library::addItem(ModelItem * item, int state) {
