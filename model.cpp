@@ -226,8 +226,9 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
         emit selectionUpdateNeeded();
     } else {
         QModelIndex next = parentIndex.child(row, 0);
-        if (!next.isValid() || (next.isValid() && !next.data(FOLDERID).toBool()))
+        if (!next.isValid() || (next.isValid() && !next.data(FOLDERID).toBool())) {
             emit selectionUpdateNeeded();
+        }
     }
 
     if (parentItem == rootItem) {
