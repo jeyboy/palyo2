@@ -119,14 +119,13 @@ QModelIndex Model::parent(const QModelIndex &index) const {
     ModelItem *childItem = getItem(index);
     ModelItem *parentItem = childItem->parent();
 
-    if (parentItem == rootItem || parentItem == 0)
+    if (parentItem == rootItem) // || parentItem == 0
         return QModelIndex();
 
 //    return createIndex(parentItem->row(), index.column(), parentItem);
     return createIndex(parentItem->row(), 0, parentItem);
 }
 QModelIndex Model::index(int row, int column, const QModelIndex &parent) const {
-//    if (parent.isValid() && parent.column() != 0)
     if (!hasIndex(row, column, parent))
         return QModelIndex();
 
@@ -178,12 +177,7 @@ void Model::appendRow(QString filepath, ModelItem * parentItem) {
 //    emit dataChanged(parent, parent);
 }
 
-bool Model::removeRow(int row, const QModelIndex &parent) {
-    QModelIndex parentIndex = parent;
-    if (!parentIndex.isValid()) {
-        parentIndex = index(rootItem);
-    }
-
+bool Model::removeRow(int row, const QModelIndex &parentIndex) {
     int removeCount = 1;
     ModelItem * parentItem = getItem(parentIndex);
     ModelItem * item = parentItem -> child(row);
@@ -203,12 +197,12 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
         }
 
         removeCount = 0;
-        markBranchAsDeleted(item);
     }
 
+    markBranchAsDeleted(item);
+    qDebug() << item -> childCount();
     beginRemoveRows(parentIndex, row, row);
     if (parentItem -> removeChildren(row, 1)) {
-
         if (isUnprocessed) {
             parentItem -> removeFolder(folderName);
         }
@@ -223,7 +217,7 @@ bool Model::removeRow(int row, const QModelIndex &parent) {
     }
 
     if (isUnprocessed) {
-        if (parentItem == rootItem && rootItem -> childCount() == 0) return true; // monkey patch for first level node deletion // some troubles with index tree
+//        if (parentItem == rootItem && rootItem -> childCount() == 0) return true; // monkey patch for first level node deletion // some troubles with index tree
         emit selectionUpdateNeeded();
     } else {
         QModelIndex next = parentIndex.child(row, 0);

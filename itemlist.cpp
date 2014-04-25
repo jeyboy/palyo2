@@ -301,16 +301,13 @@ void ItemList::mousePressEvent(QMouseEvent *event) {
         dragStartPoint = event -> pos();
     }
 
-    if (getModel() -> root() -> childCount() > 0) //patch // in some cases after folder deletion errors thrown
-        QTreeView::mousePressEvent(event);
+//    if (getModel() -> root() -> childCount() > 0) //patch // in some cases after folder deletion errors thrown
+    QTreeView::mousePressEvent(event);
 }
 
 void ItemList::mouseMoveEvent(QMouseEvent * event) {
     if ((event -> buttons() == Qt::LeftButton) && (dragStartPoint - event -> pos()).manhattanLength() >= 5){
         if (selectedIndexes().length() > 0) {
-            qDebug() << selectedIndexes().first().row();
-            qDebug() << getModel() -> getItem(selectedIndexes().first()) -> fullpath();
-            qDebug() << "Index count " << selectedIndexes().length();
             QDrag * drag = new QDrag(this);
             QMimeData * mimeData = model -> mimeData(selectedIndexes());
     //        drag -> setPixmap(toolIcon);
@@ -357,14 +354,20 @@ void ItemList::removeItem(ModelItem * item) {
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullpath();
     bool isFolder = item -> getState() -> isUnprocessed();
-    clearSelection(); // patch // selection did not cleaned after remove in some case
+//    clearSelection(); // patch // selection did not cleaned after remove in some case
+
+    QModelIndex parentIndex = modelIndex.parent();
+    if (!parentIndex.isValid())
+        parentIndex = rootIndex();
+
+    QAbstractItemView::rowsAboutToBeRemoved(parentIndex, modelIndex.row(), modelIndex.row());
 
     if (Player::instance() -> playedItem()) {
         if (Player::instance() -> playedItem() -> fullpath().startsWith(delPath))
             Player::instance() -> removePlaylist();
     }
 
-    if (model -> removeRow(modelIndex.row(), modelIndex.parent())) {
+    if (model -> removeRow(modelIndex.row(), parentIndex)) {
         if (isRemoveFileWithItem()) {
             if (isFolder) {
                 QDir delDir(delPath);
