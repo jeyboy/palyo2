@@ -53,7 +53,7 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
     connect(model, SIGNAL(expandNeeded(const QModelIndex &)), this, SLOT(expand(const QModelIndex &)));
     connect(model, SIGNAL(itemsCountChanged(int)), parent, SLOT(updateHeader(int)));
 //    connect(model, SIGNAL(selectionChangeNeeded(const QModelIndex &index)), this, SLOT(changeSelection(const QModelIndex &index)));
-    connect(model, SIGNAL(selectionUpdateNeeded()), this, SLOT(updateSelection()));
+//    connect(model, SIGNAL(selectionUpdateNeeded()), this, SLOT(updateSelection()));
 
     header() -> setSectionResizeMode(0, QHeaderView::Interactive);
 //    header()->setStretchLastSection(false);
@@ -359,15 +359,26 @@ void ItemList::removeItem(ModelItem * item) {
     QModelIndex parentIndex = modelIndex.parent();
     if (!parentIndex.isValid())
         parentIndex = rootIndex();
+    int row = modelIndex.row();
+    ModelItem * parent = getModel() -> getItem(parentIndex);
 
-    QAbstractItemView::rowsAboutToBeRemoved(parentIndex, modelIndex.row(), modelIndex.row());
+    while(parent -> childCount() == 1 && parent -> parent() != 0) {
+        parentIndex = getModel() -> index(parent -> parent());
+        row = parent -> row();
+        delPath = parent -> fullpath();
+        isFolder = parent -> getState() -> isUnprocessed();
+        parent = parent -> parent();
+    }
+
+    // fix for model rows remove emit
+    QAbstractItemView::rowsAboutToBeRemoved(parentIndex, row, row);
 
     if (Player::instance() -> playedItem()) {
         if (Player::instance() -> playedItem() -> fullpath().startsWith(delPath))
             Player::instance() -> removePlaylist();
     }
 
-    if (model -> removeRow(modelIndex.row(), parentIndex)) {
+    if (model -> removeRow(row, parentIndex)) {
         if (isRemoveFileWithItem()) {
             if (isFolder) {
                 QDir delDir(delPath);
@@ -376,6 +387,16 @@ void ItemList::removeItem(ModelItem * item) {
                 }
             } else {
                 QFile::remove(delPath);
+            }
+        }
+
+        //TODO: some glitches
+        if (isFolder) {
+            updateSelection();
+        } else {
+            QModelIndex next = parentIndex.child(row, 0);
+            if (!next.isValid() || (next.isValid() && !next.data(FOLDERID).toBool())) {
+                updateSelection();
             }
         }
     }

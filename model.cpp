@@ -211,25 +211,6 @@ bool Model::removeRow(int row, const QModelIndex &parentIndex) {
     }
     endRemoveRows();
 
-    if (parentItem -> childCount() == 0 && parentItem -> parent() != 0) {
-        removeRow(parentIndex.row(), parentIndex.parent());
-    }
-
-    if (isUnprocessed) {
-//        if (parentItem == rootItem && rootItem -> childCount() == 0) return true; // monkey patch for first level node deletion // some troubles with index tree
-        emit selectionUpdateNeeded();
-    } else {
-        QModelIndex next = parentIndex.child(row, 0);
-        if (!next.isValid() || (next.isValid() && !next.data(FOLDERID).toBool())) {
-            emit selectionUpdateNeeded();
-        }
-    }
-
-//    if (parentItem == rootItem) {
-//        rootItem -> dropExpandProceedFlags();
-//        repaint(); // monkey patch for first level node deletion // some troubles with index tree
-//    }
-
     return true;
 }
 
