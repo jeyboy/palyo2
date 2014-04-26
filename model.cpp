@@ -197,10 +197,9 @@ bool Model::removeRow(int row, const QModelIndex &parentIndex) {
         }
 
         removeCount = 0;
+        markBranchAsDeleted(item);
     }
 
-    markBranchAsDeleted(item);
-    qDebug() << item -> childCount();
     beginRemoveRows(parentIndex, row, row);
     if (parentItem -> removeChildren(row, 1)) {
         if (isUnprocessed) {
