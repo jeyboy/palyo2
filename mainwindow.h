@@ -50,6 +50,8 @@ protected:
     bool isToolbarNameUniq(QString name);
 
 private slots:
+    void showVKTabDialog();
+
     void showAttTabDialog(Tab * tab = 0);
     void showAttCurrTabDialog();
 

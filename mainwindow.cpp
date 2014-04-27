@@ -3,7 +3,9 @@
 #include "tabdialog.h"
 #include "toolbardialog.h"
 #include "toolbarbuttondialog.h"
-#include "mediainfo.h"
+#include "web_dialog.h"
+
+#include <QMessageBox>
 
 #include <QDebug>
 
@@ -372,8 +374,10 @@ QToolBar* MainWindow::createControlToolBar() {
     ptb -> setPalette(pal);
 //    ptb -> setMinimumWidth(75);
 
-    ptb->addAction(QPixmap(QString(":/add")), "Add new tab", this, SLOT(showAttTabDialog()));
-    ptb->addAction(QPixmap(QString(":/settings")), "Setting for current tab", this, SLOT(showAttCurrTabDialog()));
+    ptb -> addAction(QPixmap(QString(":/add")), "Add new tab", this, SLOT(showAttTabDialog()));
+    ptb -> addAction(QPixmap(QString(":/add_vk")), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
+    ptb -> addSeparator();
+    ptb -> addAction(QPixmap(QString(":/settings")), "Setting for current tab", this, SLOT(showAttCurrTabDialog()));
     ptb -> adjustSize();
 
     return ptb;
@@ -600,6 +604,20 @@ void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
     foreach(QSlider * orientable, orientables) {
         orientable -> setOrientation(orientation);
         orientable -> setInvertedAppearance(orientation == Qt::Vertical);
+    }
+}
+
+void MainWindow::showVKTabDialog() {
+    WebDialog dialog(this,
+                     "vk",
+                     "VK auth",
+                     "https://oauth.vk.com/authorize?client_id=4332211&scope=audio,video,friends,offline&redirect_uri=https://oauth.vk.com/blank.html&display=page&v=5.21&response_type=token"
+                     );
+    if (dialog.exec() == QDialog::Accepted) {
+        qDebug() << "token " << dialog.getToken();
+        qDebug() << "user " << dialog.getUserID();
+    } else {
+        QMessageBox::information(this, "VK", dialog.getError());
     }
 }
 

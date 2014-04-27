@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui webkitwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -48,7 +48,9 @@ SOURCES += main.cpp\
     library_item.cpp \
     audio_player.cpp \
     notify_timer.cpp \
-    clickable_label.cpp
+    clickable_label.cpp \
+    custom_network_access_manager.cpp \
+    web_dialog.cpp
 
 unix:!mac {
         QT += gui-private
@@ -98,12 +100,15 @@ HEADERS  += mainwindow.h \
     slider_style.h \
     audio_player.h \
     notify_timer.h \
-    clickable_label.h
+    clickable_label.h \
+    custom_network_access_manager.h \
+    web_dialog.h
 
 FORMS    += mainwindow.ui \
     tabdialog.ui \
     toolbardialog.ui \
-    toolbarbuttondialog.ui
+    toolbarbuttondialog.ui \
+    web_dialog.ui
 
 RESOURCES += \
     picts.qrc
