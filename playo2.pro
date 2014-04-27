@@ -25,8 +25,10 @@ INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/bass/include)
 
 CONFIG += static thread windows x11 sse sse2 x86
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
+SOURCES += web/web_api.cpp\
+    web/socials/vk_api.cpp\
+    main.cpp\
+    mainwindow.cpp \
     tabber.cpp \
     tab.cpp \
     icon_provider.cpp \
@@ -52,6 +54,7 @@ SOURCES += main.cpp\
     custom_network_access_manager.cpp \
     web_dialog.cpp
 
+
 unix:!mac {
         QT += gui-private
         CONFIG += link_pkgconfig
@@ -75,7 +78,9 @@ mac: {
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.dylib)
 }
 
-HEADERS  += mainwindow.h \
+HEADERS  += web/web_api.h\
+    web/socials/vk_api.h\
+    mainwindow.h \
     tabber.h \
     tab.h \
     icon_provider.h \
