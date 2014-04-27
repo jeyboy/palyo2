@@ -17,7 +17,7 @@ bool DataStore::load() {
     }
 
     QByteArray saveData = loadFile.readAll();
-    QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+    QJsonDocument loadDoc(QJsonDocument::fromBinaryData(saveData));
     json = loadDoc.object();
 
     return true;
@@ -31,7 +31,7 @@ bool DataStore::save() {
     }
 
     QJsonDocument saveDoc(json);
-    saveFile.write(saveDoc.toJson());
+    saveFile.write(saveDoc.toBinaryData());
 
     return true;
 }
