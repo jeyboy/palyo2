@@ -55,7 +55,7 @@ public:
 
 public slots:
 //    void changeSelection(const QModelIndex & index);
-    void updateSelection();
+    void updateSelection(QModelIndex candidate);
 
 private slots:
     void on_doubleClick(const QModelIndex &index);

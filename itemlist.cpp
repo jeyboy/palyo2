@@ -215,11 +215,9 @@ void ItemList::dropEvent(QDropEvent *event) {
     } else event -> ignore();
 }
 
-void ItemList::updateSelection() {
-    QModelIndexList list = selectedIndexes();
-
-    if (list.count() > 0) {
-        ModelItem * item = getModel() -> getItem(list.first());
+void ItemList::updateSelection(QModelIndex candidate) {
+    if (candidate.isValid()) {
+        ModelItem * item = getModel() -> getItem(candidate);
 
         if (item -> getState() -> isUnprocessed()) {
             if ((item = nextItem(item)))
@@ -354,21 +352,25 @@ void ItemList::removeItem(ModelItem * item) {
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullpath();
     bool isFolder = item -> getState() -> isUnprocessed();
-//    clearSelection(); // patch // selection did not cleaned after remove in some case
 
     QModelIndex parentIndex = modelIndex.parent();
     if (!parentIndex.isValid())
         parentIndex = rootIndex();
     int row = modelIndex.row();
     ModelItem * parent = getModel() -> getItem(parentIndex);
+    QModelIndex selCandidate = parentIndex.child(row + 1, 0);
 
     while(parent -> childCount() == 1 && parent -> parent() != 0) {
         parentIndex = getModel() -> index(parent -> parent());
         row = parent -> row();
         delPath = parent -> fullpath();
         isFolder = parent -> getState() -> isUnprocessed();
+        selCandidate = parentIndex.child(row + 1, 0);
+
         parent = parent -> parent();
     }
+
+    clearSelection();
 
     // fix for model rows remove emit
     QAbstractItemView::rowsAboutToBeRemoved(parentIndex, row, row);
@@ -390,13 +392,12 @@ void ItemList::removeItem(ModelItem * item) {
             }
         }
 
-        //TODO: some glitches
         if (isFolder) {
-            updateSelection();
+            updateSelection(selCandidate);
         } else {
             QModelIndex next = parentIndex.child(row, 0);
             if (!next.isValid() || (next.isValid() && !next.data(FOLDERID).toBool())) {
-                updateSelection();
+                updateSelection(selCandidate);
             }
         }
     }
