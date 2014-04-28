@@ -370,6 +370,15 @@ void ItemList::removeItem(ModelItem * item) {
         parent = parent -> parent();
     }
 
+    if (isFolder && item -> childTreeCount() > 1) {
+        if (QMessageBox::warning(
+                    parentWidget(),
+                    "Folder deletion",
+                    "Are you shure what you want remove the not empty folder ?",
+                    QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Cancel)
+            return;
+    }
+
     clearSelection();
 
     // fix for model rows remove emit

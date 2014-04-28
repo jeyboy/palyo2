@@ -11,6 +11,7 @@
 #include <QHeaderView>
 #include <QDesktopServices>
 #include <QMenu>
+#include <QMessageBox>
 
 #include "player.h"
 #include "model.h"

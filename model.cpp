@@ -187,15 +187,6 @@ bool Model::removeRow(int row, const QModelIndex &parentIndex) {
     if (isUnprocessed) {      
         folderName = item -> data(NAMEUID).toString();
 
-        if (item -> childCount() > 0) {
-            if (QMessageBox::warning(
-                        QApplication::activeWindow(),
-                        "Folder deletion",
-                        "Are you shure what you want remove the not empty folder ?",
-                        QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Cancel)
-                return false;
-        }
-
         removeCount = 0;
         markBranchAsDeleted(item);
     }
