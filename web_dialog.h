@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QtWebKitWidgets>
-#include "custom_network_access_manager.h"
+#include "web/web_api.h"
 
 namespace Ui {
     class WebDialog;
@@ -13,27 +13,15 @@ class WebDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit WebDialog(QWidget *parent, QString appName, QString title, QString url);
+    explicit WebDialog(QWidget *parent, WebApi * apiClass, QString title);
     ~WebDialog();
-
-    QString getError();
-    QString getToken();
-    QString getExpire();
-    QString getUserID();
 
 private slots:
     void urlChanged(const QUrl&);
 
 private:
-    void vkResponse(const QUrl& url);
-
-    QString app_name;
+    WebApi * api;
     Ui::WebDialog *ui;
-
-    QString error;
-    QString token;
-    QString expires_in;
-    QString user_id;
 };
 
 

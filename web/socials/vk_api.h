@@ -6,7 +6,14 @@
 class VkApi : public WebApi {
 public:
     QString name() const;
-    void setParams(QString accessToken, QString userID);
+    QString authUrl() const;
+    QString proceedResponse(const QUrl & url);
+
+    void setParams(QString accessToken, QString userID, QString expiresIn);
+
+    QString getToken();
+    QString getExpire();
+    QString getUserID();
 
     ~VkApi() {
 
@@ -21,11 +28,13 @@ private:
     VkApi() : WebApi() {
         token = QString();
         user_id = QString();
+        expires_in = QString();
     }
 
     static VkApi *self;
 
     QString token;
+    QString expires_in;
     QString user_id;
 };
 

@@ -13,6 +13,12 @@ public:
     WebApi();
     ~WebApi();
 
+    QString getError();
+
+    virtual QString name() const = 0;
+    virtual QString authUrl() const = 0;
+    virtual QString proceedResponse(const QUrl & url) = 0;
+
     CustomNetworkAccessManager * manager() const;
 
 protected:
@@ -21,6 +27,8 @@ protected:
 
     QByteArray sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts = 0);
     CustomNetworkAccessManager * netManager;
+
+    QString error;
 };
 
 #endif // WEB_API_H

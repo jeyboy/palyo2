@@ -23,6 +23,8 @@
 #include "slider_style.h"
 #include "clickable_label.h"
 
+#include "web/socials/vk_api.h"
+
 namespace Ui {
   class MainWindow;
 }

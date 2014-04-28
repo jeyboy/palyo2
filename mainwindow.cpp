@@ -482,6 +482,8 @@ MainWindow::~MainWindow() {
         IconProvider::close();
         Library::close();
         Player::close();
+
+        VkApi::close();
     ///////////////////////////////////////////////
 
     delete next;
@@ -608,16 +610,12 @@ void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
 }
 
 void MainWindow::showVKTabDialog() {
-    WebDialog dialog(this,
-                     "vk",
-                     "VK auth",
-                     "https://oauth.vk.com/authorize?client_id=4332211&scope=audio,video,friends,offline&redirect_uri=https://oauth.vk.com/blank.html&display=page&v=5.21&response_type=token"
-                     );
+    WebDialog dialog(this, VkApi::instance(), "VK auth");
     if (dialog.exec() == QDialog::Accepted) {
-        qDebug() << "token " << dialog.getToken();
-        qDebug() << "user " << dialog.getUserID();
+        qDebug() << "token " << VkApi::instance() -> getToken();
+        qDebug() << "user " << VkApi::instance() -> getUserID();
     } else {
-        QMessageBox::information(this, "VK", dialog.getError());
+        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
     }
 }
 

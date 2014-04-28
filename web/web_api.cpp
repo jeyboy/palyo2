@@ -8,6 +8,10 @@ WebApi::~WebApi() {
     delete netManager;
 }
 
+QString WebApi::getError() {
+    return error;
+}
+
 CustomNetworkAccessManager * WebApi::manager() const {
     return netManager;
 }
