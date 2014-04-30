@@ -135,8 +135,8 @@ void AudioPlayer::signalUpdate() {
     int curr_pos = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetPosition(chan, BASS_POS_BYTE)) * 1000;
 
     emit positionChanged(curr_pos);
-    if (duration - curr_pos < 500)
-        endOfPlayback();
+//    if (duration - curr_pos < 500)
+//        endOfPlayback();
 }
 
 ////////////////////////////////////////////////////////////////////////
