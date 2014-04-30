@@ -128,7 +128,6 @@ void AudioPlayer::started() {
 
 void AudioPlayer::stoped() {
     currentState = StoppedState;
-    closeChannel();
 }
 
 void AudioPlayer::signalUpdate() {
@@ -180,7 +179,7 @@ void AudioPlayer::resume() {
 }
 
 void AudioPlayer::stop() {
-    BASS_ChannelStop(chan);
+    closeChannel();
     notifyTimer -> stop();
     emit stateChanged(StoppedState);
 }
