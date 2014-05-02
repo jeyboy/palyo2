@@ -16,15 +16,15 @@ Player * Player::instance() {
 ModelItem * Player::playedItem() const {
     return played;
 }
-ItemList * Player::currentPlaylist() const {
+View * Player::currentPlaylist() const {
     return playlist;
 }
-ItemList * Player::currentActivePlaylist() const {
+View * Player::currentActivePlaylist() const {
     return playlist;
 }
 
 
-void Player::setActivePlaylist(ItemList * newActivePlaylist) {
+void Player::setActivePlaylist(View * newActivePlaylist) {
     activePlaylist = newActivePlaylist;
 }
 
@@ -51,7 +51,7 @@ void  Player::setLikeButton(QAction * likeAction) {
     connect((QObject *)likeAction, SIGNAL(triggered(bool)), this, SLOT(like()));
 }
 
-void Player::setPlaylist(ItemList * playlist) {
+void Player::setPlaylist(View * playlist) {
    stop();
    playlist = playlist;
    played = 0;
@@ -82,7 +82,7 @@ void Player::updateItemState(bool isPlayed) {
     }
 }
 
-void Player::playItem(ItemList * itemPlaylist, ModelItem * item) {
+void Player::playItem(View * itemPlaylist, ModelItem * item) {
     switch(state()) {
         case StoppedState: { break; }
 

@@ -10,9 +10,10 @@
 #include <QVector>
 
 #include "mediainfo.h"
-#include "model_item.h"
-#include "model_item_state.h"
 #include "library_item.h"
+
+#include "model/model_item.h"
+#include "model/model_item_state.h"
 
 class ModelItem;
 class LibraryItem;

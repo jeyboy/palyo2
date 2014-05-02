@@ -5,9 +5,9 @@
 #include <QBoxLayout>
 #include <QJsonObject>
 
-#include "itemlist.h"
-#include "model.h"
-#include "model_item.h"
+#include "model/view.h"
+#include "model/model.h"
+#include "model/model_item.h"
 
 
 #ifndef CBHASH
@@ -30,7 +30,7 @@ public:
     QString getName() const;
     void setName(QString newName);
 
-    ItemList * getList() const;
+    View * getList() const;
     QJsonObject toJSON(QString name);
 
 public slots:
@@ -40,7 +40,7 @@ protected:
     void setNameWithCount(QString name);
 
 private:
-    ItemList * list;
+    View * list;
     QTabWidget * tabber;
 
 //private slots:

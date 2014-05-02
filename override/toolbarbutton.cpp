@@ -49,7 +49,7 @@ void ToolbarButton::dropEvent(QDropEvent *event) {
           event->accept();
 
           if (QString(event -> source() -> metaObject() -> className()) == "ItemList")
-            ((ItemList *)event -> source()) -> markSelectedAsLiked();
+            ((View *)event -> source()) -> markSelectedAsLiked();
           else
             "Out request";
 

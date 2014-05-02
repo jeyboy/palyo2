@@ -9,7 +9,7 @@
 #include <QJsonArray>
 
 #include "model_item_state.h"
-#include "library.h"
+#include "media/library.h"
 
 #define NAMEUID 0
 #define EXTENSIONUID 1

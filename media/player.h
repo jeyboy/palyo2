@@ -8,22 +8,22 @@
 
 #include <QtCore/qmath.h>
 
-#include "model.h"
-#include "itemlist.h"
+#include "model/model.h"
+#include "model/view.h"
 #include "audio_player.h"
-#include "clickable_label.h"
+#include "override/clickable_label.h"
 
-class ItemList;
+class View;
 
 class Player : public AudioPlayer {
     Q_OBJECT
 public:
 
     static Player * instance();
-    void playItem(ItemList * itemPlaylist, ModelItem * item);
+    void playItem(View * itemPlaylist, ModelItem * item);
     void playFile(QString uri);
 
-    void setActivePlaylist(ItemList * itemPlaylist);
+    void setActivePlaylist(View * itemPlaylist);
     void setPlayButton(QAction * playAction);
     void setPauseButton(QAction * pauseAction);
     void setStopButton(QAction * stopAction);
@@ -32,12 +32,12 @@ public:
     void setTrackBar(QSlider * trackBar);
     void setTimePanel(ClickableLabel * timePanel);
 //    void setVideoOutput(QVideoWidget * container);
-    void setPlaylist(ItemList * playlist);
+    void setPlaylist(View * playlist);
     void removePlaylist();
 
     ModelItem * playedItem() const;
-    ItemList * currentPlaylist() const;
-    ItemList * currentActivePlaylist() const;
+    View * currentPlaylist() const;
+    View * currentActivePlaylist() const;
 
     static void close() {
         delete self;
@@ -92,9 +92,9 @@ private:
     QSlider * slider;
     ClickableLabel * timePanel;
     ModelItem * played;
-    ItemList * playlist;
 
-    ItemList * activePlaylist;
+    View * playlist;
+    View * activePlaylist;
 
     QAction * playButton;
     QAction * pauseButton;

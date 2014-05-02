@@ -1,7 +1,7 @@
-#include "itemlist.h"
+#include "view.h"
 #include <QDebug>
 
-ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {   
+View::View(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : QTreeView(parent) {
     settings = settingsSet;
     setIndentation(8);
 
@@ -59,15 +59,15 @@ ItemList::ItemList(QWidget *parent, CBHash settingsSet, QJsonObject * attrs) : Q
 //    header()->setStretchLastSection(false);
 }
 
-ItemList::~ItemList() {
+View::~View() {
     delete model;
 }
 
-Model * ItemList::getModel() const {
+Model * View::getModel() const {
     return model;
 }
 
-void ItemList::keyPressEvent(QKeyEvent *event) {
+void View::keyPressEvent(QKeyEvent *event) {
     if (event ->key() == Qt::Key_Enter || event ->key() == Qt::Key_Return) {
         QModelIndexList list = selectedIndexes();
 
@@ -86,7 +86,7 @@ void ItemList::keyPressEvent(QKeyEvent *event) {
     } else { QTreeView::keyPressEvent(event); }
 }
 
-ModelItem * ItemList::activeItem(bool next) {     
+ModelItem * View::activeItem(bool next) {
     ModelItem * item = 0;
 
     if (Player::instance() -> currentPlaylist() == this) {
@@ -121,7 +121,7 @@ ModelItem * ItemList::activeItem(bool next) {
     return item;
 }
 
-void ItemList::proceedPrev() {
+void View::proceedPrev() {
     ModelItem * item = activeItem(false);
 
     if (item == 0) return;
@@ -130,7 +130,7 @@ void ItemList::proceedPrev() {
     execItem(item);
 }
 
-void ItemList::proceedNext() {
+void View::proceedNext() {
     ModelItem * item = activeItem();
     if (item == 0) return;
 
@@ -138,7 +138,7 @@ void ItemList::proceedNext() {
     execItem(item);
 }
 
-void ItemList::deleteCurrentProceedNext() {
+void View::deleteCurrentProceedNext() {
     ModelItem * item = activeItem();
     if (item == 0) return;
 
@@ -154,13 +154,13 @@ void ItemList::deleteCurrentProceedNext() {
     execItem(item);
 }
 
-void ItemList::dragEnterEvent(QDragEnterEvent *event) {
+void View::dragEnterEvent(QDragEnterEvent *event) {
     if (event -> source() != this && event -> mimeData() -> hasFormat("text/uri-list"))
         event -> accept();
     else event -> ignore();
 }
 
-void ItemList::dragMoveEvent(QDragMoveEvent * event) {
+void View::dragMoveEvent(QDragMoveEvent * event) {
     if (event -> source() != this && event -> mimeData() -> hasFormat("text/uri-list"))
         event -> accept();
     else event -> ignore();
@@ -178,7 +178,7 @@ void ItemList::dragMoveEvent(QDragMoveEvent * event) {
 //                            SortFlags sort = NoSort) const;
 
 
-void ItemList::filesRoutine(ModelItem * index, QFileInfoList list){
+void View::filesRoutine(ModelItem * index, QFileInfoList list){
     foreach(QFileInfo file, list) {
         if (file.isDir()) {
             ModelItem * new_index = model -> addFolder(file.fileName(), index);
@@ -189,7 +189,7 @@ void ItemList::filesRoutine(ModelItem * index, QFileInfoList list){
     }
 }
 
-void ItemList::filesRoutine(ModelItem * index, QList<QUrl> list){
+void View::filesRoutine(ModelItem * index, QList<QUrl> list){
     foreach(QUrl url, list) {
         QFileInfo file = QFileInfo(url.toLocalFile());
         if (file.isDir()) {
@@ -201,7 +201,7 @@ void ItemList::filesRoutine(ModelItem * index, QList<QUrl> list){
     }
 }
 
-void ItemList::dropEvent(QDropEvent *event) {
+void View::dropEvent(QDropEvent *event) {
     if (event -> source() != this && event -> mimeData() -> hasUrls()) {
         QList<QUrl> list = event -> mimeData() -> urls();
         ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path()); // -> parent();
@@ -215,7 +215,7 @@ void ItemList::dropEvent(QDropEvent *event) {
     } else event -> ignore();
 }
 
-void ItemList::updateSelection(QModelIndex candidate) {
+void View::updateSelection(QModelIndex candidate) {
     if (candidate.isValid()) {
         ModelItem * item = getModel() -> getItem(candidate);
 
@@ -226,11 +226,11 @@ void ItemList::updateSelection(QModelIndex candidate) {
     }
 }
 
-//void ItemList::changeSelection(const QModelIndex & index) {
+//void View::changeSelection(const QModelIndex & index) {
 //    emit selectionChanged(index, currentIndex());
 //}
 
-void ItemList::on_doubleClick(const QModelIndex &index) {
+void View::on_doubleClick(const QModelIndex &index) {
     ModelItem * item = model -> getItem(index);
 
     if (!item -> getState() -> isUnprocessed()) {
@@ -238,7 +238,7 @@ void ItemList::on_doubleClick(const QModelIndex &index) {
     }
 }
 
-void ItemList::showContextMenu(const QPoint& pnt) {
+void View::showContextMenu(const QPoint& pnt) {
     QList<QAction *> actions;
 
     if (indexAt(pnt).isValid()) {
@@ -251,7 +251,7 @@ void ItemList::showContextMenu(const QPoint& pnt) {
         QMenu::exec(actions, mapToGlobal(pnt));
 }
 
-void ItemList::openLocation() {
+void View::openLocation() {
     ModelItem * item = model -> getItem(this -> currentIndex());
     if (item -> getState() -> isUnprocessed())
         QDesktopServices::openUrl(QUrl::fromLocalFile(item -> fullpath()));
@@ -259,7 +259,7 @@ void ItemList::openLocation() {
         QDesktopServices::openUrl(QUrl::fromLocalFile(item -> parent() -> fullpath()));
 }
 
-QJsonObject ItemList::toJSON() {
+QJsonObject View::toJSON() {
     QJsonObject res = model -> getItem(rootIndex()) -> toJSON();
     QJsonObject set = QJsonObject();
 
@@ -274,19 +274,19 @@ QJsonObject ItemList::toJSON() {
     return res;
 }
 
-bool ItemList::isRemoveFileWithItem() {
+bool View::isRemoveFileWithItem() {
     return settings["d"];
 }
 
-bool ItemList::isPlaylist() {
+bool View::isPlaylist() {
     return settings["p"];
 }
 
 
-CBHash ItemList::getSettings() const {
+CBHash View::getSettings() const {
     return settings;
 }
-void ItemList::setSettings(CBHash newSettings) {
+void View::setSettings(CBHash newSettings) {
     settings = newSettings;
 }
 
@@ -294,7 +294,7 @@ void ItemList::setSettings(CBHash newSettings) {
 //// Dnd
 ////////////////////////////////////////////////////////////
 
-void ItemList::mousePressEvent(QMouseEvent *event) {
+void View::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         dragStartPoint = event -> pos();
     }
@@ -303,7 +303,7 @@ void ItemList::mousePressEvent(QMouseEvent *event) {
     QTreeView::mousePressEvent(event);
 }
 
-void ItemList::mouseMoveEvent(QMouseEvent * event) {
+void View::mouseMoveEvent(QMouseEvent * event) {
     if ((event -> buttons() == Qt::LeftButton) && (dragStartPoint - event -> pos()).manhattanLength() >= 5){
         if (selectedIndexes().length() > 0) {
             QDrag * drag = new QDrag(this);
@@ -317,7 +317,7 @@ void ItemList::mouseMoveEvent(QMouseEvent * event) {
     QTreeView::mouseMoveEvent(event);
 }
 
-void ItemList::markSelectedAsLiked() {
+void View::markSelectedAsLiked() {
     ModelItem * temp;
     foreach (const QModelIndex &index, selectedIndexes()) {
         if (index.isValid()) {
@@ -332,7 +332,7 @@ void ItemList::markSelectedAsLiked() {
 
 ////////////////////////////////////////////////////////////
 
-bool ItemList::execItem(ModelItem * item) {
+bool View::execItem(ModelItem * item) {
     if (item) {
         scrollTo(model -> index(item));
         if (item -> isExist()) {
@@ -348,7 +348,7 @@ bool ItemList::execItem(ModelItem * item) {
     return false;
 }
 
-void ItemList::removeItem(ModelItem * item) {
+void View::removeItem(ModelItem * item) {
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullpath();
     bool isFolder = item -> getState() -> isUnprocessed();
@@ -416,7 +416,7 @@ void ItemList::removeItem(ModelItem * item) {
 
 
 //// test needed / update need
-//ModelItem * ItemList::nextItem(QModelIndex currIndex) {
+//ModelItem * View::nextItem(QModelIndex currIndex) {
 //    QModelIndex newIndex;
 //    ModelItem * item;
 
@@ -441,7 +441,7 @@ void ItemList::removeItem(ModelItem * item) {
 //    }
 //}
 
-ModelItem * ItemList::nextItem(ModelItem * curr) {
+ModelItem * View::nextItem(ModelItem * curr) {
     ModelItem * item = curr;
     bool first_elem = curr -> parent() == 0 || curr -> getState() -> isUnprocessed();
 
@@ -469,7 +469,7 @@ ModelItem * ItemList::nextItem(ModelItem * curr) {
         }
     }
 }
-ModelItem * ItemList::prevItem(ModelItem * curr) {
+ModelItem * View::prevItem(ModelItem * curr) {
     ModelItem * item = curr;
     bool last_elem = false;
 

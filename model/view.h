@@ -1,5 +1,5 @@
-#ifndef ITEMLIST_H
-#define ITEMLIST_H
+#ifndef VIEW_H
+#define VIEW_H
 
 #include <QMimeData>
 #include <QTreeView>
@@ -13,7 +13,7 @@
 #include <QMenu>
 #include <QMessageBox>
 
-#include "player.h"
+#include "media/player.h"
 #include "model.h"
 #include "model_item.h"
 #include "model_item_delegate.h"
@@ -26,11 +26,11 @@
   Q_DECLARE_METATYPE(CBHash);
 #endif // CBHASH
 
-class ItemList : public QTreeView {
+class View : public QTreeView {
   Q_OBJECT
 public:
-    ItemList(QWidget * parent, CBHash settinsSet, QJsonObject * attrs = 0);
-    ~ItemList();
+    View(QWidget * parent, CBHash settinsSet, QJsonObject * attrs = 0);
+    ~View();
 
     QJsonObject toJSON();
 
@@ -86,4 +86,4 @@ private:
     QPoint dragStartPoint;
 };
 
-#endif // ITEMLIST_H
+#endif // VIEW_H

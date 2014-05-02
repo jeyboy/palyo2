@@ -7,9 +7,11 @@
 #include <QBrush>
 
 #include "model_item.h"
+
 #include "icon_provider.h"
-#include "library.h"
-#include "library_item.h"
+
+#include "media/library.h"
+#include "media/library_item.h"
 
 class ModelItem;
 class LibraryItem;

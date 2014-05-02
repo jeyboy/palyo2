@@ -2,7 +2,7 @@
 #include <QDebug>
 
 void Tab::init(CBHash params, QJsonObject * attrs) {
-    list = new ItemList(this, params, attrs);
+    list = new View(this, params, attrs);
 //    list -> setResizeMode();
 
     this -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
@@ -39,7 +39,7 @@ void Tab::setName(QString newName) {
     setNameWithCount(newName);
 }
 
-ItemList * Tab::getList() const {
+View * Tab::getList() const {
     return list;
 }
 

@@ -1,8 +1,8 @@
 #ifndef LIBRARY_PROC_ITEM_H
 #define LIBRARY_PROC_ITEM_H
 
-#include "model.h"
-#include "model_item.h"
+#include "model/model.h"
+#include "model/model_item.h"
 
 class Model;
 class ModelItem;

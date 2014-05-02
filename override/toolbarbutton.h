@@ -7,7 +7,7 @@
 #include <QFile>
 #include <QMessageBox>
 
-#include "itemlist.h"
+#include "model/view.h"
 
 class ToolbarButton : public QToolButton {
     Q_OBJECT
