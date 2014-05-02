@@ -183,16 +183,20 @@ bool Model::removeRow(int row, const QModelIndex &parentIndex) {
     ModelItem * item = parentItem -> child(row);
     QString folderName;
     bool isUnprocessed = item -> getState() -> isUnprocessed();
+    bool res;
 
     if (isUnprocessed) {      
         folderName = item -> data(NAMEUID).toString();
 
-        removeCount = 0;
-        markBranchAsDeleted(item);
+        removeCount = item -> childTreeCount();
+//        markBranchAsDeleted(item);
     }
 
     beginRemoveRows(parentIndex, row, row);
-    if (parentItem -> removeChildren(row, 1)) {
+    res = parentItem -> removeChildren(row, 1);
+    endRemoveRows();
+
+    if (res) {
         if (isUnprocessed) {
             parentItem -> removeFolder(folderName);
         }
@@ -200,18 +204,17 @@ bool Model::removeRow(int row, const QModelIndex &parentIndex) {
         if (removeCount > 0)
             emit itemsCountChanged(count -= removeCount);
     }
-    endRemoveRows();
 
-    return true;
+    return res;
 }
 
-void Model::markBranchAsDeleted(ModelItem * parentItem) {
-    foreach(ModelItem * item, parentItem -> foldersList() -> values()) {
-        markBranchAsDeleted(item);
-    }
-    count += parentItem -> foldersList() -> count(); // patch // compensation removing  of folders
-    removeRows(0, parentItem -> childCount(), index(parentItem));
-}
+//void Model::markBranchAsDeleted(ModelItem * parentItem) {
+//    foreach(ModelItem * item, parentItem -> foldersList() -> values()) {
+//        markBranchAsDeleted(item);
+//    }
+//    count += parentItem -> foldersList() -> count(); // patch // compensation removing  of folders
+//    removeRows(0, parentItem -> childCount(), index(parentItem));
+//}
 
 bool Model::removeRows(int position, int rows, const QModelIndex &parent) {
     ModelItem *parentItem = getItem(parent);
