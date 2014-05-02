@@ -35,7 +35,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
                    emit expandNeeded(index);
                }
 
-               qDebug() << item -> fullpath();
+               qDebug() << item -> fullPath();
            }
 
            return item -> data(index.column());
@@ -53,11 +53,11 @@ QVariant Model::data(const QModelIndex &index, int role) const {
                return QVariant();
 //               return IconProvider::fileIcon("", "");
            else
-               return IconProvider::fileIcon(item -> fullpath(), (item -> data(EXTENSIONUID).toString()));
+               return IconProvider::fileIcon(item -> fullPath(), (item -> data(EXTENSIONID).toString()));
         }
         case Qt::ToolTipRole:
             item = getItem(index);
-            return item -> data(EXTENSIONUID).toString();
+            return item -> data(EXTENSIONID).toString();
         case Qt::SizeHintRole:
             return QSize(0, 18);
         case Qt::TextColorRole:
@@ -186,7 +186,7 @@ bool Model::removeRow(int row, const QModelIndex &parentIndex) {
     bool res;
 
     if (isUnprocessed) {      
-        folderName = item -> data(NAMEUID).toString();
+        folderName = item -> data(TITLEID).toString();
 
         removeCount = item -> childTreeCount();
 //        markBranchAsDeleted(item);
@@ -321,7 +321,7 @@ QMimeData * Model::mimeData(const QModelIndexList &indexes) const {
     foreach (const QModelIndex &index, indexes) {
         if (index.isValid()) {
             temp = getItem(index);
-            list.append(QUrl::fromLocalFile(temp -> fullpath()));
+            list.append(QUrl::fromLocalFile(temp -> fullPath()));
 //            if (!temp -> getState() -> isUnprocessed())
 //            tempData = temp -> fullpath().toUtf8();
         }

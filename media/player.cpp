@@ -95,7 +95,7 @@ void Player::playItem(View * itemPlaylist, ModelItem * item) {
 
     updateItemState(false);
 
-    setMedia(QUrl::fromLocalFile(item -> fullpath()));
+    setMedia(QUrl::fromLocalFile(item -> fullPath()));
 
     played = item;
     playlist = itemPlaylist;

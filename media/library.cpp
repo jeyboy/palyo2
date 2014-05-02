@@ -16,15 +16,15 @@ void Library::initItem(LibraryItem * libItem) {
 }
 
 bool Library::addItem(ModelItem * item, int state) {
-    if (item -> names == 0) {
-        item -> names = getNamesForItem(item);
+    if (!item -> cacheIsPrepared()) {
+        item -> setCache(getNamesForItem(item));
     }
 
     if (state == STATE_LIKED)
         state = 1;
     else state = 0;
 
-    return proceedItemNames(item -> names, state);
+    return proceedItemNames(item -> getTitlesCache(), state);
 }
 
 void Library::restoreItemState(LibraryItem * libItem) {
@@ -34,7 +34,7 @@ void Library::restoreItemState(LibraryItem * libItem) {
     QString name;
     QList<QString>::iterator i;
 
-    for (i = libItem -> item() -> names -> begin(); i != libItem -> item() -> names -> end(); ++i) {
+    for (i = libItem -> item() -> getTitlesCache() -> begin(); i != libItem -> item() -> getTitlesCache() -> end(); ++i) {
         name = (*i);
         cat = getCatalog(name);
 
@@ -74,7 +74,7 @@ void Library::saveCatalogs() {
 void Library::itemsInit(LibraryItem * libItem) {
     if (libItem -> item() -> isExist()) {
         if (saveBlock.tryLock(-1)) {
-            libItem -> item() -> names = getNamesForItem(libItem -> item());
+            libItem -> item() -> setCache(getNamesForItem(libItem -> item()));
             restoreItemState(libItem);
             saveBlock.unlock();
         }
@@ -189,9 +189,9 @@ QList<QString> * Library::getNamesForObject(QString path, QString name) {
 }
 
 QList<QString> * Library::getNamesForItem(ModelItem * item) {
-    QString name = prepareName(item -> data(NAMEUID).toString());
+    QString name = prepareName(item -> data(TITLEID).toString());
 
-    return getNamesForObject(item -> fullpath(), name);
+    return getNamesForObject(item -> fullPath(), name);
 }
 
 QList<QString> * Library::getNamesForItem(QString path) {

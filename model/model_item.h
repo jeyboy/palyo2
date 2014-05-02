@@ -1,28 +1,55 @@
+/// JSON names
+/// t - title
+/// s - state
+/// p - path
+/// e - extension
+/// c - children
+/// i - item type
+/// l - tab items count
+/// n - tab name
+/// set - tab settings
+///
+
+
 #ifndef MODEL_ITEM_H
 #define MODEL_ITEM_H
 
 #include <QFile>
 #include <QDir>
-#include <QVariant>
-#include <QAbstractItemModel>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QDesktopServices>
+#include <QAbstractItemModel>
 
 #include "model_item_state.h"
 #include "media/library.h"
 
-#define NAMEUID 0
-#define EXTENSIONUID 1
-#define PATHUID 2
+#define TITLEID 0
+#define EXTENSIONID 1
+#define PATHID 2
 #define FOLDERID 3
 #define STATEID 4
+
+#define FILE_ITEM 0
+#define FOLDER_ITEM 1
+#define CUE_ITEM 2
+#define WEB_ITEM 3
 
 class ModelItem {
 public:
     ModelItem();
-    ModelItem(QJsonObject * attrs, ModelItem *parent = 0);
+    ModelItem(QJsonObject * hash, ModelItem *parent = 0);
     ModelItem(const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
     ~ModelItem();
+
+    QString fullPath() const;
+    QString getTitle() const;
+    void openLocation();
+
+    bool isExist() const;
+    bool isFolder() const;
+
+    QJsonObject toJSON();
 
     ModelItem *parent();
 
@@ -41,32 +68,30 @@ public:
     QVariant data(int column) const;
     bool setData(int column, const QVariant &value);
 
-    QString fullpath() const;
-
     ModelItemState * getState() const;
     void setState(int new_state, bool append_to_library = true);
 
     void dropExpandProceedFlags();
 
-    QJsonObject toJSON();
-
-    bool isExist();
-
     QHash<QString, ModelItem *> * foldersList() const;
     int removeFolder(QString name);
 
-    QList<QString> * names;
+    bool cacheIsPrepared() const;
+    void setCache(QList<QString> * newCache);
+    void addToCache(QString title);
+    QList<QString> * getTitlesCache() const;
 private:
     void init(bool isFolder);
     void rootItemInit();
 
     QHash<QString, ModelItem *> * folders;
+    QList<QString> * titlesCache;
 
     QList<ModelItem*> childItems;
     ModelItem *parentItem;  
 
+    QString title;
     QString path;
-    QString name;
     QString extension;
     ModelItemState * state;
 };

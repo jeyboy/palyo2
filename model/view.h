@@ -9,7 +9,6 @@
 #include <QJsonObject>
 #include <QDrag>
 #include <QHeaderView>
-#include <QDesktopServices>
 #include <QMenu>
 #include <QMessageBox>
 

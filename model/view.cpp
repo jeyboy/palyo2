@@ -253,10 +253,7 @@ void View::showContextMenu(const QPoint& pnt) {
 
 void View::openLocation() {
     ModelItem * item = model -> getItem(this -> currentIndex());
-    if (item -> getState() -> isUnprocessed())
-        QDesktopServices::openUrl(QUrl::fromLocalFile(item -> fullpath()));
-    else
-        QDesktopServices::openUrl(QUrl::fromLocalFile(item -> parent() -> fullpath()));
+    item -> openLocation();
 }
 
 QJsonObject View::toJSON() {
@@ -350,7 +347,7 @@ bool View::execItem(ModelItem * item) {
 
 void View::removeItem(ModelItem * item) {
     QModelIndex modelIndex = model -> index(item);
-    QString delPath = item -> fullpath();
+    QString delPath = item -> fullPath();
     bool isFolder = item -> getState() -> isUnprocessed();
 
     QModelIndex parentIndex = modelIndex.parent();
@@ -363,7 +360,7 @@ void View::removeItem(ModelItem * item) {
     while(parent -> childCount() == 1 && parent -> parent() != 0) {
         parentIndex = getModel() -> index(parent -> parent());
         row = parent -> row();
-        delPath = parent -> fullpath();
+        delPath = parent -> fullPath();
         isFolder = parent -> getState() -> isUnprocessed();
         selCandidate = parentIndex.child(row + 1, 0);
 
@@ -385,7 +382,7 @@ void View::removeItem(ModelItem * item) {
     QAbstractItemView::rowsAboutToBeRemoved(parentIndex, row, row);
 
     if (Player::instance() -> playedItem()) {
-        if (Player::instance() -> playedItem() -> fullpath().startsWith(delPath))
+        if (Player::instance() -> playedItem() -> fullPath().startsWith(delPath))
             Player::instance() -> removePlaylist();
     }
 
