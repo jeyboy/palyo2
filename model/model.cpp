@@ -321,7 +321,7 @@ QMimeData * Model::mimeData(const QModelIndexList &indexes) const {
     foreach (const QModelIndex &index, indexes) {
         if (index.isValid()) {
             temp = getItem(index);
-            list.append(QUrl::fromLocalFile(temp -> fullPath()));
+            list.append(temp -> toUrl());
 //            if (!temp -> getState() -> isUnprocessed())
 //            tempData = temp -> fullpath().toUtf8();
         }

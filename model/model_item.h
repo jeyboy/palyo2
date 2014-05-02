@@ -19,7 +19,6 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDesktopServices>
-#include <QAbstractItemModel>
 
 #include "model_item_state.h"
 #include "media/library.h"
@@ -35,8 +34,10 @@
 #define CUE_ITEM 2
 #define WEB_ITEM 3
 
+//TODO: add list of extensions for extension serialization to extension index in list
+
 class ModelItem {
-public:
+public:   
     ModelItem();
     ModelItem(QJsonObject * hash, ModelItem *parent = 0);
     ModelItem(const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
@@ -49,6 +50,7 @@ public:
     bool isExist() const;
     bool isFolder() const;
 
+    QUrl toUrl();
     QJsonObject toJSON();
 
     ModelItem *parent();

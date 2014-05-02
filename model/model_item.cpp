@@ -27,23 +27,23 @@ ModelItem::ModelItem() {
     parentItem = 0;
 }
 
-ModelItem::ModelItem(QJsonObject * attrs, ModelItem *parent) {
+ModelItem::ModelItem(QJsonObject * hash, ModelItem *parent) {
     parentItem = parent;
-    init(attrs -> contains("p"));
-    state = new ModelItemState(attrs -> value("s").toInt());
+    init(hash -> contains("p"));
+    state = new ModelItemState(hash -> value("s").toInt());
 
-    if (attrs -> contains("p")) {
-        title = path = attrs -> value("p").toString();
+    if (hash -> contains("p")) {
+        title = path = hash -> value("p").toString();
 
         if (parent != 0)
             parent -> folders -> insert(title, this);
     } else {
-        title = attrs -> value("n").toString();
-        extension = attrs -> value("e").toString();
+        title = hash -> value("n").toString();
+        extension = hash -> value("e").toString();
     }
 
-    if (attrs -> contains("c")) {
-        QJsonArray ar = attrs -> value("c").toArray();
+    if (hash -> contains("c")) {
+        QJsonArray ar = hash -> value("c").toArray();
         QJsonObject iter_obj;
 
         foreach(QJsonValue obj, ar) {
@@ -100,13 +100,73 @@ ModelItem::~ModelItem() {
     delete titlesCache;
 }
 
-/////////////////////////////////////////////////////////
+
+QString ModelItem::fullPath() const {
+    ModelItem * curr = parentItem;
+    QString path_buff = "";
+
+    while(curr != 0) {
+        path_buff = curr -> path + '/' + path_buff;
+        curr = curr -> parentItem;
+    }
+
+    if (extension.isEmpty())
+        return path_buff.mid(1) + title;
+    else
+        return path_buff.mid(1) + title + '.' + extension;
+}
+
+QString ModelItem::getTitle() const {
+    return title;
+}
+
+void ModelItem::openLocation() {
+    if (isFolder())
+        QDesktopServices::openUrl(toUrl());
+    else
+        QDesktopServices::openUrl(parent() -> toUrl());
+}
+
+bool ModelItem::isExist() const {
+    return QFile::exists(fullPath());
+}
+
+bool ModelItem::isFolder() const {
+    return false;
+}
+
+
+QUrl ModelItem::toUrl() {
+    return QUrl::fromLocalFile(fullPath());
+}
+
+QJsonObject ModelItem::toJSON() {
+    QJsonObject root = QJsonObject();
+
+    if (childItems.length() > 0) {
+        QJsonArray ar = QJsonArray();
+        for(int i=0; i < childItems.length(); i++)
+            ar.append(childItems.at(i)->toJSON());
+
+        root["c"] = ar;
+    }
+
+    root["s"] = state -> getFuncValue();
+
+    if (state -> isUnprocessed())
+        root["p"] = path;
+    else {
+        root["n"] = title;
+        root["e"] = extension;
+    }
+
+    return root;
+}
+
 
 ModelItem *ModelItem::parent() {
     return parentItem;
 }
-
-/////////////////////////////////////////////////////////
 
 ModelItem *ModelItem::child(int row) {
     return childItems.value(row);
@@ -146,7 +206,6 @@ bool ModelItem::removeChildren(int position, int count) {
     return true;
 }
 
-/////////////////////////////////////////////////////////
 
 int ModelItem::column() const {
      return 0;
@@ -156,7 +215,6 @@ int ModelItem::columnCount() const {
      return 1;
 }
 
-/////////////////////////////////////////////////////////
 
 int ModelItem::row() const {
      if (parentItem)
@@ -165,7 +223,6 @@ int ModelItem::row() const {
      return 0;
 }
 
-/////////////////////////////////////////////////////////
 
 QVariant ModelItem::data(int column) const {
     switch(column) {
@@ -193,6 +250,21 @@ bool ModelItem::setData(int column, const QVariant &value) {
     return true;
 }
 
+
+ModelItemState * ModelItem::getState() const {
+    return state;
+}
+
+void ModelItem::setState(int new_state, bool append_to_library) {
+    if (state -> setBit(new_state) && append_to_library) {
+        if (state -> isListened())
+            Library::instance() -> addItem(this, STATE_LISTENED);
+        else if (state -> isLiked())
+            Library::instance() -> addItem(this, STATE_LIKED);
+    }
+}
+
+
 void ModelItem::dropExpandProceedFlags() {
     foreach(ModelItem * item, folders -> values()) {
         item -> getState() -> unsetProceed();
@@ -200,41 +272,6 @@ void ModelItem::dropExpandProceedFlags() {
     }
 }
 
-/////////////////////////////////////////////////////////
-
-QString ModelItem::fullPath() const {
-    ModelItem * curr = parentItem;
-    QString path_buff = "";
-
-    while(curr != 0) {
-        path_buff = curr -> path + '/' + path_buff;
-        curr = curr -> parentItem;
-    }
-
-    if (extension.isEmpty())
-        return path_buff.mid(1) + title;
-    else
-        return path_buff.mid(1) + title + '.' + extension;
-}
-
-QString ModelItem::getTitle() const {
-    return title;
-}
-
-void ModelItem::openLocation() {
-    if (isFolder())
-        QDesktopServices::openUrl(QUrl::fromLocalFile(fullPath()));
-    else
-        QDesktopServices::openUrl(QUrl::fromLocalFile(parent() -> fullPath()));
-}
-
-bool ModelItem::isExist() const {
-    return QFile::exists(fullPath());
-}
-
-bool ModelItem::isFolder() const {
-    return false;
-}
 
 QHash<QString, ModelItem *> * ModelItem::foldersList() const {
     return folders;
@@ -242,6 +279,7 @@ QHash<QString, ModelItem *> * ModelItem::foldersList() const {
 int ModelItem::removeFolder(QString name) {
     return folders -> remove(name);
 }
+
 
 bool ModelItem::cacheIsPrepared() const {
     return titlesCache == 0;
@@ -258,45 +296,3 @@ void ModelItem::addToCache(QString title) {
 QList<QString> * ModelItem::getTitlesCache() const {
     return titlesCache;
 }
-
-//////////////////////////properties///////////////////////////////
-
-ModelItemState * ModelItem::getState() const {
-    return state;
-}
-
-void ModelItem::setState(int new_state, bool append_to_library) {
-    if (state -> setBit(new_state) && append_to_library) {
-        if (state -> isListened())
-            Library::instance() -> addItem(this, STATE_LISTENED);
-        else if (state -> isLiked())
-            Library::instance() -> addItem(this, STATE_LIKED);
-    }
-}
-
-///////////////////////////////////////////////////////
-
-QJsonObject ModelItem::toJSON() {
-    QJsonObject root = QJsonObject();
-
-    if (childItems.length() > 0) {
-        QJsonArray ar = QJsonArray();
-        for(int i=0; i < childItems.length(); i++)
-            ar.append(childItems.at(i)->toJSON());
-
-        root["c"] = ar;
-    }
-
-    root["s"] = state -> getFuncValue();
-
-    if (state -> isUnprocessed())
-        root["p"] = path;
-    else {
-        root["n"] = title;
-        root["e"] = extension;
-    }
-
-    return root;
-}
-
-//TODO: add list of extensions for extension serialization to extension index in list
