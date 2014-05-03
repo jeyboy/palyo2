@@ -3,10 +3,10 @@
 
 /////////////////////////////////////////////////////////
 
-ModelItem::ModelItem() {
+ModelItem::ModelItem(int initState) {
     parentItem = 0;
     titlesCache = 0;
-    state = new ModelItemState(STATE_DEFAULT);
+    state = new ModelItemState(initState);
     path = QString();
     title = QString("--(O_o)--");
     extension = QString();

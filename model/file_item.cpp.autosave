@@ -94,7 +94,7 @@ QJsonObject FileItem::toJSON() {
     return root;
 }
 
-// this func didnt work
+// this func didnt call from constructor
 void FileItem::initInfo(QString filePath) {
     path = filePath.section('/', 0, -2);
     title = filePath.section('/', -1, -1);

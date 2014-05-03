@@ -38,7 +38,7 @@
 
 class ModelItem {
 public:   
-    ModelItem();
+    ModelItem(int initState = STATE_DEFAULT);
     ModelItem(QJsonObject * hash, ModelItem *parent = 0);
     ModelItem(const QString filePath, ModelItem *parent = 0, int initState = STATE_DEFAULT);
     virtual ~ModelItem();
@@ -46,27 +46,23 @@ public:
     QString fullPath() const;
     QString getTitle() const;
     void openLocation();
-//    virtual bool removePhysicalObject() const = 0;
+    virtual bool removePhysicalObject() const = 0;
 
-//    virtual bool isExist() const = 0;
-
-    inline bool removePhysicalObject() const { return false;}
-
-    inline bool isExist() const { return true;}
-    bool isFolder() const;
+    virtual bool isExist() const = 0;
+    virtual bool isFolder() const;
 
     QUrl toUrl();
-    QJsonObject toJSON();
+    virtual QJsonObject toJSON();
     ModelItem * toModelItem();
 
     ModelItem *parent();
 
-    ModelItem *child(int row);  // stub
-    int childTreeCount() const;  // stub
-    int childCount() const;  // stub
-    void insertChild(int pos, ModelItem *item);  // stub
-    void appendChild(ModelItem *child);  // stub
-    bool removeChildren(int position, int count);  // stub
+    virtual ModelItem *child(int row);  // stub
+    virtual int childTreeCount() const;  // stub
+    virtual int childCount() const;  // stub
+    virtual void insertChild(int pos, ModelItem *item);  // stub
+    virtual void appendChild(ModelItem *child);  // stub
+    virtual bool removeChildren(int position, int count);  // stub
 
     int column() const;
     int columnCount() const;
@@ -80,19 +76,19 @@ public:
     ModelItemState *getState() const;
     void setState(int new_state, bool append_to_library = true);
 
-    void dropExpandProceedFlags();  // stub
+    virtual void dropExpandProceedFlags();  // stub
 
     bool cacheIsPrepared() const;
     void setCache(QList<QString> *newCache);
     void addToCache(QString title);
     QList<QString> * getTitlesCache() const;
 
-    QHash<QString, ModelItem *> * foldersList() const; // stub
-    int removeFolder(QString name);  // stub
+    virtual QHash<QString, ModelItem *> * foldersList() const; // stub
+    virtual int removeFolder(QString name);  // stub
 
 protected:
-    QList<ModelItem *> * childItemsList(); // stub
-    void initInfo(QString filePath);
+    virtual QList<ModelItem *> * childItemsList(); // stub
+    virtual void initInfo(QString filePath);
 
     QList<QString> *titlesCache;
 

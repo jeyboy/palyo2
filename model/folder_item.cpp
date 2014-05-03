@@ -2,7 +2,7 @@
 #include <QDebug>
 
 ///////////////////////////////////////////////////////////
-FolderItem::FolderItem() : ModelItem() {
+FolderItem::FolderItem() : ModelItem(STATE_UNPROCESSED) {
     folders = new QHash<QString, ModelItem *>();
 }
 
