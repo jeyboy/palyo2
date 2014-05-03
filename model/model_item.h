@@ -35,32 +35,35 @@
 #define WEB_ITEM 3
 
 //TODO: add list of extensions for extension serialization to extension index in list
+//TODO: deleting object of polymorphic class type 'ModelItem' which has non-virtual destructor might cause undefined behaviour
 
 class ModelItem {
 public:   
     ModelItem();
     ModelItem(QJsonObject * hash, ModelItem *parent = 0);
-    ModelItem(const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
+    ModelItem(const QString filePath, ModelItem *parent = 0, int initState = STATE_DEFAULT);
     ~ModelItem();
 
     QString fullPath() const;
     QString getTitle() const;
     void openLocation();
+    virtual bool removePhysicalObject() const;
 
-    bool isExist() const;
+    virtual bool isExist() const;
     bool isFolder() const;
 
     QUrl toUrl();
     QJsonObject toJSON();
+    ModelItem * toModelItem();
 
     ModelItem *parent();
 
-    ModelItem *child(int row);
-    int childTreeCount() const;
-    int childCount() const;
-    void insertChild(int pos, ModelItem *item);
-    void appendChild(ModelItem *child);
-    bool removeChildren(int position, int count);
+    ModelItem *child(int row);  // stub
+    int childTreeCount() const;  // stub
+    int childCount() const;  // stub
+    void insertChild(int pos, ModelItem *item);  // stub
+    void appendChild(ModelItem *child);  // stub
+    bool removeChildren(int position, int count);  // stub
 
     int column() const;
     int columnCount() const;
@@ -70,32 +73,31 @@ public:
     QVariant data(int column) const;
     bool setData(int column, const QVariant &value);
 
-    ModelItemState * getState() const;
+    ModelItemState *getState() const;
     void setState(int new_state, bool append_to_library = true);
 
-    void dropExpandProceedFlags();
-
-    QHash<QString, ModelItem *> * foldersList() const;
-    int removeFolder(QString name);
+    void dropExpandProceedFlags();  // stub
 
     bool cacheIsPrepared() const;
-    void setCache(QList<QString> * newCache);
+    void setCache(QList<QString> *newCache);
     void addToCache(QString title);
     QList<QString> * getTitlesCache() const;
-private:
-    void init(bool isFolder);
-    void rootItemInit();
 
-    QHash<QString, ModelItem *> * folders;
-    QList<QString> * titlesCache;
+    QHash<QString, ModelItem *> * foldersList() const; // stub
+    int removeFolder(QString name);  // stub
 
-    QList<ModelItem*> childItems;
+protected:
+    QList<ModelItem *> * childItemsList(); // stub
+    void initInfo(QString filePath);
+
+    QList<QString> *titlesCache;
+
     ModelItem *parentItem;  
-
-    QString title;
-    QString path;
-    QString extension;
     ModelItemState * state;
+
+    QString path;
+    QString title;
+    QString extension;
 };
 
 

@@ -3,117 +3,58 @@
 
 /////////////////////////////////////////////////////////
 
-void ModelItem::init(bool isFolder) {
+ModelItem::ModelItem() {
+    parentItem = 0;
     titlesCache = 0;
-    childItems = QList<ModelItem*>();
-
-    if (isFolder) {
-        folders = new QHash<QString, ModelItem *>();
-    } else {
-        folders = 0;
-    }
-}
-
-void ModelItem::rootItemInit() {
+    state = new ModelItemState(STATE_DEFAULT);
     path = QString();
     title = QString("--(O_o)--");
     extension = QString();
 }
 
-ModelItem::ModelItem() {
-    init(true);
-    state = new ModelItemState(STATE_UNPROCESSED);
-    rootItemInit();
-    parentItem = 0;
-}
-
-ModelItem::ModelItem(QJsonObject * hash, ModelItem *parent) {
+ModelItem::ModelItem(QJsonObject *hash, ModelItem *parent) {
     parentItem = parent;
-    init(hash -> contains("p"));
+    titlesCache = 0;
     state = new ModelItemState(hash -> value("s").toInt());
-
-    if (hash -> contains("p")) {
-        title = path = hash -> value("p").toString();
-
-        if (parent != 0)
-            parent -> folders -> insert(title, this);
-    } else {
-        title = hash -> value("n").toString();
-        extension = hash -> value("e").toString();
-    }
-
-    if (hash -> contains("c")) {
-        QJsonArray ar = hash -> value("c").toArray();
-        QJsonObject iter_obj;
-
-        foreach(QJsonValue obj, ar) {
-            iter_obj = obj.toObject();
-            new ModelItem(&iter_obj, this);
-        }
-    }
-
-    if (parent != 0) {
-        parent -> appendChild(this);
-    } else {
-        rootItemInit();
-    }
+    path = hash -> value("p").toString();
+    title = hash -> value("t").toString();
+    extension = hash -> value("e").toString();
 }
 
-ModelItem::ModelItem(QString file_path, ModelItem *parent, int init_state) {
-    state = new ModelItemState(init_state);
+ModelItem::ModelItem(QString filePath, ModelItem *parent, int initState) {
     parentItem = parent;
+    titlesCache = 0;
+    state = new ModelItemState(initState);
 
-    if (!state -> isUnprocessed()) {
-        init(false);
-        path = file_path.section('/', 0, -2);
-        title = file_path.section('/', -1, -1);
-        extension = title.section('.', -1, -1);
-        if (extension != title)
-            title = title.section('.', 0, -2);
-        else extension = QString();
-
-    } else {
-        init(true);
-        title = path = file_path;
-        extension = QString();
-
-        if (parent != 0)
-            parent -> folders -> insert(title, this);
-    }
-
-    if (parent != 0) {
-        if (!state -> isUnprocessed()) {
-            parent -> insertChild(0, this);
-        } else {
-            parent -> appendChild(this);
-        }
-    }
+    initInfo(filePath);
 }
 
 ModelItem::~ModelItem() {
-    qDeleteAll(childItems);
-
     delete state;
-
-    delete folders;
-
     delete titlesCache;
 }
 
 
 QString ModelItem::fullPath() const {
-    ModelItem * curr = parentItem;
-    QString path_buff = "";
-
-    while(curr != 0) {
-        path_buff = curr -> path + '/' + path_buff;
-        curr = curr -> parentItem;
+    if (parentItem != 0) {
+        return parentItem -> fullPath() + '/' + path;
     }
 
-    if (extension.isEmpty())
-        return path_buff.mid(1) + title;
-    else
-        return path_buff.mid(1) + title + '.' + extension;
+    return "";
+
+
+//    ModelItem * curr = parentItem;
+//    QString path_buff = "";
+
+//    while(curr != 0) {
+//        path_buff = curr -> path + '/' + path_buff;
+//        curr = curr -> parentItem;
+//    }
+
+//    if (extension.isEmpty())
+//        return path_buff.mid(1) + title;
+//    else
+//        return path_buff.mid(1) + title + '.' + extension;
 }
 
 QString ModelItem::getTitle() const {
@@ -121,14 +62,7 @@ QString ModelItem::getTitle() const {
 }
 
 void ModelItem::openLocation() {
-    if (isFolder())
-        QDesktopServices::openUrl(toUrl());
-    else
-        QDesktopServices::openUrl(parent() -> toUrl());
-}
-
-bool ModelItem::isExist() const {
-    return QFile::exists(fullPath());
+    QDesktopServices::openUrl(toUrl());
 }
 
 bool ModelItem::isFolder() const {
@@ -143,24 +77,18 @@ QUrl ModelItem::toUrl() {
 QJsonObject ModelItem::toJSON() {
     QJsonObject root = QJsonObject();
 
-    if (childItems.length() > 0) {
-        QJsonArray ar = QJsonArray();
-        for(int i=0; i < childItems.length(); i++)
-            ar.append(childItems.at(i)->toJSON());
-
-        root["c"] = ar;
-    }
-
+    root["t"] = title;
     root["s"] = state -> getFuncValue();
+    root["p"] = path;
 
-    if (state -> isUnprocessed())
-        root["p"] = path;
-    else {
-        root["n"] = title;
+    if (!extension.isNull())
         root["e"] = extension;
-    }
 
     return root;
+}
+
+ModelItem * ModelItem::toModelItem() {
+    return dynamic_cast<ModelItem *>(this);
 }
 
 
@@ -168,57 +96,27 @@ ModelItem *ModelItem::parent() {
     return parentItem;
 }
 
-ModelItem *ModelItem::child(int row) {
-    return childItems.value(row);
-}
+ModelItem *ModelItem::child(int) { return 0; }
 
-int ModelItem::childTreeCount() const {
-    int ret = 0;
-    foreach(ModelItem * childItem, childItems) {
-        if (childItem -> folders == 0) // not is unprocessed
-            ret += 1;
-        else
-            ret += childItem -> childTreeCount();
-    }
+int ModelItem::childTreeCount() const { return 0; }
 
-    return ret;
-}
+int ModelItem::childCount() const { return 0; }
 
-int ModelItem::childCount() const {
-    return childItems.count();
-}
+void ModelItem::insertChild(int, ModelItem *) { }
 
-void ModelItem::insertChild(int pos, ModelItem *item) {
-    childItems.insert(pos, item);
-}
+void ModelItem::appendChild(ModelItem *) {}
 
-void ModelItem::appendChild(ModelItem *item) {
-    childItems.append(item);
-}
-
-bool ModelItem::removeChildren(int position, int count) {
-    if (position < 0 || position + count > childItems.size())
-        return false;
-
-    for (int row = 0; row < count; ++row)
-        delete childItems.takeAt(position);
-
-    return true;
-}
+bool ModelItem::removeChildren(int, int) { return false; }
 
 
-int ModelItem::column() const {
-     return 0;
-}
+int ModelItem::column() const { return 0; }
 
-int ModelItem::columnCount() const {
-     return 1;
-}
+int ModelItem::columnCount() const { return 1; }
 
 
 int ModelItem::row() const {
      if (parentItem)
-         return parentItem -> childItems.indexOf(const_cast<ModelItem*>(this));
+         return parentItem -> childItemsList() -> indexOf(const_cast<ModelItem *>(this));
 
      return 0;
 }
@@ -229,7 +127,7 @@ QVariant ModelItem::data(int column) const {
         case TITLEID: return getTitle();
         case EXTENSIONID: return extension;
         case PATHID: return path;
-        case FOLDERID: return state -> isUnprocessed(); // is folder
+        case FOLDERID: return isFolder();
         default: return QVariant();
     }
 }
@@ -251,7 +149,7 @@ bool ModelItem::setData(int column, const QVariant &value) {
 }
 
 
-ModelItemState * ModelItem::getState() const {
+ModelItemState *ModelItem::getState() const {
     return state;
 }
 
@@ -265,20 +163,11 @@ void ModelItem::setState(int new_state, bool append_to_library) {
 }
 
 
-void ModelItem::dropExpandProceedFlags() {
-    foreach(ModelItem * item, folders -> values()) {
-        item -> getState() -> unsetProceed();
-        item -> dropExpandProceedFlags();
-    }
-}
+void ModelItem::dropExpandProceedFlags() {}
 
 
-QHash<QString, ModelItem *> * ModelItem::foldersList() const {
-    return folders;
-}
-int ModelItem::removeFolder(QString name) {
-    return folders -> remove(name);
-}
+QHash<QString, ModelItem *> *ModelItem::foldersList() const { return 0; }
+int ModelItem::removeFolder(QString) { return -1; }
 
 
 bool ModelItem::cacheIsPrepared() const {
@@ -293,6 +182,13 @@ void ModelItem::addToCache(QString title) {
     if (!titlesCache -> contains(title))
         titlesCache -> append(title);
 }
-QList<QString> * ModelItem::getTitlesCache() const {
+QList<QString> *ModelItem::getTitlesCache() const {
     return titlesCache;
+}
+
+QList<ModelItem *> * ModelItem::childItemsList() { return 0;}
+
+void ModelItem::initInfo(QString filePath) {
+    title = path = filePath;
+    extension = QString();
 }

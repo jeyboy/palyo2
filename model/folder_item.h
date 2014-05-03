@@ -8,68 +8,41 @@
 //#include <QJsonObject>
 //#include <QJsonArray>
 
-//#include "model_item_state.h"
-//#include "media/library.h"
+#include "model_item.h"
+#include "file_item.h"
 
-//#define NAMEUID 0
-//#define EXTENSIONUID 1
-//#define PATHUID 2
-//#define FOLDERID 3
-//#define STATEID 4
+class FolderItem : public ModelItem {
+public:
+    FolderItem();
+    FolderItem(QJsonObject * hash, ModelItem *parent = 0);
+    FolderItem(const QString filePath, ModelItem *parent = 0, int initState = STATE_DEFAULT);
+    ~FolderItem();
 
-//class ModelItem {
-//public:
-//    ModelItem();
-//    ModelItem(QJsonObject * attrs, ModelItem *parent = 0);
-//    ModelItem(const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
-//    ~ModelItem();
+    void openLocation();
+    bool removePhysicalObject() const;
 
-//    ModelItem *parent();
+    bool isExist() const;
+    bool isFolder() const;
 
-//    ModelItem *child(int row);
-//    int childTreeCount() const;
-//    int childCount() const;
-//    void insertChild(int pos, ModelItem *item);
-//    void appendChild(ModelItem *child);
-//    bool removeChildren(int position, int count);
+    QJsonObject toJSON();
 
-//    int column() const;
-//    int columnCount() const;
+    ModelItem *child(int row);
+    int childTreeCount() const;
+    int childCount() const;
+    void insertChild(int pos, ModelItem *item);
+    void appendChild(ModelItem *child);
+    bool removeChildren(int position, int count);
 
-//    int row() const;
+    void dropExpandProceedFlags();
 
-//    QVariant data(int column) const;
-//    bool setData(int column, const QVariant &value);
-
-//    QString fullpath() const;
-
-//    ModelItemState * getState() const;
-//    void setState(int new_state, bool append_to_library = true);
-
-//    void dropExpandProceedFlags();
-
-//    QJsonObject toJSON();
-
-//    bool isExist();
-
-//    QHash<QString, ModelItem *> * foldersList() const;
-//    int removeFolder(QString name);
-
-//    QList<QString> * names;
-//private:
-//    void init(bool isFolder);
-//    void rootItemInit();
-
-//    QHash<QString, ModelItem *> * folders;
-
-//    QList<ModelItem*> childItems;
-//    ModelItem *parentItem;
-
-//    QString path;
-//    QString name;
-//    QString extension;
-//    ModelItemState * state;
-//};
+    QHash<QString, ModelItem *> * foldersList() const;
+    int removeFolder(QString name);
+protected:
+    QList<ModelItem *> * childItemsList();
+private:
+    QHash<QString, ModelItem *> *folders;
+    QList<ModelItem *> childItems;
+};
 
 
 #endif // FOLDER_ITEM_H

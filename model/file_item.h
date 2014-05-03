@@ -1,75 +1,23 @@
 #ifndef FILE_ITEM_H
 #define FILE_ITEM_H
 
-//#include <QFile>
-//#include <QDir>
-//#include <QVariant>
-//#include <QAbstractItemModel>
-//#include <QJsonObject>
-//#include <QJsonArray>
+#include <QFile>
+#include <QJsonObject>
 
-//#include "model_item_state.h"
-//#include "media/library.h"
+#include "model_item.h"
 
-//#define NAMEUID 0
-//#define EXTENSIONUID 1
-//#define PATHUID 2
-//#define FOLDERID 3
-//#define STATEID 4
+class FileItem : public ModelItem {
+public:
+    FileItem(QJsonObject *hash, ModelItem *parent = 0);
+    FileItem(const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
+    ~FileItem();
 
-//class ModelItem {
-//public:
-//    ModelItem();
-//    ModelItem(QJsonObject * attrs, ModelItem *parent = 0);
-//    ModelItem(const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
-//    ~ModelItem();
+    bool removePhysicalObject() const;
 
-//    ModelItem *parent();
+    bool isExist() const;
 
-//    ModelItem *child(int row);
-//    int childTreeCount() const;
-//    int childCount() const;
-//    void insertChild(int pos, ModelItem *item);
-//    void appendChild(ModelItem *child);
-//    bool removeChildren(int position, int count);
-
-//    int column() const;
-//    int columnCount() const;
-
-//    int row() const;
-
-//    QVariant data(int column) const;
-//    bool setData(int column, const QVariant &value);
-
-//    QString fullpath() const;
-
-//    ModelItemState * getState() const;
-//    void setState(int new_state, bool append_to_library = true);
-
-//    void dropExpandProceedFlags();
-
-//    QJsonObject toJSON();
-
-//    bool isExist();
-
-//    QHash<QString, ModelItem *> * foldersList() const;
-//    int removeFolder(QString name);
-
-//    QList<QString> * names;
-//private:
-//    void init(bool isFolder);
-//    void rootItemInit();
-
-//    QHash<QString, ModelItem *> * folders;
-
-//    QList<ModelItem*> childItems;
-//    ModelItem *parentItem;
-
-//    QString path;
-//    QString name;
-//    QString extension;
-//    ModelItemState * state;
-//};
+    QJsonObject toJSON();
+};
 
 
 #endif // FILE_ITEM_H
