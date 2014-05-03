@@ -35,7 +35,7 @@
 class View : public QTreeView {
   Q_OBJECT
 public:
-    View(Model * model, QWidget * parent, CBHash settinsSet);
+    View(Model * newModel, QWidget * parent, CBHash settinsSet);
     ~View();
 
     QJsonObject toJSON();

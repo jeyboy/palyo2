@@ -1,9 +1,9 @@
 #include "view.h"
 #include <QDebug>
 
-View::View(Model * model, QWidget *parent, CBHash settingsSet) : QTreeView(parent) {
+View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(parent) {
     settings = settingsSet;
-    setModel(model);
+    setModel((model = newModel));
 
 
     setIndentation(8);
