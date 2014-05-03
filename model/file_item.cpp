@@ -78,10 +78,27 @@ FileItem::~FileItem() {
 
 }
 
+bool FileItem::removePhysicalObject() const {
+    return QFile::remove(fullPath());
+}
+
+bool FileItem::isExist() const {
+    return QFile::exists(fullPath());
+}
+
 QJsonObject FileItem::toJSON() {
     QJsonObject root = ModelItem::toJSON();
 
     root["i"] = FILE_ITEM;
 
     return root;
+}
+
+void FileItem::initInfo(QString filePath) {
+    path = filePath.section('/', 0, -2);
+    title = filePath.section('/', -1, -1);
+    extension = title.section('.', -1, -1);
+    if (extension != title)
+        title = title.section('.', 0, -2);
+    else extension = QString();
 }

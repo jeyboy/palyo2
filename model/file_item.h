@@ -1,9 +1,6 @@
 #ifndef FILE_ITEM_H
 #define FILE_ITEM_H
 
-#include <QFile>
-#include <QJsonObject>
-
 #include "model_item.h"
 
 class FileItem : public ModelItem {
@@ -12,7 +9,13 @@ public:
     FileItem(const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
     ~FileItem();
 
+    bool removePhysicalObject() const;
+
+    bool isExist() const;
+
     QJsonObject toJSON();
+protected:
+    void initInfo(QString filePath);
 };
 
 

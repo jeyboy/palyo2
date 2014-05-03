@@ -1,13 +1,6 @@
 #ifndef FOLDER_ITEM_H
 #define FOLDER_ITEM_H
 
-//#include <QFile>
-//#include <QDir>
-//#include <QVariant>
-//#include <QAbstractItemModel>
-//#include <QJsonObject>
-//#include <QJsonArray>
-
 #include "model_item.h"
 #include "file_item.h"
 

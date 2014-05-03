@@ -46,9 +46,9 @@ public:
     QString fullPath() const;
     QString getTitle() const;
     void openLocation();
-    bool removePhysicalObject() const;
+    virtual bool removePhysicalObject() const = 0;
 
-    bool isExist() const;
+    virtual bool isExist() const = 0;
     bool isFolder() const;
 
     QUrl toUrl();

@@ -1,8 +1,11 @@
 #include "tab.h"
 #include <QDebug>
 
-void Tab::init(CBHash params, QJsonObject * attrs) {
-    list = new View(this, params, attrs);
+void Tab::init(CBHash params, QJsonObject * hash) {
+
+    //TODO: add to settings type of view
+
+    list = (View *)new TreeView(this, params, hash);
 //    list -> setResizeMode();
 
     this -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
@@ -15,15 +18,15 @@ Tab::Tab(CBHash params, QWidget * parent) : QWidget(parent) {
     init(params);
 }
 
-Tab::Tab(QJsonObject json_attrs, QWidget * parent) : QWidget(parent) {
-    QJsonObject set = json_attrs["set"].toObject();
+Tab::Tab(QJsonObject hash, QWidget * parent) : QWidget(parent) {
+    QJsonObject set = hash["set"].toObject();
     CBHash params = CBHash();
 
     foreach(QString key, set.keys()) {
         params.insert(key, set[key].toBool());
     }
 
-    init(params, &json_attrs);
+    init(params, &hash);
 }
 
 Tab::~Tab() {

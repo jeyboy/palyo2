@@ -7,6 +7,7 @@
 #include <QBrush>
 
 #include "model_item.h"
+#include "folder_item.h"
 
 #include "icon_provider.h"
 
@@ -20,7 +21,7 @@ class Model : public QAbstractItemModel {
     Q_OBJECT
 
 public:
-    Model(QJsonObject * attrs = 0, QObject *parent = 0);
+    Model(QJsonObject *hash = 0, QObject *parent = 0);
     ~Model();
 
     QVariant data(const QModelIndex &index, int role) const;
@@ -38,17 +39,18 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    void appendRow(QString path, ModelItem * parent);
+    void appendRow(ModelItem * item);
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
-    void repaint();
+    void refresh();
     void refreshItem(ModelItem * item);
 
     ModelItem *getItem(const QModelIndex &index) const;
+//    template<class T> T *getItem(const QModelIndex &index) const;
     ModelItem * root() const;
 
-    ModelItem * buildPath(QString path);
+    virtual ModelItem * buildPath(QString path) = 0;
     ModelItem * addFolder(QString folder_name, ModelItem * parent);
 
     Qt::DropActions supportedDropActions() const;
@@ -58,19 +60,14 @@ public:
 signals:
     void itemsCountChanged(int newCount);
     void expandNeeded(const QModelIndex &index) const;
-//    void selectionChangeNeeded(const QModelIndex &index);
-//    void selectionUpdateNeeded();
 
 public slots:
     void expanded(const QModelIndex &index);
     void collapsed(const QModelIndex &index);
 
-private:
-//    void markBranchAsDeleted(ModelItem * parentItem);
-
+protected:
     int count;
     ModelItem *rootItem;
 };
-
 
 #endif // MODEL_H
