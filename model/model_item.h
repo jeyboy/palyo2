@@ -1,3 +1,6 @@
+#ifndef MODEL_ITEM_H
+#define MODEL_ITEM_H
+
 /// JSON names
 /// t - title
 /// s - state
@@ -9,10 +12,6 @@
 /// n - tab name
 /// set - tab settings
 ///
-
-
-#ifndef MODEL_ITEM_H
-#define MODEL_ITEM_H
 
 #include <QFile>
 #include <QDir>
@@ -42,14 +41,14 @@ public:
     ModelItem();
     ModelItem(QJsonObject * hash, ModelItem *parent = 0);
     ModelItem(const QString filePath, ModelItem *parent = 0, int initState = STATE_DEFAULT);
-    ~ModelItem();
+    virtual ~ModelItem();
 
     QString fullPath() const;
     QString getTitle() const;
     void openLocation();
-    virtual bool removePhysicalObject() const;
+    bool removePhysicalObject() const;
 
-    virtual bool isExist() const;
+    bool isExist() const;
     bool isFolder() const;
 
     QUrl toUrl();

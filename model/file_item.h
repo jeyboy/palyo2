@@ -12,10 +12,6 @@ public:
     FileItem(const QString filepath, ModelItem *parent = 0, int init_state = STATE_DEFAULT);
     ~FileItem();
 
-    bool removePhysicalObject() const;
-
-    bool isExist() const;
-
     QJsonObject toJSON();
 };
 

@@ -78,14 +78,6 @@ FileItem::~FileItem() {
 
 }
 
-bool ModelItem::removePhysicalObject() const {
-    return QFile::remove(fullPath());
-}
-
-bool FileItem::isExist() const {
-    return QFile::exists(fullPath());
-}
-
 QJsonObject FileItem::toJSON() {
     QJsonObject root = ModelItem::toJSON();
 

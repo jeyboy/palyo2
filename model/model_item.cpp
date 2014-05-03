@@ -65,6 +65,14 @@ void ModelItem::openLocation() {
     QDesktopServices::openUrl(toUrl());
 }
 
+bool ModelItem::removePhysicalObject() const {
+    return QFile::remove(fullPath());
+}
+
+bool ModelItem::isExist() const {
+    return QFile::exists(fullPath());
+}
+
 bool ModelItem::isFolder() const {
     return false;
 }
