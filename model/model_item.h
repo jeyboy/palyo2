@@ -15,12 +15,13 @@
 
 #include <QFile>
 #include <QDir>
+#include <QUrl>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDesktopServices>
 
 #include "model_item_state.h"
-#include "media/library.h"
+//#include "media/library.h"
 
 #define TITLEID 0
 #define EXTENSIONID 1
@@ -28,13 +29,12 @@
 #define FOLDERID 3
 #define STATEID 4
 
-#define FILE_ITEM 0
-#define FOLDER_ITEM 1
-#define CUE_ITEM 2
-#define WEB_ITEM 3
+#define FILE_ITEM 100
+#define FOLDER_ITEM 200
+#define CUE_ITEM 300
+#define WEB_ITEM 400
 
 //TODO: add list of extensions for extension serialization to extension index in list
-//TODO: deleting object of polymorphic class type 'ModelItem' which has non-virtual destructor might cause undefined behaviour
 
 class ModelItem {
 public:   
@@ -46,9 +46,13 @@ public:
     QString fullPath() const;
     QString getTitle() const;
     void openLocation();
-    virtual bool removePhysicalObject() const = 0;
+//    virtual bool removePhysicalObject() const = 0;
 
-    virtual bool isExist() const = 0;
+//    virtual bool isExist() const = 0;
+
+    inline bool removePhysicalObject() const { return false;}
+
+    inline bool isExist() const { return true;}
     bool isFolder() const;
 
     QUrl toUrl();
@@ -72,6 +76,7 @@ public:
     QVariant data(int column) const;
     bool setData(int column, const QVariant &value);
 
+    void proceedByLibrary(const QModelIndex & index);
     ModelItemState *getState() const;
     void setState(int new_state, bool append_to_library = true);
 

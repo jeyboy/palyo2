@@ -286,6 +286,10 @@ void View::openLocation() {
 /// PROTECTED
 //////////////////////////////////////////////////////
 
+Model * View::newModel(QJsonObject * ) {
+    return 0;
+}
+
 ModelItem * View::activeItem(bool next) {
     ModelItem * item = 0;
 

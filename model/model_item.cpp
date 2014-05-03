@@ -149,17 +149,21 @@ bool ModelItem::setData(int column, const QVariant &value) {
 }
 
 
+void ModelItem::proceedByLibrary(const QModelIndex & index) {
+//    Library::instance() -> initItem(index);
+}
+
 ModelItemState *ModelItem::getState() const {
     return state;
 }
 
 void ModelItem::setState(int new_state, bool append_to_library) {
-    if (state -> setBit(new_state) && append_to_library) {
-        if (state -> isListened())
-            Library::instance() -> addItem(this, STATE_LISTENED);
-        else if (state -> isLiked())
-            Library::instance() -> addItem(this, STATE_LIKED);
-    }
+//    if (state -> setBit(new_state) && append_to_library) {
+//        if (state -> isListened())
+//            Library::instance() -> addItem(this, STATE_LISTENED);
+//        else if (state -> isLiked())
+//            Library::instance() -> addItem(this, STATE_LIKED);
+//    }
 }
 
 

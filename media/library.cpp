@@ -9,9 +9,11 @@ Library *Library::instance() {
     return self;
 }
 
-void Library::initItem(LibraryItem * libItem) {
-    libItem -> item() -> getState() -> setProceed();
-    if (!libItem -> item() -> getState() -> isUnprocessed())
+void Library::initItem(const QModelIndex & ind) {
+    LibraryItem * libItem = new LibraryItem(ind);
+//    libItem -> item() -> getState() -> setProceed();
+    libItem -> item() -> setState(STATE_LIST_PROCEED, false);
+    if (!libItem -> item() -> isFolder())
         QtConcurrent::run(this, &Library::itemsInit, libItem);
 }
 

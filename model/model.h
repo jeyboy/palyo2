@@ -5,17 +5,16 @@
 #include <QModelIndex>
 #include <QFont>
 #include <QBrush>
-
-#include "model_item.h"
-#include "folder_item.h"
+#include <QMimeData>
+#include <QUrl>
 
 #include "icon_provider.h"
 
-#include "media/library.h"
-#include "media/library_item.h"
+#include "model_item.h"
+#include "file_item.h"
+#include "folder_item.h"
 
 class ModelItem;
-class LibraryItem;
 
 class Model : public QAbstractItemModel {
     Q_OBJECT
@@ -67,7 +66,7 @@ public slots:
 
 protected:
     int count;
-    ModelItem *rootItem;
+    ModelItem * rootItem;
 };
 
 #endif // MODEL_H

@@ -1,8 +1,8 @@
 #ifndef FOLDER_ITEM_H
 #define FOLDER_ITEM_H
 
-#include "model_item.h"
-#include "file_item.h"
+#include "model/model_item.h"
+#include "model/file_item.h"
 
 class FolderItem : public ModelItem {
 public:

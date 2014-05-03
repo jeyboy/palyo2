@@ -1,6 +1,9 @@
 #ifndef FILE_ITEM_H
 #define FILE_ITEM_H
 
+#include <QFile>
+#include <QJsonObject>
+
 #include "model_item.h"
 
 class FileItem : public ModelItem {

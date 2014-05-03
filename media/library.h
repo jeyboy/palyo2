@@ -13,10 +13,6 @@
 #include "library_item.h"
 
 #include "model/model_item.h"
-#include "model/model_item_state.h"
-
-class ModelItem;
-class LibraryItem;
 
 class Library : QObject {
     Q_OBJECT
@@ -30,7 +26,7 @@ public:
         }
     }
 
-    void initItem(LibraryItem * item);
+    void initItem(const QModelIndex & ind);
     bool addItem(ModelItem * item, int state);
     void restoreItemState(LibraryItem * item);
 

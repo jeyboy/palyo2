@@ -1,8 +1,8 @@
 #include "library_item.h"
 
-LibraryItem::LibraryItem(const Model * item_model, ModelItem * proc_item) {
-    model = const_cast<Model *>(item_model);
-    model_item = proc_item;
+LibraryItem::LibraryItem(const QModelIndex & ind) {
+    model = dynamic_cast<Model *>(const_cast<QAbstractItemModel *>(ind.model()));
+    model_item = model -> getItem(ind);
 }
 
 void LibraryItem::refresh(int state) {

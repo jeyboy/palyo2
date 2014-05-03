@@ -9,7 +9,7 @@ class ModelItem;
 
 class LibraryItem {
 public:
-    LibraryItem(const Model * item_model, ModelItem * proc_item);
+    LibraryItem(const QModelIndex & ind);
 
     void refresh(int state);
 

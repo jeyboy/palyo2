@@ -18,10 +18,9 @@
 
 #include "media/player.h"
 #include "model.h"
-#include "model_item.h"
-#include "file_item.h"
-#include "folder_item.h"
 #include "model_item_delegate.h"
+
+#include "model_item.h"
 
 #ifndef CBHASH
 #define CBHASH

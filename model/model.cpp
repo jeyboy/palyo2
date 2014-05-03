@@ -27,14 +27,11 @@ QVariant Model::data(const QModelIndex &index, int role) const {
            item = getItem(index);
 
            if (!item -> getState() -> isProceed()) {
-               Library::instance() -> initItem(new LibraryItem(this, item));
+               item -> proceedByLibrary(index);
 
                if (item -> getState() -> isExpanded()) {
-                   qDebug() << "expand";
                    emit expandNeeded(index);
                }
-
-               qDebug() << item -> fullPath();
            }
 
            return item -> data(index.column());

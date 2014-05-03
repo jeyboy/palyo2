@@ -15,7 +15,6 @@
 
 #include "model/view.h"
 #include "model/tree/tree_model.h"
-#include "model/model_item.h"
 
 #ifndef CBHASH
 #define CBHASH

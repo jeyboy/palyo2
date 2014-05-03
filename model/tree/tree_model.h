@@ -7,7 +7,6 @@
 //#include <QBrush>
 
 #include "model/model.h"
-#include "model/model_item.h"
 
 class TreeModel : public Model {
     Q_OBJECT
