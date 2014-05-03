@@ -1,16 +1,12 @@
 #include "tree_view.h"
 #include <QDebug>
 
-TreeView::TreeView(QWidget *parent, CBHash settingsSet, QJsonObject *hash) : View(parent, settingsSet, hash) {
-
+TreeView::TreeView(QWidget *parent, CBHash settingsSet, QJsonObject *hash)
+    : View(dynamic_cast<Model *>(new TreeModel(hash)), parent, settingsSet) {
 }
 
 TreeView::~TreeView() {
 
-}
-
-Model * TreeView::newModel(QJsonObject * hash) {
-    return dynamic_cast<Model *>(new TreeModel(hash));
 }
 
 QModelIndex TreeView::dropProcession(const QList<QUrl> & list) {

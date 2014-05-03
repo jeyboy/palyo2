@@ -1,8 +1,11 @@
 #include "view.h"
 #include <QDebug>
 
-View::View(QWidget *parent, CBHash settingsSet, QJsonObject * hash) : QTreeView(parent) {
+View::View(Model * model, QWidget *parent, CBHash settingsSet) : QTreeView(parent) {
     settings = settingsSet;
+    setModel(model);
+
+
     setIndentation(8);
 
 //    setStyleSheet(QString(
@@ -32,8 +35,6 @@ View::View(QWidget *parent, CBHash settingsSet, QJsonObject * hash) : QTreeView(
 
 //  setFlow(QListView::TopToBottom);
 
-    model = newModel(hash);
-    setModel(model);
 //    setTreePosition(2);
 //    setRootIndex();
 //    setRowHidden(0, rootIndex(), true);
@@ -285,10 +286,6 @@ void View::openLocation() {
 //////////////////////////////////////////////////////
 /// PROTECTED
 //////////////////////////////////////////////////////
-
-Model * View::newModel(QJsonObject * ) {
-    return 0;
-}
 
 ModelItem * View::activeItem(bool next) {
     ModelItem * item = 0;

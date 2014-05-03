@@ -35,7 +35,7 @@
 class View : public QTreeView {
   Q_OBJECT
 public:
-    View(QWidget * parent, CBHash settinsSet, QJsonObject * attrs = 0);
+    View(Model * model, QWidget * parent, CBHash settinsSet);
     ~View();
 
     QJsonObject toJSON();
@@ -67,8 +67,6 @@ protected slots:
     void openLocation();
 
 protected:
-    virtual Model * newModel(QJsonObject * hash = 0) = 0;
-
     ModelItem * activeItem(bool next = true);
 //    ModelItem * nextItem(QModelIndex currIndex);
     ModelItem * nextItem(ModelItem * curr);
