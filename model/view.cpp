@@ -178,7 +178,19 @@ bool View::execItem(ModelItem * item) {
     return false;
 }
 
+ModelItem * View::removeCandidate(ModelItem * item) {
+    ModelItem * parent = item -> parent();
+
+    while(parent -> childCount() == 1 && parent -> parent() != 0) {
+        item = parent;
+        parent = parent -> parent();
+    }
+
+    return item;
+}
+
 void View::removeItem(ModelItem * item) {
+    item = removeCandidate(item);
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullPath();
     bool isFolder = item -> isFolder();
@@ -187,18 +199,7 @@ void View::removeItem(ModelItem * item) {
     if (!parentIndex.isValid())
         parentIndex = rootIndex();
     int row = modelIndex.row();
-    ModelItem * parent = getModel() -> getItem(parentIndex);
     QModelIndex selCandidate = parentIndex.child(row + 1, 0);
-
-    while(parent -> childCount() == 1 && parent -> parent() != 0) {
-        parentIndex = getModel() -> index(parent -> parent());
-        row = parent -> row();
-        delPath = parent -> fullPath();
-        isFolder = parent -> isFolder();
-        selCandidate = parentIndex.child(row + 1, 0);
-
-        parent = parent -> parent();
-    }
 
     if (isFolder && item -> childTreeCount() > 1) {
         if (QMessageBox::warning(
@@ -210,9 +211,6 @@ void View::removeItem(ModelItem * item) {
     }
 
     clearSelection();
-
-    // fix for model rows remove emit
-    QAbstractItemView::rowsAboutToBeRemoved(parentIndex, row, row);
 
     if (Player::instance() -> playedItem()) {
         if (Player::instance() -> playedItem() -> fullPath().startsWith(delPath))
@@ -406,6 +404,7 @@ ModelItem * View::prevItem(ModelItem * curr) {
 
 QFileInfoList View::folderEntities(QFileInfo file) {
     return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
+    //TODO: did not find folders with filters
 //    return QDir(file.filePath()).entryInfoList(filtersList, QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
 }
 

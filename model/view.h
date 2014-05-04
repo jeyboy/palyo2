@@ -56,6 +56,7 @@ public:
     void markSelectedAsLiked();
 
     bool execItem(ModelItem * item);
+    ModelItem * removeCandidate(ModelItem * item);
     void removeItem(ModelItem * item);
 
 public slots:

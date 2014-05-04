@@ -12,7 +12,7 @@ ModelItem::ModelItem(int initState) {
     extension = QString();
 }
 
-ModelItem::ModelItem(QJsonObject *hash, ModelItem *parent) {
+ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     parentItem = parent;
     titlesCache = 0;
     state = new ModelItemState(hash -> value("s").toInt());
@@ -21,7 +21,7 @@ ModelItem::ModelItem(QJsonObject *hash, ModelItem *parent) {
     extension = hash -> value("e").toString();
 }
 
-ModelItem::ModelItem(const QString filePath, ModelItem *parent, int initState) {
+ModelItem::ModelItem(const QString filePath, ModelItem * parent, int initState) {
     parentItem = parent;
     titlesCache = 0;
     state = new ModelItemState(initState);
@@ -96,7 +96,7 @@ ModelItem * ModelItem::toModelItem() {
 }
 
 
-ModelItem *ModelItem::parent() {
+ModelItem * ModelItem::parent() {
     return parentItem;
 }
 

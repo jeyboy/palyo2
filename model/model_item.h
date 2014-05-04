@@ -40,8 +40,8 @@
 class ModelItem {
 public:   
     ModelItem(int initState = STATE_DEFAULT);
-    ModelItem(QJsonObject * hash, ModelItem *parent = 0);
-    ModelItem(const QString filePath, ModelItem *parent = 0, int initState = STATE_DEFAULT);
+    ModelItem(QJsonObject * hash, ModelItem * parent = 0);
+    ModelItem(const QString filePath, ModelItem * parent = 0, int initState = STATE_DEFAULT);
     virtual ~ModelItem();
 
     QString fullPath() const;
@@ -56,7 +56,7 @@ public:
     virtual QJsonObject toJSON();
     ModelItem * toModelItem();
 
-    ModelItem *parent();
+    ModelItem * parent();
 
     virtual ModelItem *child(int row);  // stub
     virtual int childTreeCount() const;  // stub
@@ -90,9 +90,9 @@ public:
 protected:
     virtual QList<ModelItem *> * childItemsList(); // stub
 
-    QList<QString> *titlesCache;
+    QList<QString> * titlesCache;
 
-    ModelItem *parentItem;  
+    ModelItem * parentItem;
     ModelItemState * state;
 
     QString path;
