@@ -21,13 +21,14 @@
 #include <QDesktopServices>
 
 #include "model_item_state.h"
-//#include "media/library.h"
+#include "media/library.h"
 
 #define TITLEID 0
 #define EXTENSIONID 1
 #define PATHID 2
 #define FOLDERID 3
 #define STATEID 4
+#define TITLESCACHEID 5
 
 #define FILE_ITEM 100
 #define FOLDER_ITEM 200

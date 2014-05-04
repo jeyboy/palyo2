@@ -9,8 +9,8 @@ Library *Library::instance() {
     return self;
 }
 
-void Library::initItem(const QModelIndex & ind) {
-    LibraryItem * libItem = new LibraryItem(ind);
+void Library::initItem(const QModelIndex & ind, ModelItem * item) {
+    LibraryItem * libItem = new LibraryItem(ind, item);
 //    libItem -> item() -> getState() -> setProceed();
     libItem -> item() -> setState(STATE_LIST_PROCEED, false);
     if (!libItem -> item() -> isFolder())

@@ -132,6 +132,8 @@ QVariant ModelItem::data(int column) const {
         case EXTENSIONID: return extension;
         case PATHID: return path;
         case FOLDERID: return isFolder();
+        case TITLESCACHEID: return QVariant(*getTitlesCache());
+        case STATEID: return getState() -> currStateValue();
         default: return QVariant();
     }
 }
@@ -144,9 +146,10 @@ bool ModelItem::setData(int column, const QVariant &value) {
 //    itemData[column] = value;
 
     switch(column) {
-        case TITLEID: title = value.toString();
-        case EXTENSIONID: extension = value.toString();
-        case PATHID: path = value.toString();
+        case TITLEID: { title = value.toString(); break; }
+        case EXTENSIONID: { extension = value.toString(); break; }
+        case PATHID: { path = value.toString(); break; }
+        case STATEID: { setState(value.toInt(), false); break;}
     }
 
     return true;
@@ -154,7 +157,7 @@ bool ModelItem::setData(int column, const QVariant &value) {
 
 
 void ModelItem::proceedByLibrary(const QModelIndex & index) {
-//    Library::instance() -> initItem(index);
+    Library::instance() -> initItem(index, this);
 }
 
 ModelItemState *ModelItem::getState() const {
@@ -162,12 +165,12 @@ ModelItemState *ModelItem::getState() const {
 }
 
 void ModelItem::setState(int new_state, bool append_to_library) {
-//    if (state -> setBit(new_state) && append_to_library) {
-//        if (state -> isListened())
-//            Library::instance() -> addItem(this, STATE_LISTENED);
-//        else if (state -> isLiked())
-//            Library::instance() -> addItem(this, STATE_LIKED);
-//    }
+    if (state -> setBit(new_state) && append_to_library) {
+        if (state -> isListened())
+            Library::instance() -> addItem(this, STATE_LISTENED);
+        else if (state -> isLiked())
+            Library::instance() -> addItem(this, STATE_LIKED);
+    }
 }
 
 

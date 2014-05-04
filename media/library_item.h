@@ -1,25 +1,25 @@
-#ifndef LIBRARY_PROC_ITEM_H
-#define LIBRARY_PROC_ITEM_H
+#ifndef LIBRARY_ITEM_H
+#define LIBRARY_ITEM_H
 
-#include "model/model.h"
+#include <QModelIndex>
 #include "model/model_item.h"
 
-class Model;
 class ModelItem;
 
 class LibraryItem {
 public:
-    LibraryItem(const QModelIndex & ind);
+    LibraryItem(const QModelIndex & ind, ModelItem * item);
+
+    void setState(int state);
 
     void refresh(int state);
 
-    ModelItem * item() const;
+    ModelItem * item();
 
 private:
-
-    Model * model;
-    ModelItem * model_item;
+    QModelIndex index;
+    ModelItem * modelItem;
 };
 
-#endif // LIBRARY_PROC_ITEM_H
+#endif // LIBRARY_ITEM_H
 
