@@ -405,7 +405,8 @@ ModelItem * View::prevItem(ModelItem * curr) {
 }
 
 QFileInfoList View::folderEntities(QFileInfo file) {
-    return QDir(file.filePath()).entryInfoList(filtersList, QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
+    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
+//    return QDir(file.filePath()).entryInfoList(filtersList, QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
 }
 
 void View::dragEnterEvent(QDragEnterEvent *event) {

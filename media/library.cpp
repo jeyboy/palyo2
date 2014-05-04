@@ -12,7 +12,7 @@ Library *Library::instance() {
 void Library::initItem(const QModelIndex & ind, ModelItem * item) {
     LibraryItem * libItem = new LibraryItem(ind, item);
 //    libItem -> item() -> getState() -> setProceed();
-    libItem -> item() -> setState(STATE_LIST_PROCEED, false);
+    libItem -> setState(STATE_LIST_PROCEED);
     if (!libItem -> item() -> isFolder())
         QtConcurrent::run(this, &Library::itemsInit, libItem);
 }

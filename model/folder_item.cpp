@@ -142,6 +142,14 @@ QJsonObject FolderItem::toJSON() {
 
     root["i"] = FOLDER_ITEM;
 
+    if (childItems.length() > 0) {
+        QJsonArray ar = QJsonArray();
+        for(int i=0; i < childItems.length(); i++)
+            ar.append(childItems.at(i) -> toJSON());
+
+        root["c"] = ar;
+    }
+
     return root;
 }
 
