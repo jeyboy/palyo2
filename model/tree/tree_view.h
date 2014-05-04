@@ -32,7 +32,7 @@ public:
 
 protected:
     QModelIndex dropProcession(const QList<QUrl> & list);
-    void filesRoutine(ModelItem * index, QFileInfoList list);
+    void filesRoutine(ModelItem * index, QFileInfo currFile);
     void filesRoutine(ModelItem * index, QList<QUrl> list);
 };
 

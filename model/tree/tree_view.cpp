@@ -15,15 +15,19 @@ QModelIndex TreeView::dropProcession(const QList<QUrl> & list) {
     return model -> index(index);
 }
 
-void TreeView::filesRoutine(ModelItem * index, QFileInfoList list){
-    foreach(QFileInfo file, list) {
-        if (file.isDir()) {
-            ModelItem * new_index = model -> addFolder(file.fileName(), index);
-            filesRoutine(new_index, folderEntities(file));
-        } else {
-            FileItem * fi = new FileItem(file.fileName(), index);
-            model -> appendRow(fi -> toModelItem());
-        }
+void TreeView::filesRoutine(ModelItem * index, QFileInfo currFile){
+    QFileInfoList fileList = folderFiles(currFile);
+
+    foreach(QFileInfo file, fileList) {
+        FileItem * fi = new FileItem(file.fileName(), index);
+        model -> appendRow(fi -> toModelItem());
+    }
+
+    QFileInfoList folderList = folderDirectories(currFile);
+
+    foreach(QFileInfo file, folderList) {
+        ModelItem * new_index = model -> addFolder(file.fileName(), index);
+        filesRoutine(new_index, file);
     }
 }
 
@@ -32,7 +36,7 @@ void TreeView::filesRoutine(ModelItem * index, QList<QUrl> list){
         QFileInfo file = QFileInfo(url.toLocalFile());
         if (file.isDir()) {
             ModelItem * new_index = model -> addFolder(file.fileName(), index);
-            filesRoutine(new_index, folderEntities(file));
+            filesRoutine(new_index, file);
         } else {
             FileItem * fi = new FileItem(file.fileName(), index);
             model -> appendRow(fi -> toModelItem());

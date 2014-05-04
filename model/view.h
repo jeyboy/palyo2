@@ -73,13 +73,15 @@ protected:
     ModelItem * nextItem(ModelItem * curr);
     ModelItem * prevItem(ModelItem * curr);
 
-    QFileInfoList folderEntities(QFileInfo file);
+    QFileInfoList folderFiles(QFileInfo file);
+    QFileInfoList folderDirectories(QFileInfo file);
+
     virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
     void dropEvent(QDropEvent *event);
 
-    virtual void filesRoutine(ModelItem * index, QFileInfoList list) = 0;
+    virtual void filesRoutine(ModelItem * index, QFileInfo currFile) = 0;
     virtual void filesRoutine(ModelItem * index, QList<QUrl> list) = 0;
 
     void keyPressEvent(QKeyEvent *event);
