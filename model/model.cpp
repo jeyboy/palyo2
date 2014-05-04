@@ -45,7 +45,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
 
            if (item -> getState() -> isNotExist())
                return IconProvider::missedIcon();
-           else if (item -> getState() -> isUnprocessed())
+           else if (item -> isFolder())
                return QVariant();
 //               return IconProvider::fileIcon("", "");
            else
@@ -173,7 +173,7 @@ bool Model::removeRow(int row, const QModelIndex &parentIndex) {
     ModelItem * parentItem = getItem(parentIndex);
     ModelItem * item = parentItem -> child(row);
     QString folderName;
-    bool isUnprocessed = item -> getState() -> isUnprocessed();
+    bool isUnprocessed = item -> isFolder();
     bool res;
 
     if (isUnprocessed) {      

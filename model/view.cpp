@@ -181,7 +181,7 @@ bool View::execItem(ModelItem * item) {
 void View::removeItem(ModelItem * item) {
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullPath();
-    bool isFolder = item -> getState() -> isUnprocessed();
+    bool isFolder = item -> isFolder();
 
     QModelIndex parentIndex = modelIndex.parent();
     if (!parentIndex.isValid())
@@ -194,7 +194,7 @@ void View::removeItem(ModelItem * item) {
         parentIndex = getModel() -> index(parent -> parent());
         row = parent -> row();
         delPath = parent -> fullPath();
-        isFolder = parent -> getState() -> isUnprocessed();
+        isFolder = parent -> isFolder();
         selCandidate = parentIndex.child(row + 1, 0);
 
         parent = parent -> parent();
@@ -250,7 +250,7 @@ void View::updateSelection(QModelIndex candidate) {
     if (candidate.isValid()) {
         ModelItem * item = getModel() -> getItem(candidate);
 
-        if (item -> getState() -> isUnprocessed()) {
+        if (item -> isFolder()) {
             if ((item = nextItem(item)))
               setCurrentIndex(getModel() -> index(item));
         }
@@ -260,7 +260,7 @@ void View::updateSelection(QModelIndex candidate) {
 void View::onDoubleClick(const QModelIndex &index) {
     ModelItem * item = model -> getItem(index);
 
-    if (!item -> getState() -> isUnprocessed()) {
+    if (!item -> isFolder()) {
         execItem(item);
     }
 }
@@ -302,7 +302,7 @@ ModelItem * View::activeItem(bool next) {
         if (list.count() > 0) {
             item = model -> getItem(list.first());
 
-            if (!item -> getState() -> isUnprocessed()) {
+            if (!item -> isFolder()) {
                 QModelIndex m;
                 if (next) {
                     m = this -> indexAbove(list.first());
@@ -349,7 +349,7 @@ ModelItem * View::activeItem(bool next) {
 
 ModelItem * View::nextItem(ModelItem * curr) {
     ModelItem * item = curr;
-    bool first_elem = curr -> parent() == 0 || curr -> getState() -> isUnprocessed();
+    bool first_elem = curr -> parent() == 0 || curr -> isFolder();
 
     while(true) {
         if (first_elem) {
@@ -359,7 +359,7 @@ ModelItem * View::nextItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item -> getState() -> isUnprocessed()) {
+            if (!item -> isFolder()) {
                 return item;
             } else {
                 curr = item;
@@ -387,7 +387,7 @@ ModelItem * View::prevItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item->getState() -> isUnprocessed()) {
+            if (!item -> isFolder()) {
                 return item;
             } else {
                 curr = item;
