@@ -71,6 +71,7 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
 
 FolderItem::FolderItem(QString filePath, ModelItem *parent, int initState) : ModelItem(filePath, parent, initState) {
     folders = new QHash<QString, ModelItem *>();
+    title = filePath;
 
     if (parent != 0) {
         parent -> foldersList() -> insert(title, this -> toModelItem());

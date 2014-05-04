@@ -21,12 +21,14 @@ ModelItem::ModelItem(QJsonObject *hash, ModelItem *parent) {
     extension = hash -> value("e").toString();
 }
 
-ModelItem::ModelItem(QString filePath, ModelItem *parent, int initState) {
+ModelItem::ModelItem(const QString filePath, ModelItem *parent, int initState) {
     parentItem = parent;
     titlesCache = 0;
     state = new ModelItemState(initState);
 
-    initInfo(filePath);
+//    title = fileTitle;
+    path = filePath;
+//    extension = fileExtension;
 }
 
 ModelItem::~ModelItem() {
@@ -36,20 +38,22 @@ ModelItem::~ModelItem() {
 
 
 QString ModelItem::fullPath() const {
-    if (parentItem != 0) {
-        return parentItem -> fullPath() + '/' + path;
+//    if (parentItem != 0) {
+//        return parentItem -> fullPath() + '/' + path;
+//    }
+
+//    return "file://";
+
+
+    ModelItem * curr = parentItem;
+    QString path_buff = path;
+
+    while(curr != 0) {
+        path_buff = curr -> path + '/' + path_buff;
+        curr = curr -> parentItem;
     }
 
-    return "";
-
-
-//    ModelItem * curr = parentItem;
-//    QString path_buff = "";
-
-//    while(curr != 0) {
-//        path_buff = curr -> path + '/' + path_buff;
-//        curr = curr -> parentItem;
-//    }
+    return path_buff.mid(1);
 
 //    if (extension.isEmpty())
 //        return path_buff.mid(1) + title;
@@ -191,8 +195,3 @@ QList<QString> *ModelItem::getTitlesCache() const {
 }
 
 QList<ModelItem *> * ModelItem::childItemsList() { return 0;}
-
-void ModelItem::initInfo(QString filePath) {
-    title = path = filePath;
-    extension = QString();
-}

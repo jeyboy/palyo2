@@ -18,7 +18,8 @@ public:
 
     QJsonObject toJSON();
 protected:
-    void initInfo(QString filePath);
+    QString fileExtension(QString filePath);
+    QString fileTitle(QString filePath);
 };
 
 

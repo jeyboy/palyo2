@@ -21,7 +21,7 @@ void TreeView::filesRoutine(ModelItem * index, QFileInfoList list){
             ModelItem * new_index = model -> addFolder(file.fileName(), index);
             filesRoutine(new_index, folderEntities(file));
         } else {
-            FileItem * fi = new FileItem(file.filePath(), index);
+            FileItem * fi = new FileItem(file.fileName(), index);
             model -> appendRow(fi -> toModelItem());
         }
     }
@@ -34,7 +34,7 @@ void TreeView::filesRoutine(ModelItem * index, QList<QUrl> list){
             ModelItem * new_index = model -> addFolder(file.fileName(), index);
             filesRoutine(new_index, folderEntities(file));
         } else {
-            FileItem * fi = new FileItem(file.filePath(), index);
+            FileItem * fi = new FileItem(file.fileName(), index);
             model -> appendRow(fi -> toModelItem());
         }
     }

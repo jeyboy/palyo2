@@ -88,7 +88,6 @@ public:
 
 protected:
     virtual QList<ModelItem *> * childItemsList(); // stub
-    virtual void initInfo(QString filePath);
 
     QList<QString> *titlesCache;
 

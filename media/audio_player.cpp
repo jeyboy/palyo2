@@ -110,7 +110,6 @@ int AudioPlayer::openChannel(QString path) {
 }
 
 void AudioPlayer::closeChannel() {
-    qDebug() << "close channel";
     BASS_ChannelStop(chan);
     BASS_ChannelRemoveSync(chan, syncHandle);
     BASS_StreamFree(chan);
