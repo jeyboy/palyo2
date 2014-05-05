@@ -4,6 +4,7 @@
 #include "web/web_api.h"
 
 class VkApi : public WebApi {
+    Q_OBJECT
 public:
     QString name() const;
     QString authUrl() const;
@@ -15,6 +16,10 @@ public:
     QString getExpire();
     QString getUserID();
 
+    void getUserAudios(int uid = -1);
+    void getGroupAudios(int uid = -1);
+    void getAlbumAudios(int uid = -1);
+
     ~VkApi() {
 
     }
@@ -23,8 +28,45 @@ public:
     static void close() {
         delete self;
     }
+protected:
+    QString apiVersion() const;
+    QUrlQuery methodParams();
+    QString getAPIUrl();
 
-private:
+//    QUrl getAudioListUrl() const;
+//    QUrl getAudioCountUrl() const;
+//    QUrl getAudioSearchUrl() const;
+//    QUrl getAudioCopyUrl() const;
+//    QUrl getAudioRemoveUrl() const;
+
+//    QUrl getAudioAlbumsListUrl() const;
+//    QUrl getAudioAlbumAddUrl() const;
+//    QUrl getAudioAlbumEditUrl() const;
+//    QUrl getAudioAlbumRemoveUrl() const;
+//    QUrl getAudioAlbumMoveToUrl() const;
+
+//    QUrl getAudioSaveServerUrl() const;
+//    QUrl getAudioSaveUrl() const;
+
+protected slots:
+    void audioListRequest();
+//    void audioCountRequest();
+//    void audioSearchRequest();
+//    void audioCopyRequest();
+//    void audioRemoveRequest();
+
+//    void audioSaveServerRequest();
+//    void audioSave();
+
+//    void audioAlbumsRequest();
+//    void audioAlbumAddRequest();
+//    void audioAlbumEditRequest();
+//    void audioAlbumRemoveRequest();
+//    void audioAlbumMoveToRequest();
+
+private:   
+    void getAudioList(int uid = -1);
+
     VkApi() : WebApi() {
         token = QString();
         user_id = QString();

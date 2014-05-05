@@ -40,19 +40,19 @@ QJsonObject WebApi::toJson(QByteArray data) {
 ////    }
 //}
 
-QByteArray WebApi::sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts) {
-    QNetworkReply * reply;
-    QNetworkRequest req(request);
+//QByteArray WebApi::sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts) {
+//    QNetworkReply * reply;
+//    QNetworkRequest req(request);
 
-    if (sendMethod == "get") {
-        reply = netManager -> get(req);
-    } else if (sendMethod == "post") {
-        reply = netManager -> post(req, parts);
-    } else if (sendMethod == "put") {
-        reply = netManager -> put(req, parts);
-    } if (sendMethod == "delete") {
-        reply = netManager -> deleteResource(req);
-    }
+//    if (sendMethod == "get") {
+//        reply = netManager -> get(req);
+//    } else if (sendMethod == "post") {
+//        reply = netManager -> post(req, parts);
+//    } else if (sendMethod == "put") {
+//        reply = netManager -> put(req, parts);
+//    } if (sendMethod == "delete") {
+//        reply = netManager -> deleteResource(req);
+//    }
 
-    return reply -> readAll();
-}
+//    return reply -> readAll();
+//}

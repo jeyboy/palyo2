@@ -25,7 +25,7 @@ protected:
     QJsonObject toJson(QByteArray data);
 //    QDomDocument toXml(QByteArray data);
 
-    QByteArray sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts = 0);
+//    QByteArray sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts = 0);
     CustomNetworkAccessManager * netManager;
 
     QString error;
