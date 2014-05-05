@@ -177,7 +177,7 @@ int ModelItem::removeFolder(QString) { return -1; }
 
 
 bool ModelItem::cacheIsPrepared() const {
-    return titlesCache == 0;
+    return titlesCache != 0;
 }
 
 void ModelItem::setCache(QList<QString> * newCache) {
