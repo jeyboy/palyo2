@@ -81,9 +81,6 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event);
     void dropEvent(QDropEvent *event);
 
-    virtual void filesRoutine(ModelItem * index, QFileInfo currFile) = 0;
-    virtual void filesRoutine(ModelItem * index, QList<QUrl> list) = 0;
-
     void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent * event);

@@ -54,11 +54,6 @@ QString ModelItem::fullPath() const {
     }
 
     return path_buff.mid(1);
-
-//    if (extension.isEmpty())
-//        return path_buff.mid(1) + title;
-//    else
-//        return path_buff.mid(1) + title + '.' + extension;
 }
 
 QString ModelItem::getTitle() const {
@@ -66,7 +61,7 @@ QString ModelItem::getTitle() const {
 }
 
 void ModelItem::openLocation() {
-    QDesktopServices::openUrl(toUrl());
+    QDesktopServices::openUrl(parent() -> toUrl());
 }
 
 bool ModelItem::isFolder() const {
