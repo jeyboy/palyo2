@@ -9,7 +9,7 @@
 //typedef QHash <char, bool> CBHash;
 //Q_DECLARE_METATYPE(CBHash);
 
-#include <tab.h>
+#include "override/tab.h"
 
 class Tabber : public QWidget {
     Q_OBJECT

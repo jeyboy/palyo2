@@ -1,11 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "tabdialog.h"
-#include "toolbardialog.h"
-#include "toolbarbuttondialog.h"
-#include "web_dialog.h"
-
-#include <QMessageBox>
 
 #include <QDebug>
 

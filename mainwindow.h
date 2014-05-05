@@ -12,16 +12,26 @@
 #include <QWidgetAction>
 #include <QSettings>
 
-#include "globalshortcut/qxtglobalshortcut.h"
-#include "tabber.h"
-#include "tab.h"
 #include "data_store.h"
-#include "player.h"
-#include "toolbar.h"
-#include "toolbarbutton.h"
-#include "library.h"
-#include "slider_style.h"
-#include "clickable_label.h"
+
+
+#include "dialogs/tabdialog.h"
+#include "dialogs/toolbardialog.h"
+#include "dialogs/toolbarbuttondialog.h"
+#include "dialogs/web_dialog.h"
+
+
+#include "globalshortcut/qxtglobalshortcut.h"
+#include "override/tabber.h"
+#include "override/tab.h"
+#include "override/toolbar.h"
+#include "override/toolbarbutton.h"
+#include "override/slider_style.h"
+#include "override/clickable_label.h"
+
+#include "media/library.h"
+#include "media/player.h"
+#include "media/mediainfo.h"
 
 #include "web/socials/vk_api.h"
 

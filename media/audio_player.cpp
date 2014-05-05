@@ -102,8 +102,9 @@ int AudioPlayer::openRemoteChannel(QString path) {
 
 int AudioPlayer::openChannel(QString path) {
     BASS_ChannelStop(chan);
-    if (!(chan = BASS_StreamCreateFile(false, path.toStdWString().c_str(), 0, 0, BASS_SAMPLE_LOOP))
-        && !(chan = BASS_MusicLoad(false, path.toStdWString().c_str(), 0, 0, BASS_MUSIC_RAMP | BASS_MUSIC_POSRESET | BASS_MUSIC_STOPBACK | BASS_STREAM_PRESCAN | BASS_MUSIC_AUTOFREE, 1)))
+    if (!(chan = BASS_StreamCreateFile(false, path.toStdWString().c_str(), 0, 0, BASS_SAMPLE_FLOAT | BASS_ASYNCFILE)))
+//    if (!(stream = BASS_StreamCreateFile(false, path.toStdWString().c_str(), 0, 0, BASS_SAMPLE_LOOP))
+//        && !(chan = BASS_MusicLoad(false, path.toStdWString().c_str(), 0, 0, BASS_SAMPLE_LOOP | BASS_MUSIC_RAMP | BASS_MUSIC_POSRESET | BASS_MUSIC_STOPBACK | BASS_STREAM_PRESCAN | BASS_MUSIC_AUTOFREE, 1)))
         qDebug() << "Can't play file " <<  BASS_ErrorGetCode() << path.toUtf8();
     return chan;
 }
@@ -111,7 +112,8 @@ int AudioPlayer::openChannel(QString path) {
 void AudioPlayer::closeChannel() {
     BASS_ChannelStop(chan);
     BASS_ChannelRemoveSync(chan, syncHandle);
-    BASS_MusicFree(chan);
+    BASS_StreamFree(chan);
+//    BASS_MusicFree(chan);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -131,8 +133,8 @@ void AudioPlayer::signalUpdate() {
     int curr_pos = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetPosition(chan, BASS_POS_BYTE)) * 1000;
 
     emit positionChanged(curr_pos);
-    if (duration - curr_pos < 500)
-        endOfPlayback();
+//    if (duration - curr_pos < 500)
+//        endOfPlayback();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -176,7 +178,7 @@ void AudioPlayer::resume() {
 }
 
 void AudioPlayer::stop() {
-    BASS_ChannelStop(chan);
+    closeChannel();
     notifyTimer -> stop();
     emit stateChanged(StoppedState);
 }

@@ -10,10 +10,9 @@
 #include <QVector>
 
 #include "mediainfo.h"
-#include "model_item.h"
-#include "model_item_state.h"
 #include "library_item.h"
 
+#include "model/model_item.h"
 class ModelItem;
 class LibraryItem;
 
@@ -29,7 +28,7 @@ public:
         }
     }
 
-    void initItem(LibraryItem * item);
+    void initItem(const QModelIndex & ind, ModelItem * item);
     bool addItem(ModelItem * item, int state);
     void restoreItemState(LibraryItem * item);
 

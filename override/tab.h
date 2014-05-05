@@ -5,9 +5,12 @@
 #include <QBoxLayout>
 #include <QJsonObject>
 
-#include "itemlist.h"
-#include "model.h"
-#include "model_item.h"
+#include "model/list/list_view.h"
+#include "model/tree/tree_view.h"
+#include "model/level_tree/level_tree_view.h"
+
+#include "model/model.h"
+#include "model/model_item.h"
 
 
 #ifndef CBHASH
@@ -21,16 +24,16 @@
 class Tab : public QWidget {
     Q_OBJECT
 public:
-    void init(CBHash params, QJsonObject * attrs = 0);
+    void init(CBHash params, QJsonObject * hash = 0);
 
     explicit Tab(CBHash params, QWidget * parent = 0);
-    explicit Tab(QJsonObject json_attrs, QWidget * parent = 0);
+    explicit Tab(QJsonObject hash, QWidget * parent = 0);
     ~Tab();
 
     QString getName() const;
     void setName(QString newName);
 
-    ItemList * getList() const;
+    View * getList() const;
     QJsonObject toJSON(QString name);
 
 public slots:
@@ -40,7 +43,7 @@ protected:
     void setNameWithCount(QString name);
 
 private:
-    ItemList * list;
+    View * list;
     QTabWidget * tabber;
 
 //private slots:

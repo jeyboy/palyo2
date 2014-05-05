@@ -25,35 +25,81 @@ INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/bass/include)
 
 CONFIG += static thread windows x11 sse sse2 x86
 
-SOURCES += web/web_api.cpp\
-    web/socials/vk_api.cpp\
-    main.cpp\
+SOURCES += main.cpp\
     mainwindow.cpp \
-    tabber.cpp \
-    tab.cpp \
-    icon_provider.cpp \
-    globalshortcut/qxtglobalshortcut.cpp \
-    tabdialog.cpp \
-    itemlist.cpp \
-    model.cpp \
-    model_item.cpp \
-    library.cpp \
-    model_item_delegate.cpp \
     data_store.cpp \
-    player.cpp \
-    toolbardialog.cpp \
-    toolbarbuttondialog.cpp \
-    toolbar.cpp \
-    toolbarbutton.cpp \
-    mediainfo.cpp \
-    model_item_state.cpp \
-    library_item.cpp \
-    audio_player.cpp \
-    notify_timer.cpp \
-    clickable_label.cpp \
-    custom_network_access_manager.cpp \
-    web_dialog.cpp
+    icon_provider.cpp \
+    web/web_api.cpp\
+    web/socials/vk_api.cpp\
+    globalshortcut/qxtglobalshortcut.cpp \
+    dialogs/tabdialog.cpp \
+    dialogs/toolbardialog.cpp \
+    dialogs/toolbarbuttondialog.cpp \
+    dialogs/web_dialog.cpp \
+    model/view.cpp \
+    model/model.cpp \
+    model/model_item.cpp \
+    model/folder_item.cpp \
+    model/file_item.cpp \
+    model/level_tree/level_tree_model.cpp \
+    model/level_tree/level_tree_view.cpp \
+    model/tree/tree_model.cpp \
+    model/tree/tree_view.cpp \
+    model/list/list_model.cpp \
+    model/list/list_view.cpp \
+    model/model_item_delegate.cpp \
+    model/model_item_state.cpp \
+    media/audio_player.cpp \
+    media/player.cpp \
+    media/mediainfo.cpp \
+    media/library.cpp \
+    media/library_item.cpp \
+    override/toolbar.cpp \
+    override/toolbarbutton.cpp \
+    override/notify_timer.cpp \
+    override/clickable_label.cpp \
+    override/tabber.cpp \
+    override/tab.cpp \
+    override/custom_network_access_manager.cpp
 
+HEADERS  += mainwindow.h \
+    data_store.h \
+    icon_provider.h \
+    web/web_api.h\
+    web/socials/vk_api.h\
+    globalshortcut/qxtglobal.h \
+    globalshortcut/qxtglobalshortcut.h \
+    globalshortcut/qxtglobalshortcut_p.h \
+    dialogs/tabdialog.h \
+    dialogs/toolbardialog.h \
+    dialogs/toolbarbuttondialog.h \
+    dialogs/web_dialog.h \
+    model/view.h \
+    model/model.h \
+    model/model_item.h \
+    model/folder_item.h \
+    model/file_item.h \
+    model/level_tree/level_tree_model.h \
+    model/level_tree/level_tree_view.h \
+    model/tree/tree_model.h \
+    model/tree/tree_view.h \
+    model/list/list_model.h \
+    model/list/list_view.h \
+    model/model_item_delegate.h \
+    model/model_item_state.h \
+    media/audio_player.h \
+    media/player.h \
+    media/mediainfo.h \
+    media/library.h \
+    media/library_item.h \
+    override/toolbar.h \
+    override/toolbarbutton.h \
+    override/slider_style.h \
+    override/notify_timer.h \
+    override/clickable_label.h\
+    override/tabber.h \
+    override/tab.h \
+    override/custom_network_access_manager.h
 
 unix:!mac {
         QT += gui-private
@@ -78,42 +124,11 @@ mac: {
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.dylib)
 }
 
-HEADERS  += web/web_api.h\
-    web/socials/vk_api.h\
-    mainwindow.h \
-    tabber.h \
-    tab.h \
-    icon_provider.h \
-    globalshortcut/qxtglobal.h \
-    globalshortcut/qxtglobalshortcut.h \
-    globalshortcut/qxtglobalshortcut_p.h \
-    tabdialog.h \
-    itemlist.h \
-    model.h \
-    model_item.h \
-    library.h \
-    data_store.h \
-    model_item_delegate.h \
-    player.h \
-    toolbardialog.h \
-    toolbarbuttondialog.h \
-    toolbar.h \
-    toolbarbutton.h \
-    mediainfo.h \
-    model_item_state.h \
-    library_item.h \
-    slider_style.h \
-    audio_player.h \
-    notify_timer.h \
-    clickable_label.h \
-    custom_network_access_manager.h \
-    web_dialog.h
-
 FORMS    += mainwindow.ui \
-    tabdialog.ui \
-    toolbardialog.ui \
-    toolbarbuttondialog.ui \
-    web_dialog.ui
+    dialogs/tabdialog.ui \
+    dialogs/toolbardialog.ui \
+    dialogs/toolbarbuttondialog.ui \
+    dialogs/web_dialog.ui
 
 RESOURCES += \
     picts.qrc

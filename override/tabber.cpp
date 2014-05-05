@@ -24,7 +24,7 @@ void Tabber::handleCurrentChanged(int index) {
     } else {
         Tab * new_tab = static_cast<Tab *>(tabber -> widget(index));
 
-        Player::instance() -> setActivePlaylist(const_cast<ItemList *>(new_tab -> getList()));
+        Player::instance() -> setActivePlaylist(const_cast<View *>(new_tab -> getList()));
     }
 }
 

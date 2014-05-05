@@ -1,21 +1,20 @@
 #include "model.h"
 #include <QDebug>
 
-/////////////////////////////////////////////////////////
 
-Model::Model(QJsonObject * attrs, QObject *parent) : QAbstractItemModel(parent) {
-    count = 0;
-    if (attrs != 0) {
-        rootItem = new ModelItem(attrs);
-        count = attrs ->value("l").toInt();
-    } else
-        rootItem = new ModelItem();
+Model::Model(QJsonObject *hash, QObject *parent) : QAbstractItemModel(parent) {
+    if (hash != 0) {
+        rootItem = new FolderItem(hash);
+        count = hash -> value("l").toInt();
+    } else {
+        rootItem = new FolderItem();
+        count = 0;
+    }
 }
 
 Model::~Model() {
 //    delete rootItem;
 }
-/////////////////////////////////////////////////////////
 
 QVariant Model::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
@@ -28,14 +27,11 @@ QVariant Model::data(const QModelIndex &index, int role) const {
            item = getItem(index);
 
            if (!item -> getState() -> isProceed()) {
-               Library::instance() -> initItem(new LibraryItem(this, item));
+               item -> proceedByLibrary(index);
 
                if (item -> getState() -> isExpanded()) {
-                   qDebug() << "expand";
                    emit expandNeeded(index);
                }
-
-               qDebug() << item -> fullpath();
            }
 
            return item -> data(index.column());
@@ -49,15 +45,15 @@ QVariant Model::data(const QModelIndex &index, int role) const {
 
            if (item -> getState() -> isNotExist())
                return IconProvider::missedIcon();
-           else if (item -> getState() -> isUnprocessed())
+           else if (item -> isFolder())
                return QVariant();
 //               return IconProvider::fileIcon("", "");
            else
-               return IconProvider::fileIcon(item -> fullpath(), (item -> data(EXTENSIONUID).toString()));
+               return IconProvider::fileIcon(item -> fullPath(), (item -> data(EXTENSIONID).toString()));
         }
         case Qt::ToolTipRole:
             item = getItem(index);
-            return item -> data(EXTENSIONUID).toString();
+            return item -> data(EXTENSIONID).toString();
         case Qt::SizeHintRole:
             return QSize(0, 18);
         case Qt::TextColorRole:
@@ -78,7 +74,7 @@ bool Model::setData(const QModelIndex &index, const QVariant &value, int role) {
         return false;
 
     ModelItem *item = getItem(index);
-    bool result = item->setData(index.column(), value);
+    bool result = item -> setData(index.column(), value);
 
     if (result)
         emit dataChanged(index, index);
@@ -88,7 +84,7 @@ bool Model::setData(const QModelIndex &index, const QVariant &value, int role) {
 
 QVariant Model::headerData(int section, Qt::Orientation orientation, int role) const {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return rootItem->data(section);
+        return rootItem -> data(section);
 
     return QVariant();
 }
@@ -96,15 +92,13 @@ bool Model::setHeaderData(int section, Qt::Orientation orientation, const QVaria
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
         return false;
 
-    bool result = rootItem->setData(section, value);
+    bool result = rootItem -> setData(section, value);
 
     if (result)
         emit headerDataChanged(orientation, section, section);
 
     return result;
 }
-
-/////////////////////////////////////////////////////////
 
 Qt::ItemFlags Model::flags(const QModelIndex &index) const {
      if (!index.isValid())
@@ -117,13 +111,13 @@ QModelIndex Model::parent(const QModelIndex &index) const {
         return QModelIndex();
 
     ModelItem *childItem = getItem(index);
-    ModelItem *parentItem = childItem->parent();
+    ModelItem *parentItem = childItem -> parent();
 
-    if (parentItem == rootItem) // || parentItem == 0
+    if (parentItem == rootItem)
         return QModelIndex();
 
 //    return createIndex(parentItem->row(), index.column(), parentItem);
-    return createIndex(parentItem->row(), 0, parentItem);
+    return createIndex(parentItem -> row(), 0, parentItem);
 }
 QModelIndex Model::index(int row, int column, const QModelIndex &parent) const {
     if (!hasIndex(row, column, parent))
@@ -131,7 +125,7 @@ QModelIndex Model::index(int row, int column, const QModelIndex &parent) const {
 
     ModelItem *parentItem = getItem(parent);
 
-    ModelItem *childItem = parentItem->child(row);
+    ModelItem *childItem = parentItem -> child(row);
     if (childItem)
         return createIndex(row, column, childItem);
     else
@@ -142,22 +136,19 @@ QModelIndex Model::index(ModelItem * item) const {
    return createIndex(item -> row(), item -> column(), item);
 }
 
-/////////////////////////////////////////////////////////
 
 int Model::itemsCount() const {
     return count;
 }
 
-/////////////////////////////////////////////////////////
 
 int Model::columnCount(const QModelIndex &parent) const {
-    if (parent.isValid())
-        return static_cast<ModelItem *>(parent.internalPointer()) -> columnCount();
-    else
-        return rootItem -> columnCount();
+    return getItem(parent) -> columnCount();
+//    if (parent.isValid())
+//        return static_cast<ModelItem *>(parent.internalPointer()) -> columnCount();
+//    else
+//        return rootItem -> columnCount();
 }
-
-/////////////////////////////////////////////////////////
 
 int Model::rowCount(const QModelIndex &parent) const {
     if (parent.column() > 0)
@@ -167,11 +158,11 @@ int Model::rowCount(const QModelIndex &parent) const {
     return parentItem -> childCount();
 }
 
-void Model::appendRow(QString filepath, ModelItem * parentItem) {
+void Model::appendRow(ModelItem * item) {
 //    int position = parentItem -> childCount();
 //    beginInsertRows(index(parentItem), position, position);
-    new ModelItem(filepath, parentItem);
-    emit itemsCountChanged(++count);
+    if (!item -> isFolder())
+        emit itemsCountChanged(++count);
 //    endInsertRows();
 
 //    emit dataChanged(parent, parent);
@@ -182,26 +173,20 @@ bool Model::removeRow(int row, const QModelIndex &parentIndex) {
     ModelItem * parentItem = getItem(parentIndex);
     ModelItem * item = parentItem -> child(row);
     QString folderName;
-    bool isUnprocessed = item -> getState() -> isUnprocessed();
+    bool isUnprocessed = item -> isFolder();
+    bool res;
 
     if (isUnprocessed) {      
-        folderName = item -> data(NAMEUID).toString();
+        folderName = item -> data(TITLEID).toString();
 
-        if (item -> childCount() > 0) {
-            if (QMessageBox::warning(
-                        QApplication::activeWindow(),
-                        "Folder deletion",
-                        "Are you shure what you want remove the not empty folder ?",
-                        QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Cancel)
-                return false;
-        }
-
-        removeCount = 0;
-        markBranchAsDeleted(item);
+        removeCount = item -> childTreeCount();
     }
 
     beginRemoveRows(parentIndex, row, row);
-    if (parentItem -> removeChildren(row, 1)) {
+    res = parentItem -> removeChildren(row, 1);
+    endRemoveRows();
+
+    if (res) {
         if (isUnprocessed) {
             parentItem -> removeFolder(folderName);
         }
@@ -209,17 +194,8 @@ bool Model::removeRow(int row, const QModelIndex &parentIndex) {
         if (removeCount > 0)
             emit itemsCountChanged(count -= removeCount);
     }
-    endRemoveRows();
 
-    return true;
-}
-
-void Model::markBranchAsDeleted(ModelItem * parentItem) {
-    foreach(ModelItem * item, parentItem -> foldersList() -> values()) {
-        markBranchAsDeleted(item);
-    }
-    count += parentItem -> foldersList() -> count(); // patch // compensation removing  of folders
-    removeRows(0, parentItem -> childCount(), index(parentItem));
+    return res;
 }
 
 bool Model::removeRows(int position, int rows, const QModelIndex &parent) {
@@ -236,9 +212,8 @@ bool Model::removeRows(int position, int rows, const QModelIndex &parent) {
     return success;
 }
 
-/////////////////////////////////////////////////////////
 
-void Model::repaint() {
+void Model::refresh() {
     beginResetModel();
     endResetModel();
 }
@@ -255,12 +230,17 @@ void Model::refreshItem(ModelItem * item) {
 
 ModelItem * Model::getItem(const QModelIndex &index) const {
     if (index.isValid()) {
-        ModelItem *item = static_cast<ModelItem*>(index.internalPointer());
-        if (item)
-            return item;
+        return static_cast<ModelItem *>(index.internalPointer());
     }
     return rootItem;
 }
+
+//template<class T> T * Model::getItem(const QModelIndex &index) const {
+//    if (index.isValid()) {
+//        return dynamic_cast<T *>(index.internalPointer());
+//    }
+//    return dynamic_cast<T *>(rootItem);
+//}
 
 ModelItem * Model::root() const {
     return rootItem;
@@ -269,28 +249,13 @@ ModelItem * Model::root() const {
 /////////////////////////////////////////////////////////
 
 //TODO: improve model insertion (add emit of rows insertion)
-ModelItem * Model::buildPath(QString path) {
-    QStringList list = path.split('/', QString::SkipEmptyParts);
-    ModelItem * curr = rootItem;
-
-    foreach(QString piece, list) {
-        if (curr -> foldersList() -> contains(piece)) {
-            curr = curr -> foldersList() -> value(piece);
-        } else {
-            curr = new ModelItem(piece, curr, STATE_UNPROCESSED);
-        }
-    }
-
-    return curr;
-}
-
 ModelItem * Model::addFolder(QString folder_name, ModelItem * parent) {
     ModelItem * curr = parent;
 
     if (curr -> foldersList() -> contains(folder_name)) {
         curr = curr -> foldersList() -> value(folder_name);
     } else {
-        curr = new ModelItem(folder_name, curr, STATE_UNPROCESSED);
+        curr = new FolderItem(folder_name, curr);
     }
 
     return curr;
@@ -327,15 +292,10 @@ QMimeData * Model::mimeData(const QModelIndexList &indexes) const {
     foreach (const QModelIndex &index, indexes) {
         if (index.isValid()) {
             temp = getItem(index);
-            list.append(QUrl::fromLocalFile(temp -> fullpath()));
-//            if (!temp -> getState() -> isUnprocessed())
-//            tempData = temp -> fullpath().toUtf8();
+            list.append(temp -> toUrl());
         }
     }
 
-//    mimeData -> setData(DnD::instance() -> listItems, encodedData);
-//    qDebug() << encodedData;
-//    qDebug() << mimeData -> data(DnD::instance() -> listItems);
     mimeData -> setUrls(list);
     return mimeData;
 }

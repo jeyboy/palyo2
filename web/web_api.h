@@ -5,7 +5,7 @@
 //#include <QtXml/QDomDocument>
 #include <QJsonDocument>
 #include <QUrl>
-#include "custom_network_access_manager.h"
+#include "override/custom_network_access_manager.h"
 
 class WebApi : public QObject {
     Q_OBJECT   
