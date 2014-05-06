@@ -4,7 +4,9 @@
 ///////////////////////////////////////////////////////////
 
 VkModel::VkModel(QJsonObject * hash, QObject *parent) : Model(hash, parent) {
-
+    if (hash == 0) {
+        VkApi::getUserAudios()
+    }
 }
 
 VkModel::~VkModel() {

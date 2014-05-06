@@ -16,9 +16,9 @@ public:
     QString getExpire();
     QString getUserID();
 
-    void getUserAudios(int uid = -1);
-    void getGroupAudios(int uid = -1);
-    void getAlbumAudios(int uid = -1);
+    void getUserAudioList(int uid = -1);
+    void getGroupAudioList(int uid = -1);
+    void getAlbumAudioList(int uid = -1);
 
     ~VkApi() {
 
