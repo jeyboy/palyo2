@@ -411,6 +411,10 @@ QFileInfoList View::folderDirectories(QFileInfo file) {
 //    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
 }
 
+ModelItem * View::createItem(QString path, ModelItem * parent) {
+   return (new FileItem(path, parent)) -> toModelItem();
+}
+
 void View::dragEnterEvent(QDragEnterEvent *event) {
     if (event -> source() != this && event -> mimeData() -> hasFormat("text/uri-list"))
         event -> accept();
