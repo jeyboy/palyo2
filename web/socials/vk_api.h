@@ -28,6 +28,10 @@ public:
     static void close() {
         delete self;
     }
+
+signals:
+    void audioListReceived(QJsonObject &);
+
 protected:
     QString apiVersion() const;
     QUrlQuery methodParams();

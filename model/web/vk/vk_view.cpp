@@ -2,7 +2,7 @@
 #include <QDebug>
 
 VkView::VkView(QWidget *parent, CBHash settingsSet, QJsonObject *hash)
-    : View(dynamic_cast<Model *>(new TreeModel(hash)), parent, settingsSet) {
+    : TreeView(dynamic_cast<Model *>(new VkModel(hash)), parent, settingsSet) {
 }
 
 VkView::~VkView() {

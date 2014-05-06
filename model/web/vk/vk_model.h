@@ -3,15 +3,18 @@
 
 #include "web/socials/vk_api.h"
 #include "model/model.h"
+#include "model/tree/tree_model.h"
 
-class VkModel : public Model {
+class VkModel : public TreeModel {
     Q_OBJECT
 
 public:
     VkModel(QJsonObject * hash = 0, QObject *parent = 0);
-    ~TreeModel();
+    ~VkModel();
 
-    VkModel * buildPath(QString path);
+//    ModelItem * buildPath(QString path);
+protected:
+    void proceedAudioList(QJsonObject &);
 };
 
 

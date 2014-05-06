@@ -32,7 +32,6 @@ public:
     int removeFolder(QString name);
 protected:
     QList<ModelItem *> * childItemsList();
-private:
     QHash<QString, ModelItem *> *folders;
     QList<ModelItem *> childItems;
 };

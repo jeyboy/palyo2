@@ -124,14 +124,14 @@ void VkApi::audioListRequest() {
 void VkApi::getAudioList(int uid) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams();
-    query.addQueryItem("code",
+//    query.addQueryItem("code", "return {audios: API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 100, 'uid': " + getUserID() + "}})}"
 //                       "var audioList = [];" +
 //                       "var count = API.audio.getCount()@.response; " +
 //                       "var step = 0;" +
 //                       "while(step < count) { audioList.pust(API.audio.get())};"
-                       );
+    query.addQueryItem("code", "return {audios: API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 100, 'uid': " + getUserID() + "}})}");
     url.setQuery(query);
 
-    QNetworkReply * m_http = manager -> get(QNetworkRequest(url));
+    QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
     QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListRequest()));
 }

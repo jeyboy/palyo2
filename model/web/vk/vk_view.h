@@ -2,6 +2,7 @@
 #define VK_VIEW_H
 
 #include "model/tree/tree_view.h"
+#include "model/view.h"
 #include "model/web/vk/vk_model.h"
 
 //#ifndef CBHASH
