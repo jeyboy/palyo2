@@ -76,6 +76,7 @@ protected:
     QFileInfoList folderFiles(QFileInfo file);
     QFileInfoList folderDirectories(QFileInfo file);
 
+    virtual ModelItem * createItem(QString path, ModelItem * parent);
     virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
