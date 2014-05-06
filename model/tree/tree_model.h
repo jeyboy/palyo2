@@ -14,8 +14,6 @@ class TreeModel : public Model {
 public:
     TreeModel(QJsonObject * hash = 0, QObject *parent = 0);
     ~TreeModel();
-
-    ModelItem * buildPath(QString path);
 };
 
 

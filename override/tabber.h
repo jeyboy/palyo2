@@ -6,7 +6,7 @@
 #include <data_store.h>
 
 //#include <QHash>
-//typedef QHash <char, bool> CBHash;
+//typedef QHash <char, int> CBHash;
 //Q_DECLARE_METATYPE(CBHash);
 
 #include "override/tab.h"

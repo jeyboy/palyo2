@@ -49,7 +49,7 @@ public:
 //    template<class T> T *getItem(const QModelIndex &index) const;
     ModelItem * root() const;
 
-    virtual ModelItem * buildPath(QString path) = 0;
+    ModelItem * buildPath(QString path);
     ModelItem * addFolder(QString folder_name, ModelItem * parent);
 
     Qt::DropActions supportedDropActions() const;

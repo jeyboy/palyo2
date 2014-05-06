@@ -127,11 +127,11 @@ void View::deleteCurrentProceedNext() {
 }
 
 bool View::isRemoveFileWithItem() {
-    return settings["d"];
+    return settings["d"] == 1;
 }
 
 bool View::isPlaylist() {
-    return settings["p"];
+    return settings["p"] == 1;
 }
 
 Model * View::getModel() const {

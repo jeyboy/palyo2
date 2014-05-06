@@ -2,10 +2,17 @@
 #include <QDebug>
 
 void Tab::init(CBHash params, QJsonObject * hash) {
-
-    //TODO: add to settings type of view
-
-    list = (View *)new TreeView(this, params, hash);
+    switch(params["t"]) {
+        case 1: {
+            list = (View *)new ListView(this, params, hash);
+        break;}
+        case 2: {
+            list = (View *)new LevelTreeView(this, params, hash);
+        break;}
+        default: {
+            list = (View *)new TreeView(this, params, hash);
+        break;}
+    }
 //    list -> setResizeMode();
 
     this -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom));

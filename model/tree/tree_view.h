@@ -16,13 +16,13 @@
 #include "model/view.h"
 #include "model/tree/tree_model.h"
 
-#ifndef CBHASH
-#define CBHASH
+//#ifndef CBHASH
+//#define CBHASH
 
-  #include <QHash>
-  typedef QHash <QString, bool> CBHash;
-  Q_DECLARE_METATYPE(CBHash);
-#endif // CBHASH
+//  #include <QHash>
+//  typedef QHash <QString, int> CBHash;
+//  Q_DECLARE_METATYPE(CBHash);
+//#endif // CBHASH
 
 class TreeView : public View {
   Q_OBJECT

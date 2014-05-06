@@ -248,6 +248,17 @@ ModelItem * Model::root() const {
 
 /////////////////////////////////////////////////////////
 
+ModelItem * Model::buildPath(QString path) {
+    QStringList list = path.split('/', QString::SkipEmptyParts);
+    ModelItem * curr = rootItem;
+
+    foreach(QString piece, list) {
+        curr = addFolder(piece, curr);
+    }
+
+    return curr;
+}
+
 //TODO: improve model insertion (add emit of rows insertion)
 ModelItem * Model::addFolder(QString folder_name, ModelItem * parent) {
     ModelItem * curr = parent;
