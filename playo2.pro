@@ -47,6 +47,8 @@ SOURCES += main.cpp\
     model/tree/tree_view.cpp \
     model/list/list_model.cpp \
     model/list/list_view.cpp \
+    model/web/vk/vk_model.cpp \
+    model/web/vk/vk_view.cpp \
     model/model_item_delegate.cpp \
     model/model_item_state.cpp \
     media/audio_player.cpp \
@@ -85,6 +87,8 @@ HEADERS  += mainwindow.h \
     model/tree/tree_view.h \
     model/list/list_model.h \
     model/list/list_view.h \
+    model/web/vk/vk_model.h \
+    model/web/vk/vk_view.h \
     model/model_item_delegate.h \
     model/model_item_state.h \
     media/audio_player.h \
