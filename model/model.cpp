@@ -26,8 +26,6 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case Qt::DisplayRole: {
            item = getItem(index);
 
-           qDebug() << item -> fullPath();
-
            if (!item -> getState() -> isProceed()) {
                item -> proceedByLibrary(index);
 
