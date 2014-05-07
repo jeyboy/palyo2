@@ -265,8 +265,9 @@ void View::onDoubleClick(const QModelIndex &index) {
 
 void View::showContextMenu(const QPoint& pnt) {
     QList<QAction *> actions;
+    QModelIndex ind = indexAt(pnt);
 
-    if (indexAt(pnt).isValid()) {
+    if (ind.isValid() && !model -> getItem(ind) -> fullPath().isEmpty()) {
         QAction * openAct = new QAction(QIcon(":/open"), "Open location", this);
         connect(openAct, SIGNAL(triggered(bool)), this, SLOT(openLocation()));
         actions.append(openAct);

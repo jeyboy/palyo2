@@ -62,7 +62,12 @@ QString ModelItem::getTitle() const {
 }
 
 void ModelItem::openLocation() {
-    QDesktopServices::openUrl(parent() -> toUrl());
+    if (!parent() -> fullPath().isEmpty())
+        QDesktopServices::openUrl(parent() -> toUrl());
+    else {
+        QFileInfo info(fullPath());
+        QDesktopServices::openUrl(QUrl::fromLocalFile(info.path()));
+    }
 }
 
 bool ModelItem::isFolder() const {
