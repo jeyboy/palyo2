@@ -1,18 +1,28 @@
 #include "mainwindow.h"
-#include <QApplication>
+#include "single_application.h"
+#include <qDebug>
 
 int main(int argc, char *argv[]) {
     qRegisterMetaType<QVector <int> >("QVector<int>");
-//    qRegisterMetaType<QHash <QString, bool> >("CBHash");
 
     QCoreApplication::setOrganizationName("BigBug");
     QCoreApplication::setOrganizationDomain("bigbug.sos");
     QCoreApplication::setApplicationName("Playo");
 
-    QApplication a(argc, argv);
+    SingleApplication app(argc, argv, "bigbugplayo");
 
-    MainWindow w;
-    w.show();
+    if (app.isRunning()) {
+        QStringList list = QCoreApplication::arguments();
+        if (list.length() > 1) {
+            list.removeFirst();
+            app.sendMessage(list.join('|'));
+        }
+        return 0;
+    }
 
-    return a.exec();
+    MainWindow * mainWindow = new MainWindow();
+    QObject::connect(&app, SIGNAL(messageAvailable(QString)), mainWindow, SLOT(receiveMessage(QString)));
+    mainWindow -> show();
+
+    return app.exec();
 }

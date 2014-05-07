@@ -134,6 +134,10 @@ bool View::isPlaylist() {
     return settings["p"];
 }
 
+bool View::isCommon() {
+    return settings["c"];
+}
+
 Model * View::getModel() const {
     return model;
 }

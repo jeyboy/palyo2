@@ -599,6 +599,11 @@ void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
     }
 }
 
+void MainWindow::receiveMessage(QString message) {
+    QStringList list = message.split('|', QString::SkipEmptyParts);
+    tabber -> commonTab() -> getList() -> dropProcession(QUrl::fromStringList(list));
+}
+
 void MainWindow::showAttTabDialog(Tab * tab) {
   TabDialog dialog(this);
   if(tab) {
