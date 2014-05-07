@@ -50,6 +50,7 @@ public:
     ModelItem * root() const;
 
     ModelItem * buildPath(QString path);
+    ModelItem * addFolder(QString folderPath, QString folderName, ModelItem * parent);
     ModelItem * addFolder(QString folder_name, ModelItem * parent);
 
     Qt::DropActions supportedDropActions() const;

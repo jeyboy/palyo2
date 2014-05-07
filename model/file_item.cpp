@@ -8,8 +8,7 @@ FileItem::FileItem(QJsonObject *hash, ModelItem *parent) : ModelItem(hash, paren
     }
 }
 
-FileItem::FileItem(QString filePath, ModelItem *parent, int initState) : ModelItem(filePath, parent, initState) {
-    title = filePath.section('/', -1, -1);
+FileItem::FileItem(QString filePath, ModelItem *parent, int initState) : ModelItem(filePath, filePath.section('/', -1, -1), parent, initState) {
     extension = title.section('.', -1, -1);
     if (extension != title)
         title = title.section('.', 0, -2);
@@ -29,7 +28,6 @@ bool FileItem::removePhysicalObject() const {
 }
 
 bool FileItem::isExist() const {
-    qDebug() << fullPath();
     return QFile::exists(fullPath());
 }
 

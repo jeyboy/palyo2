@@ -26,6 +26,8 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case Qt::DisplayRole: {
            item = getItem(index);
 
+           qDebug() << item -> fullPath();
+
            if (!item -> getState() -> isProceed()) {
                item -> proceedByLibrary(index);
 
@@ -260,16 +262,22 @@ ModelItem * Model::buildPath(QString path) {
 }
 
 //TODO: improve model insertion (add emit of rows insertion)
-ModelItem * Model::addFolder(QString folder_name, ModelItem * parent) {
+
+
+ModelItem * Model::addFolder(QString folderPath, QString folderName, ModelItem * parent) {
     ModelItem * curr = parent;
 
-    if (curr -> foldersList() -> contains(folder_name)) {
-        curr = curr -> foldersList() -> value(folder_name);
+    if (curr -> foldersList() -> contains(folderName)) {
+        curr = curr -> foldersList() -> value(folderName);
     } else {
-        curr = new FolderItem(folder_name, curr);
+        curr = new FolderItem(folderPath, folderName, curr);
     }
 
     return curr;
+}
+
+ModelItem * Model::addFolder(QString folderPath, ModelItem * parent) {
+    return addFolder(folderPath, folderPath, parent);
 }
 
 //////////////////////// slots //////////////////////////

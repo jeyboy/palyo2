@@ -21,12 +21,12 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     extension = hash -> value("e").toString();
 }
 
-ModelItem::ModelItem(const QString filePath, ModelItem * parent, int initState) {
+ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int initState) {
     parentItem = parent;
     titlesCache = 0;
     state = new ModelItemState(initState);
 
-//    title = fileTitle;
+    title = fileName;
     path = filePath;
 //    extension = fileExtension;
 }
@@ -48,12 +48,13 @@ QString ModelItem::fullPath() const {
     ModelItem * curr = parentItem;
     QString path_buff = path;
 
-    while(curr != 0) {
+    while(curr != 0 && !curr -> path.isEmpty()) {
         path_buff = curr -> path + '/' + path_buff;
         curr = curr -> parentItem;
     }
 
-    return path_buff.mid(1);
+    return path_buff;
+//    return path_buff.mid(1);
 }
 
 QString ModelItem::getTitle() const {

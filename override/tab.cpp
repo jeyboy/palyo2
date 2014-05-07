@@ -30,7 +30,7 @@ Tab::Tab(QJsonObject hash, QWidget * parent) : QWidget(parent) {
     CBHash params = CBHash();
 
     foreach(QString key, set.keys()) {
-        params.insert(key, set[key].toBool());
+        params.insert(key, set[key].toInt());
     }
 
     init(params, &hash);
