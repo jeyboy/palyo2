@@ -613,6 +613,21 @@ void MainWindow::showVKTabDialog() {
     }
 }
 
+void MainWindow::receiveMessage(QString message) {
+    QStringList list = message.split('|', QString::SkipEmptyParts);
+    QList<QUrl> urls;
+
+    foreach(QString path, list)
+        urls.append(QUrl::fromLocalFile(path));
+
+    tabber -> commonTab() -> getList() -> dropProcession(urls);
+    tabber -> commonTab() -> getList() -> getModel() -> refresh();
+
+    if (!Player::instance() -> isPlayed()) {
+        tabber -> commonTab() -> getList() -> proceedNext();
+    }
+}
+
 void MainWindow::showAttTabDialog(Tab * tab) {
   TabDialog dialog(this);
   if(tab) {

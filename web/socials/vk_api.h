@@ -17,8 +17,8 @@ public:
     QString getUserID();
 
     void getUserAudioList(int uid = -1);
-    void getGroupAudioList(int uid = -1);
-    void getAlbumAudioList(int uid = -1);
+//    void getGroupAudioList(int uid = -1);
+//    void getAlbumAudioList(int uid = -1);
 
     ~VkApi() {
 

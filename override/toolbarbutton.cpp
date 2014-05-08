@@ -31,29 +31,30 @@ ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent)
 }
 
 void ToolbarButton::dragEnterEvent(QDragEnterEvent *event) {
-   if (event -> mimeData() -> hasFormat("text/uri-list")) {
-       event -> accept();
-   } else {
+    if (event -> mimeData() -> hasFormat("text/uri-list")) {
+        event -> accept();
+    } else {
         event -> ignore();
-   }
+    }
 }
 
 void ToolbarButton::dropEvent(QDropEvent *event) {
-      if (event -> mimeData() -> hasUrls()) {
-          QList<QUrl> list = event -> mimeData() -> urls();
 
-          foreach(QUrl url, list) {
-              copyFile(url.toLocalFile());
-          }
+    if (event -> mimeData() -> hasUrls()) {
+        QList<QUrl> list = event -> mimeData() -> urls();
 
-          event->accept();
+        foreach(QUrl url, list) {
+            copyFile(url.toLocalFile());
+        }
 
-          if (QString(event -> source() -> metaObject() -> className()) == "ItemList")
+        event->accept();
+
+        if (QString(event -> source() -> metaObject() -> className()).endsWith("View"))
             ((View *)event -> source()) -> markSelectedAsLiked();
-          else
-            "Out request";
+        else
+            qDebug() << "Out request";
 
-      } else {  event->ignore(); }
+    } else {  event->ignore(); }
 }
 
 void ToolbarButton::copyFile(QString copyPath) {

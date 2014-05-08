@@ -2,7 +2,7 @@
 #include <QDebug>
 
 ///////////////////////////////////////////////////////////
-FolderItem::FolderItem() : ModelItem(STATE_UNPROCESSED) {
+FolderItem::FolderItem(int initState) : ModelItem(initState) {
     folders = new QHash<QString, ModelItem *>();
 }
 
@@ -38,9 +38,11 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
     }
 }
 
-FolderItem::FolderItem(QString filePath, ModelItem *parent, int initState) : ModelItem(filePath, parent, initState) {
+FolderItem::FolderItem(const QString folderPath, QString folderTitle, ModelItem *parent, int initState) : ModelItem(folderPath, folderTitle, parent, initState) {
     folders = new QHash<QString, ModelItem *>();
-    title = filePath;
+
+    if (title.isEmpty())
+        title = folderPath;
 
     if (parent != 0) {
         parent -> foldersList() -> insert(title, this -> toModelItem());

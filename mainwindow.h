@@ -14,7 +14,6 @@
 
 #include "data_store.h"
 
-
 #include "dialogs/tabdialog.h"
 #include "dialogs/toolbardialog.h"
 #include "dialogs/toolbarbuttondialog.h"
@@ -60,7 +59,10 @@ public:
 
 protected:
     bool isToolbarNameUniq(QString name);
+    void registerFileType(const QString& documentId, const QString& fileTypeName, const QString& fileExtension, qint32 appIconIndex);
 
+public slots:
+    void receiveMessage(QString);
 private slots:
     void showVKTabDialog();
 

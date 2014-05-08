@@ -25,6 +25,11 @@ QString VkApi::getUserID() {
     return user_id;
 }
 
+void VkApi::getUserAudioList(int uid) {
+    //TODO: add
+}
+
+
 QString VkApi::authUrl() const {
     QUrl url("https://oauth.vk.com/authorize");
     QUrlQuery queryParams = QUrlQuery();

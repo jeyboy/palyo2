@@ -26,7 +26,7 @@
 #define CBHASH
 
   #include <QHash>
-  typedef QHash <QString, bool> CBHash;
+  typedef QHash <QString, int> CBHash;
   Q_DECLARE_METATYPE(CBHash);
 #endif // CBHASH
 
@@ -46,6 +46,8 @@ public:
 
     bool isRemoveFileWithItem();
     bool isPlaylist();
+    bool isCommon();
+
 
 //    template<class T> T * getModel() const;
     Model * getModel() const;
@@ -59,6 +61,7 @@ public:
     ModelItem * removeCandidate(ModelItem * item);
     void removeItem(ModelItem * item);
 
+    virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
 public slots:
     void updateSelection(QModelIndex candidate);
 
@@ -77,10 +80,10 @@ protected:
     QFileInfoList folderDirectories(QFileInfo file);
 
     virtual ModelItem * createItem(QString path, ModelItem * parent);
-    virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
+
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
-    void dropEvent(QDropEvent *event);
+    virtual void dropEvent(QDropEvent *event);
 
     void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);

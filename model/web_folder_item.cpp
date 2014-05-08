@@ -2,11 +2,11 @@
 #include <QDebug>
 
 ///////////////////////////////////////////////////////////
-FolderItem::FolderItem() : ModelItem(STATE_UNPROCESSED) {
+WebFolderItem::WebFolderItem() : FolderItem(STATE_UNPROCESSED) {
     folders = new QHash<QString, ModelItem *>();
 }
 
-FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, parent) {
+WebFolderItem::WebFolderItem(QJsonObject * hash, ModelItem *parent) : FolderItem(hash, parent) {
     folders = new QHash<QString, ModelItem *>();
 
     if (parent != 0) {
@@ -38,7 +38,7 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
     }
 }
 
-FolderItem::FolderItem(QString filePath, ModelItem *parent, int initState) : ModelItem(filePath, parent, initState) {
+WebFolderItem::WebFolderItem(QString filePath, QString folderTitle, ModelItem *parent, int initState) : FolderItem(filePath, folderTitle, parent, initState) {
     folders = new QHash<QString, ModelItem *>();
     title = filePath;
 
@@ -48,17 +48,17 @@ FolderItem::FolderItem(QString filePath, ModelItem *parent, int initState) : Mod
     }
 }
 
-FolderItem::~FolderItem() {
+WebFolderItem::~WebFolderItem() {
     qDeleteAll(childItems);
 
     delete folders;
 }
 
-void FolderItem::openLocation() {
+void WebFolderItem::openLocation() {
     QDesktopServices::openUrl(toUrl());
 }
 
-bool FolderItem::removePhysicalObject() const {
+bool WebFolderItem::removePhysicalObject() const {
     QDir delDir(fullPath());
     if (fullPath().split('/').length() >= 2) {
         return delDir.removeRecursively();
@@ -67,90 +67,90 @@ bool FolderItem::removePhysicalObject() const {
     return false;
 }
 
-bool FolderItem::isExist() const {
+bool WebFolderItem::isExist() const {
     return QDir(fullPath()).exists();
 }
 
-bool FolderItem::isFolder() const {
-    return true;
-}
+//bool WebFolderItem::isFolder() const {
+//    return true;
+//}
 
-QJsonObject FolderItem::toJSON() {
-    QJsonObject root = ModelItem::toJSON();
+//QJsonObject WebFolderItem::toJSON() {
+//    QJsonObject root = ModelItem::toJSON();
 
-    root["i"] = FOLDER_ITEM;
+//    root["i"] = FOLDER_ITEM;
 
-    if (childItems.length() > 0) {
-        QJsonArray ar = QJsonArray();
-        for(int i=0; i < childItems.length(); i++)
-            ar.append(childItems.at(i) -> toJSON());
+//    if (childItems.length() > 0) {
+//        QJsonArray ar = QJsonArray();
+//        for(int i=0; i < childItems.length(); i++)
+//            ar.append(childItems.at(i) -> toJSON());
 
-        root["c"] = ar;
-    }
-
-    return root;
-}
-
-
-QList<ModelItem *> * FolderItem::childItemsList() {
-    return &childItems;
-}
-
-ModelItem *FolderItem::child(int row) {
-    return childItems.value(row);
-}
-
-int FolderItem::childTreeCount() const {
-    int ret = childItems.count() - foldersList() -> count();
-    foreach(ModelItem * folder, foldersList() -> values()) {
-        ret += folder -> childTreeCount();
-    }
-
-
-//    int ret = 0;
-//    foreach(ModelItem * childItem, childItems) {
-//        if (childItem -> folders == 0) // not is unprocessed
-//            ret += 1;
-//        else
-//            ret += childItem -> childTreeCount();
+//        root["c"] = ar;
 //    }
 
-    return ret;
-}
-
-int FolderItem::childCount() const {
-    return childItems.count();
-}
-
-void FolderItem::insertChild(int pos, ModelItem *item) {
-    childItems.insert(pos, item);
-}
-
-void FolderItem::appendChild(ModelItem *item) {
-    childItems.append(item);
-}
-
-bool FolderItem::removeChildren(int position, int count) {
-    if (position < 0 || position + count > childItems.size())
-        return false;
-
-    for (int row = 0; row < count; ++row)
-        delete childItems.takeAt(position);
-
-    return true;
-}
-
-void FolderItem::dropExpandProceedFlags() {
-    getState() -> unsetProceed();
-    foreach(ModelItem *item, folders -> values()) {
-        item -> dropExpandProceedFlags();
-    }
-}
+//    return root;
+//}
 
 
-QHash<QString, ModelItem *> * FolderItem::foldersList() const {
-    return folders;
-}
-int FolderItem::removeFolder(QString name) {
-    return folders -> remove(name);
-}
+//QList<ModelItem *> * WebFolderItem::childItemsList() {
+//    return &childItems;
+//}
+
+//ModelItem *WebFolderItem::child(int row) {
+//    return childItems.value(row);
+//}
+
+//int WebFolderItem::childTreeCount() const {
+//    int ret = childItems.count() - foldersList() -> count();
+//    foreach(ModelItem * folder, foldersList() -> values()) {
+//        ret += folder -> childTreeCount();
+//    }
+
+
+////    int ret = 0;
+////    foreach(ModelItem * childItem, childItems) {
+////        if (childItem -> folders == 0) // not is unprocessed
+////            ret += 1;
+////        else
+////            ret += childItem -> childTreeCount();
+////    }
+
+//    return ret;
+//}
+
+//int WebFolderItem::childCount() const {
+//    return childItems.count();
+//}
+
+//void WebFolderItem::insertChild(int pos, ModelItem *item) {
+//    childItems.insert(pos, item);
+//}
+
+//void WebFolderItem::appendChild(ModelItem *item) {
+//    childItems.append(item);
+//}
+
+//bool WebFolderItem::removeChildren(int position, int count) {
+//    if (position < 0 || position + count > childItems.size())
+//        return false;
+
+//    for (int row = 0; row < count; ++row)
+//        delete childItems.takeAt(position);
+
+//    return true;
+//}
+
+//void WebFolderItem::dropExpandProceedFlags() {
+//    getState() -> unsetProceed();
+//    foreach(ModelItem *item, folders -> values()) {
+//        item -> dropExpandProceedFlags();
+//    }
+//}
+
+
+//QHash<QString, ModelItem *> * WebFolderItem::foldersList() const {
+//    return folders;
+//}
+//int WebFolderItem::removeFolder(QString name) {
+//    return folders -> remove(name);
+//}

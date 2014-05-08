@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>289</width>
-    <height>191</height>
+    <width>302</width>
+    <height>181</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>20</y>
+     <y>10</y>
      <width>31</width>
      <height>21</height>
     </rect>
@@ -55,8 +55,8 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>20</y>
-     <width>221</width>
+     <y>10</y>
+     <width>241</width>
      <height>20</height>
     </rect>
    </property>
@@ -64,44 +64,112 @@
     <string/>
    </property>
   </widget>
-  <widget class="QCheckBox" name="deleteFile">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>50</y>
-     <width>261</width>
-     <height>17</height>
+     <x>150</x>
+     <y>40</y>
+     <width>141</width>
+     <height>101</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Delete file with item</string>
+   <property name="title">
+    <string>List type</string>
    </property>
+   <widget class="QRadioButton" name="isListRadio">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>List</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="isTreeRadio">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Tree</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="IsOneLevelTreeRadio">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>One Level Tree</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QCheckBox" name="interactive">
+  <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>80</y>
-     <width>261</width>
-     <height>17</height>
+     <y>40</y>
+     <width>141</width>
+     <height>101</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Interactive</string>
+   <property name="title">
+    <string>List options</string>
    </property>
-  </widget>
-  <widget class="QCheckBox" name="playlist">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>110</y>
-     <width>261</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Play as playlist</string>
-   </property>
+   <widget class="QCheckBox" name="playlist">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Play as playlist</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="interactive">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Interactive</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="deleteFile">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>121</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Delete file with item</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

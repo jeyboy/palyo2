@@ -17,7 +17,7 @@
 #define CBHASH
 
   #include <QHash>
-  typedef QHash <QString, bool> CBHash;
+  typedef QHash <QString, int> CBHash;
   Q_DECLARE_METATYPE(CBHash);
 #endif // CBHASH
 

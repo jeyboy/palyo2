@@ -7,11 +7,13 @@ class WebFolderItem : public FolderItem {
 public:
     WebFolderItem();
     WebFolderItem(QJsonObject * hash, ModelItem *parent = 0);
-    WebFolderItem(const QString filePath, ModelItem *parent = 0, int initState = STATE_UNPROCESSED);
+    WebFolderItem(const QString filePath, QString folderTitle = "", ModelItem *parent = 0, int initState = STATE_UNPROCESSED);
     ~WebFolderItem();
 
     void openLocation();
     bool removePhysicalObject() const;
+
+    bool isExist() const;
 
     QJsonObject toJSON();
 

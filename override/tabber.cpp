@@ -7,6 +7,9 @@
 //TODO:// add tab position for each tab
 //    tabber->setTabPosition(TabPosition);
 
+
+//tabber -> tabBar() -> setTabIcon();
+
 void Tabber::setNoTabsStyle() {
     tabber -> setStyleSheet(
         "QTabWidget::pane {"
@@ -30,6 +33,10 @@ void Tabber::handleCurrentChanged(int index) {
 
 void Tabber::handleTabCloseRequested(int index) {
     Tab * del_tab = static_cast<Tab *>(tabber -> widget(index));
+
+    if (del_tab == commonPlaylist)
+        commonPlaylist = 0;
+
     if (Player::instance() -> currentPlaylist() == del_tab -> getList()) {
         Player::instance() -> removePlaylist();
     }
@@ -47,7 +54,7 @@ void Tabber::handleTabCloseRequested(int index) {
 
 Tabber::Tabber(QTabWidget * container) {
     tabber = container;
-
+    commonPlaylist = 0;
 
     setNoTabsStyle();
 //    if (tabber -> count() == 0) {
@@ -74,27 +81,51 @@ int Tabber::addTab(QString name, CBHash settings) {
 }
 
 Tab * Tabber::currentTab() {
-     return static_cast<Tab *>(tabber->currentWidget());
+    return static_cast<Tab *>(tabber -> currentWidget());
+}
+
+Tab * Tabber::commonTab() {
+    if (commonPlaylist == 0) {
+        TabDialog dialog;
+        CBHash settings = dialog.getSettings(); // get default settings
+        settings.insert("p", 1); // is playlist
+        settings.insert("t", 2); // is one level tree
+
+        addTab("Common", settings);
+        commonPlaylist = currentTab();
+    } else {
+        tabber -> setCurrentIndex(tabber -> indexOf(commonPlaylist));
+    }
+
+    return commonPlaylist;
 }
 
 void Tabber::save() {
-    Player::instance() ->stop();
+    Player::instance() -> stop();
     store -> clear();
-    for(int i = 0; i < tabber->count(); i++) {
+    for(int i = 0; i < tabber -> count(); i++) {
         Tab * tab = (Tab*)(tabber -> widget(i));
-        store->write(QString::number(i) + "h", tab -> toJSON(tab -> getName()));
+        if (tab == commonPlaylist) {
+            // logic for common playlist // at this time common list did not save
+        } else {
+            store -> write(QString::number(i) + "h", tab -> toJSON(tab -> getName()));
+        }
     }
 
     store -> save();
 }
 
 void Tabber::load() {
-    if (store->state) {
+    if (store -> state) {
         QJsonObject tab;
 
-        foreach(QString key, store-> keys()) {
+        foreach(QString key, store -> keys()) {
             tab = store -> read(key).toObject();
             Tab * new_tab = new Tab(tab, tabber);
+
+            if (new_tab -> getList() -> isCommon())
+                commonPlaylist = new_tab;
+
             tabber -> addTab(new_tab, tab["n"].toString());
             new_tab -> updateHeader();
         }

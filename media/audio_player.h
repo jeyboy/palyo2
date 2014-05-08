@@ -53,6 +53,10 @@ public:
 
     MediaState state() const;
 
+    bool isPlayed() const;
+    bool isPaused() const;
+    bool isStoped() const;
+
 signals:
     void playbackEnded();
     void stateChanged(MediaState);
