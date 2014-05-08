@@ -33,6 +33,10 @@ void Tabber::handleCurrentChanged(int index) {
 
 void Tabber::handleTabCloseRequested(int index) {
     Tab * del_tab = static_cast<Tab *>(tabber -> widget(index));
+
+    if (del_tab == commonPlaylist)
+        commonPlaylist = 0;
+
     if (Player::instance() -> currentPlaylist() == del_tab -> getList()) {
         Player::instance() -> removePlaylist();
     }
@@ -83,7 +87,11 @@ Tab * Tabber::currentTab() {
 Tab * Tabber::commonTab() {
     if (commonPlaylist == 0) {
         TabDialog dialog;
-        addTab("Common", dialog.getSettings()); // set default settings
+        CBHash settings = dialog.getSettings(); // get default settings
+        settings.insert("p", 1); // is playlist
+        settings.insert("t", 2); // is one level tree
+
+        addTab("Common", settings);
         commonPlaylist = currentTab();
     } else {
         tabber -> setCurrentIndex(tabber -> indexOf(commonPlaylist));

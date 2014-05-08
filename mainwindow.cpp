@@ -607,6 +607,8 @@ void MainWindow::receiveMessage(QString message) {
         urls.append(QUrl::fromLocalFile(path));
 
     tabber -> commonTab() -> getList() -> dropProcession(urls);
+    tabber -> commonTab() -> getList() -> getModel() -> refresh();
+
     if (!Player::instance() -> isPlayed()) {
         tabber -> commonTab() -> getList() -> proceedNext();
     }
