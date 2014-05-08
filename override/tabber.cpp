@@ -7,6 +7,9 @@
 //TODO:// add tab position for each tab
 //    tabber->setTabPosition(TabPosition);
 
+
+//tabber -> tabBar() -> setTabIcon();
+
 void Tabber::setNoTabsStyle() {
     tabber -> setStyleSheet(
         "QTabWidget::pane {"
@@ -74,7 +77,7 @@ int Tabber::addTab(QString name, CBHash settings) {
 }
 
 Tab * Tabber::currentTab() {
-     return static_cast<Tab *>(tabber->currentWidget());
+    return static_cast<Tab *>(tabber -> currentWidget());
 }
 
 void Tabber::save() {
