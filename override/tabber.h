@@ -3,7 +3,9 @@
 
 #include <QWidget>
 #include <QTabWidget>
+
 #include <data_store.h>
+#include "dialogs/tabdialog.h"
 
 //#include <QHash>
 //typedef QHash <char, int> CBHash;
@@ -19,30 +21,20 @@ public:
 
     int addTab(QString name, CBHash settings);
     Tab * currentTab();
+    Tab * commonTab();
     void load();
     void save();
 
 private:
     void setNoTabsStyle();
 
+    Tab * commonPlaylist;
     QTabWidget * tabber;
     DataStore * store;
 
 private slots:
     void handleCurrentChanged(int index);
     void handleTabCloseRequested(int index);
-
-//public:
-//    explicit MainWindow(QWidget *parent = 0);
-//    ~MainWindow();
-
-//    void on_pushButton_clicked();
-
-//    void on_tabWidget_tabCloseRequested(int index);
-
-//private:
-//    Ui::MainWindow *ui;
-//    QMediaPlayer * player;
 };
 
 #endif // TABBER_H

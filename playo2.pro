@@ -56,11 +56,13 @@ SOURCES += main.cpp\
     override/notify_timer.cpp \
     override/clickable_label.cpp \
     override/tabber.cpp \
-    override/tab.cpp
+    override/tab.cpp \
+    single_application.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
     icon_provider.h \
+#    file_registration/file_registration.h \
     globalshortcut/qxtglobal.h \
     globalshortcut/qxtglobalshortcut.h \
     globalshortcut/qxtglobalshortcut_p.h \
@@ -91,7 +93,8 @@ HEADERS  += mainwindow.h \
     override/notify_timer.h \
     override/clickable_label.h\
     override/tabber.h \
-    override/tab.h
+    override/tab.h \
+    single_application.h
 
 unix:!mac {
         QT += gui-private
@@ -100,12 +103,14 @@ unix:!mac {
         LDFLAGS =- lX11
         DEFINES += HAVE_X11
         SOURCES += globalshortcut/qxtglobalshortcut_x11.cpp
+#            file_registration/file_registration_x11.cpp
 
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib/taglib-project.a)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.so)
 }
 win32: {
         SOURCES += globalshortcut/qxtglobalshortcut_win.cpp
+#            file_registration/file_registration_win.cpp
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib/taglib-project.dll)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass_fx.lib)
@@ -113,6 +118,7 @@ win32: {
 }
 mac: {
         SOURCES += globalshortcut/qxtglobalshortcut_mac.cpp
+#            file_registration/file_registration_mac.cpp
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.dylib)
 }
 
