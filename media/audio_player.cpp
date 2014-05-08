@@ -82,6 +82,16 @@ AudioPlayer::MediaState AudioPlayer::state() const {
     return currentState;
 }
 
+bool AudioPlayer::isPlayed() const {
+    return currentState == PlayingState;
+}
+bool AudioPlayer::isPaused() const {
+    return currentState == PausedState;
+}
+bool AudioPlayer::isStoped() const {
+    return currentState == StoppedState;
+}
+
 ////////////////////////////////////////////////////////////////////////
 /// PRIVATE
 ////////////////////////////////////////////////////////////////////////

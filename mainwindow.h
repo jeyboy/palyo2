@@ -58,9 +58,9 @@ protected:
     bool isToolbarNameUniq(QString name);
     void registerFileType(const QString& documentId, const QString& fileTypeName, const QString& fileExtension, qint32 appIconIndex);
 
-private slots:
+public slots:
     void receiveMessage(QString);
-
+private slots:
     void showAttTabDialog(Tab * tab = 0);
     void showAttCurrTabDialog();
 

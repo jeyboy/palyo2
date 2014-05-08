@@ -11,17 +11,25 @@ int main(int argc, char *argv[]) {
 
     SingleApplication app(argc, argv, "bigbugplayo");
 
+    QString message;
+    QStringList list = QCoreApplication::arguments();
+    if (list.length() > 1) {
+        list.removeFirst();
+        message = list.join('|');
+    }
+
     if (app.isRunning()) {
-        QStringList list = QCoreApplication::arguments();
-        if (list.length() > 1) {
-            list.removeFirst();
-            app.sendMessage(list.join('|'));
+        if (!message.isEmpty()) {
+            app.sendMessage(message);
         }
         return 0;
     }
 
     MainWindow * mainWindow = new MainWindow();
     QObject::connect(&app, SIGNAL(messageAvailable(QString)), mainWindow, SLOT(receiveMessage(QString)));
+    if (!message.isEmpty()) {
+        mainWindow -> receiveMessage(message);
+    }
     mainWindow -> show();
 
     return app.exec();
