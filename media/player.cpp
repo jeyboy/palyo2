@@ -51,10 +51,10 @@ void  Player::setLikeButton(QAction * likeAction) {
     connect((QObject *)likeAction, SIGNAL(triggered(bool)), this, SLOT(like()));
 }
 
-void Player::setPlaylist(View * playlist) {
+void Player::setPlaylist(View * newPlaylist) {
    stop();
-   playlist = playlist;
-   played = 0;
+   updatePlaylist(newPlaylist);
+   updateItem(0);
 }
 
 void Player::removePlaylist() {
@@ -66,8 +66,18 @@ void Player::removePlaylist() {
         }
         default: {}
     }
-    playlist = 0;
-    played = 0;
+
+    updatePlaylist(0);
+    updateItem(0);
+}
+
+void Player::updateItem(ModelItem * newItem) {
+    emit itemChanged(played, newItem);
+    played = newItem;
+}
+void Player::updatePlaylist(View * newPlaylist) {
+    emit playlistChanged(playlist, newPlaylist);
+    playlist = newPlaylist;
 }
 
 void Player::updateItemState(bool isPlayed) {
@@ -97,26 +107,8 @@ void Player::playItem(View * itemPlaylist, ModelItem * item) {
 
     setMedia(item -> toUrl());
 
-    played = item;
-    playlist = itemPlaylist;
-    play();
-}
-
-void Player::playFile(QString uri) {
-    switch(state()) {
-        case StoppedState: { break; }
-
-        case PausedState:
-        case PlayingState: {
-            stop();
-            break;
-        }
-    }
-
-    updateItemState(false);
-
-    played = 0;
-    setMedia(QUrl::fromLocalFile(uri));
+    updatePlaylist(itemPlaylist);
+    updateItem(item);
     play();
 }
 

@@ -59,6 +59,7 @@ protected:
     void registerFileType(const QString& documentId, const QString& fileTypeName, const QString& fileExtension, qint32 appIconIndex);
 
 public slots:
+    void outputActiveItem(ModelItem *, ModelItem *);
     void receiveMessage(QString);
 private slots:
     void showAttTabDialog(Tab * tab = 0);

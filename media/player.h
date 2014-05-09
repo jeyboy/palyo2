@@ -21,7 +21,6 @@ public:
 
     static Player * instance();
     void playItem(View * itemPlaylist, ModelItem * item);
-    void playFile(QString uri);
 
     void setActivePlaylist(View * itemPlaylist);
     void setPlayButton(QAction * playAction);
@@ -32,7 +31,7 @@ public:
     void setTrackBar(QSlider * trackBar);
     void setTimePanel(ClickableLabel * timePanel);
 //    void setVideoOutput(QVideoWidget * container);
-    void setPlaylist(View * playlist);
+    void setPlaylist(View * newPlaylist);
     void removePlaylist();
 
     ModelItem * playedItem() const;
@@ -42,6 +41,10 @@ public:
     static void close() {
         delete self;
     }
+
+signals:
+    void playlistChanged(QWidget * from, QWidget * to);
+    void itemChanged(ModelItem * from, ModelItem * to);
 
 public slots:
     void playPause();
@@ -60,6 +63,9 @@ private slots:
     void onMediaStatusChanged(MediaStatus status);
 
 private:
+    void updateItem(ModelItem *);
+    void updatePlaylist(View *);
+
     void updateItemState(bool played);
     void initFormat(int millis);
     QString intToStr(int millis);
