@@ -1,5 +1,6 @@
 #include "folder_item.h"
 #include "web_folder_item.h"
+#include "web_file_item.h"
 #include <QDebug>
 
 ///////////////////////////////////////////////////////////
@@ -34,9 +35,9 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
                 case WEB_FOLDER_ITEM: {
                     new WebFolderItem(&iterObj, this -> toModelItem());
                 break;}
-//                case WEB_FILE_ITEM: {
-//                    new WebFileItem(&iterObj, this -> toModelItem());
-//                break;}
+                case WEB_FILE_ITEM: {
+                    new WebFileItem(&iterObj, this -> toModelItem());
+                break;}
             }
         }
     }

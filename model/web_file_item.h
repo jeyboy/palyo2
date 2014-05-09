@@ -16,6 +16,8 @@ public:
 
     bool isExist() const;
 
+
+    QUrl toUrl();
     QJsonObject toJSON();
 protected:
     QString uid;

@@ -3,10 +3,6 @@
 
 VkView::VkView(QWidget *parent, CBHash settingsSet, QJsonObject *hash)
     : TreeView(dynamic_cast<Model *>(new VkModel(hash)), parent, settingsSet) {
-
-    QJsonObject res = hash -> value("vk").toObject();
-
-    VkApi::instance() -> setParams(res.value("t").toString(), res.value("u").toString(), res.value("e").toString());
 }
 
 VkView::~VkView() {}

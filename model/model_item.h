@@ -57,7 +57,7 @@ public:
     virtual bool isExist() const = 0;
     virtual bool isFolder() const;
 
-    QUrl toUrl();
+    virtual QUrl toUrl();
     virtual QJsonObject toJSON();
     ModelItem * toModelItem();
 

@@ -76,8 +76,8 @@ void VkApi::getAudioList(int uid) {
 //                       "var count = API.audio.getCount()@.response; " +
 //                       "var step = 0;" +
 //                       "while(step < count) { audioList.pust(API.audio.get())};"
-    query.addQueryItem("code", "return {audio_list: API.audio.get({'count': 10, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 10, 'uid': " + getUserID() + "}})}");
-//    query.addQueryItem("code", "return {audio_list: API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 100, 'uid': " + getUserID() + "}})}");
+    query.addQueryItem("code", "return {\"audio_list\": API.audio.get({\"count\": 10, \"uid\": "+getUserID()+"}), \"albums\": API.audio.getAlbums({\"count\": 10, \"uid\": " + getUserID() + "})};");
+//    query.addQueryItem("code", "return {'audio_list': API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), 'albums': API.audio.getAlbums({'count': 100, 'uid': " + getUserID() + "}})};");
     url.setQuery(query);
 
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
@@ -91,7 +91,14 @@ void VkApi::audioListRequest() {
 
     qDebug() << doc;
     qDebug() << reply -> readAll();
-    emit audioListReceived(doc);
+    if (doc.contains("error")) {
+        emit errorReceived(doc);
+    } else {
+
+        doc = doc.value("response").toObject();
+        emit audioListReceived(doc);
+    }
+
     delete reply;
 }
 

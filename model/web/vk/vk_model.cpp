@@ -6,7 +6,10 @@
 VkModel::VkModel(QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) {
     connect(VkApi::instance(), SIGNAL(audioListReceived(QJsonObject &)), this, SLOT(proceedAudioList(QJsonObject &)));
 
-    if (hash == 0) {
+    if (hash != 0) {
+        QJsonObject res = hash -> value("vk").toObject();
+        VkApi::instance() -> setParams(res.value("t").toString(), res.value("u").toString(), res.value("e").toString());
+    } else {
         VkApi::instance() -> getUserAudioList();
     }
 }
@@ -27,21 +30,22 @@ VkModel::~VkModel() {
 //}
 
 void VkModel::proceedAudioList(QJsonObject & hash) {
-    QJsonArray ar = hash.value("folders").toArray();
+    qDebug() << hash.keys();
+    QJsonArray ar = hash.value("albums").toObject().value("items").toArray();
     QJsonObject iterObj;
-    ModelItem * folder;
 
     qDebug() << ar;
 
     if (ar.count() > 0) {
+        ModelItem * folder;
+
         foreach(QJsonValue obj, ar) {
             iterObj = obj.toObject();
-            folder = addFolder(iterObj.value("name").toString(), rootItem);
-            qDebug() << folder -> fullPath();
+            folder = addFolder(iterObj.value("title").toString(), rootItem);
         }
     }
 
-    ar = hash.value("audio_list").toArray();
+    ar = hash.value("audio_list").toObject().value("items").toArray();
 
     qDebug() << ar;
 
@@ -62,4 +66,6 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
             appendRow(newItem -> toModelItem());
         }
     }
+
+    refresh();
 }

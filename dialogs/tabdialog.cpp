@@ -1,6 +1,16 @@
 #include "tabdialog.h"
 #include "ui_tabdialog.h"
 
+CBHash TabDialog::VKSettings() {
+    CBHash res;
+    res.insert("d", 0);
+    res.insert("i", 0);
+    res.insert("p", 1);
+    res.insert("t", 4);
+
+    return res;
+}
+
 TabDialog::TabDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::TabDialog) {
   ui->setupUi(this);

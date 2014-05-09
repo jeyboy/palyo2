@@ -20,6 +20,8 @@ class TabDialog : public QDialog {
   Q_OBJECT
 
 public:
+  static CBHash VKSettings();
+
   explicit TabDialog(QWidget *parent = 0);
   ~TabDialog();
 

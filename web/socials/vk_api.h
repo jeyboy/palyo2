@@ -29,6 +29,7 @@ public:
 
 signals:
     void audioListReceived(QJsonObject &);
+    void errorReceived(QJsonObject &);
 
 protected:
     QString apiVersion() const;

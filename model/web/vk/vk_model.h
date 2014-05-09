@@ -13,7 +13,7 @@ public:
     ~VkModel();
 
 //    ModelItem * buildPath(QString path);
-protected:
+protected slots:
     void proceedAudioList(QJsonObject &);
 };
 

@@ -36,6 +36,10 @@ bool WebFileItem::isExist() const {
 //    return QFile::exists(fullPath());
 }
 
+QUrl WebFileItem::toUrl() {
+    return QUrl(path);
+}
+
 QJsonObject WebFileItem::toJSON() {
     QJsonObject root = ModelItem::toJSON();
 

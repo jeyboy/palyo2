@@ -157,7 +157,16 @@ void AudioPlayer::play() {
         if (mediaUri.isEmpty()) {
             emit mediaStatusChanged(NoMedia);
         } else {
-            if (openChannel(mediaUri.toLocalFile())) {
+            qDebug() << mediaUri.toString();
+
+            if (mediaUri.isLocalFile()) {
+                openChannel(mediaUri.toLocalFile());
+            } else {
+                openRemoteChannel(mediaUri.toString());
+            }
+
+
+            if (chan) {
                 duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
                 durationChanged(duration);
                 BASS_ChannelPlay(chan, true);
