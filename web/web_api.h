@@ -17,7 +17,7 @@ public:
 
     virtual QString name() const = 0;
     virtual QString authUrl() const = 0;
-    virtual QString proceedResponse(const QUrl & url) = 0;
+    virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
     CustomNetworkAccessManager * manager() const;
 

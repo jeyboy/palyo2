@@ -25,11 +25,9 @@ QString VkApi::getUserID() {
     return user_id;
 }
 
-void VkApi::getUserAudioList(int uid) {
-    //TODO: add
-}
-
-
+///////////////////////////////////////////////////////////
+/// AUTH
+///////////////////////////////////////////////////////////
 QString VkApi::authUrl() const {
     QUrl url("https://oauth.vk.com/authorize");
     QUrlQuery queryParams = QUrlQuery();
@@ -46,7 +44,7 @@ QString VkApi::authUrl() const {
 //    return "https://oauth.vk.com/authorize?client_id=4332211&scope=audio,video,friends,offline&redirect_uri=https://oauth.vk.com/blank.html&display=page&v=5.21&response_type=token";
 }
 
-QString VkApi::proceedResponse(const QUrl & url) {
+QString VkApi::proceedAuthResponse(const QUrl & url) {
     QUrlQuery query(url.fragment());
 
     if (query.hasQueryItem("error")) {
@@ -61,6 +59,48 @@ QString VkApi::proceedResponse(const QUrl & url) {
 
     return "";
 }
+
+///////////////////////////////////////////////////////////
+/// AUDIO LIST
+///////////////////////////////////////////////////////////
+
+void VkApi::getUserAudioList(int uid) {
+    getAudioList();
+}
+
+void VkApi::getAudioList(int uid) {
+    QUrl url(getAPIUrl() + "execute");
+    QUrlQuery query = methodParams();
+//    query.addQueryItem("code", "return {audios: API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 100, 'uid': " + getUserID() + "}})}"
+//                       "var audioList = [];" +
+//                       "var count = API.audio.getCount()@.response; " +
+//                       "var step = 0;" +
+//                       "while(step < count) { audioList.pust(API.audio.get())};"
+    query.addQueryItem("code", "return {audio_list: API.audio.get({'count': 10, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 10, 'uid': " + getUserID() + "}})}");
+//    query.addQueryItem("code", "return {audio_list: API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 100, 'uid': " + getUserID() + "}})}");
+    url.setQuery(query);
+
+    QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
+    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListRequest()));
+}
+
+void VkApi::audioListRequest() {
+    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
+
+    QJsonObject doc = toJson(reply -> readAll());
+
+    qDebug() << doc;
+    qDebug() << reply -> readAll();
+    emit audioListReceived(doc);
+    delete reply;
+}
+
+///////////////////////////////////////////////////////////
+
+
+
+
+
 
 
 ///////////////////////////////////////////////////////////
@@ -103,13 +143,7 @@ QString VkApi::getAPIUrl() {
 /// SLOTS
 ///////////////////////////////////////////////////////////
 
-void VkApi::audioListRequest() {
-    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
 
-    QJsonObject doc = toJson(reply -> readAll());
-    qDebug() << doc;
-    qDebug() << reply -> readAll();
-}
 //void VkApi::audioCountRequest() {}
 //void VkApi::audioSearchRequest() {}
 //void VkApi::audioCopyRequest() {}
@@ -126,17 +160,4 @@ void VkApi::audioListRequest() {
 
 ///////////////////////////////////////////////////////////
 
-void VkApi::getAudioList(int uid) {
-    QUrl url(getAPIUrl() + "execute");
-    QUrlQuery query = methodParams();
-//    query.addQueryItem("code", "return {audios: API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 100, 'uid': " + getUserID() + "}})}"
-//                       "var audioList = [];" +
-//                       "var count = API.audio.getCount()@.response; " +
-//                       "var step = 0;" +
-//                       "while(step < count) { audioList.pust(API.audio.get())};"
-    query.addQueryItem("code", "return {audios: API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 100, 'uid': " + getUserID() + "}})}");
-    url.setQuery(query);
 
-    QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
-    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListRequest()));
-}

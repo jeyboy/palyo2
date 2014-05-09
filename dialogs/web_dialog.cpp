@@ -28,7 +28,7 @@ WebDialog::~WebDialog() {
 ////////////////////////////////////////////////////////////
 
 void WebDialog::urlChanged(const QUrl& url) {
-    QString res = api -> proceedResponse(url);
+    QString res = api -> proceedAuthResponse(url);
     qDebug() << "Hula: " << res;
     if (res == "accept") {
         accept();

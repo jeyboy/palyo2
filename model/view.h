@@ -38,7 +38,7 @@ public:
     View(Model * newModel, QWidget * parent, CBHash settinsSet);
     ~View();
 
-    QJsonObject toJSON();
+    virtual QJsonObject toJSON();
 
     void proceedPrev();
     void proceedNext();

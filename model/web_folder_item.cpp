@@ -7,11 +7,11 @@ WebFolderItem::WebFolderItem() : FolderItem(STATE_UNPROCESSED) {
 }
 
 WebFolderItem::WebFolderItem(QJsonObject * hash, ModelItem *parent) : FolderItem(hash, parent) {
-    aid = hash -> value("a").toInt();
+    uid = hash -> value("u").toString();
 }
 
-WebFolderItem::WebFolderItem(QString filePath, QString folderTitle, ModelItem *parent, int initState) : FolderItem(filePath, folderTitle, parent, initState) {
-
+WebFolderItem::WebFolderItem(QString filePath, QString folderID, QString folderTitle, ModelItem *parent, int initState) : FolderItem(filePath, folderTitle, parent, initState) {
+    uid = folderID;
 }
 
 WebFolderItem::~WebFolderItem() {}
@@ -40,6 +40,7 @@ QJsonObject WebFolderItem::toJSON() {
     QJsonObject root = FolderItem::toJSON();
 
     root["i"] = WEB_FOLDER_ITEM;
+    root["u"] = uid;
 
     return root;
 }

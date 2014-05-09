@@ -34,9 +34,9 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
                 case WEB_FOLDER_ITEM: {
                     new WebFolderItem(&iterObj, this -> toModelItem());
                 break;}
-                // case WEB_ITEM: {
-                // new WebItem(&iter_obj, this -> toModelItem());
-                // break;}
+//                case WEB_FILE_ITEM: {
+//                    new WebFileItem(&iterObj, this -> toModelItem());
+//                break;}
             }
         }
     }

@@ -2,16 +2,19 @@
 #define MODEL_ITEM_H
 
 /// JSON names
-/// a - web folder id
-/// t - title
-/// s - state
-/// p - path
-/// e - extension
 /// c - children
+/// d - duration
+/// e - extension
+/// g - genreID
 /// i - item type
 /// l - tab items count
 /// n - tab name
+/// p - path
+/// s - state
 /// set - tab settings
+/// t - title
+/// u - web item id
+/// vk - vk settings
 ///
 
 #include <QFile>
@@ -43,7 +46,7 @@ class ModelItem {
 public:   
     ModelItem(int initState = STATE_DEFAULT);
     ModelItem(QJsonObject * hash, ModelItem * parent = 0);
-    ModelItem(const QString filePath, QString fileName, ModelItem * parent = 0, int initState = STATE_DEFAULT);
+    ModelItem(const QString filePath, QString fileName, ModelItem * parent = 0, int genre_id = -1, int initState = STATE_DEFAULT);
     virtual ~ModelItem();
 
     QString fullPath() const;
@@ -100,6 +103,8 @@ protected:
     QString path;
     QString title;
     QString extension;
+
+    int genreID;
 };
 
 

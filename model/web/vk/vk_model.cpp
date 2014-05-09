@@ -31,9 +31,35 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
     QJsonObject iterObj;
     ModelItem * folder;
 
-    foreach(QJsonValue obj, ar) {
-        iterObj = obj.toObject();
-        folder = addFolder(iterObj.value("name").toString(), rootItem);
-        qDebug() << folder->fullPath();
+    qDebug() << ar;
+
+    if (ar.count() > 0) {
+        foreach(QJsonValue obj, ar) {
+            iterObj = obj.toObject();
+            folder = addFolder(iterObj.value("name").toString(), rootItem);
+            qDebug() << folder -> fullPath();
+        }
+    }
+
+    ar = hash.value("audio_list").toArray();
+
+    qDebug() << ar;
+
+    if (ar.count() > 0) {
+        WebFileItem * newItem;
+
+        foreach(QJsonValue obj, ar) {
+            iterObj = obj.toObject();
+            newItem = new WebFileItem(
+                        iterObj.value("url").toString(),
+                        iterObj.value("artist").toString() + " - " + iterObj.value("title").toString(),
+                        iterObj.value("id").toString(),
+                        root(),
+                        iterObj.value("genre_id").toInt(-1),
+                        iterObj.value("duration").toInt(-1)
+                        );
+
+            appendRow(newItem -> toModelItem());
+        }
     }
 }

@@ -13,6 +13,8 @@
 #include "model_item.h"
 #include "file_item.h"
 #include "folder_item.h"
+#include "web_folder_item.h"
+#include "web_file_item.h"
 
 class ModelItem;
 

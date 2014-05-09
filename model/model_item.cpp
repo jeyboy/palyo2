@@ -19,15 +19,17 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     path = hash -> value("p").toString();
     title = hash -> value("t").toString();
     extension = hash -> value("e").toString();
+    genreID = hash -> value("g").toInt(-1);
 }
 
-ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int initState) {
+ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int genre_id, int initState) {
     parentItem = parent;
     titlesCache = 0;
     state = new ModelItemState(initState);
 
     title = fileName;
     path = filePath;
+    genreID = genre_id;
 //    extension = fileExtension;
 }
 
@@ -85,6 +87,7 @@ QJsonObject ModelItem::toJSON() {
     root["t"] = title;
     root["s"] = state -> getFuncValue();
     root["p"] = path;
+    root["g"] = genreID;
 
     if (!extension.isNull())
         root["e"] = extension;

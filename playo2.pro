@@ -41,6 +41,7 @@ SOURCES += main.cpp\
     model/model_item.cpp \
     model/folder_item.cpp \
     model/web_folder_item.cpp \
+    model/web_file_item.cpp \
     model/file_item.cpp \
     model/level_tree/level_tree_model.cpp \
     model/level_tree/level_tree_view.cpp \
@@ -85,6 +86,7 @@ HEADERS  += mainwindow.h \
     model/model_item.h \
     model/folder_item.h \
     model/web_folder_item.h \
+    model/web_file_item.h \
     model/file_item.h \
     model/level_tree/level_tree_model.h \
     model/level_tree/level_tree_view.h \

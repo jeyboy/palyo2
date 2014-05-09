@@ -8,7 +8,7 @@ class VkApi : public WebApi {
 public:
     QString name() const;
     QString authUrl() const;
-    QString proceedResponse(const QUrl & url);
+    QString proceedAuthResponse(const QUrl & url);
 
     void setParams(QString accessToken, QString userID, QString expiresIn);
 
@@ -20,9 +20,7 @@ public:
 //    void getGroupAudioList(int uid = -1);
 //    void getAlbumAudioList(int uid = -1);
 
-    ~VkApi() {
-
-    }
+    ~VkApi() { }
 
     static VkApi * instance();
     static void close() {

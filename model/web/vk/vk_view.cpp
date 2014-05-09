@@ -2,9 +2,26 @@
 #include <QDebug>
 
 VkView::VkView(QWidget *parent, CBHash settingsSet, QJsonObject *hash)
-    : TreeView(dynamic_cast<Model *>(new VkModel(hash)), parent, settingsSet) {}
+    : TreeView(dynamic_cast<Model *>(new VkModel(hash)), parent, settingsSet) {
+
+    QJsonObject res = hash -> value("vk").toObject();
+
+    VkApi::instance() -> setParams(res.value("t").toString(), res.value("u").toString(), res.value("e").toString());
+}
 
 VkView::~VkView() {}
+
+QJsonObject VkView::toJSON() {
+    QJsonObject res = TreeView::toJSON();
+
+    QJsonObject set = QJsonObject();
+    set["u"] = VkApi::instance() -> getUserID();
+    set["t"] = VkApi::instance() -> getToken();
+    set["e"] = VkApi::instance() -> getExpire();
+
+    res["vk"] = set;
+    return res;
+}
 
 QModelIndex VkView::dropProcession(const QList<QUrl> & list) {
 //    ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path());
