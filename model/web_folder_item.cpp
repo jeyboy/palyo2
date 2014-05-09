@@ -7,51 +7,17 @@ WebFolderItem::WebFolderItem() : FolderItem(STATE_UNPROCESSED) {
 }
 
 WebFolderItem::WebFolderItem(QJsonObject * hash, ModelItem *parent) : FolderItem(hash, parent) {
-    folders = new QHash<QString, ModelItem *>();
-
-    if (parent != 0) {
-        parent -> foldersList() -> insert(title, this -> toModelItem());
-        parent -> appendChild(this -> toModelItem());
-    }
-
-    if (hash -> contains("c")) {
-        QJsonArray ar = hash -> value("c").toArray();
-        QJsonObject iterObj;
-
-        foreach(QJsonValue obj, ar) {
-            iterObj = obj.toObject();
-            switch(iterObj.value("i").toInt()) {
-                case FILE_ITEM: {
-                    new FileItem(&iterObj, this -> toModelItem());
-                break;}
-                case FOLDER_ITEM: {
-                    new FolderItem(&iterObj, this -> toModelItem());
-                break;}
-                // case CUE_ITEM: {
-                // new CueItem(&iter_obj, this -> toModelItem());
-                // break;}
-                // case WEB_ITEM: {
-                // new WebItem(&iter_obj, this -> toModelItem());
-                // break;}
-            }
-        }
-    }
+    aid = hash -> value("a").toInt();
 }
 
 WebFolderItem::WebFolderItem(QString filePath, QString folderTitle, ModelItem *parent, int initState) : FolderItem(filePath, folderTitle, parent, initState) {
-    folders = new QHash<QString, ModelItem *>();
-    title = filePath;
 
-    if (parent != 0) {
-        parent -> foldersList() -> insert(title, this -> toModelItem());
-        parent -> appendChild(this -> toModelItem());
-    }
 }
 
-WebFolderItem::~WebFolderItem() {
-    qDeleteAll(childItems);
+WebFolderItem::~WebFolderItem() {}
 
-    delete folders;
+QUrl WebFolderItem::toUrl() {
+    return QUrl(path);
 }
 
 void WebFolderItem::openLocation() {
@@ -59,37 +25,24 @@ void WebFolderItem::openLocation() {
 }
 
 bool WebFolderItem::removePhysicalObject() const {
-    QDir delDir(fullPath());
-    if (fullPath().split('/').length() >= 2) {
-        return delDir.removeRecursively();
-    }
+    //TODO: add realization
 
     return false;
 }
 
-bool WebFolderItem::isExist() const {
-    return QDir(fullPath()).exists();
+bool WebFolderItem::isExist() const {   
+    //TODO: add realization
+
+    return true;
 }
 
-//bool WebFolderItem::isFolder() const {
-//    return true;
-//}
+QJsonObject WebFolderItem::toJSON() {
+    QJsonObject root = FolderItem::toJSON();
 
-//QJsonObject WebFolderItem::toJSON() {
-//    QJsonObject root = ModelItem::toJSON();
+    root["i"] = WEB_FOLDER_ITEM;
 
-//    root["i"] = FOLDER_ITEM;
-
-//    if (childItems.length() > 0) {
-//        QJsonArray ar = QJsonArray();
-//        for(int i=0; i < childItems.length(); i++)
-//            ar.append(childItems.at(i) -> toJSON());
-
-//        root["c"] = ar;
-//    }
-
-//    return root;
-//}
+    return root;
+}
 
 
 //QList<ModelItem *> * WebFolderItem::childItemsList() {

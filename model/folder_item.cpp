@@ -1,4 +1,5 @@
 #include "folder_item.h"
+#include "web_folder_item.h"
 #include <QDebug>
 
 ///////////////////////////////////////////////////////////
@@ -26,10 +27,13 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
                 break;}
                 case FOLDER_ITEM: {
                     new FolderItem(&iterObj, this -> toModelItem());
-                break;}
+                break;}               
                 // case CUE_ITEM: {
                 // new CueItem(&iter_obj, this -> toModelItem());
                 // break;}
+                case WEB_FOLDER_ITEM: {
+                    new WebFolderItem(&iterObj, this -> toModelItem());
+                break;}
                 // case WEB_ITEM: {
                 // new WebItem(&iter_obj, this -> toModelItem());
                 // break;}

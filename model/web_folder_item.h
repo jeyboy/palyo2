@@ -10,6 +10,7 @@ public:
     WebFolderItem(const QString filePath, QString folderTitle = "", ModelItem *parent = 0, int initState = STATE_UNPROCESSED);
     ~WebFolderItem();
 
+    QUrl toUrl();
     void openLocation();
     bool removePhysicalObject() const;
 
@@ -17,9 +18,9 @@ public:
 
     QJsonObject toJSON();
 
-    void insertChild(int pos, ModelItem *item);
-    void appendChild(ModelItem *child);
-    bool removeChildren(int position, int count);
+//    void insertChild(int pos, ModelItem *item);
+//    void appendChild(ModelItem *child);
+//    bool removeChildren(int position, int count);
 
 protected:
     int aid;

@@ -2,6 +2,7 @@
 #define MODEL_ITEM_H
 
 /// JSON names
+/// a - web folder id
 /// t - title
 /// s - state
 /// p - path
@@ -33,7 +34,8 @@
 #define FILE_ITEM 100
 #define FOLDER_ITEM 200
 #define CUE_ITEM 300
-#define WEB_ITEM 400
+#define WEB_FOLDER_ITEM 400
+#define WEB_FILE_ITEM 500
 
 //TODO: add list of extensions for extension serialization to extension index in list
 
