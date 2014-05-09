@@ -42,7 +42,7 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
     }
 }
 
-FolderItem::FolderItem(const QString folderPath, QString folderTitle, ModelItem *parent, int initState) : ModelItem(folderPath, folderTitle, parent, initState) {
+FolderItem::FolderItem(const QString folderPath, QString folderTitle, ModelItem *parent, int initState) : ModelItem(folderPath, folderTitle, parent, -1, initState) {
     folders = new QHash<QString, ModelItem *>();
 
     if (title.isEmpty())

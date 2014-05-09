@@ -9,6 +9,10 @@ void Tab::init(CBHash params, QJsonObject * hash) {
         case 2: {
             list = (View *)new LevelTreeView(this, params, hash);
         break;}
+        case 4: {
+            params["p"] = 1; // set to playlist
+            list = (View *)new VkView(this, params, hash);
+        break;}
         default: {
             list = (View *)new TreeView(this, params, hash);
         break;}

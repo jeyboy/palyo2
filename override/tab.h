@@ -8,6 +8,7 @@
 #include "model/list/list_view.h"
 #include "model/tree/tree_view.h"
 #include "model/level_tree/level_tree_view.h"
+#include "model/web/vk/vk_view.h"
 
 #include "model/model.h"
 #include "model/model_item.h"

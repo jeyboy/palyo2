@@ -606,8 +606,8 @@ void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
 void MainWindow::showVKTabDialog() {
     WebDialog dialog(this, VkApi::instance(), "VK auth");
     if (dialog.exec() == QDialog::Accepted) {
-        qDebug() << "token " << VkApi::instance() -> getToken();
-        qDebug() << "user " << VkApi::instance() -> getUserID();
+        TabDialog dialog(this);
+        tabber -> addTab("VK", dialog.getSettings());
     } else {
         QMessageBox::information(this, "VK", VkApi::instance() -> getError());
     }
