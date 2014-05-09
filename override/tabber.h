@@ -33,6 +33,7 @@ private:
     DataStore * store;
 
 private slots:
+    void updateActiveTab(QWidget *, QWidget *);
     void handleCurrentChanged(int index);
     void handleTabCloseRequested(int index);
 };

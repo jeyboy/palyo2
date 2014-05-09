@@ -140,6 +140,8 @@ MainWindow::MainWindow(QWidget *parent) :
     registrateTray();
 
     QApplication::setWindowIcon(QIcon(":icon"));
+
+    connect(Player::instance(), SIGNAL(itemChanged(ModelItem *, ModelItem *)), this, SLOT(outputActiveItem(ModelItem *, ModelItem *)));
 }
 
 void MainWindow::registrateGlobalKeys() {
@@ -164,6 +166,7 @@ void MainWindow::registrateTray() {
     m_tray.setIcon(QIcon(":/icon"));
 
     if(m_tray.isSystemTrayAvailable()) {
+//        m_tray.showMessage();
         QMenu *pTrayMenu = new QMenu();
 //        pTrayMenu->addAction("Add snippet", this, SLOT(onAddSnippet()),Qt::ControlModifier + Qt::Key_D);
 //        pTrayMenu->addAction("Search", this, SLOT(onSearch()),Qt::MetaModifier + Qt::Key_V);
@@ -603,6 +606,7 @@ void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
     }
 }
 
+
 void MainWindow::showVKTabDialog() {
     WebDialog dialog(this, VkApi::instance(), "VK auth");
     if (dialog.exec() == QDialog::Accepted) {
@@ -610,6 +614,11 @@ void MainWindow::showVKTabDialog() {
     } else {
         QMessageBox::information(this, "VK", VkApi::instance() -> getError());
     }
+}
+
+void MainWindow::outputActiveItem(ModelItem *, ModelItem * to) {
+    if (to)
+        m_tray.showMessage("Next item ...", to -> data(TITLEID).toString());
 }
 
 void MainWindow::receiveMessage(QString message) {

@@ -21,6 +21,20 @@ void Tabber::setNoTabsStyle() {
     );
 }
 
+void Tabber::updateActiveTab(QWidget * last, QWidget * current) {
+    int index;
+
+    if (last != 0) {
+        index = tabber -> indexOf(last -> parentWidget());
+        tabber -> setTabIcon(index, QIcon());
+    }
+
+    if (current != 0) {
+        index = tabber -> indexOf(current -> parentWidget());
+        tabber -> setTabIcon(index, QIcon(":/active_tab"));
+    }
+}
+
 void Tabber::handleCurrentChanged(int index) {
     if (index == -1) {
         Player::instance() -> setActivePlaylist(0);
@@ -63,6 +77,7 @@ Tabber::Tabber(QTabWidget * container) {
 
     connect(tabber, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
     connect(tabber, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
+    connect(Player::instance(), SIGNAL(playlistChanged(QWidget *, QWidget *)), this, SLOT(updateActiveTab(QWidget *, QWidget *)));
 
     store = new DataStore("tabs.json");
     load();
