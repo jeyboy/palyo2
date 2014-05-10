@@ -135,7 +135,11 @@ bool View::isPlaylist() {
 }
 
 bool View::isCommon() {
-    return settings["c"];
+    return settings["c"] == 1;
+}
+
+bool View::isEditable() {
+    return settings["t"] < 4 && !isCommon();
 }
 
 Model * View::getModel() const {

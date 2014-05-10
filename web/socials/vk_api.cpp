@@ -71,13 +71,14 @@ void VkApi::getUserAudioList(int uid) {
 void VkApi::getAudioList(int uid) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams();
-//    query.addQueryItem("code", "return {audios: API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), albums: API.audio.getAlbums({'count: 100, 'uid': " + getUserID() + "}})}"
-//                       "var audioList = [];" +
-//                       "var count = API.audio.getCount()@.response; " +
-//                       "var step = 0;" +
-//                       "while(step < count) { audioList.pust(API.audio.get())};"
-    query.addQueryItem("code", "return {\"audio_list\": API.audio.get({\"count\": 10, \"uid\": "+getUserID()+"}), \"albums\": API.audio.getAlbums({\"count\": 10, \"uid\": " + getUserID() + "})};");
-//    query.addQueryItem("code", "return {'audio_list': API.audio.get({'count': 6000, 'uid': "+getUserID()+"}), 'albums': API.audio.getAlbums({'count': 100, 'uid': " + getUserID() + "}})};");
+    query.addQueryItem("code",
+                       "var folders = API.audio.getAlbums({count: 24, uid: " + getUserID() + "}).items;" +
+                       "var sort_by_folders = {};" +
+                       "while(folders.length > 0) { var curr = folders.pop();  sort_by_folders.push(" +
+                       "{folder_id: curr.id, title: curr.title, items: API.audio.get({album_id: curr.id}).items});" +
+                       "};" +
+                       "return {\"audio_list\": API.audio.get({count: 6000, uid: " + getUserID() + "}), albums: sort_by_folders};"
+                       );
     url.setQuery(query);
 
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
@@ -89,8 +90,6 @@ void VkApi::audioListRequest() {
 
     QJsonObject doc = toJson(reply -> readAll());
 
-    qDebug() << doc;
-    qDebug() << reply -> readAll();
     if (doc.contains("error")) {
         emit errorReceived(doc);
     } else {

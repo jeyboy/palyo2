@@ -36,6 +36,8 @@ bool WebFolderItem::isExist() const {
     return true;
 }
 
+bool WebFolderItem::isRemote() const { return true; }
+
 QJsonObject WebFolderItem::toJSON() {
     QJsonObject root = FolderItem::toJSON();
 

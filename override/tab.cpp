@@ -70,3 +70,7 @@ QJsonObject Tab::toJSON(QString name) {
     res["n"] = name;
     return res;
 }
+
+bool Tab::isEditable() const {
+    return list -> isEditable();
+}

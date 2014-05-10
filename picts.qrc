@@ -29,5 +29,6 @@
         <file alias="tab_back">icons/tree_back.png</file>
         <file alias="add_vk">icons/add_vk.png</file>
         <file alias="active_tab">icons/active_tab.png</file>
+        <file alias="remote">icons/remote.png</file>
     </qresource>
 </RCC>

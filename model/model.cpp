@@ -43,8 +43,10 @@ QVariant Model::data(const QModelIndex &index, int role) const {
            //pixmap.fill(color);
            //QIcon icon(pixmap);
 
-           if (item -> getState() -> isNotExist())
+           if (item -> getState() -> isNotExist()) {
+               qDebug() << "Not exist";
                return IconProvider::missedIcon();
+           }
            else if (item -> isFolder())
                return QVariant();
 //               return IconProvider::fileIcon("", "");

@@ -47,6 +47,7 @@ public:
     bool isRemoveFileWithItem();
     bool isPlaylist();
     bool isCommon();
+    bool isEditable();
 
 
 //    template<class T> T * getModel() const;

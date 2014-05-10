@@ -72,9 +72,9 @@ void ModelItem::openLocation() {
     }
 }
 
-bool ModelItem::isFolder() const {
-    return false;
-}
+bool ModelItem::isRemote() const { return false; }
+
+bool ModelItem::isFolder() const { return false; }
 
 
 QUrl ModelItem::toUrl() {

@@ -55,6 +55,7 @@ public:
     virtual bool removePhysicalObject() const = 0;
 
     virtual bool isExist() const = 0;
+    virtual bool isRemote() const;
     virtual bool isFolder() const;
 
     virtual QUrl toUrl();

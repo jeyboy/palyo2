@@ -105,6 +105,7 @@ Tab * Tabber::commonTab() {
         CBHash settings = dialog.getSettings(); // get default settings
         settings.insert("p", 1); // is playlist
         settings.insert("t", 2); // is one level tree
+        settings.insert("c", 1); // is common
 
         addTab("Common", settings);
         commonPlaylist = currentTab();

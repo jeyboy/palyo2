@@ -15,7 +15,7 @@ public:
     bool removePhysicalObject() const;
 
     bool isExist() const;
-
+    bool isRemote() const;
 
     QUrl toUrl();
     QJsonObject toJSON();

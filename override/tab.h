@@ -37,6 +37,8 @@ public:
     View * getList() const;
     QJsonObject toJSON(QString name);
 
+    bool isEditable() const;
+
 public slots:
     void updateHeader(int new_count = -1);
 

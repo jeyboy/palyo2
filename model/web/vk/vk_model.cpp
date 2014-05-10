@@ -29,10 +29,16 @@ VkModel::~VkModel() {
 //    return curr;
 //}
 
+
+//TODO: extend folder creation for new params
+//TODO: create separate items for vk ?
+
 void VkModel::proceedAudioList(QJsonObject & hash) {
     qDebug() << hash.keys();
-    QJsonArray ar = hash.value("albums").toObject().value("items").toArray();
-    QJsonObject iterObj;
+    QJsonArray filesAr, ar = hash.value("albums").toArray();
+//    folder_id: curr, title: curr.title, items: API.audio.get({album_id: curr}).items
+    QJsonObject iterObj, fileIterObj;
+    WebFileItem * newItem;
 
     qDebug() << ar;
 
@@ -42,6 +48,24 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
         foreach(QJsonValue obj, ar) {
             iterObj = obj.toObject();
             folder = addFolder(iterObj.value("title").toString(), rootItem);
+
+            filesAr = iterObj.value("items").toArray();
+
+            qDebug() << filesAr;
+
+            foreach(QJsonValue obj, filesAr) {
+                fileIterObj = obj.toObject();
+                newItem = new WebFileItem(
+                            fileIterObj.value("url").toString(),
+                            fileIterObj.value("artist").toString() + " - " + fileIterObj.value("title").toString(),
+                            fileIterObj.value("id").toString(),
+                            folder,
+                            fileIterObj.value("genre_id").toInt(-1),
+                            fileIterObj.value("duration").toInt(-1)
+                            );
+
+                appendRow(newItem -> toModelItem());
+            }
         }
     }
 
@@ -50,8 +74,6 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
     qDebug() << ar;
 
     if (ar.count() > 0) {
-        WebFileItem * newItem;
-
         foreach(QJsonValue obj, ar) {
             iterObj = obj.toObject();
             newItem = new WebFileItem(

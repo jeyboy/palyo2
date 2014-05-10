@@ -665,5 +665,8 @@ void MainWindow::showAttTabDialog(Tab * tab) {
 }
 
 void MainWindow::showAttCurrTabDialog() {
-    emit showAttTabDialog(tabber -> currentTab());
+    if (tabber -> currentTab() -> isEditable())
+        emit showAttTabDialog(tabber -> currentTab());
+    else
+        QMessageBox::warning(this, "Settings", "This tab type did not have any settings...");
 }
