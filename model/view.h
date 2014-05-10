@@ -62,6 +62,8 @@ public:
     ModelItem * removeCandidate(ModelItem * item);
     void removeItem(ModelItem * item);
 
+    int itemsCount() const;
+
     virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
 public slots:
     void updateSelection(QModelIndex candidate);

@@ -5,10 +5,9 @@
 #-------------------------------------------------
 
 QT       += core gui webkitwidgets
+QT       += multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-#QT       += multimedia multimediawidgets
 
 TARGET = playo2
 TEMPLATE = app

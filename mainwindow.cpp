@@ -617,8 +617,8 @@ void MainWindow::showVKTabDialog() {
 }
 
 void MainWindow::outputActiveItem(ModelItem *, ModelItem * to) {
-    if (to)
-        m_tray.showMessage("Next item ...", to -> data(TITLEID).toString());
+    if (to && !this -> isActiveWindow())
+        m_tray.showMessage("(" + QString::number(tabber -> currentTab() -> getList() -> itemsCount()) + ") Now played:", to -> data(TITLEID).toString(), QSystemTrayIcon::Information, 20000);
 }
 
 void MainWindow::receiveMessage(QString message) {
