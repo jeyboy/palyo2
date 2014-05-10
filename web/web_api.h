@@ -19,7 +19,16 @@ public:
     virtual QString authUrl() const = 0;
     virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
+    void downloadFile(QUrl & uri, QUrl & savePath);
+
     CustomNetworkAccessManager * manager() const;
+
+protected slots:
+    void downloadConnectionResponsed();
+
+signals:
+    void downloadProgress(QUrl & uri, int percentDone);
+    void downloadFinished(QUrl & uri);
 
 protected:
     QJsonObject toJson(QByteArray data);
@@ -29,6 +38,8 @@ protected:
     CustomNetworkAccessManager * netManager;
 
     QString error;
+
+    QHash<void *, QUrl> * downloads;
 };
 
 #endif // WEB_API_H

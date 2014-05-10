@@ -2,6 +2,7 @@
 
 WebApi::WebApi() {
     netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
+    downloads = new QHash<void *, QUrl>();
 }
 
 WebApi::~WebApi() {
@@ -10,6 +11,19 @@ WebApi::~WebApi() {
 
 QString WebApi::getError() {
     return error;
+}
+
+void WebApi::downloadFile(QUrl & uri, QUrl & savePath) {
+    QNetworkReply * m_http = manager() -> get(QNetworkRequest(uri));
+    downloads -> insert(m_http, savePath);
+    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
+}
+
+void WebApi::downloadConnectionResponsed() {
+    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
+    QUrl savePath = downloads -> value(reply);
+
+    //TODO: finish with download
 }
 
 CustomNetworkAccessManager * WebApi::manager() const {
