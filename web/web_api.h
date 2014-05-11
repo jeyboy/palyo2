@@ -5,7 +5,19 @@
 //#include <QtXml/QDomDocument>
 #include <QJsonDocument>
 #include <QUrl>
+#include <QtConcurrent/QtConcurrent>
+
 #include "override/custom_network_access_manager.h"
+
+struct DownloadPosition {
+    DownloadPosition(void * obj, QUrl path) {
+        item = obj;
+        savePath = path;
+    }
+
+    void * item;
+    QUrl savePath;
+};
 
 class WebApi : public QObject {
     Q_OBJECT   
@@ -19,7 +31,8 @@ public:
     virtual QString authUrl() const = 0;
     virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
-    void downloadFile(QUrl uri, QUrl savePath);
+    void downloadFile(QObject * caller, void * item, QUrl uri, QUrl savePath);
+    void downloadRoutine(QNetworkReply * reply, DownloadPosition * position);
 
     CustomNetworkAccessManager * manager() const;
 
@@ -27,9 +40,9 @@ protected slots:
     void downloadConnectionResponsed();
 
 signals:
-    void downloadProgress(QUrl & uri, int percentDone);
-    void downloadFinished(QUrl & uri);
-    void downloadError(QUrl & uri, QString message);
+    void downloadProgress(void * item, int percentDone);
+    void downloadFinished(void * item, bool success);
+    void downloadError(void * item, QString message);
 
 protected:
     QJsonObject toJson(QByteArray data);
@@ -40,7 +53,7 @@ protected:
 
     QString error;
 
-    QHash<void *, QUrl> * downloads;
+    QHash<void *, DownloadPosition *> * downloads;
 };
 
 #endif // WEB_API_H

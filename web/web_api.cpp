@@ -2,7 +2,7 @@
 
 WebApi::WebApi() {
     netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
-    downloads = new QHash<void *, QUrl>();
+    downloads = new QHash<void *, DownloadPosition *>();
 }
 
 WebApi::~WebApi() {
@@ -13,30 +13,31 @@ QString WebApi::getError() {
     return error;
 }
 
-void WebApi::downloadFile(QUrl uri, QUrl savePath) {
+void WebApi::downloadFile(QObject * caller, void * item, QUrl uri, QUrl savePath) {
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(uri));
-    downloads -> insert(m_http, savePath);
+    downloads -> insert(m_http, new DownloadPosition(item, savePath));
     QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
+    QObject::connect(this, SIGNAL(downloadFinished(void *, bool)), caller, SLOT(itemDownloadFinished(void *, bool)));
+    QObject::connect(this, SIGNAL(downloadProgress(void *, int)), caller, SLOT(itemDownloadProgress(void *, int)));
 }
 
-void WebApi::downloadConnectionResponsed() {
-    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
-    QUrl savePath = downloads -> value(reply);
-
+void WebApi::downloadRoutine(QNetworkReply * reply, DownloadPosition * position) {
     qDebug() << reply -> bytesAvailable();
     qDebug() << reply -> isSequential();
 
-    QFile file(savePath.toLocalFile());
+    QFile file(position -> savePath.toLocalFile());
 
 //    QIODevice::Append | QIODevice::Unbuffered
 
     if (!file.open(QIODevice::WriteOnly)) {
-        emit downloadError(savePath, "File did not opened");
+        emit downloadError(position -> item, "File did not created");
+        emit downloadFinished(position -> item, false);
         return;
     }
 
     if (!file.resize(reply -> bytesAvailable())) {
-        emit downloadError(savePath, "Empty space on your device is not enough");
+        emit downloadError(position -> item, "Empty space on your device is not enough");
+        emit downloadFinished(position -> item, false);
         return;
     }
 
@@ -51,8 +52,7 @@ void WebApi::downloadConnectionResponsed() {
             pos += buffer.length();
             file.write(buffer);
 
-            qDebug() << (((pos/limit) * 100)) << "%";
-            emit downloadProgress(savePath, (pos/limit) * 100);
+            emit downloadProgress(position -> item, (pos/limit) * 100);
         }
 
         catch(...) {
@@ -62,8 +62,15 @@ void WebApi::downloadConnectionResponsed() {
 
     file.close();
     reply -> close();
-    emit downloadFinished(savePath);
+    emit downloadFinished(position -> item, true);
     delete reply;
+}
+
+void WebApi::downloadConnectionResponsed() {
+    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
+    DownloadPosition * position = downloads -> value(reply);
+
+    QtConcurrent::run(this, &WebApi::downloadRoutine, reply, position);
 }
 
 CustomNetworkAccessManager * WebApi::manager() const {

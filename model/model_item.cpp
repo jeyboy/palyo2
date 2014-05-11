@@ -10,6 +10,7 @@ ModelItem::ModelItem(int initState) {
     path = QString();
     title = QString("--(O_o)--");
     extension = QString();
+    progress = -1;
 }
 
 ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
@@ -20,6 +21,7 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     title = hash -> value("t").toString();
     extension = hash -> value("e").toString();
     genreID = hash -> value("g").toInt(-1);
+    progress = -1;
 }
 
 ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int genre_id, int initState) {
@@ -30,6 +32,7 @@ ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * paren
     title = fileName;
     path = filePath;
     genreID = genre_id;
+    progress = -1;
 //    extension = fileExtension;
 }
 
@@ -60,10 +63,14 @@ QString ModelItem::fullPath() const {
 }
 
 QString ModelItem::getDownloadTitle() const {
+    QString ret;
+
     if (!extension.isEmpty())
-        return title + '.' + extension;
+        ret = title + '.' + extension;
     else
-        return getTitle();
+        ret = getTitle();
+
+    return ret.mid(0, 240);
 }
 
 QString ModelItem::getTitle() const {
@@ -83,6 +90,14 @@ bool ModelItem::isRemote() const { return false; }
 
 bool ModelItem::isFolder() const { return false; }
 
+
+int ModelItem::getDownloadProgress() const {
+    return progress;
+}
+
+void ModelItem::setDownloadProgress(int percentageVal) {
+    progress = percentageVal;
+}
 
 QUrl ModelItem::toUrl() {
     return QUrl::fromLocalFile(fullPath());

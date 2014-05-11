@@ -67,6 +67,9 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case Qt::UserRole:
             item = getItem(index);
             return item -> getState() -> currStateValue();
+        case Qt::UserRole + 1:
+            item = getItem(index);
+            return QVariant(item -> getDownloadProgress());
 
         default: return QVariant();
     }
@@ -223,6 +226,7 @@ void Model::refresh() {
 void Model::refreshItem(ModelItem * item) {
     QModelIndex ind = index(item);
     if (ind.isValid()) {
+        qDebug() << "update" << item -> getDownloadProgress();
 //        emit dataChanged(ind.parent(), ind);
         emit dataChanged(ind, ind);
     }
@@ -289,6 +293,18 @@ void Model::expanded(const QModelIndex &index) {
 void Model::collapsed(const QModelIndex &index) {
     ModelItem * item = getItem(index);
     item -> getState() -> unsetExpanded();
+}
+
+void Model::itemDownloadProgress(void * itemObj, int percentage) {
+    ModelItem * item = (ModelItem *)itemObj;
+    item -> setDownloadProgress(percentage);
+    qDebug() << percentage;
+    refreshItem(item);
+}
+void Model::itemDownloadFinished(void * itemObj, bool success) {
+    ModelItem * item = (ModelItem *)itemObj;
+    item -> setDownloadProgress(-1);
+    refreshItem(item);
 }
 
 /////////////////////////////////////////////////////////

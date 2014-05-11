@@ -311,7 +311,7 @@ void View::downloadFromLocation() {
         if (!dir.exists()) {
             dir.mkpath(".");
         }
-        model -> getApi() -> downloadFile(item -> toUrl(), QUrl::fromLocalFile(downloadPath() + item -> getDownloadTitle()));
+        model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(downloadPath() + item -> getDownloadTitle()));
     }
 }
 

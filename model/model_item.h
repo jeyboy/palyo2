@@ -59,6 +59,9 @@ public:
     virtual bool isRemote() const;
     virtual bool isFolder() const;
 
+    int getDownloadProgress() const;
+    void setDownloadProgress(int percentageVal);
+
     virtual QUrl toUrl();
     virtual QJsonObject toJSON();
     ModelItem * toModelItem();
@@ -97,6 +100,7 @@ public:
 protected:
     virtual QList<ModelItem *> * childItemsList(); // stub
 
+    qint8 progress;
     QList<QString> * titlesCache;
 
     ModelItem * parentItem;
