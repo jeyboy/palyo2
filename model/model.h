@@ -8,7 +8,8 @@
 #include <QMimeData>
 #include <QUrl>
 
-#include "icon_provider.h"
+#include "misc/icon_provider.h"
+#include "web/web_api.h"
 
 #include "model_item.h"
 #include "file_item.h"
@@ -59,6 +60,7 @@ public:
     QStringList mimeTypes() const;
     QMimeData * mimeData(const QModelIndexList &indexes) const;
 
+    virtual WebApi * getApi() { return 0; } //stub
 signals:
     void itemsCountChanged(int newCount);
     void expandNeeded(const QModelIndex &index) const;

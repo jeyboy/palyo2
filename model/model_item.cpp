@@ -59,6 +59,13 @@ QString ModelItem::fullPath() const {
 //    return path_buff.mid(1);
 }
 
+QString ModelItem::getDownloadTitle() const {
+    if (!extension.isEmpty())
+        return title + '.' + extension;
+    else
+        return getTitle();
+}
+
 QString ModelItem::getTitle() const {
     return title;
 }

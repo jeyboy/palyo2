@@ -16,7 +16,7 @@ WebFileItem::WebFileItem(QString filePath, QString fileName, QString fileID, Mod
 
     uid = fileID;
     duration = itemDuration;
-//    extension = "mp3";
+    extension = "mp3";
 
     if (parent != 0) {
        parent -> insertChild(0, this);

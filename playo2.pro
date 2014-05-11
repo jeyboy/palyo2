@@ -27,7 +27,8 @@ CONFIG += static thread windows x11 sse sse2 x86
 SOURCES += main.cpp\
     mainwindow.cpp \
     data_store.cpp \
-    icon_provider.cpp \
+    misc/icon_provider.cpp \
+    misc/file_size.cpp \
     web/web_api.cpp\
     web/socials/vk_api.cpp\
     globalshortcut/qxtglobalshortcut.cpp \
@@ -69,7 +70,8 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     data_store.h \
-    icon_provider.h \
+    misc/icon_provider.h \
+    misc/file_size.h \
     web/web_api.h\
     web/socials/vk_api.h\
 #    file_registration/file_registration.h \

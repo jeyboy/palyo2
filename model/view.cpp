@@ -278,11 +278,19 @@ void View::onDoubleClick(const QModelIndex &index) {
 void View::showContextMenu(const QPoint& pnt) {
     QList<QAction *> actions;
     QModelIndex ind = indexAt(pnt);
+    ModelItem * item = model -> getItem(ind);
+    QAction * openAct;
 
-    if (ind.isValid() && !model -> getItem(ind) -> fullPath().isEmpty()) {
-        QAction * openAct = new QAction(QIcon(":/open"), "Open location", this);
+    if (ind.isValid() && !item -> fullPath().isEmpty()) {
+        openAct = new QAction(QIcon(":/open"), "Open location", this);
         connect(openAct, SIGNAL(triggered(bool)), this, SLOT(openLocation()));
         actions.append(openAct);
+
+        if (item -> isRemote()) {
+            openAct = new QAction(QIcon(":/download"), "Download", this);
+            connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFromLocation()));
+            actions.append(openAct);
+        }
     }
 
     if (actions.count() > 0)
@@ -294,9 +302,26 @@ void View::openLocation() {
     item -> openLocation();
 }
 
+void View::downloadFromLocation() {
+    ModelItem * item = model -> getItem(this -> currentIndex());
+    if (model -> getApi() == 0)
+        qDebug() << "Some shit happened :(";
+    else {
+        QDir dir(downloadPath());
+        if (!dir.exists()) {
+            dir.mkpath(".");
+        }
+        model -> getApi() -> downloadFile(item -> toUrl(), QUrl::fromLocalFile(downloadPath() + item -> getDownloadTitle()));
+    }
+}
+
 //////////////////////////////////////////////////////
 /// PROTECTED
 //////////////////////////////////////////////////////
+
+QString View::downloadPath() const {
+    return QCoreApplication::applicationDirPath() + "/downloads/";
+}
 
 ModelItem * View::activeItem(bool next) {
     ModelItem * item = 0;

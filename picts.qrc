@@ -30,5 +30,6 @@
         <file alias="add_vk">icons/add_vk.png</file>
         <file alias="active_tab">icons/active_tab.png</file>
         <file alias="remote">icons/remote.png</file>
+        <file alias="download">icons/download.png</file>
     </qresource>
 </RCC>

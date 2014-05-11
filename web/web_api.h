@@ -19,7 +19,7 @@ public:
     virtual QString authUrl() const = 0;
     virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
-    void downloadFile(QUrl & uri, QUrl & savePath);
+    void downloadFile(QUrl uri, QUrl savePath);
 
     CustomNetworkAccessManager * manager() const;
 
@@ -29,6 +29,7 @@ protected slots:
 signals:
     void downloadProgress(QUrl & uri, int percentDone);
     void downloadFinished(QUrl & uri);
+    void downloadError(QUrl & uri, QString message);
 
 protected:
     QJsonObject toJson(QByteArray data);

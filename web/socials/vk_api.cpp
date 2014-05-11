@@ -98,6 +98,7 @@ void VkApi::audioListRequest() {
         emit audioListReceived(doc);
     }
 
+    reply -> close();
     delete reply;
 }
 

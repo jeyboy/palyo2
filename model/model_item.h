@@ -50,6 +50,7 @@ public:
     virtual ~ModelItem();
 
     QString fullPath() const;
+    QString getDownloadTitle() const;
     QString getTitle() const;
     void openLocation();
     virtual bool removePhysicalObject() const = 0;

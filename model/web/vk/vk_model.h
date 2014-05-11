@@ -13,6 +13,7 @@ public:
     ~VkModel();
 
 //    ModelItem * buildPath(QString path);
+    WebApi * getApi() { return VkApi::instance(); }
 protected slots:
     void proceedAudioList(QJsonObject &);
 };

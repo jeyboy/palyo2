@@ -72,8 +72,11 @@ protected slots:
     void onDoubleClick(const QModelIndex &index);
     void showContextMenu(const QPoint &);
     void openLocation();
+    void downloadFromLocation();
 
 protected:
+    QString downloadPath() const;
+
     ModelItem * activeItem(bool next = true);
 //    ModelItem * nextItem(QModelIndex currIndex);
     ModelItem * nextItem(ModelItem * curr);
