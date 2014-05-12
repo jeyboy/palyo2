@@ -55,7 +55,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         }
         case Qt::ToolTipRole:
             item = getItem(index);
-            return item -> data(EXTENSIONID).toString();
+            return item -> data(TITLEID).toString();
         case Qt::SizeHintRole:
             return QSize(0, 18);
         case Qt::TextColorRole:
@@ -67,7 +67,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case Qt::UserRole:
             item = getItem(index);
             return item -> getState() -> currStateValue();
-        case Qt::UserRole + 1:
+        case PROGRESSID:
             item = getItem(index);
             return QVariant(item -> getDownloadProgress());
 
@@ -226,7 +226,6 @@ void Model::refresh() {
 void Model::refreshItem(ModelItem * item) {
     QModelIndex ind = index(item);
     if (ind.isValid()) {
-        qDebug() << "update" << item -> getDownloadProgress();
 //        emit dataChanged(ind.parent(), ind);
         emit dataChanged(ind, ind);
     }

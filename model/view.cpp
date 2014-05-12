@@ -311,6 +311,7 @@ void View::downloadFromLocation() {
         if (!dir.exists()) {
             dir.mkpath(".");
         }
+        item -> setDownloadProgress(0);
         model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(downloadPath() + item -> getDownloadTitle()));
     }
 }

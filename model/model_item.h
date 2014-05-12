@@ -33,6 +33,7 @@
 #define FOLDERID 3
 #define STATEID 4
 #define TITLESCACHEID 5
+#define PROGRESSID 101
 
 #define FILE_ITEM 100
 #define FOLDER_ITEM 200

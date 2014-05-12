@@ -53,10 +53,12 @@ void WebApi::downloadRoutine(QNetworkReply * reply, DownloadPosition * position)
             file.write(buffer);
 
             emit downloadProgress(position -> item, (pos/limit) * 100);
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
         }
 
         catch(...) {
-            qDebug() << "Some shit";
+            emit downloadError(position -> item, "Some error occured while download...");
+            emit downloadFinished(position -> item, false);
         }
     }
 

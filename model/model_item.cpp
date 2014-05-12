@@ -160,6 +160,7 @@ QVariant ModelItem::data(int column) const {
         case FOLDERID: return isFolder();
         case TITLESCACHEID: return QVariant(*getTitlesCache());
         case STATEID: return getState() -> currStateValue();
+        case PROGRESSID: return progress;
         default: return QVariant();
     }
 }

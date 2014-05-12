@@ -211,30 +211,32 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 }
 
 void ModelItemDelegate::progress(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int progressPercentage) const {
+    painter -> save();
     QStyleOptionProgressBarV2 progressBarOption;
-    progressBarOption.rect = QRect(option.rect.x(), option.rect.y() + 5 , option.rect.width(), option.rect.height() / 1.2);
+    progressBarOption.rect = QRect(option.rect.x() + 10, option.rect.y() + 2 , option.rect.width() - 16, option.rect.height() - 4);
     progressBarOption.text = index.model() -> data(index, Qt::DisplayRole).toString();
+    progressBarOption.textAlignment = Qt::AlignLeft | Qt::AlignHCenter | Qt::AlignJustify;
+    progressBarOption.textVisible = true;
     progressBarOption.minimum = 0;
     progressBarOption.maximum = 100;
     progressBarOption.progress = progressPercentage;
-//    QPalette pal = progressBarOption.palette;
-//    QColor col = QColor(35, 35, 25);
-//    pal.setColor(QPalette::Highlight, col); // or QPalette::Window doesnt matter
-//    progressBarOption.palette = pal;
+    QPalette pal = progressBarOption.palette;
+    pal.setColor(QPalette::HighlightedText, QColor::fromRgb(0, 0, 0));
+    progressBarOption.palette = pal;
 
 //    if(option.state & QStyle::State_Selected) {
 
 //    }
 
     QApplication::style() -> drawControl(QStyle::CE_ProgressBar, &progressBarOption, painter);
+    painter -> restore();
 }
 
 
 void ModelItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
-    int progressPercentage = index.model() -> data(index, Qt::UserRole + 1).toInt();
+    int progressPercentage = index.data(PROGRESSID).toInt();  //index.model() -> data(index, Qt::UserRole + 1).toInt();
 
     if (progressPercentage != -1) {
-        qDebug() << progressPercentage;
         progress(painter, option, index, progressPercentage);
     } else {
         usuall(painter, option, index);
