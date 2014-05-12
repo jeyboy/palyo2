@@ -70,7 +70,7 @@ QString ModelItem::getDownloadTitle() const {
     else
         ret = getTitle();
 
-    return ret.mid(0, 240);
+    return Library::instance()->filenameFilter(ret).mid(0, 240);
 }
 
 QString ModelItem::getTitle() const {

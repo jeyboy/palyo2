@@ -32,6 +32,7 @@ public:
     bool addItem(ModelItem * item, int state);
     void restoreItemState(LibraryItem * item);
 
+    QString filenameFilter(QString title);
 private slots:
     void saveCatalogs();
 

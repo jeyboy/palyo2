@@ -29,6 +29,7 @@ SOURCES += main.cpp\
     data_store.cpp \
     misc/icon_provider.cpp \
     misc/file_size.cpp \
+    misc/ip_check.cpp \
     web/web_api.cpp\
     web/socials/vk_api.cpp\
     globalshortcut/qxtglobalshortcut.cpp \
@@ -72,6 +73,7 @@ HEADERS  += mainwindow.h \
     data_store.h \
     misc/icon_provider.h \
     misc/file_size.h \
+    misc/ip_check.h \
     web/web_api.h\
     web/socials/vk_api.h\
 #    file_registration/file_registration.h \

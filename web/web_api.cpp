@@ -30,12 +30,14 @@ void WebApi::downloadRoutine(QNetworkReply * reply, DownloadPosition * position)
 //    QIODevice::Append | QIODevice::Unbuffered
 
     if (!file.open(QIODevice::WriteOnly)) {
+        qDebug() << file.errorString();
         emit downloadError(position -> item, "File did not created");
         emit downloadFinished(position -> item, false);
         return;
     }
 
     if (!file.resize(reply -> bytesAvailable())) {
+        qDebug() << file.errorString();
         emit downloadError(position -> item, "Empty space on your device is not enough");
         emit downloadFinished(position -> item, false);
         return;

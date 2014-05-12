@@ -29,6 +29,10 @@ bool Library::addItem(ModelItem * item, int state) {
     return proceedItemNames(item -> getTitlesCache(), state);
 }
 
+QString Library::filenameFilter(QString title) {
+    return forwardNumberPreFilter(sitesFilter(title)).remove(QRegExp("[^\\w-\\. ()]*"));
+}
+
 void Library::restoreItemState(LibraryItem * libItem) {
     QHash<QString, int> * cat;
     bool isListened = false;

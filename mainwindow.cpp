@@ -142,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QApplication::setWindowIcon(QIcon(":icon"));
 
     connect(Player::instance(), SIGNAL(itemChanged(ModelItem *, ModelItem *)), this, SLOT(outputActiveItem(ModelItem *, ModelItem *)));
+    qDebug() << Library::instance() -> filenameFilter("Radio Killer - Be Free (Sunrider Remix) cамая клубная музыка только у нас, заходи к нам http://vk.com/clubmusictlt");
 }
 
 void MainWindow::registrateGlobalKeys() {
