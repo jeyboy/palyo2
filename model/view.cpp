@@ -290,6 +290,19 @@ void View::showContextMenu(const QPoint& pnt) {
             openAct = new QAction(QIcon(":/download"), "Download", this);
             connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFromLocation()));
             actions.append(openAct);
+
+            openAct = new QAction(QIcon(":/download"), "Download Folder", this);
+            connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFolder()));
+            actions.append(openAct);
+
+            openAct = new QAction(QIcon(":/download"), "Download All", this);
+            connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadAll()));
+            actions.append(openAct);
+
+            openAct = new QAction(this);
+            openAct -> setSeparator(true);
+
+            actions.append(openAct);
         }
     }
 
@@ -302,17 +315,57 @@ void View::openLocation() {
     item -> openLocation();
 }
 
-void View::downloadFromLocation() {
-    ModelItem * item = model -> getItem(this -> currentIndex());
-    if (model -> getApi() == 0)
+
+bool View::prepareDownloading() {
+    if (model -> getApi() == 0) {
         qDebug() << "Some shit happened :(";
-    else {
+        return false;
+    } else {
         QDir dir(downloadPath());
         if (!dir.exists()) {
             dir.mkpath(".");
         }
+
+        return true;
+    }
+}
+
+void View::downloadBranch(ModelItem * rootNode, QString savePath) {
+    QList<ModelItem *> * children = rootNode -> childItemsList();
+    ModelItem * item;
+
+    for(int i = 0; i < children -> length(); i++) {
+        item = children -> at(i);
+
+        if (item -> isFolder()) {
+            downloadBranch(item, savePath + item -> getDownloadTitle() + "/");
+        } else {
+            item -> setDownloadProgress(0);
+            model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(savePath + item -> getDownloadTitle()));
+        }
+    }
+}
+
+void View::downloadFromLocation() {
+    ModelItem * item = model -> getItem(this -> currentIndex());
+
+    if (prepareDownloading()) {
         item -> setDownloadProgress(0);
         model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(downloadPath() + item -> getDownloadTitle()));
+    }
+}
+
+void View::downloadFolder() {
+    ModelItem * rootNode = model -> getItem(this -> currentIndex().parent());
+
+    if (prepareDownloading()) {
+        downloadBranch(rootNode, downloadPath());
+    }
+}
+
+void View::downloadAll() {
+    if (prepareDownloading()) {
+        downloadBranch(model -> root(), downloadPath());
     }
 }
 

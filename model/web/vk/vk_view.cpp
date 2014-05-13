@@ -14,6 +14,7 @@ QJsonObject VkView::toJSON() {
     set["u"] = VkApi::instance() -> getUserID();
     set["t"] = VkApi::instance() -> getToken();
     set["e"] = VkApi::instance() -> getExpire();
+    set["i"] = VkApi::instance() -> getIp();
 
     res["vk"] = set;
     return res;

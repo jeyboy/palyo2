@@ -30,12 +30,14 @@ public:
     virtual QString authUrl() const = 0;
     virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
+    void initIp();
     void downloadFile(QObject * caller, void * item, QUrl uri, QUrl savePath);
 
     CustomNetworkAccessManager * manager() const;
 
 protected slots:
     void downloadConnectionResponsed();
+    void ipResponse(QNetworkReply*);
 
 signals:
     void downloadProgress(void * item, int percentDone);
@@ -49,6 +51,7 @@ protected:
 //    QByteArray sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts = 0);
     CustomNetworkAccessManager * netManager;
 
+    QString ip;
     QString error;
 
     QHash<void *, DownloadPosition *> * downloads;

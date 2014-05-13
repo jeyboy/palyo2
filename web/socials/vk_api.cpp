@@ -9,10 +9,11 @@ VkApi *VkApi::instance() {
 }
 
 QString VkApi::name() const { return "vk"; }
-void VkApi::setParams(QString accessToken, QString userID, QString expiresIn) {
+void VkApi::setParams(QString accessToken, QString userID, QString expiresIn, QString requestIp) {
     token = accessToken;
     user_id = userID;
     expires_in = expiresIn;
+    refreshRequire = requestIp != ip;
 }
 
 QString VkApi::getToken() {
@@ -23,6 +24,17 @@ QString VkApi::getExpire() {
 }
 QString VkApi::getUserID() {
     return user_id;
+}
+QString VkApi::getIp() {
+    return ip;
+}
+
+QHash<int, QString> VkApi::getGenres() const {
+    return genres;
+}
+
+bool VkApi::isRefreshRequire() const {
+    return refreshRequire;
 }
 
 ///////////////////////////////////////////////////////////
@@ -64,20 +76,20 @@ QString VkApi::proceedAuthResponse(const QUrl & url) {
 /// AUDIO LIST
 ///////////////////////////////////////////////////////////
 
-void VkApi::getUserAudioList(int uid) {
-    getAudioList();
+void VkApi::getUserAudioList(QString uid) {
+    getAudioList(uid == 0 ? getUserID() : uid);
 }
 
-void VkApi::getAudioList(int uid) {
+void VkApi::getAudioList(QString uid) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams();
     query.addQueryItem("code",
-                       "var folders = API.audio.getAlbums({count: 24, uid: " + getUserID() + "}).items;" +
+                       "var folders = API.audio.getAlbums({count: 24, uid: " + uid + "}).items;" +
                        "var sort_by_folders = {};" +
                        "while(folders.length > 0) { var curr = folders.pop();  sort_by_folders.push(" +
                        "{folder_id: curr.id, title: curr.title, items: API.audio.get({album_id: curr.id}).items});" +
                        "};" +
-                       "return {\"audio_list\": API.audio.get({count: 6000, uid: " + getUserID() + "}), albums: sort_by_folders};"
+                       "return {audio_list: API.audio.get({count: 6000, uid: " + uid + "}), albums: sort_by_folders};"
                        );
     url.setQuery(query);
 

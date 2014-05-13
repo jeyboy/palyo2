@@ -1,10 +1,6 @@
 #ifndef VIEW_H
 #define VIEW_H
 
-#define LIST_VIEW 0
-#define TREE_VIEW 1
-#define LEVEL_TREE_VIEW 2
-
 #include <QMimeData>
 #include <QTreeView>
 #include <QMouseEvent>
@@ -15,6 +11,7 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QMessageBox>
+#include <QList>
 
 #include "media/player.h"
 #include "model.h"
@@ -72,7 +69,15 @@ protected slots:
     void onDoubleClick(const QModelIndex &index);
     void showContextMenu(const QPoint &);
     void openLocation();
+
+    bool prepareDownloading();
+
+    void downloadBranch(ModelItem * rootNode, QString savePath);
+
     void downloadFromLocation();
+    void downloadFolder();
+    void downloadAll();
+
 
 protected:
     QString downloadPath() const;

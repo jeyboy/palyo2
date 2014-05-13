@@ -7,6 +7,7 @@
 #include <QNetworkInterface>
 
 class IpCheck {
+public:
     static QString getIp();
 };
 

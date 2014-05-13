@@ -98,8 +98,8 @@ public:
     virtual QHash<QString, ModelItem *> * foldersList() const; // stub
     virtual int removeFolder(QString name);  // stub
 
-protected:
     virtual QList<ModelItem *> * childItemsList(); // stub
+protected:
 
     qint8 progress;
     QList<QString> * titlesCache;

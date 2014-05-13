@@ -13,6 +13,23 @@ QString WebApi::getError() {
     return error;
 }
 
+
+void WebApi::initIp() {
+    manager() -> get(QNetworkRequest(QUrl("http://whatismyip.org/")));
+    connect(manager(), SIGNAL(finished(QNetworkReply*)), SLOT(ipResponse(QNetworkReply*)));
+}
+
+void WebApi::ipResponse(QNetworkReply *reply) {
+    if(reply -> error() == QNetworkReply::NoError) {
+        ip = reply -> readAll();
+        qDebug() << "IP: " << ip;
+    } else {
+        //TODO: piecedays
+    }
+    reply -> deleteLater();
+}
+
+
 void WebApi::downloadFile(QObject * caller, void * item, QUrl uri, QUrl savePath) {
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(uri));
     QCoreApplication::processEvents(QEventLoop::AllEvents, 200);

@@ -40,7 +40,9 @@ CBHash TabDialog::getSettings() {
       res.insert("t", 1);
   else if (ui -> isTreeRadio -> isChecked())
       res.insert("t", 3);
-  else res.insert("t", 2);
+  else if (ui -> IsOneLevelTreeRadio -> isChecked())
+      res.insert("t", 2);
+  else res.insert("t", 4);
 
   return res;
 }

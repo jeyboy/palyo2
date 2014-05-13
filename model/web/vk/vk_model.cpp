@@ -8,7 +8,10 @@ VkModel::VkModel(QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) 
 
     if (hash != 0) {
         QJsonObject res = hash -> value("vk").toObject();
-        VkApi::instance() -> setParams(res.value("t").toString(), res.value("u").toString(), res.value("e").toString());
+        VkApi::instance() -> setParams(res.value("t").toString(), res.value("u").toString(), res.value("e").toString(), res.value("i").toString());
+
+        if (VkApi::instance() -> isRefreshRequire())
+            VkApi::instance() -> getUserAudioList();
     } else {
         VkApi::instance() -> getUserAudioList();
     }
