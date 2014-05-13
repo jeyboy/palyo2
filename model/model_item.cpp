@@ -63,14 +63,12 @@ QString ModelItem::fullPath() const {
 }
 
 QString ModelItem::getDownloadTitle() const {
-    QString ret;
+    QString ret = Library::instance() -> filenameFilter(getTitle()).mid(0, 240);
 
     if (!extension.isEmpty())
-        ret = title + '.' + extension;
-    else
-        ret = getTitle();
+        ret = ret + '.' + extension;
 
-    return Library::instance()->filenameFilter(ret).mid(0, 240);
+    return ret;
 }
 
 QString ModelItem::getTitle() const {

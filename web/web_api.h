@@ -5,7 +5,6 @@
 //#include <QtXml/QDomDocument>
 #include <QJsonDocument>
 #include <QUrl>
-#include <QtConcurrent/QtConcurrent>
 
 #include "override/custom_network_access_manager.h"
 
@@ -32,7 +31,6 @@ public:
     virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
     void downloadFile(QObject * caller, void * item, QUrl uri, QUrl savePath);
-    void downloadRoutine(QNetworkReply * reply, DownloadPosition * position);
 
     CustomNetworkAccessManager * manager() const;
 
