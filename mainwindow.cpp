@@ -375,7 +375,7 @@ QToolBar* MainWindow::createControlToolBar() {
     ptb -> addAction(QPixmap(QString(":/add")), "Add new tab", this, SLOT(showAttTabDialog()));
     ptb -> addAction(QPixmap(QString(":/add_vk")), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
     ptb -> addSeparator();
-    ptb -> addAction(QPixmap(QString(":/settings")), "Setting for current tab", this, SLOT(showAttCurrTabDialog()));
+    ptb -> addAction(QPixmap(QString(":/settings")), "Common setting", this, SLOT(showSettingsDialog()));
     ptb -> adjustSize();
 
     return ptb;
@@ -607,6 +607,14 @@ void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
     }
 }
 
+void MainWindow::showSettingsDialog() {
+    SettingsDialog dialog(this);
+    if (dialog.exec() == QDialog::Accepted) {
+
+    } else {
+
+    }
+}
 
 void MainWindow::showVKTabDialog() {
     WebDialog dialog(this, VkApi::instance(), "VK auth");

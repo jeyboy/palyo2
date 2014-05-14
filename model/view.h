@@ -13,6 +13,8 @@
 #include <QMessageBox>
 #include <QList>
 
+#include "dialogs/tabdialog.h"
+
 #include "media/player.h"
 #include "model.h"
 #include "model_item_delegate.h"

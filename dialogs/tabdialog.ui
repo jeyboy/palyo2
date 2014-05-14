@@ -60,6 +60,9 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>This name will be shown in tab header</string>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -73,6 +76,9 @@
      <height>101</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;List type let you set type of elements placement relative to its logical path.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="title">
     <string>List type</string>
    </property>
@@ -84,6 +90,9 @@
       <width>121</width>
       <height>17</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In this case you will see items, without any relation to the folder&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>List</string>
@@ -97,6 +106,9 @@
       <width>121</width>
       <height>17</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; In this case you will see full path, which will be splited on folders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>Tree</string>
@@ -113,6 +125,9 @@
       <width>121</width>
       <height>17</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In this case you will see only parent folder of item. If you are will include two folders with same name - its will be showed as one folder and contains items from both folders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>One Level Tree</string>
@@ -140,6 +155,9 @@
       <height>17</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;After ending playing of current element automatically initiated next item&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
      <string>Play as playlist</string>
     </property>
@@ -165,6 +183,9 @@
       <width>121</width>
       <height>17</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;With this option when you remove item, you are initiate deletion  of object from your hard disk ( or account data storage)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>Delete file with item</string>

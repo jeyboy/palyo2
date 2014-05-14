@@ -18,6 +18,7 @@
 #include "dialogs/toolbardialog.h"
 #include "dialogs/toolbarbuttondialog.h"
 #include "dialogs/web_dialog.h"
+#include "dialogs/settings_dialog.h"
 
 
 #include "globalshortcut/qxtglobalshortcut.h"
@@ -64,11 +65,14 @@ protected:
 public slots:
     void outputActiveItem(ModelItem *, ModelItem *);
     void receiveMessage(QString);
+    void showAttCurrTabDialog();
+
 private slots:
+    void showSettingsDialog();
+
     void showVKTabDialog();
 
     void showAttTabDialog(Tab * tab = 0);
-    void showAttCurrTabDialog();
 
     void mediaVisibilityChanged(bool visible);
     void mediaOrientationChanged(Qt::Orientation);

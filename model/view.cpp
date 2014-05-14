@@ -281,12 +281,24 @@ void View::showContextMenu(const QPoint& pnt) {
     ModelItem * item = model -> getItem(ind);
     QAction * openAct;
 
+    openAct = new QAction(QIcon(":/settings"), "Tab settings", this);
+    connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showAttCurrTabDialog()));
+    actions.append(openAct);
+
+    openAct = new QAction(this);
+    openAct -> setSeparator(true);
+    actions.append(openAct);
+
     if (ind.isValid() && !item -> fullPath().isEmpty()) {
         openAct = new QAction(QIcon(":/open"), "Open location", this);
         connect(openAct, SIGNAL(triggered(bool)), this, SLOT(openLocation()));
         actions.append(openAct);
 
         if (item -> isRemote()) {
+            openAct = new QAction(this);
+            openAct -> setSeparator(true);
+            actions.append(openAct);
+
             openAct = new QAction(QIcon(":/download"), "Download", this);
             connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFromLocation()));
             actions.append(openAct);
@@ -297,11 +309,6 @@ void View::showContextMenu(const QPoint& pnt) {
 
             openAct = new QAction(QIcon(":/download"), "Download All", this);
             connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadAll()));
-            actions.append(openAct);
-
-            openAct = new QAction(this);
-            openAct -> setSeparator(true);
-
             actions.append(openAct);
         }
     }

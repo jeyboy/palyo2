@@ -37,6 +37,9 @@ SOURCES += main.cpp\
     dialogs/toolbardialog.cpp \
     dialogs/toolbarbuttondialog.cpp \
     dialogs/web_dialog.cpp \
+    dialogs/settings_dialog.cpp \
+    model/hotkey_model/hotkey_model.cpp \
+    model/hotkey_model/hotkey_model_item.cpp \
     model/view.cpp \
     model/model.cpp \
     model/model_item.cpp \
@@ -66,7 +69,7 @@ SOURCES += main.cpp\
     override/tabber.cpp \
     override/tab.cpp \
     override/custom_network_access_manager.cpp \
-    single_application.cpp
+    single_application.cpp \
 
 
 HEADERS  += mainwindow.h \
@@ -84,6 +87,9 @@ HEADERS  += mainwindow.h \
     dialogs/toolbardialog.h \
     dialogs/toolbarbuttondialog.h \
     dialogs/web_dialog.h \
+    dialogs/settings_dialog.h \
+    model/hotkey_model/hotkey_model.h \
+    model/hotkey_model/hotkey_model_item.h \
     model/view.h \
     model/model.h \
     model/model_item.h \
@@ -114,7 +120,7 @@ HEADERS  += mainwindow.h \
     override/tabber.h \
     override/tab.h \
     override/custom_network_access_manager.h \
-    single_application.h
+    single_application.h \
 
 unix:!mac {
         QT += gui-private
@@ -146,7 +152,8 @@ FORMS    += mainwindow.ui \
     dialogs/tabdialog.ui \
     dialogs/toolbardialog.ui \
     dialogs/toolbarbuttondialog.ui \
-    dialogs/web_dialog.ui
+    dialogs/web_dialog.ui \
+    dialogs/settings_dialog.ui
 
 RESOURCES += \
     picts.qrc
