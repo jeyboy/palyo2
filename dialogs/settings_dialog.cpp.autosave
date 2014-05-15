@@ -10,6 +10,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> treeView -> setEditTriggers(QTreeView::AllEditTriggers);
   ui -> treeView -> setModel(new HotkeyModel(Settings::instance() -> getHotKeys(), this));
   ui -> treeView -> setColumnWidth(0, 250);
+  ui -> treeView -> editorDestroyed();
+  ui -> treeView -> itemDelegate() -> createEditor()
 }
 
 SettingsDialog::~SettingsDialog() {

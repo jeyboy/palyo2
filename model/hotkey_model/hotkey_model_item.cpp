@@ -1,4 +1,5 @@
 #include "hotkey_model_item.h"
+#include <qDebug>;
 
 HotkeyModelItem::HotkeyModelItem(const QVector<QVariant> &data, HotkeyModelItem *parent) {
      parentItem = parent;
@@ -91,4 +92,9 @@ bool HotkeyModelItem::setData(int column, const QVariant &value) {
 
     itemData[column] = value;
     return true;
+}
+
+void HotkeyModelItem::appendChilds(QList<HotkeyModelItem *> * newChilds) {
+    childItems.append(*newChilds);
+    qDebug() << childItems.length();
 }

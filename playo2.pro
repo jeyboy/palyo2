@@ -70,6 +70,7 @@ SOURCES += main.cpp\
     override/tab.cpp \
     override/custom_network_access_manager.cpp \
     single_application.cpp \
+    misc/settings.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -121,6 +122,7 @@ HEADERS  += mainwindow.h \
     override/tab.h \
     override/custom_network_access_manager.h \
     single_application.h \
+    misc/settings.h
 
 unix:!mac {
         QT += gui-private

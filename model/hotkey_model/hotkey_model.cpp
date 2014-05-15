@@ -1,8 +1,11 @@
 #include "hotkey_model.h"
+#include <qDebug>
 
-HotkeyModel::HotkeyModel(QJsonObject *hash, QObject *parent) : QAbstractItemModel(parent) {
+HotkeyModel::HotkeyModel(QList<HotkeyModelItem *> * toplevelchilds, QObject *parent) : QAbstractItemModel(parent) {
     QVector<QVariant> rootData;
+    rootData << "" << "";
     rootItem = new HotkeyModelItem(rootData);
+    rootItem -> appendChilds(toplevelchilds);
 }
 
 HotkeyModel::~HotkeyModel() {
@@ -21,7 +24,6 @@ QVariant HotkeyModel::data(const QModelIndex &index, int role) const {
         return QVariant();
 
     HotkeyModelItem *item = getItem(index);
-
     return item -> data(index.column());
 }
 
@@ -29,7 +31,10 @@ Qt::ItemFlags HotkeyModel::flags(const QModelIndex &index) const {
     if (!index.isValid())
         return 0;
 
-    return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    if (index.column() > 0)
+        return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    else
+        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
 HotkeyModelItem *HotkeyModel::getItem(const QModelIndex &index) const {
@@ -88,7 +93,7 @@ QModelIndex HotkeyModel::parent(const QModelIndex &index) const {
     HotkeyModelItem *childItem = getItem(index);
     HotkeyModelItem *parentItem = childItem->parent();
 
-    if (parentItem == rootItem)
+    if (parentItem == rootItem || parentItem == 0)
         return QModelIndex();
 
     return createIndex(parentItem->childNumber(), 0, parentItem);
@@ -120,7 +125,6 @@ QModelIndex HotkeyModel::parent(const QModelIndex &index) const {
 
 int HotkeyModel::rowCount(const QModelIndex &parent) const {
     HotkeyModelItem *parentItem = getItem(parent);
-
     return parentItem -> childCount();
 }
 

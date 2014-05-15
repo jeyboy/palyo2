@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "model/hotkey_model/hotkey_model.h"
 #include "model/hotkey_model/hotkey_model_item.h"
+#include "misc/settings.h"
 
 namespace Ui {
     class SettingsDialog;
@@ -13,10 +14,9 @@ class SettingsDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget *parent, QJsonObject * hash = 0);
+    explicit SettingsDialog(QWidget *parent);
     ~SettingsDialog();
 
-    static QJsonObject * getDefaults();
 private:
     Ui::SettingsDialog *ui;
 };

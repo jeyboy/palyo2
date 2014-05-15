@@ -9,7 +9,7 @@ class HotkeyModel : public QAbstractItemModel {
     Q_OBJECT
 
 public:
-    HotkeyModel(QJsonObject *hash = 0, QObject *parent = 0);
+    HotkeyModel(QList<HotkeyModelItem *> * toplevelchilds = 0, QObject *parent = 0);
     ~HotkeyModel();
 
     QVariant data(const QModelIndex &index, int role) const;
