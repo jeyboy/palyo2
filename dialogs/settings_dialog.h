@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "model/hotkey_model/hotkey_model.h"
 #include "model/hotkey_model/hotkey_model_item.h"
+#include "model/hotkey_model/hotkey_delegate.h"
 #include "misc/settings.h"
 
 namespace Ui {

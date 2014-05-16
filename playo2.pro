@@ -70,7 +70,9 @@ SOURCES += main.cpp\
     override/tab.cpp \
     override/custom_network_access_manager.cpp \
     single_application.cpp \
-    misc/settings.cpp
+    misc/settings.cpp \
+    model/hotkey_model/hotkey_delegate.cpp \
+    model/hotkey_model/hotkey_editor.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -122,7 +124,9 @@ HEADERS  += mainwindow.h \
     override/tab.h \
     override/custom_network_access_manager.h \
     single_application.h \
-    misc/settings.h
+    misc/settings.h \
+    model/hotkey_model/hotkey_delegate.h \
+    model/hotkey_model/hotkey_editor.h
 
 unix:!mac {
         QT += gui-private

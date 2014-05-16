@@ -8,6 +8,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   setWindowTitle("Settings ept");
 
   ui -> treeView -> setEditTriggers(QTreeView::AllEditTriggers);
+  ui -> treeView -> setItemDelegate(new HotkeyDelegate(ui -> treeView));
   ui -> treeView -> setModel(new HotkeyModel(Settings::instance() -> getHotKeys(), this));
   ui -> treeView -> setColumnWidth(0, 250);
 }
