@@ -6,6 +6,8 @@
 #include "model/hotkey_model/hotkey_model_item.h"
 #include "model/hotkey_model/hotkey_delegate.h"
 #include "misc/settings.h"
+#include "misc/hotkey_manager.h"
+#include "media/player.h"
 
 namespace Ui {
     class SettingsDialog;
@@ -17,6 +19,8 @@ class SettingsDialog : public QDialog {
 public:
     explicit SettingsDialog(QWidget *parent);
     ~SettingsDialog();
+
+    static void registerHotkeys(QWidget * receiver);
 
 private:
     Ui::SettingsDialog *ui;

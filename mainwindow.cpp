@@ -143,23 +143,26 @@ MainWindow::MainWindow(QWidget *parent) :
     QApplication::setWindowIcon(QIcon(":icon"));
 
     connect(Player::instance(), SIGNAL(itemChanged(ModelItem *, ModelItem *)), this, SLOT(outputActiveItem(ModelItem *, ModelItem *)));
+
+//    qDebug() << Library::instance() -> prepareName("5ugar, Eva Kade  (2012) http://vk.com/clubmusicthebestin - All Around feat Evil T (Andrea Bertolini Remix)");
 }
 
 void MainWindow::registrateGlobalKeys() {
-   next = new QxtGlobalShortcut(QKeySequence("Ctrl+Down"));
-   connect(next, SIGNAL(activated()), this, SLOT(nextItemTriggered()));
+    SettingsDialog::registerHotkeys(this);
+//   next = new QxtGlobalShortcut(QKeySequence("Ctrl+Down"));
+//   connect(next, SIGNAL(activated()), this, SLOT(nextItemTriggered()));
 
-   next_and_delete = new QxtGlobalShortcut(QKeySequence("Ctrl+Delete"));
-   connect(next_and_delete, SIGNAL(activated()), this, SLOT(nextItemWithDelTriggered()));
+//   next_and_delete = new QxtGlobalShortcut(QKeySequence("Ctrl+Delete"));
+//   connect(next_and_delete, SIGNAL(activated()), this, SLOT(nextItemWithDelTriggered()));
 
-   prev = new QxtGlobalShortcut(QKeySequence("Ctrl+Up"));
-   connect(prev, SIGNAL(activated()), this, SLOT(prevItemTriggered()));
+//   prev = new QxtGlobalShortcut(QKeySequence("Ctrl+Up"));
+//   connect(prev, SIGNAL(activated()), this, SLOT(prevItemTriggered()));
 
-   play = new QxtGlobalShortcut(QKeySequence(Qt::Key_MediaPlay));
-   connect(play, SIGNAL(activated()), Player::instance(), SLOT(playPause()));
+//   play = new QxtGlobalShortcut(QKeySequence(Qt::Key_MediaPlay));
+//   connect(play, SIGNAL(activated()), Player::instance(), SLOT(playPause()));
 
-   stop = new QxtGlobalShortcut(QKeySequence(Qt::Key_MediaStop));
-   connect(stop, SIGNAL(activated()), Player::instance(), SLOT(stop()));
+//   stop = new QxtGlobalShortcut(QKeySequence(Qt::Key_MediaStop));
+//   connect(stop, SIGNAL(activated()), Player::instance(), SLOT(stop()));
 }
 
 //TODO: menu finish needed
@@ -499,14 +502,11 @@ MainWindow::~MainWindow() {
         Library::close();
         Player::close();
 
+        Settings::close();
+        HotkeyManager::close();
+
         VkApi::close();
     ///////////////////////////////////////////////
-
-    delete next;
-    delete next_and_delete;
-    delete prev;
-    delete play;
-    delete stop;
 
     delete settings;
     delete tabber;

@@ -20,8 +20,8 @@
 #include "dialogs/web_dialog.h"
 #include "dialogs/settings_dialog.h"
 
+#include "misc/hotkey_manager.h"
 
-#include "globalshortcut/qxtglobalshortcut.h"
 #include "override/tabber.h"
 #include "override/tab.h"
 #include "override/toolbar.h"
