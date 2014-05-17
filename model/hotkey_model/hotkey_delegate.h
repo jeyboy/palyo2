@@ -19,8 +19,6 @@ public:
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model,
                       const QModelIndex &index) const;
-protected slots:
-    void keyEvent(QKeyEvent *);
 
 private slots:
     void commitAndCloseEditor();

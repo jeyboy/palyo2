@@ -20,10 +20,15 @@ QVariant HotkeyModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
         return QVariant();
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
+    HotkeyModelItem *item;
+
+    if (role == Qt::UserRole) {
+        item = getItem(index);
+        return item -> data(2);
+    } else if (role != Qt::DisplayRole && role != Qt::EditRole)
         return QVariant();
 
-    HotkeyModelItem *item = getItem(index);
+    item = getItem(index);
     return item -> data(index.column());
 }
 

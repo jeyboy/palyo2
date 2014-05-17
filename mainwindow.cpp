@@ -92,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
     underMouseBar = 0;
     underMouseButton = 0;
 
+    Settings::instance() -> fromJson(settings -> read("settings").toObject());
     QJsonArray bars = settings -> read("bars").toArray();
 
     if (bars.count() > 0) {
@@ -149,20 +150,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::registrateGlobalKeys() {
     SettingsDialog::registerHotkeys(this);
-//   next = new QxtGlobalShortcut(QKeySequence("Ctrl+Down"));
-//   connect(next, SIGNAL(activated()), this, SLOT(nextItemTriggered()));
-
-//   next_and_delete = new QxtGlobalShortcut(QKeySequence("Ctrl+Delete"));
-//   connect(next_and_delete, SIGNAL(activated()), this, SLOT(nextItemWithDelTriggered()));
-
-//   prev = new QxtGlobalShortcut(QKeySequence("Ctrl+Up"));
-//   connect(prev, SIGNAL(activated()), this, SLOT(prevItemTriggered()));
-
-//   play = new QxtGlobalShortcut(QKeySequence(Qt::Key_MediaPlay));
-//   connect(play, SIGNAL(activated()), Player::instance(), SLOT(playPause()));
-
-//   stop = new QxtGlobalShortcut(QKeySequence(Qt::Key_MediaStop));
-//   connect(stop, SIGNAL(activated()), Player::instance(), SLOT(stop()));
 }
 
 //TODO: menu finish needed
@@ -478,6 +465,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
         settings -> write("bars", toolbar_array);
     }
+
+    settings -> write("settings", Settings::instance() -> toJson());
 
     settings -> save();
 

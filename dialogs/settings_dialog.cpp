@@ -24,19 +24,19 @@ void SettingsDialog::registerHotkeys(QWidget * receiver) {
     foreach(HotkeyModelItem * key, list) {
         switch(key -> data(2).toInt()) {
             case HOTKEY_NEXT: {
-                HotkeyManager::instance() -> registerNext(key -> data(1).toString(), receiver, SLOT(nextItemTriggered()));
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), receiver, SLOT(nextItemTriggered()));
             break;}
             case HOTKEY_NEXT_AND_DELETE: {
-                HotkeyManager::instance() -> registerNextAndDelete(key -> data(1).toString(), receiver, SLOT(nextItemWithDelTriggered()));
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), receiver, SLOT(nextItemWithDelTriggered()));
             break;}
             case HOTKEY_PREV: {
-                HotkeyManager::instance() -> registerPrev(key -> data(1).toString(), receiver, SLOT(prevItemTriggered()));
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), receiver, SLOT(prevItemTriggered()));
             break;}
             case HOTKEY_PLAY: {
-                HotkeyManager::instance() -> registerPlay(key -> data(1).toString(), Player::instance(), SLOT(playPause()));
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), Player::instance(), SLOT(playPause()));
             break;}
             case HOTKEY_STOP: {
-                HotkeyManager::instance() -> registerStop(key -> data(1).toString(), Player::instance(), SLOT(stop()));
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), Player::instance(), SLOT(stop()));
             break;}
         }
     }

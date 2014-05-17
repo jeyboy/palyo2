@@ -21,11 +21,11 @@ QList<HotkeyModelItem *> * Settings::getHotKeys() const {
     QList<HotkeyModelItem *> * ret = new QList<HotkeyModelItem *>();
     int iKey;
 
-    foreach(QString key, hotkeys -> keys()) {
+    foreach(QString key, hotkeys.keys()) {
         iKey = key.toInt();
         itemVals = QVector<QVariant>();
         itemVals.append(humanizeHotkeyText.value(iKey));
-        itemVals.append(hotkeys -> value(key));
+        itemVals.append(hotkeys.value(key));
         itemVals.append(iKey);
         ret -> append(new HotkeyModelItem(itemVals));
     }
@@ -33,21 +33,39 @@ QList<HotkeyModelItem *> * Settings::getHotKeys() const {
     return ret;
 }
 
+QJsonObject Settings::hotkeysJson() const {
+    return hotkeys;
+}
+
 void Settings::setHotKeys(QList<HotkeyModelItem *> hotkeyList) {
     foreach(HotkeyModelItem * item, hotkeyList) {
-        hotkeys -> insert(QString::number(item -> data(2).toInt()), QJsonValue::fromVariant(item -> data(1)));
+        hotkeys.insert(QString::number(item -> data(2).toInt()), QJsonValue::fromVariant(item -> data(1)));
     }
 }
 
-void Settings::setHotKeys(QJsonObject * hotkeysHash) {
-    if (hotkeysHash == 0) {
-        hotkeys = new QJsonObject();
-        hotkeys -> insert(QString::number(HOTKEY_NEXT), QJsonValue::fromVariant("Ctrl+Down"));
-        hotkeys -> insert(QString::number(HOTKEY_NEXT_AND_DELETE), QJsonValue::fromVariant("Ctrl+Delete"));
-        hotkeys -> insert(QString::number(HOTKEY_PREV), QJsonValue::fromVariant("Ctrl+Up"));
-        hotkeys -> insert(QString::number(HOTKEY_PLAY), QJsonValue::fromVariant("Media Play"));
-        hotkeys -> insert(QString::number(HOTKEY_STOP), QJsonValue::fromVariant("Media Stop"));
+void Settings::setHotKeys(QJsonObject hotkeysHash) {
+    if (hotkeysHash.empty()) {
+        hotkeys = QJsonObject();
+        hotkeys.insert(QString::number(HOTKEY_NEXT), QJsonValue::fromVariant("Ctrl+Down"));
+        hotkeys.insert(QString::number(HOTKEY_NEXT_AND_DELETE), QJsonValue::fromVariant("Ctrl+Delete"));
+        hotkeys.insert(QString::number(HOTKEY_PREV), QJsonValue::fromVariant("Ctrl+Up"));
+        hotkeys.insert(QString::number(HOTKEY_PLAY), QJsonValue::fromVariant("Media Play"));
+        hotkeys.insert(QString::number(HOTKEY_STOP), QJsonValue::fromVariant("Media Stop"));
     } else {
         hotkeys = hotkeysHash;
     }
+}
+
+void Settings::fromJson(QJsonObject settingsObj) {
+    setHotKeys(settingsObj.value("hotkeys").toObject());
+    downloadPath = settingsObj.value("download_path").toString(QCoreApplication::applicationDirPath() + "/downloads/");
+}
+
+QJsonObject Settings::toJson() {
+    QJsonObject ret = QJsonObject();
+
+    ret.insert("hotkeys", hotkeysJson());
+    ret.insert("download_path", QJsonValue::fromVariant(downloadPath));
+
+    return ret;
 }

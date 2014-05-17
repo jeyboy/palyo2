@@ -1,24 +1,19 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#define HOTKEY_NEXT 1
-#define HOTKEY_NEXT_AND_DELETE 2
-#define HOTKEY_PREV 3
-#define HOTKEY_PLAY 4
-#define HOTKEY_STOP 5
-
-
 #include <QObject>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QList>
+#include <QApplication>
 
 #include "model/hotkey_model/hotkey_model_item.h"
+#include "misc/hotkey_types.h"
 
 class Settings {
 public:
     ~Settings() {
-        delete hotkeys;
+
     }
 
     static Settings * instance();
@@ -31,7 +26,9 @@ public:
 
     QList<HotkeyModelItem *> * getHotKeys() const;
     void setHotKeys(QList<HotkeyModelItem *>);
-    void setHotKeys(QJsonObject * hotkeysHash = 0);
+
+    void fromJson(QJsonObject settingsObj = QJsonObject());
+    QJsonObject toJson();
 
 private:
     Settings() {
@@ -42,13 +39,16 @@ private:
         humanizeHotkeyText.insert(HOTKEY_PLAY, "Play/pause");
         humanizeHotkeyText.insert(HOTKEY_STOP, "Stop");
 
-        setHotKeys();
+//        setHotKeys();
     }
+
+    void setHotKeys(QJsonObject hotkeysHash = QJsonObject());
+    QJsonObject hotkeysJson() const;
 
     static Settings *self;
 
     QString downloadPath;
-    QJsonObject * hotkeys;
+    QJsonObject hotkeys;
     QHash<int, QString> humanizeHotkeyText;
 };
 

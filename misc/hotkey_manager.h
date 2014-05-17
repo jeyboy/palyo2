@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "globalshortcut/qxtglobalshortcut.h"
+#include "misc/hotkey_types.h"
 
 class HotkeyManager : public QObject {
     Q_OBJECT
@@ -21,11 +22,7 @@ public:
         delete self;
     }
 
-    bool registerNext(QString sequence, QObject * receiver, const char* slot);
-    bool registerNextAndDelete(QString sequence, QObject * receiver, const char* slot);
-    bool registerPrev(QString sequence, QObject * receiver, const char* slot);
-    bool registerPlay(QString sequence, QObject * receiver, const char* slot);
-    bool registerStop(QString sequence, QObject * receiver, const char* slot);
+    bool registerSequence(int hotkeyType, QString sequence, QObject * receiver = 0, const char* slot = 0);
 
 private:
     HotkeyManager() {
@@ -36,7 +33,8 @@ private:
         stop = 0;
     }
 
-    bool registerSequence(QxtGlobalShortcut * shortcut, QString sequence, QObject * receiver, const char * slot);
+    QxtGlobalShortcut * registerSequence(QObject * receiver, const char* slot);
+    bool updateSequence(QxtGlobalShortcut * shortcut, QKeySequence sequence);
 
     static HotkeyManager * self;
 

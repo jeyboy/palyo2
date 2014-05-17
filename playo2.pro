@@ -128,7 +128,8 @@ HEADERS  += mainwindow.h \
     single_application.h \
     misc/settings.h \
     model/hotkey_model/hotkey_delegate.h \
-    model/hotkey_model/hotkey_editor.h
+    model/hotkey_model/hotkey_editor.h \
+    misc/hotkey_types.h
 
 unix:!mac {
         QT += gui-private

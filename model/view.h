@@ -21,6 +21,8 @@
 
 #include "model_item.h"
 
+#include "misc/settings.h"
+
 #ifndef CBHASH
 #define CBHASH
 
@@ -82,8 +84,6 @@ protected slots:
 
 
 protected:
-    QString downloadPath() const;
-
     ModelItem * activeItem(bool next = true);
 //    ModelItem * nextItem(QModelIndex currIndex);
     ModelItem * nextItem(ModelItem * curr);

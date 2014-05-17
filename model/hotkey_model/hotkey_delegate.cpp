@@ -1,6 +1,3 @@
-
-#include <QtGui>
-
 #include "hotkey_delegate.h"
 
 void HotkeyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
@@ -13,7 +10,7 @@ QSize HotkeyDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelI
 
 QWidget * HotkeyDelegate::createEditor(QWidget *parent,
                                      const QStyleOptionViewItem &,
-                                     const QModelIndex &) const {
+                                     const QModelIndex & index) const {
 //    if (index.data().canConvert<StarRating>()) {
 //        StarEditor *editor = new StarEditor(parent);
 //        connect(editor, SIGNAL(editingFinished()),
@@ -25,14 +22,10 @@ QWidget * HotkeyDelegate::createEditor(QWidget *parent,
 
 //    QWidget * editor = QStyledItemDelegate::createEditor(parent, option, index);
 
-    HotkeyEditor * editor = new HotkeyEditor(parent);
+    HotkeyEditor * editor = new HotkeyEditor(index.data(Qt::UserRole).toInt(), parent);
     connect(editor, SIGNAL(editingFinished()), this, SLOT(commitAndCloseEditor()));
 
     return editor;
-}
-
-void HotkeyDelegate::keyEvent(QKeyEvent *) {
-
 }
 
 void HotkeyDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {

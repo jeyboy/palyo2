@@ -328,7 +328,7 @@ bool View::prepareDownloading() {
         qDebug() << "Some shit happened :(";
         return false;
     } else {
-        QDir dir(downloadPath());
+        QDir dir(Settings::instance() -> getDownloadPath());
         if (!dir.exists()) {
             dir.mkpath(".");
         }
@@ -358,7 +358,7 @@ void View::downloadFromLocation() {
 
     if (prepareDownloading()) {
         item -> setDownloadProgress(0);
-        model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(downloadPath() + item -> getDownloadTitle()));
+        model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(Settings::instance() -> getDownloadPath() + item -> getDownloadTitle()));
     }
 }
 
@@ -366,23 +366,19 @@ void View::downloadFolder() {
     ModelItem * rootNode = model -> getItem(this -> currentIndex().parent());
 
     if (prepareDownloading()) {
-        downloadBranch(rootNode, downloadPath());
+        downloadBranch(rootNode, Settings::instance() -> getDownloadPath());
     }
 }
 
 void View::downloadAll() {
     if (prepareDownloading()) {
-        downloadBranch(model -> root(), downloadPath());
+        downloadBranch(model -> root(), Settings::instance() -> getDownloadPath());
     }
 }
 
 //////////////////////////////////////////////////////
 /// PROTECTED
 //////////////////////////////////////////////////////
-
-QString View::downloadPath() const {
-    return QCoreApplication::applicationDirPath() + "/downloads/";
-}
 
 ModelItem * View::activeItem(bool next) {
     ModelItem * item = 0;

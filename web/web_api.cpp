@@ -43,9 +43,6 @@ void WebApi::downloadConnectionResponsed() {
     QNetworkReply * reply = (QNetworkReply*)QObject::sender();
     DownloadPosition * position = downloads -> value(reply);
 
-    qDebug() << reply -> bytesAvailable();
-    qDebug() << reply -> isSequential();
-
     QFile file(position -> savePath.toLocalFile());
 
 //    QIODevice::Append | QIODevice::Unbuffered
