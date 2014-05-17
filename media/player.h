@@ -5,6 +5,7 @@
 
 #include <QSlider>
 #include <QAction>
+#include <QIcon>
 
 #include <QtCore/qmath.h>
 
@@ -27,6 +28,7 @@ public:
     void setPauseButton(QAction * pauseAction);
     void setStopButton(QAction * stopAction);
     void setLikeButton(QAction * likeAction);
+    void setMuteButton(QAction * likeAction);
 
     void setVolumeTrackBar(QSlider * trackBar);
     void setTrackBar(QSlider * trackBar);
@@ -53,6 +55,7 @@ public slots:
 private slots:
     void start();
     void like();
+    void mute();
 
     void changeTrackbarValue(int);
     void setTrackbarValue(int);
@@ -77,6 +80,7 @@ private:
     Player() {
         time_forward = true;
         extended_format = true;
+        prevVolumeVal = 0;
 
         slider = 0;
         volumeSlider = 0;
@@ -84,6 +88,7 @@ private:
         played = 0;
         playlist = 0;
 
+        muteButton = 0;
         playButton = 0;
         pauseButton = 0;
         stopButton = 0;
@@ -109,7 +114,9 @@ private:
     QAction * pauseButton;
     QAction * stopButton;
     QAction * likeButton;
+    QAction * muteButton;
 
+    int prevVolumeVal;
     bool time_forward;
     bool extended_format;
 };

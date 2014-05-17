@@ -45,6 +45,7 @@ public:
     ~AudioPlayer();
 
     int getDuration() const;
+    int getVolume() const;
 
     int getNotifyInterval();
     void setNotifyInterval(signed int milis);
@@ -70,8 +71,6 @@ private slots:
     void started();
     void stoped();
     void signalUpdate();
-    void changeChannelVolume(int val);
-    void changeVolume(int val);
 
 public slots:
     void play();
@@ -81,6 +80,8 @@ public slots:
     void endOfPlayback();
 
     void setPosition(int position);
+    void setChannelVolume(int val);
+    void setVolume(int val);
 
 private:
     QUrl mediaUri;

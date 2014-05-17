@@ -148,15 +148,19 @@ void AudioPlayer::signalUpdate() {
 }
 
 //0 to 10000
-void AudioPlayer::changeChannelVolume(int val) {
+void AudioPlayer::setChannelVolume(int val) {
     volumeVal = (val / 10000.0);
     BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
 }
 
 
 // 0 to 10000
-void AudioPlayer::changeVolume(int val) {
+void AudioPlayer::setVolume(int val) {
     BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, val);
+}
+
+int AudioPlayer::getVolume() const {
+    return volumeVal * 10000;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -176,7 +180,6 @@ void AudioPlayer::play() {
             } else {
                 openRemoteChannel(mediaUri.toString());
             }
-
 
             if (chan) {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);

@@ -219,9 +219,9 @@ QToolBar* MainWindow::createMediaBar() {
     ptb -> setMinimumHeight(30);
 
 
-    Player::instance() -> setPlayButton(ptb->addAction(QPixmap(":/play"), "Play"));
-    Player::instance() -> setPauseButton(ptb->addAction(QPixmap(":/pause"), "Pause"));
-    Player::instance() -> setStopButton(ptb->addAction(QPixmap(":/stop"), "Stop"));
+    Player::instance() -> setPlayButton(ptb -> addAction(QPixmap(":/play"), "Play"));
+    Player::instance() -> setPauseButton(ptb -> addAction(QPixmap(":/pause"), "Pause"));
+    Player::instance() -> setStopButton(ptb -> addAction(QPixmap(":/stop"), "Stop"));
 
     ptb -> adjustSize();
 
@@ -240,10 +240,83 @@ QToolBar* MainWindow::createVolumeMediaBar() {
 
     connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
 
+    QAction * act = ptb -> addAction(QPixmap(":/mute"), "Mute");
+    act -> setCheckable(true);
+
+    Player::instance() -> setMuteButton(act);
+
     QSlider * slider = new QSlider();
     slider -> setStyle(new SliderStyle());
     slider -> setOrientation(Qt::Horizontal);
     slider -> setMinimumSize(30, 30);
+    slider -> setStyleSheet(QString(
+                                              "QSlider::groove {"
+                                                "border: 1px solid #bbb;"
+                                                "border-radius: 2px;"
+                                              "}"
+
+                                              "QSlider::groove:horizontal {"
+                                                "height: 18px;"
+                                              "}"
+
+                                              "QSlider::groove:vertical {"
+                                                "width: 18px;"
+                                              "}"
+
+                                              "QSlider::add-page {"
+                                                "background-color: rgba(255, 255, 255, 100%);"
+                                              "}"
+
+                                              "QSlider::sub-page {"
+                                                "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #000, stop: 1 #777);"
+                                                "background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 1, stop: 0 #777, stop: 1 #fff);"
+                                                "border: 1px solid #777;"
+                                                "border-radius: 2px;"
+                                              "}"
+
+                                              "QSlider::add-page {"
+                                                "background: #fff;"
+                                                "border: 1px solid #777;"
+                                                "border-radius: 2px;"
+                                              "}"
+
+                                              "QSlider::handle {"
+                                                "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);"
+                                                "border: 1px solid #777;"
+                                                "margin: 0 -1px;"
+                                                "border-radius: 2px;"
+                                              "}"
+
+                                              "QSlider::handle:horizontal {"
+                                                "width: 12px;"
+                                              "}"
+
+                                              "QSlider::handle:vertical {"
+                                                "height: 12px;"
+                                              "}"
+
+                                              "QSlider::handle:hover {"
+                                                "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #fff, stop:1 #ddd);"
+                                                "border: 1px solid #444;"
+                                                "border-radius: 2px;"
+                                              "}"
+
+                                              "QSlider::sub-page:disabled {"
+                                                "background: #bbb;"
+                                                "border-color: #999;"
+                                              "}"
+
+                                              "QSlider::add-page:disabled {"
+                                                "background: #eee;"
+                                                "border-color: #999;"
+                                              "}"
+
+                                              "QSlider::handle:disabled {"
+                                                "background: #eee;"
+                                                "border: 1px solid #aaa;"
+                                                "border-radius: 2px;"
+                                              "}"
+    ));
 
     Player::instance() -> setVolumeTrackBar(slider);
     ptb -> addWidget(slider);

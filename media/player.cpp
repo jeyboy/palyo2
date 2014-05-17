@@ -45,10 +45,15 @@ void Player::setStopButton(QAction * stopAction) {
     connect((QObject *)stopAction, SIGNAL(triggered(bool)), this, SLOT(stop()));
 }
 
-void  Player::setLikeButton(QAction * likeAction) {
+void Player::setLikeButton(QAction * likeAction) {
     likeButton = likeAction;
     likeButton -> setVisible(false);
     connect((QObject *)likeAction, SIGNAL(triggered(bool)), this, SLOT(like()));
+}
+
+void Player::setMuteButton(QAction * muteAction) {
+    muteButton = muteAction;
+    connect((QObject *)muteButton, SIGNAL(triggered(bool)), this, SLOT(mute()));
 }
 
 void Player::setPlaylist(View * newPlaylist) {
@@ -124,9 +129,9 @@ void Player::setTrackBar(QSlider * trackBar) {
 
 void Player::setVolumeTrackBar(QSlider * trackBar) {
     volumeSlider = trackBar;
+    connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(setChannelVolume(int)));
     volumeSlider -> setMaximum(10000);
     volumeSlider -> setValue(10000);
-    connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(changeChannelVolume(int)));
 }
 
 void Player::setTimePanel(ClickableLabel * newTimePanel) {
@@ -214,6 +219,15 @@ void Player::start() {
 
 void Player::like() {
     played -> setState(STATE_LIKED);
+}
+
+void Player::mute() {
+    int curr = getVolume();
+    setChannelVolume(prevVolumeVal);
+    if ((prevVolumeVal = curr) == 0)
+        muteButton -> setIcon(QIcon(":/mute"));
+    else
+        muteButton -> setIcon(QIcon(":/volume"));
 }
 
 void Player::changeTrackbarValue(int pos) {
