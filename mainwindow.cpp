@@ -54,7 +54,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    this -> setWindowTitle("Playo");
+    setWindowTitle("Playo");
+    setAcceptDrops(true);
     pal.setColor(QPalette::Button, QColor("#E1E0E0"));
     highlighted = 0;
 
@@ -404,8 +405,26 @@ QToolBar* MainWindow::createToolBar(QString name) {
     return ptb;
 }
 
+void MainWindow::dragEnterEvent(QDragEnterEvent * event) {
+    if (event -> mimeData() -> hasUrls()) {
+        event -> accept();
+    } else event -> ignore();
+}
+void MainWindow::dragMoveEvent(QDragMoveEvent * event) {
+    if (event -> mimeData() -> hasUrls()) {
+        event -> accept();
+    } else event -> ignore();
+}
+
+void MainWindow::dropEvent(QDropEvent * event) {
+//    if (event -> source() != this && event -> mimeData() -> hasUrls()) {
+    if (event -> mimeData() -> hasUrls()) {
+        putToCommonTab(event -> mimeData() -> urls());
+    } else event -> ignore();
+}
+
 void MainWindow::closeEvent(QCloseEvent *event) {
-    settings-> clear();
+    settings -> clear();
 
     QList<QToolBar *> toolbars = this -> findChildren<QToolBar *>();
     qDebug() << toolbars.length();
@@ -609,7 +628,7 @@ void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
 void MainWindow::showSettingsDialog() {
     SettingsDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
-
+        //TODO: logic needed
     } else {
 
     }
@@ -629,6 +648,15 @@ void MainWindow::outputActiveItem(ModelItem *, ModelItem * to) {
         m_tray.showMessage("(" + QString::number(tabber -> currentTab() -> getList() -> itemsCount()) + ") Now played:", to -> data(TITLEID).toString(), QSystemTrayIcon::Information, 20000);
 }
 
+void MainWindow::putToCommonTab(QList<QUrl> urls) {
+    tabber -> commonTab() -> getList() -> dropProcession(urls);
+    tabber -> commonTab() -> getList() -> getModel() -> refresh();
+
+    if (!Player::instance() -> isPlayed()) {
+        tabber -> commonTab() -> getList() -> proceedNext();
+    }
+}
+
 void MainWindow::receiveMessage(QString message) {
     QStringList list = message.split('|', QString::SkipEmptyParts);
     QList<QUrl> urls;
@@ -636,12 +664,7 @@ void MainWindow::receiveMessage(QString message) {
     foreach(QString path, list)
         urls.append(QUrl::fromLocalFile(path));
 
-    tabber -> commonTab() -> getList() -> dropProcession(urls);
-    tabber -> commonTab() -> getList() -> getModel() -> refresh();
-
-    if (!Player::instance() -> isPlayed()) {
-        tabber -> commonTab() -> getList() -> proceedNext();
-    }
+    putToCommonTab(urls);
 }
 
 void MainWindow::showAttTabDialog(Tab * tab) {

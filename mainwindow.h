@@ -95,6 +95,10 @@ private slots:
 
 
 protected:
+    void putToCommonTab(QList<QUrl> urls);
+    void dragEnterEvent(QDragEnterEvent *);
+    void dragMoveEvent(QDragMoveEvent *);
+    void dropEvent(QDropEvent *);
     void closeEvent(QCloseEvent *event);
     QMenu* createPopupMenu ();
 
