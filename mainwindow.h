@@ -54,6 +54,7 @@ public:
     QToolBar* createAdditionalMediaBar();
     QToolBar* createPositionMediaBar();
     QToolBar* createTimeMediaBar();
+    QToolBar* createVolumeMediaBar();
     QToolBar* createControlToolBar();
     void createToolbars();
     void addPanelButton(QString name, QString path, QToolBar * bar);

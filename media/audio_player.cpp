@@ -147,6 +147,18 @@ void AudioPlayer::signalUpdate() {
 //        endOfPlayback();
 }
 
+//0 to 10000
+void AudioPlayer::changeChannelVolume(int val) {
+    volumeVal = (val / 10000.0);
+    BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
+}
+
+
+// 0 to 10000
+void AudioPlayer::changeVolume(int val) {
+    BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, val);
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 void AudioPlayer::play() {
@@ -167,6 +179,7 @@ void AudioPlayer::play() {
 
 
             if (chan) {
+                BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
                 duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
                 durationChanged(duration);
                 BASS_ChannelPlay(chan, true);

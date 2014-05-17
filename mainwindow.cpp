@@ -114,6 +114,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 curr_bar = createPositionMediaBar();
             } else if (barName == "Media+Time") {
                 curr_bar = createTimeMediaBar();
+            } else if (barName == "Media+Volume") {
+                curr_bar = createVolumeMediaBar();
             } else if (barName == "Controls") {
                 curr_bar = createControlToolBar();
             } else {
@@ -184,6 +186,7 @@ void MainWindow::createToolbars() {
   addToolBar(Qt::TopToolBarArea, createPositionMediaBar());
   addToolBarBreak();
   addToolBar(Qt::TopToolBarArea, createAdditionalMediaBar());
+  addToolBar(Qt::TopToolBarArea, createVolumeMediaBar());
   addToolBar(Qt::TopToolBarArea, createControlToolBar());
   addToolBar(Qt::BottomToolBarArea, createToolBar("Folder linker 1"));
 }
@@ -224,6 +227,31 @@ QToolBar* MainWindow::createMediaBar() {
 
     return ptb;
 }
+
+
+
+QToolBar* MainWindow::createVolumeMediaBar() {
+    QToolBar* ptb = new QToolBar("Media+Volume");
+    ptb -> setObjectName("_Media+Volume");
+
+    ptb -> setAutoFillBackground(true);
+    ptb -> setPalette(pal);
+    ptb -> setMinimumHeight(30);
+
+    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
+
+    QSlider * slider = new QSlider();
+    slider -> setStyle(new SliderStyle());
+    slider -> setOrientation(Qt::Horizontal);
+    slider -> setMinimumSize(30, 30);
+
+    Player::instance() -> setVolumeTrackBar(slider);
+    ptb -> addWidget(slider);
+    ptb -> adjustSize();
+
+    return ptb;
+}
+
 
 QToolBar* MainWindow::createTimeMediaBar() {
     QToolBar* ptb = new QToolBar("Media+Time");
@@ -432,6 +460,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
                     && bar -> windowTitle() != "Media+"
                     && bar -> windowTitle() != "Media+Position"
                     && bar -> windowTitle() != "Media+Time"
+                    && bar -> windowTitle() != "Media+Volume"
                     && bar -> windowTitle() != "Controls"
                ) {
                 actions = bar -> actions();

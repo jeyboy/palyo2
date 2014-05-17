@@ -122,6 +122,13 @@ void Player::setTrackBar(QSlider * trackBar) {
     connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(changeTrackbarValue(int)));
 }
 
+void Player::setVolumeTrackBar(QSlider * trackBar) {
+    volumeSlider = trackBar;
+    volumeSlider -> setMaximum(10000);
+    volumeSlider -> setValue(10000);
+    connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(changeChannelVolume(int)));
+}
+
 void Player::setTimePanel(ClickableLabel * newTimePanel) {
     timePanel = newTimePanel;
     connect(timePanel, SIGNAL(clicked()), this, SLOT(invertTimeCountdown()));

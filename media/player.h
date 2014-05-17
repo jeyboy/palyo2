@@ -28,6 +28,7 @@ public:
     void setStopButton(QAction * stopAction);
     void setLikeButton(QAction * likeAction);
 
+    void setVolumeTrackBar(QSlider * trackBar);
     void setTrackBar(QSlider * trackBar);
     void setTimePanel(ClickableLabel * timePanel);
 //    void setVideoOutput(QVideoWidget * container);
@@ -78,6 +79,7 @@ private:
         extended_format = true;
 
         slider = 0;
+        volumeSlider = 0;
         timePanel = 0;
         played = 0;
         playlist = 0;
@@ -96,6 +98,7 @@ private:
 
     static Player * self;
     QSlider * slider;
+    QSlider * volumeSlider;
     ClickableLabel * timePanel;
     ModelItem * played;
 

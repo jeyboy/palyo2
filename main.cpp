@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
         if (!message.isEmpty()) {
             app.sendMessage(message);
         }
-//        return 0; \\ incomment later
+//        return 0; // incomment later
     }
 
     MainWindow * mainWindow = new MainWindow();

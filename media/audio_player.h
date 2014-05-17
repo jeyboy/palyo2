@@ -64,11 +64,14 @@ signals:
 
     void positionChanged(int);
     void durationChanged(int);
+//    void volumeChanged(int);
 
 private slots:
     void started();
     void stoped();
     void signalUpdate();
+    void changeChannelVolume(int val);
+    void changeVolume(int val);
 
 public slots:
     void play();
@@ -81,6 +84,8 @@ public slots:
 
 private:
     QUrl mediaUri;
+
+    float volumeVal = 1.0;
 
     int notifyInterval;
     int duration;
