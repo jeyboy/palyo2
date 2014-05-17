@@ -12,6 +12,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> treeView -> setModel(new HotkeyModel(Settings::instance() -> getHotKeys(), this));
   ui -> treeView -> hideColumn(2);
   ui -> treeView -> setColumnWidth(0, 250);
+
+  ui -> downloadPath -> setText(Settings::instance() -> getDownloadPath());
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -49,6 +51,17 @@ void SettingsDialog::on_cancelButton_clicked() {
 
 void SettingsDialog::on_acceptButton_clicked() {
     HotkeyModel * model = dynamic_cast<HotkeyModel *>(ui -> treeView -> model());
-    Settings::instance() -> setHotKeys(model ->toplevelItems());
+    Settings::instance() -> setHotKeys(model -> toplevelItems());
+
+    Settings::instance() -> setDownloadPath(ui -> downloadPath -> text());
     accept();
+}
+
+void SettingsDialog::on_browseButton_clicked() {
+    QString path = QFileDialog::getExistingDirectory(this, "Please choose new download path");
+    if (!path.isEmpty()) {
+        if (!path.endsWith('/'))
+            path += "/";
+        ui -> downloadPath -> setText(path);
+    }
 }

@@ -26,7 +26,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="common_tab">
       <attribute name="title">
@@ -44,7 +44,10 @@
        <property name="title">
         <string>Default save path for downloads</string>
        </property>
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="QLineEdit" name="downloadPath">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -54,7 +57,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="browseButton">
         <property name="geometry">
          <rect>
           <x>290</x>

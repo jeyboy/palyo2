@@ -2,6 +2,8 @@
 #define SETTINGS_DIALOG_H
 
 #include <QDialog>
+#include <QFileDialog>
+
 #include "model/hotkey_model/hotkey_model.h"
 #include "model/hotkey_model/hotkey_model_item.h"
 #include "model/hotkey_model/hotkey_delegate.h"
@@ -26,6 +28,8 @@ private slots:
     void on_cancelButton_clicked();
 
     void on_acceptButton_clicked();
+
+    void on_browseButton_clicked();
 
 private:
     Ui::SettingsDialog *ui;
