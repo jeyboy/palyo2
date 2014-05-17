@@ -93,6 +93,8 @@ MainWindow::MainWindow(QWidget *parent) :
     underMouseButton = 0;
 
     Settings::instance() -> fromJson(settings -> read("settings").toObject());
+    SettingsDialog::registerHotkeys(this);
+
     QJsonArray bars = settings -> read("bars").toArray();
 
     if (bars.count() > 0) {
@@ -138,7 +140,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ///////////////////////////////////////////////////////////
 
     tabber = new Tabber(ui -> tabber);
-    registrateGlobalKeys();
     registrateTray();
 
     QApplication::setWindowIcon(QIcon(":icon"));
@@ -146,10 +147,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(Player::instance(), SIGNAL(itemChanged(ModelItem *, ModelItem *)), this, SLOT(outputActiveItem(ModelItem *, ModelItem *)));
 
 //    qDebug() << Library::instance() -> prepareName("5ugar, Eva Kade  (2012) http://vk.com/clubmusicthebestin - All Around feat Evil T (Andrea Bertolini Remix)");
-}
-
-void MainWindow::registrateGlobalKeys() {
-    SettingsDialog::registerHotkeys(this);
 }
 
 //TODO: menu finish needed

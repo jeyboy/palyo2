@@ -472,6 +472,9 @@ ModelItem * View::prevItem(ModelItem * curr) {
     ModelItem * item = curr;
     bool last_elem = false;
 
+    if (curr -> parent() == 0)
+        return 0;
+
     while(true) {
         if (last_elem) {
             last_elem = false;

@@ -22,6 +22,11 @@ public:
 
     static void registerHotkeys(QWidget * receiver);
 
+private slots:
+    void on_cancelButton_clicked();
+
+    void on_acceptButton_clicked();
+
 private:
     Ui::SettingsDialog *ui;
 };

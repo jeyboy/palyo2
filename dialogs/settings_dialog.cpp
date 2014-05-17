@@ -41,3 +41,14 @@ void SettingsDialog::registerHotkeys(QWidget * receiver) {
         }
     }
 }
+
+
+void SettingsDialog::on_cancelButton_clicked() {
+    reject();
+}
+
+void SettingsDialog::on_acceptButton_clicked() {
+    HotkeyModel * model = dynamic_cast<HotkeyModel *>(ui -> treeView -> model());
+    Settings::instance() -> setHotKeys(model ->toplevelItems());
+    accept();
+}

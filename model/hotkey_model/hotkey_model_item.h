@@ -23,6 +23,7 @@ public:
     void appendChilds(QList<HotkeyModelItem *> *);
 
     HotkeyModelItem *parent();
+    QList<HotkeyModelItem *> childList();
 
 private:
     QList<HotkeyModelItem *> childItems;

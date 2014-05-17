@@ -35,6 +35,7 @@ public:
 
     HotkeyModelItem *getItem(const QModelIndex &index) const;
     HotkeyModelItem * root() const;
+    QList<HotkeyModelItem *> toplevelItems();
 
 protected:
     HotkeyModelItem * rootItem;

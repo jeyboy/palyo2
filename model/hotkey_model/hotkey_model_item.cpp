@@ -62,6 +62,10 @@ HotkeyModelItem *HotkeyModelItem::parent() {
     return parentItem;
 }
 
+QList<HotkeyModelItem *> HotkeyModelItem::childList() {
+    return childItems;
+}
+
 bool HotkeyModelItem::removeChildren(int position, int count) {
     if (position < 0 || position + count > childItems.size())
         return false;

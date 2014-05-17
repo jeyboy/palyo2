@@ -50,6 +50,14 @@ HotkeyModelItem *HotkeyModel::getItem(const QModelIndex &index) const {
     return rootItem;
 }
 
+HotkeyModelItem * HotkeyModel::root() const {
+    return rootItem;
+}
+
+QList<HotkeyModelItem *> HotkeyModel::toplevelItems() {
+    return root() -> childList();
+}
+
 QVariant HotkeyModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         return rootItem->data(section);
