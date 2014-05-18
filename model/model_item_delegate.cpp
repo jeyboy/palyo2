@@ -174,7 +174,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         painter -> setClipping(false);
         painter -> drawPath(roundRect);
 
-        painter -> restore();
+        drawCheckbox(painter, option, index);
 
         QVariant vfont = index.data(Qt::FontRole);
         QIcon icon;
@@ -207,7 +207,23 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         if (elem_state)
             painter -> setPen(Qt::white);
         painter -> drawText(rectText, Qt::AlignLeft, s);
-        painter -> setPen(Qt::black);
+
+        painter -> restore();
+}
+
+void ModelItemDelegate::drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) {
+    QStyleOptionButton checkboxstyle;
+    bool checked = index.data(Qt::CheckStateRole).toBool();
+    QRect checkbox_rect = QApplication::style() -> subElementRect(QStyle::SE_CheckBoxIndicator, &checkboxstyle);
+    checkboxstyle.rect = option.rect;
+    checkboxstyle.state = QStyle::State_Enabled;
+    checkboxstyle.state |= checked ? QStyle::State_On : QStyle::State_Off;
+
+
+//    checkboxstyle.type = index.data(Qt::CheckStateRole).toInt() == 0 ? ;
+//    checkboxstyle.rect.setLeft(option.rect.x() +
+//    option.rect.width()/2 - checkbox_rect.width()/2);
+    QApplication::style() -> drawControl(QStyle::CE_CheckBox, &checkboxstyle, painter);
 }
 
 void ModelItemDelegate::progress(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int progressPercentage) const {

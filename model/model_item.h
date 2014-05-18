@@ -45,9 +45,9 @@
 
 class ModelItem {
 public:   
-    ModelItem(int initState = STATE_DEFAULT);
+    ModelItem(int initState = STATE_DEFAULT | STATE_CHECKED);
     ModelItem(QJsonObject * hash, ModelItem * parent = 0);
-    ModelItem(const QString filePath, QString fileName, ModelItem * parent = 0, int genre_id = -1, int initState = STATE_DEFAULT);
+    ModelItem(const QString filePath, QString fileName, ModelItem * parent = 0, int genre_id = -1, int initState = STATE_DEFAULT | STATE_CHECKED);
     virtual ~ModelItem();
 
     QString fullPath() const;

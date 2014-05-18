@@ -2,7 +2,7 @@
 #include <QDebug>
 
 ModelItemState::ModelItemState() {
-    item_state = STATE_DEFAULT;
+    item_state = STATE_DEFAULT | STATE_CHECKED;
 }
 ModelItemState::ModelItemState(int state) {
     item_state = state;
@@ -31,6 +31,10 @@ bool ModelItemState::isUnprocessed() {
 }
 bool ModelItemState::isExpanded() {
     return bitIsSet(item_state, STATE_EXPANDED);
+}
+
+bool ModelItemState::isChecked() {
+    return bitIsSet(item_state, STATE_CHECKED);
 }
 
 bool ModelItemState::setBit(int val) {
@@ -75,10 +79,9 @@ bool ModelItemState::setNone() {
 }
 
 
-//TODO: setListened and setLiked lost played state
 bool ModelItemState::setListened() {
     if (!isLiked() && !isUnprocessed()) {
-        item_state = setBit(STATE_LISTENED, item_state & 15); // get four first bits
+        item_state = setBit(STATE_LISTENED, item_state & 31); // get five first bits
         return true;
     }
     return false;
@@ -86,7 +89,7 @@ bool ModelItemState::setListened() {
 bool ModelItemState::setLiked() {
     if (isUnprocessed()) return false;
 
-    item_state = setBit(STATE_LIKED, item_state & 15); // get four first bits
+    item_state = setBit(STATE_LIKED, item_state & 31); // get five first bits
     return true;
 }
 
@@ -110,7 +113,6 @@ bool ModelItemState::unsetExpanded() {
     item_state = unsetBit(item_state, STATE_EXPANDED);
     return true;
 }
-
 
 
 bool ModelItemState::setNotExist() {
@@ -139,6 +141,15 @@ bool ModelItemState::setUnprocessed() {
     return true;
 }
 
+bool ModelItemState::setChecked() {
+    item_state = setBit(item_state, STATE_CHECKED);
+    return true;
+}
+bool ModelItemState::unsetChecked() {
+    item_state = unsetBit(item_state, STATE_CHECKED);
+    return true;
+}
+
 int ModelItemState::getValue() const {
     return item_state;
 }
@@ -151,7 +162,7 @@ int ModelItemState::currStateValue() {
     if (isPlayed())
         return STATE_PLAYED;
     else
-        return item_state & ((0 << 4) - 1) << 4;
+        return item_state & ((0 << 3) - 1) << 5;
 }
 
 //////////// private /////////////////

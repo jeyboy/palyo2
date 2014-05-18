@@ -1,10 +1,13 @@
 #ifndef MODEL_ITEM_STATE_H
 #define MODEL_ITEM_STATE_H
 
-#define STATE_UNPROCESSED 128
-#define STATE_DEFAULT 64
-#define STATE_LISTENED 32
-#define STATE_LIKED 16
+
+#define STATE_UNPROCESSED 256
+#define STATE_DEFAULT 128
+#define STATE_LISTENED 64
+#define STATE_LIKED 32
+
+#define STATE_CHECKED 16
 
 #define STATE_EXPANDED 8
 #define STATE_PLAYED 4
@@ -27,6 +30,8 @@ public:
     bool isUnprocessed();
     bool isExpanded();
 
+    bool isChecked();
+
     bool setNone();
     bool setListened();
     bool setLiked();
@@ -44,6 +49,9 @@ public:
     bool unsetProceed();
 
     bool setUnprocessed();
+
+    bool setChecked();
+    bool unsetChecked();
 
     bool setBit(int val);
 

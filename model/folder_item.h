@@ -8,7 +8,7 @@ class FolderItem : public ModelItem {
 public:
     FolderItem(int initState = STATE_DEFAULT);
     FolderItem(QJsonObject * hash, ModelItem *parent = 0);
-    FolderItem(const QString folderPath, QString folderTitle = "", ModelItem *parent = 0, int initState = STATE_UNPROCESSED);
+    FolderItem(const QString folderPath, QString folderTitle = "", ModelItem *parent = 0, int initState = STATE_UNPROCESSED | STATE_CHECKED);
     ~FolderItem();
 
     void openLocation();

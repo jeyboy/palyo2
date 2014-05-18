@@ -11,16 +11,6 @@ QSize HotkeyDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelI
 QWidget * HotkeyDelegate::createEditor(QWidget *parent,
                                      const QStyleOptionViewItem &,
                                      const QModelIndex & index) const {
-//    if (index.data().canConvert<StarRating>()) {
-//        StarEditor *editor = new StarEditor(parent);
-//        connect(editor, SIGNAL(editingFinished()),
-//                 this, SLOT(commitAndCloseEditor()));
-//        return editor;
-//    } else {
-//        return QStyledItemDelegate::createEditor(parent, option, index);
-//    }
-
-//    QWidget * editor = QStyledItemDelegate::createEditor(parent, option, index);
 
     HotkeyEditor * editor = new HotkeyEditor(index.data(Qt::UserRole).toInt(), parent);
     connect(editor, SIGNAL(editingFinished()), this, SLOT(commitAndCloseEditor()));
@@ -34,13 +24,6 @@ void HotkeyDelegate::setEditorData(QWidget *editor, const QModelIndex &index) co
 
 void HotkeyDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
     QStyledItemDelegate::setModelData(editor, model, index);
-
-//    if (index.data().canConvert<StarRating>()) {
-//        StarEditor *starEditor = qobject_cast<StarEditor *>(editor);
-//        model->setData(index, QVariant::fromValue(starEditor->starRating()));
-//    } else {
-//        QStyledItemDelegate::setModelData(editor, model, index);
-//    }
 }
 
 void HotkeyDelegate::commitAndCloseEditor() {

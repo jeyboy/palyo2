@@ -53,6 +53,11 @@ QVariant Model::data(const QModelIndex &index, int role) const {
            else
                return IconProvider::fileIcon(item -> fullPath(), (item -> data(EXTENSIONID).toString()));
         }
+        case Qt::CheckStateRole: {
+            item = getItem(index);
+            return item -> getState() -> isChecked();
+        }
+
         case Qt::ToolTipRole:
             item = getItem(index);
             return item -> data(TITLEID).toString();
@@ -66,6 +71,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
             return QFont("Arial", 9, QFont::Normal);
         case Qt::UserRole:
             item = getItem(index);
+            qDebug() << item -> getState() -> getFuncValue() << " " << item -> getState() -> currStateValue();
             return item -> getState() -> currStateValue();
         case PROGRESSID:
             item = getItem(index);
@@ -75,10 +81,24 @@ QVariant Model::data(const QModelIndex &index, int role) const {
     }
 }
 bool Model::setData(const QModelIndex &index, const QVariant &value, int role) {
+    ModelItem * item;
+
+    if (role == Qt::CheckStateRole) {
+        item = getItem(index);
+
+        if (item -> getState() -> isChecked())
+            item -> getState() -> unsetChecked();
+        else
+            item -> getState() -> setChecked();
+
+        emit dataChanged(index, index);
+        return true;
+    }
+
     if (role != Qt::EditRole)
         return false;
 
-    ModelItem *item = getItem(index);
+    item = getItem(index);
     bool result = item -> setData(index.column(), value);
 
     if (result)
@@ -109,7 +129,7 @@ Qt::ItemFlags Model::flags(const QModelIndex &index) const {
      if (!index.isValid())
          return 0;
 
-     return Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
+     return Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
 }
 QModelIndex Model::parent(const QModelIndex &index) const {
     if (!index.isValid())

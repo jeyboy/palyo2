@@ -9,7 +9,7 @@
 class WebFileItem : public ModelItem {
 public:
     WebFileItem(QJsonObject *hash, ModelItem *parent = 0);
-    WebFileItem(const QString filepath, QString filename, QString fileID, ModelItem *parent = 0, int genre_id = -1, int itemDuration = -1, int init_state = STATE_DEFAULT);
+    WebFileItem(const QString filepath, QString filename, QString fileID, ModelItem *parent = 0, int genre_id = -1, int itemDuration = -1, int init_state = STATE_DEFAULT | STATE_CHECKED);
     ~WebFileItem();
 
     bool removePhysicalObject() const;

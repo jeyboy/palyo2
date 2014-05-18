@@ -36,6 +36,7 @@ public:
                const QModelIndex &index) const;
 
 private:
+    static void drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static QPainterPath roundRectPath(const QRect &rect, int offset);
     static QLinearGradient buildGradient(QRect rect, QColor color, bool dark);
     static QLinearGradient defaultState(QRect rect, bool dark);
