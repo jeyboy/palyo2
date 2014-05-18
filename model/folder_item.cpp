@@ -51,7 +51,7 @@ FolderItem::FolderItem(const QString folderPath, QString folderTitle, ModelItem 
 
     if (parent != 0) {
         parent -> foldersList() -> insert(title, this -> toModelItem());
-        parent -> appendChild(this -> toModelItem());
+//        parent -> appendChild(this -> toModelItem());
     }
 }
 

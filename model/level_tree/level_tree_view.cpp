@@ -25,16 +25,17 @@ QModelIndex LevelTreeView::dropProcession(const QList<QUrl> & list) {
 }
 
 void LevelTreeView::filesRoutine(ModelItem * index, QFileInfo currFile){
-    QFileInfoList fileList = folderFiles(currFile);
-
-    foreach(QFileInfo file, fileList) {
-        model -> appendRow(createItem(file.filePath(), index));
-    }
-
     QFileInfoList folderList = folderDirectories(currFile);
 
     foreach(QFileInfo file, folderList) {
         filesRoutine(model -> addFolder("", file.fileName(), model -> root()), file);
+    }
+
+
+    QFileInfoList fileList = folderFiles(currFile);
+
+    foreach(QFileInfo file, fileList) {
+        model -> appendRow(createItem(file.filePath(), index));
     }
 }
 

@@ -16,16 +16,16 @@ QModelIndex ListView::dropProcession(const QList<QUrl> & list) {
 }
 
 void ListView::filesRoutine(ModelItem * index, QFileInfo currFile){
-    QFileInfoList fileList = folderFiles(currFile);
-
-    foreach(QFileInfo file, fileList) {
-        model -> appendRow(createItem(file.filePath(), index));
-    }
-
     QFileInfoList folderList = folderDirectories(currFile);
 
     foreach(QFileInfo file, folderList) {
         filesRoutine(index, file);
+    }
+
+    QFileInfoList fileList = folderFiles(currFile);
+
+    foreach(QFileInfo file, fileList) {
+        model -> appendRow(createItem(file.filePath(), index));
     }
 }
 

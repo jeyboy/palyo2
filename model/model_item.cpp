@@ -22,6 +22,10 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     extension = hash -> value("e").toString();
     genreID = hash -> value("g").toInt(-1);
     progress = -1;
+
+    if (parent != 0) {
+       parent -> appendChild(this);
+    }
 }
 
 ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int genre_id, int initState) {
@@ -34,6 +38,10 @@ ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * paren
     genreID = genre_id;
     progress = -1;
 //    extension = fileExtension;
+
+    if (parent != 0) {
+       parent -> appendChild(this);
+    }
 }
 
 ModelItem::~ModelItem() {

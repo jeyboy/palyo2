@@ -6,9 +6,9 @@ WebFileItem::WebFileItem(QJsonObject *hash, ModelItem *parent) : ModelItem(hash,
     uid = hash -> value("u").toString();
     duration = hash -> value("d").toInt();
 
-    if (parent != 0) {
-       parent -> appendChild(this);
-    }
+//    if (parent != 0) {
+//       parent -> appendChild(this);
+//    }
 }
 
 WebFileItem::WebFileItem(QString filePath, QString fileName, QString fileID, ModelItem *parent, int genre_id, int itemDuration, int initState)
@@ -18,9 +18,9 @@ WebFileItem::WebFileItem(QString filePath, QString fileName, QString fileID, Mod
     duration = itemDuration;
     extension = "mp3";
 
-    if (parent != 0) {
-       parent -> insertChild(0, this);
-    }
+//    if (parent != 0) {
+//       parent -> insertChild(0, this);
+//    }
 }
 
 WebFileItem::~WebFileItem() {}
