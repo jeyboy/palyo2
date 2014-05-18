@@ -91,21 +91,40 @@ void Slider::paintEvent(QPaintEvent * event) {
     p.setPen(QColor::fromRgb(0, 0, 0));
     QRect rect = geometry();
 
-    float limit, step = ((float)maximum()) / tickInterval();
+    float limit, temp = 0, step = ((float)maximum()) / tickInterval();
+    int multiplyer = 0;
 
     if (orientation() == Qt::Horizontal) {
-        step = ((float)rect.width()) / step;
+        while(temp < 20) {
+            multiplyer++;
+            temp = ((float)rect.width()) / (step / multiplyer);
+        }
+
+        step = temp;
         limit = (rect.width() / step) == 0 ? rect.width() - step : rect.width();
 
         for(float pos = step; pos < limit; pos += step) {
             p.drawLine(pos, rect.top() + 4, pos, rect.bottom() - 7);
         }
+
+        if (multiplyer > 1)
+            p.drawText((int)(step), rect.top() + 18, "x " + QString::number(multiplyer));
+
     } else {
-        step = ((float)rect.height()) / step;
+        while(temp < 20) {
+            multiplyer++;
+            temp = ((float)rect.height()) / (step / multiplyer);
+        }
+
+        step = temp;
         limit = (rect.height() / step) == 0 ? rect.height() - step : rect.height();
 
         for(float pos = step; pos < limit; pos += step) {
             p.drawLine(rect.left() + 4, pos, rect.right() - 7, pos);
+        }
+
+        if (multiplyer > 1) {
+            p.drawText(rect.left() + 4 + (multiplyer < 10 ? 3 : 0), (int)(limit - step / 2) + 2, "x" + QString::number(multiplyer));
         }
     }
 
