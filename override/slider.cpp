@@ -16,7 +16,7 @@ void Slider::paintEvent(QPaintEvent * event) {
     QRect rect = geometry();
 
     float step = ((float)rect.width()) / (((float)maximum()) / tickInterval());
-    float limit = (maximum() % tickInterval()) == 0 ? rect.width() - step : rect.width();
+    float limit = (rect.width() / step) == 0 ? rect.width() - step : rect.width();
 
     for(float pos = step; pos < limit; pos += step) {
         p.drawLine(pos, rect.top() + 4, pos, rect.bottom() - 7);
