@@ -28,6 +28,7 @@
 #include "override/toolbarbutton.h"
 #include "override/slider_style.h"
 #include "override/clickable_label.h"
+#include "override/slider.h"
 
 #include "media/library.h"
 #include "media/player.h"

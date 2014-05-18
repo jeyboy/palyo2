@@ -245,8 +245,9 @@ QToolBar* MainWindow::createVolumeMediaBar() {
 
     Player::instance() -> setMuteButton(act);
 
-    QSlider * slider = new QSlider();
+    Slider * slider = new Slider();
     slider -> setStyle(new SliderStyle());
+    slider -> setTickInterval(1000);
     slider -> setOrientation(Qt::Horizontal);
     slider -> setMinimumSize(30, 30);
     slider -> setStyleSheet(QString(
@@ -352,8 +353,9 @@ QToolBar* MainWindow::createPositionMediaBar() {
     connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
     ptb -> setMinimumHeight(30);
 
-    QSlider * slider = new QSlider();
+    Slider * slider = new Slider();
     slider -> setStyle(new SliderStyle());
+    slider -> setTickInterval(60000);
     slider -> setOrientation(Qt::Horizontal);
     slider -> setMinimumSize(30, 30);
 //    slider -> setTracking(false); // send change value only on release slider

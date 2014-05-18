@@ -73,7 +73,8 @@ SOURCES += main.cpp\
     single_application.cpp \
     misc/settings.cpp \
     model/hotkey_model/hotkey_delegate.cpp \
-    model/hotkey_model/hotkey_editor.cpp
+    model/hotkey_model/hotkey_editor.cpp \
+    override/slider.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -129,7 +130,8 @@ HEADERS  += mainwindow.h \
     misc/settings.h \
     model/hotkey_model/hotkey_delegate.h \
     model/hotkey_model/hotkey_editor.h \
-    misc/hotkey_types.h
+    misc/hotkey_types.h \
+    override/slider.h
 
 unix:!mac {
         QT += gui-private
