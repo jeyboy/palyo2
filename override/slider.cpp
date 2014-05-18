@@ -95,7 +95,7 @@ void Slider::paintEvent(QPaintEvent * event) {
     int multiplyer = 0;
 
     if (orientation() == Qt::Horizontal) {
-        while(temp < 20) {
+        while(temp < 16) {
             multiplyer++;
             temp = ((float)rect.width()) / (step / multiplyer);
         }
