@@ -5,7 +5,6 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     settings = settingsSet;
     setModel((model = newModel));
 
-
     setIndentation(8);
 
 //    setStyleSheet(QString(
@@ -44,7 +43,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     setItemDelegate(new ModelItemDelegate(this));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
-    setIconSize(QSize(0,0));
+//    setIconSize(QSize(0,0));
 
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onDoubleClick(const QModelIndex&)));
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &)));

@@ -63,15 +63,12 @@ QVariant Model::data(const QModelIndex &index, int role) const {
             return item -> data(TITLEID).toString();
         case Qt::SizeHintRole:
             return QSize(0, 18);
-        case Qt::TextColorRole:
-            return QColor(0, 0, 0);
         case Qt::TextAlignmentRole:
             return Qt::AlignLeft;
         case Qt::FontRole:
             return QFont("Arial", 9, QFont::Normal);
         case Qt::UserRole:
             item = getItem(index);
-            qDebug() << item -> getState() -> getFuncValue() << " " << item -> getState() -> currStateValue();
             return item -> getState() -> currStateValue();
         case PROGRESSID:
             item = getItem(index);

@@ -108,7 +108,7 @@ void Slider::paintEvent(QPaintEvent * event) {
         }
 
         if (multiplyer > 1)
-            p.drawText((int)(step), rect.top() + 18, "x " + QString::number(multiplyer));
+            p.drawText(4, rect.top() + 18, "x " + QString::number(multiplyer));
 
     } else {
         while(temp < 20) {
