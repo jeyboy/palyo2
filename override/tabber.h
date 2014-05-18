@@ -20,6 +20,7 @@ public:
     ~Tabber();
 
     int addTab(QString name, CBHash settings);
+    Tab * toActiveTab();
     Tab * currentTab();
     Tab * commonTab();
     void load();

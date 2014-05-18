@@ -95,6 +95,14 @@ int Tabber::addTab(QString name, CBHash settings) {
     return index;
 }
 
+Tab * Tabber::toActiveTab() {
+    if (Player::instance() -> currentPlaylist()) {
+        Tab * tab = (Tab *)Player::instance() -> currentPlaylist() -> parentWidget();
+        tabber -> setCurrentIndex(tabber -> indexOf(tab));
+        return tab;
+    } else return 0;
+}
+
 Tab * Tabber::currentTab() {
     return static_cast<Tab *>(tabber -> currentWidget());
 }

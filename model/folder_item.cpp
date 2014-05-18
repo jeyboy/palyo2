@@ -13,7 +13,7 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
 
     if (parent != 0) {
         parent -> foldersList() -> insert(title, this -> toModelItem());
-        parent -> appendChild(this -> toModelItem());
+//        parent -> appendChild(this -> toModelItem());
     }
 
     if (hash -> contains("c")) {

@@ -41,6 +41,8 @@ public:
 
     virtual QJsonObject toJSON();
 
+    void scrollToActive();
+
     void proceedPrev();
     void proceedNext();
     void deleteCurrentProceedNext();

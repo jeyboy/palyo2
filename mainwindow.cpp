@@ -577,6 +577,12 @@ void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
     }
 }
 
+void MainWindow::showActiveElem() {
+    Tab * tab = tabber -> toActiveTab();
+    if (tab)
+        tab -> getList() -> scrollToActive();
+}
+
 void MainWindow::showSettingsDialog() {
     SettingsDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {

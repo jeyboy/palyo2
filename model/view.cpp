@@ -94,6 +94,12 @@ QJsonObject View::toJSON() {
     return res;
 }
 
+void View::scrollToActive() {
+    if (Player::instance() -> playedItem()) {
+        scrollTo(model -> index(Player::instance() -> playedItem()));
+    }
+}
+
 void View::proceedPrev() {
     ModelItem * item = activeItem(false);
 
@@ -289,6 +295,16 @@ void View::showContextMenu(const QPoint& pnt) {
     openAct -> setSeparator(true);
     actions.append(openAct);
 
+    if (Player::instance() -> playedItem()) {
+        openAct = new QAction(QIcon(":/active_tab"), "Show active elem", this);
+        connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showActiveElem()));
+        actions.append(openAct);
+
+        openAct = new QAction(this);
+        openAct -> setSeparator(true);
+        actions.append(openAct);
+    }
+
     if (ind.isValid() && !item -> fullPath().isEmpty()) {
         openAct = new QAction(QIcon(":/open"), "Open location", this);
         connect(openAct, SIGNAL(triggered(bool)), this, SLOT(openLocation()));
@@ -299,13 +315,15 @@ void View::showContextMenu(const QPoint& pnt) {
             openAct -> setSeparator(true);
             actions.append(openAct);
 
-            openAct = new QAction(QIcon(":/download"), "Download", this);
+            openAct = new QAction(QIcon(":/download"), "Download Selected", this);
             connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFromLocation()));
             actions.append(openAct);
 
-            openAct = new QAction(QIcon(":/download"), "Download Folder", this);
-            connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFolder()));
-            actions.append(openAct);
+            if (item -> isFolder()) {
+                openAct = new QAction(QIcon(":/download"), "Download Folder", this);
+                connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFolder()));
+                actions.append(openAct);
+            }
 
             openAct = new QAction(QIcon(":/download"), "Download All", this);
             connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadAll()));
@@ -536,14 +554,14 @@ void View::dropEvent(QDropEvent *event) {
 }
 
 void View::keyPressEvent(QKeyEvent *event) {
-    if (event ->key() == Qt::Key_Enter || event ->key() == Qt::Key_Return) {
+    if (event -> key() == Qt::Key_Enter || event -> key() == Qt::Key_Return) {
         QModelIndexList list = selectedIndexes();
 
         if (list.count() > 0) {
             ModelItem * item = model -> getItem(list.first());
             execItem(item);
         }
-    } else if (event ->key() == Qt::Key_Delete) {
+    } else if (event -> key() == Qt::Key_Delete) {
         QModelIndexList list = selectedIndexes();
         QModelIndex modelIndex;
 
@@ -555,7 +573,7 @@ void View::keyPressEvent(QKeyEvent *event) {
 }
 
 void View::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
+    if (event -> button() == Qt::LeftButton) {
         dragStartPoint = event -> pos();
     }
 

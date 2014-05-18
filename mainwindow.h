@@ -70,6 +70,8 @@ public slots:
     void showAttCurrTabDialog();
 
 private slots:
+    void showActiveElem();
+
     void showSettingsDialog();
 
     void showVKTabDialog();
