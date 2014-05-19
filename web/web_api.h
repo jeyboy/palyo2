@@ -37,7 +37,7 @@ public:
 
 protected slots:
     void downloadConnectionResponsed();
-    void ipResponse(QNetworkReply*);
+    void ipResponse();
 
 signals:
     void downloadProgress(void * item, int percentDone);

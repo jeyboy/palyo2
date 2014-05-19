@@ -16,6 +16,7 @@ public:
     WebApi * getApi() { return VkApi::instance(); }
 protected slots:
     void proceedAudioList(QJsonObject &);
+    void proceedAudioList(QJsonArray &, ModelItem *);
 };
 
 

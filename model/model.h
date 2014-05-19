@@ -45,6 +45,8 @@ public:
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
+    void clearAll(bool emitChanges = false);
+
     void refresh();
     void refreshItem(ModelItem * item);
 

@@ -235,6 +235,15 @@ bool Model::removeRows(int position, int rows, const QModelIndex &parent) {
     return success;
 }
 
+void Model::clearAll(bool refresh) {
+    if(hasChildren()) {
+        removeRows(0, rowCount());
+        count = 0;
+    }
+
+    if (refresh)
+        this -> refresh();
+}
 
 void Model::refresh() {
     beginResetModel();

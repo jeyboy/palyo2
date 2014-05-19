@@ -3,6 +3,7 @@
 WebApi::WebApi() {
     netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
     downloads = new QHash<void *, DownloadPosition *>();
+//    initIp();
 }
 
 WebApi::~WebApi() {
@@ -15,13 +16,27 @@ QString WebApi::getError() {
 
 
 void WebApi::initIp() {
-    manager() -> get(QNetworkRequest(QUrl("http://whatismyip.org/")));
-    connect(manager(), SIGNAL(finished(QNetworkReply*)), SLOT(ipResponse(QNetworkReply*)));
+    ip = "";
+    QNetworkReply * reply = manager() -> get(QNetworkRequest(QUrl("http://whatismyip.org/")));
+    connect(reply, SIGNAL(finished()), SLOT(ipResponse()));
 }
 
-void WebApi::ipResponse(QNetworkReply *reply) {
+void WebApi::ipResponse() {
+    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
+
     if(reply -> error() == QNetworkReply::NoError) {
         ip = reply -> readAll();
+
+        QRegExp rx("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b");
+        rx.indexIn(ip);
+        QStringList list = rx.capturedTexts();
+
+        qDebug() << list;
+
+        if (!list.isEmpty()) {
+            ip = list.first();
+        }
+
         qDebug() << "IP: " << ip;
     } else {
         //TODO: piecedays

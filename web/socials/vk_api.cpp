@@ -101,11 +101,12 @@ void VkApi::audioListRequest() {
     QNetworkReply * reply = (QNetworkReply*)QObject::sender();
 
     QJsonObject doc = toJson(reply -> readAll());
+    qDebug() << reply -> readAll();
 
     if (doc.contains("error")) {
+        qDebug() << reply -> readAll();
         emit errorReceived(doc);
     } else {
-
         doc = doc.value("response").toObject();
         emit audioListReceived(doc);
     }
