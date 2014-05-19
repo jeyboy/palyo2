@@ -4,6 +4,8 @@
 #include <QSlider>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QStylePainter>
+#include <QStyleOptionSlider>
 
 class Slider : public QSlider {
     Q_OBJECT

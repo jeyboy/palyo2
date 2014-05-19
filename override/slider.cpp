@@ -92,7 +92,7 @@ void Slider::paintEvent(QPaintEvent * event) {
     QRect rect = geometry();
 
     float limit, temp = 0, step = ((float)maximum()) / tickInterval();
-    int multiplyer = 0;
+    int multiplyer = 0, flag = Qt::AlignVertical_Mask | Qt::AlignHCenter;
 
     if (orientation() == Qt::Horizontal) {
         while(temp < 16) {
@@ -107,9 +107,10 @@ void Slider::paintEvent(QPaintEvent * event) {
             p.drawLine(pos, rect.top() + 4, pos, rect.bottom() - 7);
         }
 
-        if (multiplyer > 1)
-            p.drawText(4, rect.top() + 18, "x " + QString::number(multiplyer));
-
+        if (multiplyer > 1) {
+            flag = Qt::AlignHCenter | Qt::AlignVCenter;
+//            p.drawText(4, rect.top() + 18, "x " + QString::number(multiplyer));
+        }
     } else {
         while(temp < 20) {
             multiplyer++;
@@ -122,11 +123,40 @@ void Slider::paintEvent(QPaintEvent * event) {
         for(float pos = step; pos < limit; pos += step) {
             p.drawLine(rect.left() + 4, pos, rect.right() - 7, pos);
         }
+    }
 
-        if (multiplyer > 1) {
-            p.drawText(rect.left() + 4 + (multiplyer < 10 ? 3 : 0), (int)(limit - step / 2) + 2, "x" + QString::number(multiplyer));
-        }
+    if (multiplyer > 1) {
+//            p.drawText(rect.left() + 4 + (multiplyer < 10 ? 3 : 0), (int)(limit - step / 2) + 2, "x" + QString::number(multiplyer));
+
+        QStyleOptionSlider opt;
+        initStyleOption(&opt);
+
+        QStyle *styl = style();
+        QRect rectHandle = styl -> subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, NULL);
+        p.drawText(rectHandle, flag, QString::number(multiplyer));
     }
 
     p.restore();
+
+
+//    int avl=styl->pixelMetric(QStyle::PM_SliderSpaceAvailable, &opt, this);
+
+
+
+
+
+
+//    QStylePainter painter(this);
+//    QStyleOptionSlider opt;
+//    initStyleOption(&opt);
+
+//    opt.init(this);
+//    opt.orientation = orientation();
+//    opt.rect = this -> geometry();
+//    opt.minimum = 0;
+//    opt.maximum = maximum();
+//    opt.sliderPosition = value();
+////    opt.sliderValue = 20;
+//    opt.subControls = QStyle::SC_SliderHandle;
+//    painter.drawPrimitive(Control(ComplexControl(QStyle::CC_Slider, opt);
 }

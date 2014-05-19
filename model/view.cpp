@@ -304,10 +304,12 @@ void View::showContextMenu(const QPoint& pnt) {
         actions.append(openAct);
     }
 
-    if (ind.isValid() && !item -> fullPath().isEmpty()) {
-        openAct = new QAction(QIcon(":/open"), "Open location", this);
-        connect(openAct, SIGNAL(triggered(bool)), this, SLOT(openLocation()));
-        actions.append(openAct);
+    if (ind.isValid()) {
+        if (!item -> fullPath().isEmpty()) {
+            openAct = new QAction(QIcon(":/open"), "Open location", this);
+            connect(openAct, SIGNAL(triggered(bool)), this, SLOT(openLocation()));
+            actions.append(openAct);
+        }
 
         if (item -> isRemote()) {
             openAct = new QAction(this);
@@ -469,7 +471,7 @@ ModelItem * View::nextItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item -> isFolder()) {
+            if (!item -> isFolder() && item -> getState() -> isChecked()) {
                 return item;
             } else {
                 curr = item;
@@ -500,7 +502,7 @@ ModelItem * View::prevItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item -> isFolder()) {
+            if (!item -> isFolder() && item -> getState() -> isChecked()) {
                 return item;
             } else {
                 curr = item;

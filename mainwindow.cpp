@@ -247,7 +247,7 @@ QToolBar* MainWindow::createVolumeMediaBar() {
 
     Slider * slider = new Slider();
     slider -> setStyle(new SliderStyle());
-    slider -> setTickInterval(1000);
+    slider -> setTickInterval(2000);
     slider -> setOrientation(Qt::Horizontal);
     slider -> setMinimumSize(30, 30);
 
@@ -324,7 +324,7 @@ QToolBar* MainWindow::createControlToolBar() {
     ptb -> setPalette(pal);
 //    ptb -> setMinimumWidth(75);
 
-    ptb -> addAction(QPixmap(QString(":/add")), "Add new tab", this, SLOT(showAttTabDialog()));
+    ptb -> addAction(QPixmap(QString(":/add")), "Add new local tab", this, SLOT(showAttTabDialog()));
     ptb -> addAction(QPixmap(QString(":/add_vk")), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
     ptb -> addSeparator();
     ptb -> addAction(QPixmap(QString(":/settings")), "Common setting", this, SLOT(showSettingsDialog()));

@@ -127,7 +127,7 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In this case you will see only parent folder of item. If you are will include two folders with same name - its will be showed as one folder and contains items from both folders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In this case you will see only parent folder of item. If you include two folders with the same name - it will be shown as one folder and will contain items from both folders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>One Level Tree</string>
