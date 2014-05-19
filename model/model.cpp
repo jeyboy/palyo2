@@ -284,20 +284,23 @@ ModelItem * Model::buildPath(QString path) {
 //TODO: improve model insertion (add emit of rows insertion)
 
 
-ModelItem * Model::addFolder(QString folderPath, QString folderName, ModelItem * parent) {
+ModelItem * Model::addFolder(QString folderPath, QString folderName, ModelItem * parent, QString remoteID) {
     ModelItem * curr = parent;
 
     if (curr -> foldersList() -> contains(folderName)) {
         curr = curr -> foldersList() -> value(folderName);
     } else {
-        curr = new FolderItem(folderPath, folderName, curr);
+        if (!remoteID.isEmpty())
+            curr = new WebFolderItem(folderPath, remoteID, folderName, curr);
+        else
+            curr = new FolderItem(folderPath, folderName, curr);
     }
 
     return curr;
 }
 
-ModelItem * Model::addFolder(QString folderPath, ModelItem * parent) {
-    return addFolder(folderPath, folderPath, parent);
+ModelItem * Model::addFolder(QString folderPath, ModelItem * parent, QString remoteID) {
+    return addFolder(folderPath, folderPath, parent, remoteID);
 }
 
 //////////////////////// slots //////////////////////////
