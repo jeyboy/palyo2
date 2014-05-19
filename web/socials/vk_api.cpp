@@ -8,12 +8,20 @@ VkApi *VkApi::instance() {
     return self;
 }
 
+VkApi * VkApi::instance(QString pToken, QString pUserId, QString pExpired, QString currIp) {
+    if(!self)
+        self = new VkApi(pToken, pUserId, pExpired, currIp);
+    else
+        VkApi::instance() -> setParams(pToken, pUserId, pExpired, currIp);
+    return self;
+}
+
 QString VkApi::name() const { return "vk"; }
 void VkApi::setParams(QString accessToken, QString userID, QString expiresIn, QString requestIp) {
     token = accessToken;
     user_id = userID;
     expires_in = expiresIn;
-    refreshRequire = requestIp != ip;
+    ip = requestIp;
 }
 
 QString VkApi::getToken() {
@@ -31,10 +39,6 @@ QString VkApi::getIp() {
 
 QHash<int, QString> VkApi::getGenres() const {
     return genres;
-}
-
-bool VkApi::isRefreshRequire() const {
-    return refreshRequire;
 }
 
 ///////////////////////////////////////////////////////////
@@ -180,4 +184,33 @@ QString VkApi::getAPIUrl() {
 
 ///////////////////////////////////////////////////////////
 
+void VkApi::init(QString pToken, QString pUserId, QString pExpired) {
+    token = pToken;
+    user_id = pUserId;
+    expires_in = pExpired;
 
+    genres = QHash<int, QString>();
+
+    genres.insert(1, "Rock");
+    genres.insert(2, "Pop");
+    genres.insert(3, "Rap & Hip-Hop");
+    genres.insert(4, "Easy Listening");
+    genres.insert(5, "Dance & House");
+    genres.insert(6, "Instrumental");
+    genres.insert(7, "Metal");
+    genres.insert(8, "Dubstep");
+    genres.insert(9, "Jazz & Blues");
+    genres.insert(10, "Drum & Bass");
+    genres.insert(11, "Trance");
+    genres.insert(12, "Chanson");
+    genres.insert(13, "Ethnic");
+    genres.insert(14, "Acoustic & Vocal");
+    genres.insert(15, "Reggae");
+    genres.insert(16, "Classical");
+    genres.insert(17, "Indie Pop");
+    genres.insert(18, "Other");
+    genres.insert(19, "Speech");
+
+    genres.insert(21, "Alternative");
+    genres.insert(22, "Electropop & Disco");
+}

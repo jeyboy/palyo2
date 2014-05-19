@@ -1,8 +1,9 @@
 #include "web/web_api.h"
 
-WebApi::WebApi() {
+WebApi::WebApi(QString currIp) {
     netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
     downloads = new QHash<void *, DownloadPosition *>();
+    ip = currIp;
 //    initIp();
 }
 
@@ -16,7 +17,6 @@ QString WebApi::getError() {
 
 
 void WebApi::initIp() {
-    ip = "";
     QNetworkReply * reply = manager() -> get(QNetworkRequest(QUrl("http://whatismyip.org/")));
     connect(reply, SIGNAL(finished()), SLOT(ipResponse()));
 }
@@ -34,9 +34,15 @@ void WebApi::ipResponse() {
         qDebug() << list;
 
         if (!list.isEmpty()) {
-            ip = list.first();
-        }
+            QString newIp = list.first();
 
+            if (!newIp.isEmpty()) {
+                if (ip != newIp)
+                    emit ipChanged(newIp);
+
+                ip = newIp;
+            }
+        }
         qDebug() << "IP: " << ip;
     } else {
         //TODO: piecedays

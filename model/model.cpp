@@ -239,6 +239,7 @@ void Model::clearAll(bool refresh) {
     if(hasChildren()) {
         removeRows(0, rowCount());
         count = 0;
+        root() -> foldersList() -> clear();
     }
 
     if (refresh)

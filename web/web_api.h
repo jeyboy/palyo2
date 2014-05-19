@@ -21,7 +21,7 @@ struct DownloadPosition {
 class WebApi : public QObject {
     Q_OBJECT   
 public:
-    WebApi();
+    WebApi(QString currIp = "");
     ~WebApi();
 
     QString getError();
@@ -40,6 +40,8 @@ protected slots:
     void ipResponse();
 
 signals:
+    void ipChanged(QString newIp);
+
     void downloadProgress(void * item, int percentDone);
     void downloadFinished(void * item, bool success);
     void downloadError(void * item, QString message);

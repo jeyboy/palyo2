@@ -19,8 +19,6 @@ public:
     QString getIp();
     QHash<int, QString> getGenres() const;
 
-    bool isRefreshRequire() const;
-
     void getUserAudioList(QString uid = "0");
 //    void getGroupAudioList(QString uid = "0");
 //    void getAlbumAudioList(QString uid = "0");
@@ -28,6 +26,7 @@ public:
     ~VkApi() { }
 
     static VkApi * instance();
+    static VkApi * instance(QString pToken, QString pUserId, QString pExpired, QString currIp);
     static void close() {
         delete self;
     }
@@ -74,40 +73,14 @@ protected slots:
 
 private:   
     void getAudioList(QString uid = "0");
+    void init(QString pToken = "", QString pUserId = "", QString pExpired = "");
+
+    VkApi(QString pToken, QString pUserId, QString pExpired, QString currIp) : WebApi(currIp) {
+        init(pToken, pUserId, pExpired);
+    }
 
     VkApi() : WebApi() {
-        token = QString();
-        user_id = QString();
-        expires_in = QString();
-
-        genres = QHash<int, QString>();
-
-        genres.insert(1, "Rock");
-        genres.insert(2, "Pop");
-        genres.insert(3, "Rap & Hip-Hop");
-        genres.insert(4, "Easy Listening");
-        genres.insert(5, "Dance & House");
-        genres.insert(6, "Instrumental");
-        genres.insert(7, "Metal");
-        genres.insert(8, "Dubstep");
-        genres.insert(9, "Jazz & Blues");
-        genres.insert(10, "Drum & Bass");
-        genres.insert(11, "Trance");
-        genres.insert(12, "Chanson");
-        genres.insert(13, "Ethnic");
-        genres.insert(14, "Acoustic & Vocal");
-        genres.insert(15, "Reggae");
-        genres.insert(16, "Classical");
-        genres.insert(17, "Indie Pop");
-        genres.insert(18, "Other");
-        genres.insert(19, "Speech");
-
-        genres.insert(21, "Alternative");
-        genres.insert(22, "Electropop & Disco");
-
-//        ip = IpCheck::getIp();
-//        qDebug() << "IP: " << ip;
-        refreshRequire = false;
+        init();
     }
 
     static VkApi *self;
@@ -117,8 +90,6 @@ private:
     QString user_id;
 
     QHash<int, QString> genres;
-
-    bool refreshRequire;
 };
 
 #endif // VK_API_H

@@ -294,6 +294,16 @@ void View::showContextMenu(const QPoint& pnt) {
     openAct -> setSeparator(true);
     actions.append(openAct);
 
+    if (model -> rowCount() > 0) {
+        openAct = new QAction(QIcon(":/collapse"), "Collapse all", this);
+        connect(openAct, SIGNAL(triggered(bool)), this, SLOT(collapseAll()));
+        actions.append(openAct);
+    }
+
+    openAct = new QAction(this);
+    openAct -> setSeparator(true);
+    actions.append(openAct);
+
     if (Player::instance() -> playedItem()) {
         openAct = new QAction(QIcon(":/active_tab"), "Show active elem", this);
         connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showActiveElem()));

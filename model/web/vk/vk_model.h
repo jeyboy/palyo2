@@ -15,6 +15,7 @@ public:
 //    ModelItem * buildPath(QString path);
     WebApi * getApi() { return VkApi::instance(); }
 protected slots:
+    void refreshRequired(QString);
     void proceedAudioList(QJsonObject &);
     void proceedAudioList(QJsonArray &, ModelItem *);
 };

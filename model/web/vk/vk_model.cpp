@@ -8,31 +8,30 @@ VkModel::VkModel(QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) 
 
     if (hash != 0) {
         QJsonObject res = hash -> value("vk").toObject();
-        VkApi::instance() -> setParams(res.value("t").toString(), res.value("u").toString(), res.value("e").toString(), res.value("i").toString());
+        VkApi::instance(res.value("t").toString(), res.value("u").toString(), res.value("e").toString(), res.value("i").toString());
 
 //        if (VkApi::instance() -> isRefreshRequire()) {
 //            clearAll();
 //            VkApi::instance() -> getUserAudioList();
 //        }
+        VkApi::instance() -> initIp();
     } else {
         VkApi::instance() -> getUserAudioList();
     }
+
+    connect(VkApi::instance(), SIGNAL(ipChanged(QString)), this, SLOT(refreshRequired(QString)));
 }
 
 VkModel::~VkModel() {
-//    delete rootItem;
+
 }
 
-//ModelItem * VkModel::buildPath(QString path) {
-//    QStringList list = path.split('/', QString::SkipEmptyParts);
-//    ModelItem * curr = rootItem;
-
-//    foreach(QString piece, list) {
-//        curr = addFolder(piece, curr);
-//    }
-
-//    return curr;
-//}
+//TODO: update only links
+void VkModel::refreshRequired(QString) {
+    qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Update !!!!!!!!!!!!!!!!!!!!";
+    clearAll();
+    VkApi::instance() -> getUserAudioList();
+}
 
 
 //TODO: create separate items for vk ?
