@@ -89,6 +89,7 @@ public:
     void setState(int new_state, bool append_to_library = true);
 
     virtual void dropExpandProceedFlags();  // stub
+    virtual void changeCheckedState(bool checked);  // stub
 
     bool cacheIsPrepared() const;
     void setCache(QList<QString> *newCache);

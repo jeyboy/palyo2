@@ -83,12 +83,13 @@ bool Model::setData(const QModelIndex &index, const QVariant &value, int role) {
     if (role == Qt::CheckStateRole) {
         item = getItem(index);
 
-        if (item -> getState() -> isChecked())
-            item -> getState() -> unsetChecked();
-        else
-            item -> getState() -> setChecked();
+        item -> changeCheckedState(!item -> getState() -> isChecked());
 
-        emit dataChanged(index, index);
+        if (item -> isFolder()) {
+            emit dataChanged(index, this -> index(item -> child(item -> childCount() - 1)));
+        } else {
+            emit dataChanged(index, index);
+        }
         return true;
     }
 

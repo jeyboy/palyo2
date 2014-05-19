@@ -27,6 +27,7 @@ public:
     bool removeChildren(int position, int count);
 
     void dropExpandProceedFlags();
+    void changeCheckedState(bool checked);
 
     QHash<QString, ModelItem *> * foldersList() const;
     int removeFolder(QString name);

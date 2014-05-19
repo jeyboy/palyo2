@@ -213,6 +213,12 @@ void ModelItem::dropExpandProceedFlags() {}
 QHash<QString, ModelItem *> *ModelItem::foldersList() const { return 0; }
 int ModelItem::removeFolder(QString) { return -1; }
 
+void ModelItem::changeCheckedState(bool checked) {
+    if (checked)
+        getState() -> setChecked();
+    else
+        getState() -> unsetChecked();
+}
 
 bool ModelItem::cacheIsPrepared() const {
     return titlesCache != 0;

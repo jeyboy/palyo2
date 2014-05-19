@@ -154,6 +154,13 @@ void FolderItem::dropExpandProceedFlags() {
     }
 }
 
+void FolderItem::changeCheckedState(bool checked) {
+    ModelItem::changeCheckedState(checked);
+
+    foreach(ModelItem * item, childItems)
+        item -> changeCheckedState(checked);
+}
+
 
 QHash<QString, ModelItem *> * FolderItem::foldersList() const {
     return folders;
