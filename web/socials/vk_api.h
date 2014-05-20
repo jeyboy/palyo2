@@ -11,12 +11,11 @@ public:
     QString authUrl() const;
     QString proceedAuthResponse(const QUrl & url);
 
-    void setParams(QString accessToken, QString userID, QString expiresIn, QString requestIp);
+    void setParams(QString accessToken, QString userID, QString expiresIn);
 
     QString getToken();
     QString getExpire();
     QString getUserID();
-    QString getIp();
     QHash<int, QString> getGenres() const;
 
     void getUserAudioList(QString uid = "0");
@@ -26,7 +25,7 @@ public:
     ~VkApi() { }
 
     static VkApi * instance();
-    static VkApi * instance(QString pToken, QString pUserId, QString pExpired, QString currIp);
+    static VkApi * instance(QString pToken, QString pUserId, QString pExpired);
     static void close() {
         delete self;
     }
@@ -75,7 +74,7 @@ private:
     void getAudioList(QString uid = "0");
     void init(QString pToken = "", QString pUserId = "", QString pExpired = "");
 
-    VkApi(QString pToken, QString pUserId, QString pExpired, QString currIp) : WebApi(currIp) {
+    VkApi(QString pToken, QString pUserId, QString pExpired) : WebApi() {
         init(pToken, pUserId, pExpired);
     }
 

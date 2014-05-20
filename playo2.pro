@@ -29,10 +29,11 @@ SOURCES += main.cpp\
     data_store.cpp \
     misc/icon_provider.cpp \
     misc/file_size.cpp \
-    misc/ip_check.cpp \
+#    misc/ip_check.cpp \
     misc/hotkey_manager.cpp \
-    web/web_api.cpp\
-    web/socials/vk_api.cpp\
+    web/ip_checker.cpp \
+    web/web_api.cpp \
+    web/socials/vk_api.cpp \
     globalshortcut/qxtglobalshortcut.cpp \
     dialogs/tabdialog.cpp \
     dialogs/toolbardialog.cpp \
@@ -81,8 +82,9 @@ HEADERS  += mainwindow.h \
     data_store.h \
     misc/icon_provider.h \
     misc/file_size.h \
-    misc/ip_check.h \
+#    misc/ip_check.h \
     misc/hotkey_manager.h \
+    web/ip_checker.h\
     web/web_api.h\
     web/socials/vk_api.h\
 #    file_registration/file_registration.h \

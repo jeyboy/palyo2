@@ -66,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     settings = new DataStore("settings.json");
 
+    qDebug() << "Settings ip " << settings -> read("ip").toString();
+    IpChecker::instance(settings -> read("ip").toString());
+
     if (geometryState.isValid())
         restoreGeometry(geometryState.toByteArray());
 
@@ -228,8 +231,6 @@ QToolBar* MainWindow::createMediaBar() {
     return ptb;
 }
 
-
-
 QToolBar* MainWindow::createVolumeMediaBar() {
     QToolBar* ptb = new QToolBar("Media+Volume");
     ptb -> setObjectName("_Media+Volume");
@@ -257,7 +258,6 @@ QToolBar* MainWindow::createVolumeMediaBar() {
 
     return ptb;
 }
-
 
 QToolBar* MainWindow::createTimeMediaBar() {
     QToolBar* ptb = new QToolBar("Media+Time");
@@ -377,6 +377,9 @@ void MainWindow::dropEvent(QDropEvent * event) {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     settings -> clear();
+
+    if (IpChecker::instance() -> isInitialized())
+        settings -> write("ip", IpChecker::instance() -> currentIp());
 
     QList<QToolBar *> toolbars = this -> findChildren<QToolBar *>();
     qDebug() << toolbars.length();

@@ -8,20 +8,19 @@ VkApi *VkApi::instance() {
     return self;
 }
 
-VkApi * VkApi::instance(QString pToken, QString pUserId, QString pExpired, QString currIp) {
+VkApi * VkApi::instance(QString pToken, QString pUserId, QString pExpired) {
     if(!self)
-        self = new VkApi(pToken, pUserId, pExpired, currIp);
+        self = new VkApi(pToken, pUserId, pExpired);
     else
-        VkApi::instance() -> setParams(pToken, pUserId, pExpired, currIp);
+        VkApi::instance() -> setParams(pToken, pUserId, pExpired);
     return self;
 }
 
 QString VkApi::name() const { return "vk"; }
-void VkApi::setParams(QString accessToken, QString userID, QString expiresIn, QString requestIp) {
+void VkApi::setParams(QString accessToken, QString userID, QString expiresIn) {
     token = accessToken;
     user_id = userID;
     expires_in = expiresIn;
-    ip = requestIp;
 }
 
 QString VkApi::getToken() {
@@ -32,9 +31,6 @@ QString VkApi::getExpire() {
 }
 QString VkApi::getUserID() {
     return user_id;
-}
-QString VkApi::getIp() {
-    return ip;
 }
 
 QHash<int, QString> VkApi::getGenres() const {

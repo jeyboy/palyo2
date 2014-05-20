@@ -1,6 +1,7 @@
 #ifndef VK_MODEL_H
 #define VK_MODEL_H
 
+#include "web/ip_checker.h"
 #include "web/socials/vk_api.h"
 #include "model/model.h"
 #include "model/tree/tree_model.h"

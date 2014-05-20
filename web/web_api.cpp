@@ -1,10 +1,8 @@
 #include "web/web_api.h"
 
-WebApi::WebApi(QString currIp) {
+WebApi::WebApi() {
     netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
     downloads = new QHash<void *, DownloadPosition *>();
-    ip = currIp;
-//    initIp();
 }
 
 WebApi::~WebApi() {
@@ -14,42 +12,6 @@ WebApi::~WebApi() {
 QString WebApi::getError() {
     return error;
 }
-
-
-void WebApi::initIp() {
-    QNetworkReply * reply = manager() -> get(QNetworkRequest(QUrl("http://whatismyip.org/")));
-    connect(reply, SIGNAL(finished()), SLOT(ipResponse()));
-}
-
-void WebApi::ipResponse() {
-    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
-
-    if(reply -> error() == QNetworkReply::NoError) {
-        ip = reply -> readAll();
-
-        QRegExp rx("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b");
-        rx.indexIn(ip);
-        QStringList list = rx.capturedTexts();
-
-        qDebug() << list;
-
-        if (!list.isEmpty()) {
-            QString newIp = list.first();
-
-            if (!newIp.isEmpty()) {
-                if (ip != newIp)
-                    emit ipChanged(newIp);
-
-                ip = newIp;
-            }
-        }
-        qDebug() << "IP: " << ip;
-    } else {
-        //TODO: piecedays
-    }
-    reply -> deleteLater();
-}
-
 
 void WebApi::downloadFile(QObject * caller, void * item, QUrl uri, QUrl savePath) {
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(uri));
