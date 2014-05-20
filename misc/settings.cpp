@@ -8,6 +8,13 @@ Settings *Settings::instance() {
     return self;
 }
 
+bool Settings::getMetricShow() const {
+    return showMetric;
+}
+void Settings::setMetricShow(bool show) {
+    showMetric = show;
+}
+
 bool Settings::getCheckboxShow() const {
     return showCheckbox;
 }
@@ -67,6 +74,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     setHotKeys(settingsObj.value("hotkeys").toObject());
     downloadPath = settingsObj.value("download_path").toString(QCoreApplication::applicationDirPath() + "/downloads/");
     showCheckbox = settingsObj.value("show_checkboxes").toBool(true);
+    showMetric = settingsObj.value("show_metric").toBool(true);
 }
 
 QJsonObject Settings::toJson() {
@@ -75,6 +83,7 @@ QJsonObject Settings::toJson() {
     ret.insert("hotkeys", hotkeysJson());
     ret.insert("download_path", QJsonValue::fromVariant(downloadPath));
     ret.insert("show_checkboxes", QJsonValue::fromVariant(showCheckbox));
+    ret.insert("show_metric", QJsonValue::fromVariant(showMetric));
 
     return ret;
 }

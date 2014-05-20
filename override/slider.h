@@ -7,6 +7,8 @@
 #include <QStylePainter>
 #include <QStyleOptionSlider>
 
+#include "misc/settings.h"
+
 class Slider : public QSlider {
     Q_OBJECT
 public:

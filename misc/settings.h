@@ -21,6 +21,9 @@ public:
         delete self;
     }
 
+    bool getMetricShow() const;
+    void setMetricShow(bool show);
+
     bool getCheckboxShow() const;
     void setCheckboxShow(bool show);
 
@@ -52,6 +55,7 @@ private:
 
     QString downloadPath;
     bool showCheckbox;
+    bool showMetric;
     QJsonObject hotkeys;
     QHash<int, QString> humanizeHotkeyText;
 };

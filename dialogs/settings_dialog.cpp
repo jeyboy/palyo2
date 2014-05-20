@@ -15,8 +15,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
   ui -> downloadPath -> setText(Settings::instance() -> getDownloadPath());
 
-  ui -> checkboxesYes -> setChecked(Settings::instance() -> getCheckboxShow());
-  ui -> checkboxesNo -> setChecked(!Settings::instance() -> getCheckboxShow());
+  ui -> showCheckboxes -> setChecked(Settings::instance() -> getCheckboxShow());
+  ui -> drawMetrics -> setChecked(Settings::instance() -> getMetricShow());
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -57,7 +57,8 @@ void SettingsDialog::on_acceptButton_clicked() {
     Settings::instance() -> setHotKeys(model -> toplevelItems());
 
     Settings::instance() -> setDownloadPath(ui -> downloadPath -> text());
-    Settings::instance() -> setCheckboxShow(ui -> checkboxesYes ->isChecked());
+    Settings::instance() -> setCheckboxShow(ui -> showCheckboxes -> isChecked());
+    Settings::instance() -> setMetricShow(ui -> drawMetrics -> isChecked());
 
     accept();
 }

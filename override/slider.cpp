@@ -84,6 +84,9 @@ Slider::Slider(QWidget * parent) : QSlider(parent) {
 void Slider::paintEvent(QPaintEvent * event) {
     QSlider::paintEvent(event);
 
+    if (!Settings::instance() -> getMetricShow())
+        return;
+
     QPainter p(this);
 
     p.save();
@@ -91,7 +94,7 @@ void Slider::paintEvent(QPaintEvent * event) {
     p.setPen(QColor::fromRgb(0, 0, 0));
     QRect rect = geometry();
 
-    float limit, temp = 0, step = ((float)maximum()) / tickInterval();
+    double limit, temp = 0, step = ((double)maximum()) / tickInterval();
     int multiplyer = 0, flag = Qt::AlignVertical_Mask | Qt::AlignHCenter;
 
     if (orientation() == Qt::Horizontal) {
@@ -103,7 +106,7 @@ void Slider::paintEvent(QPaintEvent * event) {
         step = temp;
         limit = (rect.width() / step) == 0 ? rect.width() - step : rect.width();
 
-        for(float pos = step; pos < limit; pos += step) {
+        for(double pos = step; pos < limit; pos += step) {
             p.drawLine(pos, rect.top() + 4, pos, rect.bottom() - 7);
         }
 
@@ -120,7 +123,7 @@ void Slider::paintEvent(QPaintEvent * event) {
         step = temp;
         limit = (rect.height() / step) == 0 ? rect.height() - step : rect.height();
 
-        for(float pos = step; pos < limit; pos += step) {
+        for(double pos = step; pos < limit; pos += step) {
             p.drawLine(rect.left() + 4, pos, rect.right() - 7, pos);
         }
     }
@@ -138,25 +141,5 @@ void Slider::paintEvent(QPaintEvent * event) {
 
     p.restore();
 
-
 //    int avl=styl->pixelMetric(QStyle::PM_SliderSpaceAvailable, &opt, this);
-
-
-
-
-
-
-//    QStylePainter painter(this);
-//    QStyleOptionSlider opt;
-//    initStyleOption(&opt);
-
-//    opt.init(this);
-//    opt.orientation = orientation();
-//    opt.rect = this -> geometry();
-//    opt.minimum = 0;
-//    opt.maximum = maximum();
-//    opt.sliderPosition = value();
-////    opt.sliderValue = 20;
-//    opt.subControls = QStyle::SC_SliderHandle;
-//    painter.drawPrimitive(Control(ComplexControl(QStyle::CC_Slider, opt);
 }
