@@ -96,6 +96,11 @@ bool ModelItem::isRemote() const { return false; }
 
 bool ModelItem::isFolder() const { return false; }
 
+bool ModelItem::isPlayable() const {
+    bool showBatch = Settings::instance() -> getCheckboxShow();
+    return (!showBatch || (showBatch && getState() -> isChecked()));
+}
+
 
 int ModelItem::getDownloadProgress() const {
     return progress;

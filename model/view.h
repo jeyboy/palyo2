@@ -68,8 +68,15 @@ public:
     int itemsCount() const;
 
     virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
+
+signals:
+    void showSpinner();
+    void hideSpinner();
+
 public slots:
     void updateSelection(QModelIndex candidate);
+    void startRoutine();
+    void stopRoutine();
 
 protected slots:
     void onDoubleClick(const QModelIndex &index);

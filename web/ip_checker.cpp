@@ -34,6 +34,22 @@ void IpChecker::initIp() {
     connect(reply, SIGNAL(finished()), SLOT(ipResponse()));
 }
 
+bool IpChecker::hasIp() {
+    QString guessedGatewayAddress;
+
+    foreach (const QHostAddress &address, QNetworkInterface::allAddresses()) {
+        if (address.protocol() == QAbstractSocket::IPv4Protocol || address.protocol() == QAbstractSocket::IPv6Protocol) {
+            guessedGatewayAddress = address.toString();
+
+            if (guessedGatewayAddress == ip) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 QString IpChecker::currentIp() const {
     return ip;
 }
@@ -54,7 +70,7 @@ void IpChecker::ipResponse() {
             if (!newIp.isEmpty()) {
                 qDebug() << "received IP " << newIp << " " << ip;
                 if (ip != newIp && initialized)
-                    emit ipChanged(newIp);
+                    emit ipChanged();
 
                 ip = newIp;
                 initialized = true;

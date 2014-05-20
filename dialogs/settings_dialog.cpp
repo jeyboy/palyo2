@@ -14,6 +14,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> treeView -> setColumnWidth(0, 250);
 
   ui -> downloadPath -> setText(Settings::instance() -> getDownloadPath());
+
+  ui -> checkboxesYes -> setChecked(Settings::instance() -> getCheckboxShow());
+  ui -> checkboxesNo -> setChecked(!Settings::instance() -> getCheckboxShow());
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -54,6 +57,8 @@ void SettingsDialog::on_acceptButton_clicked() {
     Settings::instance() -> setHotKeys(model -> toplevelItems());
 
     Settings::instance() -> setDownloadPath(ui -> downloadPath -> text());
+    Settings::instance() -> setCheckboxShow(ui -> checkboxesYes ->isChecked());
+
     accept();
 }
 

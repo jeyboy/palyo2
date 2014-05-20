@@ -31,6 +31,10 @@
         <file alias="active_tab">icons/active_tab.png</file>
         <file alias="remote">icons/remote.png</file>
         <file alias="download">icons/download.png</file>
+        <file alias="refresh">icons/refresh.png</file>
         <file alias="collapse">icons/collapse.png</file>
+        <file alias="expand">icons/expand.png</file>
+        <file alias="spinner">icons/loader.gif</file>
+        <file alias="sync">icons/sync.png</file>
     </qresource>
 </RCC>

@@ -54,8 +54,10 @@ QVariant Model::data(const QModelIndex &index, int role) const {
                return IconProvider::fileIcon(item -> fullPath(), (item -> data(EXTENSIONID).toString()));
         }
         case Qt::CheckStateRole: {
-            item = getItem(index);
-            return item -> getState() -> isChecked();
+            if (Settings::instance() -> getCheckboxShow()) {
+                item = getItem(index);
+                return item -> getState() -> isChecked();
+            } else return QVariant();
         }
 
         case Qt::ToolTipRole:
@@ -127,7 +129,10 @@ Qt::ItemFlags Model::flags(const QModelIndex &index) const {
      if (!index.isValid())
          return 0;
 
-     return Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
+     if (Settings::instance() -> getCheckboxShow())
+        return Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
+     else
+        return Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
 }
 QModelIndex Model::parent(const QModelIndex &index) const {
     if (!index.isValid())

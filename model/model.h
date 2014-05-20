@@ -9,6 +9,7 @@
 #include <QUrl>
 
 #include "misc/icon_provider.h"
+#include "misc/settings.h"
 #include "web/web_api.h"
 
 #include "model_item.h"
@@ -47,7 +48,6 @@ public:
 
     void clearAll(bool emitChanges = false);
 
-    void refresh();
     void refreshItem(ModelItem * item);
 
     ModelItem *getItem(const QModelIndex &index) const;
@@ -67,7 +67,11 @@ signals:
     void itemsCountChanged(int newCount);
     void expandNeeded(const QModelIndex &index) const;
 
+    void showSpinner();
+    void hideSpinner();
+
 public slots:
+    virtual void refresh();
     void expanded(const QModelIndex &index);
     void collapsed(const QModelIndex &index);
 

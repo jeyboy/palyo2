@@ -28,10 +28,11 @@ protected slots:
     void ipResponse();
 
 signals:
-    void ipChanged(QString newIp);
+    void ipChanged();
 
 protected:
     void initIp();
+    bool hasIp();
 
     IpChecker(QString currIp = "") : QObject() {
         ip = currIp;
@@ -39,7 +40,9 @@ protected:
         noInternet = false;
         inProgress = false;
         netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
-        initIp();
+
+        if (!initialized || (initialized && !hasIp()))
+            initIp();
     }
 
     static IpChecker *self;

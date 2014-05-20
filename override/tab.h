@@ -42,12 +42,18 @@ public:
 public slots:
     void updateHeader(int new_count = -1);
 
+protected slots:
+    void startRoutine();
+    void stopRoutine();
+
 protected:
     void setNameWithCount(QString name);
 
 private:
     View * list;
     QTabWidget * tabber;
+
+    QLabel * spinnerContainer;
 
 //private slots:
 //    void handleListClicked(const QModelIndex &index);

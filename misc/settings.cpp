@@ -8,6 +8,13 @@ Settings *Settings::instance() {
     return self;
 }
 
+bool Settings::getCheckboxShow() const {
+    return showCheckbox;
+}
+void Settings::setCheckboxShow(bool show) {
+    showCheckbox = show;
+}
+
 QString Settings::getDownloadPath() const {
     return downloadPath;
 }
@@ -59,6 +66,7 @@ void Settings::setHotKeys(QJsonObject hotkeysHash) {
 void Settings::fromJson(QJsonObject settingsObj) {
     setHotKeys(settingsObj.value("hotkeys").toObject());
     downloadPath = settingsObj.value("download_path").toString(QCoreApplication::applicationDirPath() + "/downloads/");
+    showCheckbox = settingsObj.value("show_checkboxes").toBool(true);
 }
 
 QJsonObject Settings::toJson() {
@@ -66,6 +74,7 @@ QJsonObject Settings::toJson() {
 
     ret.insert("hotkeys", hotkeysJson());
     ret.insert("download_path", QJsonValue::fromVariant(downloadPath));
+    ret.insert("show_checkboxes", QJsonValue::fromVariant(showCheckbox));
 
     return ret;
 }

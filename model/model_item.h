@@ -27,6 +27,8 @@
 #include "model_item_state.h"
 #include "media/library.h"
 
+#include "misc/settings.h"
+
 #define TITLEID 0
 #define EXTENSIONID 1
 #define PATHID 2
@@ -59,6 +61,7 @@ public:
     virtual bool isExist() const = 0;
     virtual bool isRemote() const;
     virtual bool isFolder() const;
+    bool isPlayable() const;
 
     int getDownloadProgress() const;
     void setDownloadProgress(int percentageVal);

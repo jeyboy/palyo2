@@ -11,14 +11,14 @@
 //tabber -> tabBar() -> setTabIcon();
 
 void Tabber::setNoTabsStyle() {
-    tabber -> setStyleSheet(
-        "QTabWidget::pane {"
-            "border-top: 1px solid #C2C7CB;"
-            "background-image: url(:/tab_back);"
-            "background-position: center center;"
-            "background-repeat: no-repeat;"
-        "}"
-    );
+//    tabber -> setStyleSheet(
+//        "QTabWidget::pane {"
+//            "border-top: 1px solid #C2C7CB;"
+//            "background-image: url(:/tab_back);"
+//            "background-position: center center;"
+//            "background-repeat: no-repeat;"
+//        "}"
+//    );
 }
 
 void Tabber::updateActiveTab(QWidget * last, QWidget * current) {

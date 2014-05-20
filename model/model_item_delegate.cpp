@@ -226,8 +226,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
 //        int iconSize = 16;
         int delta = (option2.state & QStyle::State_MouseOver) ? 32 : 0;
-        QColor semiTransparentWhite(255, 255, 255, 48 + delta);
-        QColor semiTransparentBlack(0, 0, 0, 48 - delta);
+//        QColor semiTransparentWhite(255, 255, 255, 48 + delta);
+//        QColor semiTransparentBlack(0, 0, 0, 48 - delta);
 
         int x, y, width, height;
         option.rect.getRect(&x, &y, &width, &height);
@@ -237,8 +237,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         painter -> save();
         painter -> setRenderHint(QPainter::Antialiasing, true);
         int background_state = index.data(Qt::UserRole).toInt();
+        QVariant checkable = index.data(Qt::CheckStateRole);
 
-        QPainterPath roundRect = roundRectPath(option2.rect, 18);
+        QPainterPath roundRect = roundRectPath(option2.rect, !checkable.isValid() ? 2 : 18);
 
         bool elem_state = option.state & (QStyle::State_Selected);
 
@@ -279,7 +280,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             option2.palette.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
         }
 
-//        option2.rect.moveLeft(option2.rect.left() + 8);
+
+        if (!checkable.isValid())
+            option2.rect.moveLeft(option2.rect.left() + 4);
         QStyledItemDelegate::paint(painter, option2, index);
 }
 

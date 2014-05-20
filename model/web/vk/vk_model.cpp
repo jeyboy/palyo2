@@ -19,7 +19,7 @@ VkModel::VkModel(QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) 
         VkApi::instance() -> getUserAudioList();
     }
 
-    connect(IpChecker::instance(), SIGNAL(ipChanged(QString)), this, SLOT(refreshRequired(QString)));
+    connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
 }
 
 VkModel::~VkModel() {
@@ -27,10 +27,14 @@ VkModel::~VkModel() {
 }
 
 //TODO: update only links
-void VkModel::refreshRequired(QString) {
+void VkModel::refresh() {
+    emit showSpinner();
     qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Update !!!!!!!!!!!!!!!!!!!!";
     clearAll();
+    QApplication::processEvents();
     VkApi::instance() -> getUserAudioList();
+    QApplication::processEvents();
+    emit hideSpinner();
 }
 
 
@@ -65,7 +69,7 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
         proceedAudioList(ar, root());
     }
 
-    refresh();
+    TreeModel::refresh();
 }
 
 void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent) {

@@ -2,7 +2,6 @@
 #define VK_API_H
 
 #include "web/web_api.h"
-#include "misc/ip_check.h"
 
 class VkApi : public WebApi {
     Q_OBJECT

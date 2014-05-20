@@ -21,6 +21,9 @@ public:
         delete self;
     }
 
+    bool getCheckboxShow() const;
+    void setCheckboxShow(bool show);
+
     QString getDownloadPath() const;
     void setDownloadPath(QString newPath);
 
@@ -48,6 +51,7 @@ private:
     static Settings *self;
 
     QString downloadPath;
+    bool showCheckbox;
     QJsonObject hotkeys;
     QHash<int, QString> humanizeHotkeyText;
 };

@@ -52,6 +52,9 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
 
     connect(model, SIGNAL(expandNeeded(const QModelIndex &)), this, SLOT(expand(const QModelIndex &)));
     connect(model, SIGNAL(itemsCountChanged(int)), parent, SLOT(updateHeader(int)));
+    connect(model, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
+    connect(model, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
+
 //    connect(model, SIGNAL(selectionChangeNeeded(const QModelIndex &index)), this, SLOT(changeSelection(const QModelIndex &index)));
 //    connect(model, SIGNAL(selectionUpdateNeeded()), this, SLOT(updateSelection()));
 
@@ -261,6 +264,13 @@ int View::itemsCount() const {
 /// SLOTS
 //////////////////////////////////////////////////////
 
+void View::startRoutine() {
+    emit showSpinner();
+}
+void View::stopRoutine() {
+    emit hideSpinner();
+}
+
 void View::updateSelection(QModelIndex candidate) {
     if (candidate.isValid()) {
         ModelItem * item = getModel() -> getItem(candidate);
@@ -285,33 +295,48 @@ void View::showContextMenu(const QPoint& pnt) {
     QModelIndex ind = indexAt(pnt);
     ModelItem * item = model -> getItem(ind);
     QAction * openAct;
+    QAction * sepAct;
 
-    openAct = new QAction(QIcon(":/settings"), "Tab settings", this);
-    connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showAttCurrTabDialog()));
+    if (isEditable()) {
+        openAct = new QAction(QIcon(":/settings"), "Tab settings", this);
+        connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showAttCurrTabDialog()));
+        actions.append(openAct);
+
+        sepAct = new QAction(this);
+        sepAct -> setSeparator(true);
+        actions.append(sepAct);
+    }
+
+    openAct = new QAction(QIcon(":/refresh"), "Refresh", this);
+    connect(openAct, SIGNAL(triggered(bool)), model, SLOT(refresh()));
     actions.append(openAct);
 
-    openAct = new QAction(this);
-    openAct -> setSeparator(true);
-    actions.append(openAct);
+    sepAct = new QAction(this);
+    sepAct -> setSeparator(true);
+    actions.append(sepAct);
 
     if (model -> rowCount() > 0) {
         openAct = new QAction(QIcon(":/collapse"), "Collapse all", this);
         connect(openAct, SIGNAL(triggered(bool)), this, SLOT(collapseAll()));
         actions.append(openAct);
+
+        openAct = new QAction(QIcon(":/expand"), "Expand all", this);
+        connect(openAct, SIGNAL(triggered(bool)), this, SLOT(expandAll()));
+        actions.append(openAct);
     }
 
-    openAct = new QAction(this);
-    openAct -> setSeparator(true);
-    actions.append(openAct);
+    sepAct = new QAction(this);
+    sepAct -> setSeparator(true);
+    actions.append(sepAct);
 
     if (Player::instance() -> playedItem()) {
         openAct = new QAction(QIcon(":/active_tab"), "Show active elem", this);
         connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showActiveElem()));
         actions.append(openAct);
 
-        openAct = new QAction(this);
-        openAct -> setSeparator(true);
-        actions.append(openAct);
+        sepAct = new QAction(this);
+        sepAct -> setSeparator(true);
+        actions.append(sepAct);
     }
 
     if (ind.isValid()) {
@@ -322,17 +347,17 @@ void View::showContextMenu(const QPoint& pnt) {
         }
 
         if (item -> isRemote()) {
-            openAct = new QAction(this);
-            openAct -> setSeparator(true);
-            actions.append(openAct);
-
-            openAct = new QAction(QIcon(":/download"), "Download Selected", this);
-            connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFromLocation()));
-            actions.append(openAct);
+            sepAct = new QAction(this);
+            sepAct -> setSeparator(true);
+            actions.append(sepAct);
 
             if (item -> isFolder()) {
-                openAct = new QAction(QIcon(":/download"), "Download Folder", this);
+                openAct = new QAction(QIcon(":/download"), "Download Seelcted Folder", this);
                 connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFolder()));
+                actions.append(openAct);
+            } else {
+                openAct = new QAction(QIcon(":/download"), "Download Selected", this);
+                connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFromLocation()));
                 actions.append(openAct);
             }
 
@@ -481,7 +506,7 @@ ModelItem * View::nextItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item -> isFolder() && item -> getState() -> isChecked()) {
+            if (!item -> isFolder() && item -> isPlayable()) {
                 return item;
             } else {
                 curr = item;
@@ -512,7 +537,7 @@ ModelItem * View::prevItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item -> isFolder() && item -> getState() -> isChecked()) {
+            if (!item -> isFolder() && item -> isPlayable()) {
                 return item;
             } else {
                 curr = item;

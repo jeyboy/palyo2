@@ -20,8 +20,20 @@ void Tab::init(CBHash params, QJsonObject * hash) {
 
     this -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
     this -> layout() -> addWidget(list);
+
+
+    spinnerContainer = new QLabel;
+    spinnerContainer -> setHidden(true);
+    spinnerContainer -> setPixmap(QPixmap(":/sync"));
+    this -> layout() -> addWidget(spinnerContainer);
+    this -> layout() -> setAlignment(spinnerContainer, Qt::AlignCenter);
+
+
     this -> layout() -> setContentsMargins(0, 0, 0, 0);
     tabber = (QTabWidget *)parent();
+
+    connect(list, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
+    connect(list, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
 }
 
 Tab::Tab(CBHash params, QWidget * parent) : QWidget(parent) {
@@ -56,7 +68,7 @@ View * Tab::getList() const {
     return list;
 }
 
-void Tab::updateHeader(int new_count) {
+void Tab::updateHeader(int /*new_count*/) {
     setNameWithCount(getName());
 }
 
@@ -73,4 +85,13 @@ QJsonObject Tab::toJSON(QString name) {
 
 bool Tab::isEditable() const {
     return list -> isEditable();
+}
+
+void Tab::startRoutine() {
+    list -> setHidden(true);
+    spinnerContainer -> setHidden(false);
+}
+void Tab::stopRoutine() {
+    spinnerContainer -> setHidden(true);
+    list -> setHidden(false);
 }
