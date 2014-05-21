@@ -8,14 +8,21 @@ Settings *Settings::instance() {
     return self;
 }
 
-bool Settings::getMetricShow() const {
+bool Settings::isSpoilOnActivation() const {
+    return spoilOnActivation;
+}
+void Settings::setSpoilOnActivation(bool show) {
+    spoilOnActivation = show;
+}
+
+bool Settings::isMetricShow() const {
     return showMetric;
 }
 void Settings::setMetricShow(bool show) {
     showMetric = show;
 }
 
-bool Settings::getCheckboxShow() const {
+bool Settings::isCheckboxShow() const {
     return showCheckbox;
 }
 void Settings::setCheckboxShow(bool show) {
@@ -75,6 +82,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     downloadPath = settingsObj.value("download_path").toString(QCoreApplication::applicationDirPath() + "/downloads/");
     showCheckbox = settingsObj.value("show_checkboxes").toBool(true);
     showMetric = settingsObj.value("show_metric").toBool(true);
+    spoilOnActivation = settingsObj.value("spoil_on_activation").toBool(true);
 }
 
 QJsonObject Settings::toJson() {
@@ -84,6 +92,7 @@ QJsonObject Settings::toJson() {
     ret.insert("download_path", QJsonValue::fromVariant(downloadPath));
     ret.insert("show_checkboxes", QJsonValue::fromVariant(showCheckbox));
     ret.insert("show_metric", QJsonValue::fromVariant(showMetric));
+    ret.insert("spoil_on_activation", QJsonValue::fromVariant(spoilOnActivation));
 
     return ret;
 }

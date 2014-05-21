@@ -146,15 +146,15 @@ void Player::setTimePanel(ClickableLabel * newTimePanel) {
 void Player::setTimePanelVal(int millis) {
     if (timePanel) {
         QString val, total;
+        total = intToStr(getDuration());
 
         if (time_forward) {
             val = intToStr(millis);
+            timePanel -> setText(val + "\n" + total);
         } else {
             val = intToStr(getDuration() - millis);
+            timePanel -> setText(total + "\n" + val);
         }
-
-        total = intToStr(getDuration());
-        timePanel -> setText(val + "\n" + total);
     }
 }
 

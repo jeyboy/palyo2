@@ -97,7 +97,7 @@ bool ModelItem::isRemote() const { return false; }
 bool ModelItem::isFolder() const { return false; }
 
 bool ModelItem::isPlayable() const {
-    bool showBatch = Settings::instance() -> getCheckboxShow();
+    bool showBatch = Settings::instance() -> isCheckboxShow();
     return (!showBatch || (showBatch && getState() -> isChecked()));
 }
 

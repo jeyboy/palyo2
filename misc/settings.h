@@ -21,10 +21,13 @@ public:
         delete self;
     }
 
-    bool getMetricShow() const;
+    bool isSpoilOnActivation() const;
+    void setSpoilOnActivation(bool show);
+
+    bool isMetricShow() const;
     void setMetricShow(bool show);
 
-    bool getCheckboxShow() const;
+    bool isCheckboxShow() const;
     void setCheckboxShow(bool show);
 
     QString getDownloadPath() const;
@@ -56,6 +59,7 @@ private:
     QString downloadPath;
     bool showCheckbox;
     bool showMetric;
+    bool spoilOnActivation;
     QJsonObject hotkeys;
     QHash<int, QString> humanizeHotkeyText;
 };

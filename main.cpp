@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setOrganizationDomain("bigbug.sos");
     QCoreApplication::setApplicationName("Playo");
 
-    QCoreApplication::addLibraryPath("platforms");
+//    QCoreApplication::addLibraryPath("platforms");
 
     SingleApplication app(argc, argv, "bigbugplayo");
 

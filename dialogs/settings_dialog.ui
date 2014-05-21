@@ -20,6 +20,20 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="1">
+    <widget class="QPushButton" name="acceptButton">
+     <property name="text">
+      <string>Ok</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="cancelButton">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0" colspan="2">
     <widget class="QTabWidget" name="settingsTabs">
      <property name="tabPosition">
@@ -36,7 +50,7 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>60</y>
+         <y>10</y>
          <width>321</width>
          <height>51</height>
         </rect>
@@ -71,57 +85,44 @@
         </property>
        </widget>
       </widget>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QCheckBox" name="showCheckboxes">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>10</y>
-         <width>181</width>
-         <height>51</height>
+         <x>10</x>
+         <y>70</y>
+         <width>311</width>
+         <height>17</height>
         </rect>
        </property>
-       <property name="title">
-        <string>Checkboxes for batch operations</string>
+       <property name="text">
+        <string>Show checkboxes for batch operations</string>
        </property>
-       <widget class="QCheckBox" name="showCheckboxes">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>161</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Show</string>
-        </property>
-       </widget>
       </widget>
-      <widget class="QGroupBox" name="groupBox_3">
+      <widget class="QCheckBox" name="drawMetrics">
        <property name="geometry">
         <rect>
-         <x>190</x>
-         <y>10</y>
-         <width>131</width>
-         <height>51</height>
+         <x>10</x>
+         <y>110</y>
+         <width>311</width>
+         <height>17</height>
         </rect>
        </property>
-       <property name="title">
-        <string>Metric unit on sliders</string>
+       <property name="text">
+        <string>Draw metric grid on sliders</string>
        </property>
-       <widget class="QCheckBox" name="drawMetrics">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>161</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Draw</string>
-        </property>
-       </widget>
+      </widget>
+      <widget class="QCheckBox" name="spoilOnActivate">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>130</y>
+         <width>311</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Spoil item on activation</string>
+       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="hot_keys_tab">
@@ -151,20 +152,6 @@
        </property>
       </widget>
      </widget>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="acceptButton">
-     <property name="text">
-      <string>Ok</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="cancelButton">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
     </widget>
    </item>
   </layout>

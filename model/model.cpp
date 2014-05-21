@@ -54,7 +54,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
                return IconProvider::fileIcon(item -> fullPath(), (item -> data(EXTENSIONID).toString()));
         }
         case Qt::CheckStateRole: {
-            if (Settings::instance() -> getCheckboxShow()) {
+            if (Settings::instance() -> isCheckboxShow()) {
                 item = getItem(index);
                 return item -> getState() -> isChecked();
             } else return QVariant();
@@ -129,7 +129,7 @@ Qt::ItemFlags Model::flags(const QModelIndex &index) const {
      if (!index.isValid())
          return 0;
 
-     if (Settings::instance() -> getCheckboxShow())
+     if (Settings::instance() -> isCheckboxShow())
         return Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
      else
         return Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);

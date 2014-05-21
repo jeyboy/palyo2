@@ -84,7 +84,7 @@ Slider::Slider(QWidget * parent) : QSlider(parent) {
 void Slider::paintEvent(QPaintEvent * event) {
     QSlider::paintEvent(event);
 
-    if (!Settings::instance() -> getMetricShow())
+    if (!Settings::instance() -> isMetricShow())
         return;
 
     QPainter p(this);

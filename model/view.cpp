@@ -180,7 +180,8 @@ void View::markSelectedAsLiked() {
 
 bool View::execItem(ModelItem * item) {
     if (item) {
-        scrollTo(model -> index(item));
+        if (Settings::instance() -> isSpoilOnActivation())
+            scrollTo(model -> index(item));
         if (item -> isExist()) {
             Player::instance() -> playItem(this, item);
             return true;
