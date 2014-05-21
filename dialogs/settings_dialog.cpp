@@ -6,6 +6,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> setupUi(this);
 
   setWindowTitle("Settings ept");
+  setFixedWidth(356);
+  setFixedHeight(291);
+  setSizeGripEnabled(false);
 
   ui -> treeView -> setEditTriggers(QTreeView::AllEditTriggers);
   ui -> treeView -> setItemDelegate(new HotkeyDelegate(ui -> treeView));
