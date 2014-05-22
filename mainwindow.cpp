@@ -10,34 +10,12 @@ QMenu * MainWindow::createPopupMenu () {
     connect(menu, SIGNAL(aboutToHide()), this, SLOT(removePanelHighlight()));
 
 //    menu -> insertSeparator(menu->actions().first());
-    menu -> insertSection(menu->actions().first(), "Panels list");
+    menu -> insertSection(menu -> actions().first(), "Panels list");
 
     lastClickPoint = QCursor::pos();
     QWidget * widget = this -> childAt(this -> mapFromGlobal(lastClickPoint));
     QString widgetClassName = QString(widget -> metaObject() -> className());
 
-
-//    activeBar
-
-    ////////////////////////// for bar movable fixing ////////////////////////////////
-    if (widgetClassName == "QToolButton" || widgetClassName == "ToolbarButton") {
-        activeBar = ((QToolBar*)widget -> parentWidget());
-    } else {
-        activeBar = ((QToolBar*)widget);
-    }
-
-    QAction * fixToolbarAct;
-
-    if (activeBar -> isMovable()) {
-        fixToolbarAct = new QAction(QIcon(":locked"), "Static bar", menu);
-    } else {
-        fixToolbarAct = new QAction(QIcon(":unlocked"), "Movable bar", menu);
-    }
-
-    menu -> insertAction(menu -> actions().first(), fixToolbarAct);
-    connect(fixToolbarAct, SIGNAL(triggered(bool)), this, SLOT(changeToolbarMovable()));
-
-    //////////////////////////////////////////////////////////////////////////////////
 
     if (widgetClassName == "ToolbarButton") {
         underMouseButton = ((ToolbarButton*)widget);
@@ -69,6 +47,28 @@ QMenu * MainWindow::createPopupMenu () {
     menu -> insertAction(menu->actions().first(), addPanelAct);
 
     menu -> insertSection(menu->actions().first(), QIcon(":panels"), "Panel");
+
+    //    activeBar
+
+    ////////////////////////// for bar movable fixing ////////////////////////////////
+    if (widgetClassName == "QToolBar" || widgetClassName == "ToolBar") {
+        activeBar = ((QToolBar*)widget);
+    } else {
+        activeBar = ((QToolBar*)widget -> parentWidget());
+    }
+
+    QAction * fixToolbarAct;
+
+    if (activeBar -> isMovable()) {
+        fixToolbarAct = new QAction(QIcon(":locked"), "Static bar", menu);
+    } else {
+        fixToolbarAct = new QAction(QIcon(":unlocked"), "Movable bar", menu);
+    }
+
+    menu -> insertAction(menu -> actions().first(), fixToolbarAct);
+    connect(fixToolbarAct, SIGNAL(triggered(bool)), this, SLOT(changeToolbarMovable()));
+
+    //////////////////////////////////////////////////////////////////////////////////
 
     return menu;
 }

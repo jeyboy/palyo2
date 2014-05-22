@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QStylePainter>
 #include <QStyleOptionSlider>
+#include <QToolTip>
 
 #include "misc/settings.h"
 
@@ -16,6 +17,7 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *);
+//    void mouseMoveEvent(QMouseEvent *);
 public:
 
 };

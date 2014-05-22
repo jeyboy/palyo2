@@ -2,6 +2,8 @@
 #include "qdebug.h"
 
 Slider::Slider(QWidget * parent) : QSlider(parent) {
+//    setToolTipDuration(1000);
+
     setStyleSheet(QString(
                                               "QSlider::groove {"
                                                 "border: 1px solid #bbb;"
@@ -145,3 +147,10 @@ void Slider::paintEvent(QPaintEvent * event) {
 
 //    int avl=styl->pixelMetric(QStyle::PM_SliderSpaceAvailable, &opt, this);
 }
+
+// mouse tracking required :(
+//void Slider::mouseMoveEvent(QMouseEvent * ev) {
+//    qDebug() << "hudo";
+//    QPointF p = ev -> localPos();
+//    QToolTip::showText(QString::number(p.x()));
+//}
