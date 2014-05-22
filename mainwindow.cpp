@@ -20,7 +20,7 @@ QMenu * MainWindow::createPopupMenu () {
 //    activeBar
 
     ////////////////////////// for bar movable fixing ////////////////////////////////
-    if (widgetClassName == "QToolButton") {
+    if (widgetClassName == "QToolButton" || widgetClassName == "ToolbarButton") {
         activeBar = ((QToolBar*)widget -> parentWidget());
     } else {
         activeBar = ((QToolBar*)widget);
@@ -686,4 +686,5 @@ void MainWindow::showAttCurrTabDialog() {
 
 void MainWindow::changeToolbarMovable() {
     activeBar -> setMovable(!activeBar -> isMovable());
+    activeBar -> repaint();
 }

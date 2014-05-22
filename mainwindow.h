@@ -105,7 +105,7 @@ protected:
     void dragMoveEvent(QDragMoveEvent *);
     void dropEvent(QDropEvent *);
     void closeEvent(QCloseEvent *event);
-    QMenu* createPopupMenu ();
+    QMenu* createPopupMenu();
 
 private:
     Ui::MainWindow *ui;
