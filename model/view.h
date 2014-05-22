@@ -59,7 +59,7 @@ public:
     CBHash getSettings() const;
     void setSettings(CBHash newSettings);
 
-    void markSelectedAsLiked();
+    QModelIndexList selectedItems() const;
 
     bool execItem(ModelItem * item);
     ModelItem * removeCandidate(ModelItem * item);
@@ -70,6 +70,7 @@ public:
     virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
 
     void downloadSelected(QString savePath, bool markAsLiked = false);
+    void copyItemsFrom(View * otherView);
 
 signals:
     void showSpinner();

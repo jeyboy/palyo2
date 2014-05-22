@@ -595,11 +595,7 @@ void MainWindow::showActiveElem() {
 
 void MainWindow::showSettingsDialog() {
     SettingsDialog dialog(this);
-    if (dialog.exec() == QDialog::Accepted) {
-        //TODO: logic needed
-    } else {
-
-    }
+    dialog.exec();
 }
 
 void MainWindow::showVKTabDialog() {

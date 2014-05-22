@@ -165,17 +165,21 @@ void View::setSettings(CBHash newSettings) {
     settings = newSettings;
 }
 
-void View::markSelectedAsLiked() {
-    ModelItem *temp;
-    foreach (const QModelIndex &index, selectedIndexes()) {
-        if (index.isValid()) {
-            temp = model -> getItem(index);
-            if (!temp -> isFolder()) {
-                temp -> setState(STATE_LIKED);
-                model -> refreshItem(temp);
-            }
-        }
-    }
+//void View::markSelectedAsLiked() {
+//    ModelItem *temp;
+//    foreach (const QModelIndex &index, selectedIndexes()) {
+//        if (index.isValid()) {
+//            temp = model -> getItem(index);
+//            if (!temp -> isFolder()) {
+//                temp -> setState(STATE_LIKED);
+//                model -> refreshItem(temp);
+//            }
+//        }
+//    }
+//}
+
+QModelIndexList View::selectedItems() const {
+    return selectedIndexes();
 }
 
 bool View::execItem(ModelItem * item) {
@@ -385,7 +389,7 @@ void View::downloadItem(ModelItem * item, QString savePath) {
 
     if (item -> isRemote()) {
         if (model -> getApi() == 0) {
-            qDebug() << "Some shit happened :(";
+            QMessageBox::warning(this, "Remote download", "Some shit happened :(");
             return;
         }
 
@@ -432,6 +436,14 @@ void View::downloadSelected(QString savePath, bool markAsLiked) {
             if (markAsLiked)
                 item -> getState() -> setLiked();
         }
+    }
+}
+
+void View::copyItemsFrom(View * otherView) {
+    QModelIndexList indexes = otherView -> selectedItems();
+
+    foreach(QModelIndex index, indexes) {
+        //TODO: copy logic
     }
 }
 
