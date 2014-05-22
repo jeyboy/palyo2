@@ -70,6 +70,8 @@ signals:
     void showSpinner();
     void hideSpinner();
 
+    void updated();
+
 public slots:
     virtual void refresh();
     void expanded(const QModelIndex &index);

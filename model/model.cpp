@@ -242,6 +242,7 @@ bool Model::removeRows(int position, int rows, const QModelIndex &parent) {
 
 void Model::clearAll(bool refresh) {
     if(hasChildren()) {
+        emit updated();
         removeRows(0, rowCount());
         count = 0;
         root() -> foldersList() -> clear();
@@ -251,7 +252,8 @@ void Model::clearAll(bool refresh) {
         this -> refresh();
 }
 
-void Model::refresh() {
+void Model::refresh() {   
+    emit updated();
     beginResetModel();
     endResetModel();
 }

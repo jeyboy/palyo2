@@ -87,6 +87,7 @@ protected slots:
     void openLocation();
 
     void download();
+    void modelUpdate();
 
 protected:
     bool prepareDownloading(QString path);

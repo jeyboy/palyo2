@@ -54,6 +54,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     connect(model, SIGNAL(itemsCountChanged(int)), parent, SLOT(updateHeader(int)));
     connect(model, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
     connect(model, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
+    connect(model, SIGNAL(updated()), this, SLOT(modelUpdate()));
 
 //    connect(model, SIGNAL(selectionChangeNeeded(const QModelIndex &index)), this, SLOT(changeSelection(const QModelIndex &index)));
 //    connect(model, SIGNAL(selectionUpdateNeeded()), this, SLOT(updateSelection()));
@@ -302,6 +303,16 @@ void View::showContextMenu(const QPoint& pnt) {
     QAction * openAct;
     QAction * sepAct;
 
+    if (Player::instance() -> playedItem()) {
+        openAct = new QAction(QIcon(":/active_tab"), "Show active elem", this);
+        connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showActiveElem()));
+        actions.append(openAct);
+
+        sepAct = new QAction(this);
+        sepAct -> setSeparator(true);
+        actions.append(sepAct);
+    }
+
     if (isEditable()) {
         openAct = new QAction(QIcon(":/settings"), "Tab settings", this);
         connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showAttCurrTabDialog()));
@@ -319,16 +330,6 @@ void View::showContextMenu(const QPoint& pnt) {
     sepAct = new QAction(this);
     sepAct -> setSeparator(true);
     actions.append(sepAct);
-
-    if (Player::instance() -> playedItem()) {
-        openAct = new QAction(QIcon(":/active_tab"), "Show active elem", this);
-        connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showActiveElem()));
-        actions.append(openAct);
-
-        sepAct = new QAction(this);
-        sepAct -> setSeparator(true);
-        actions.append(sepAct);
-    }
 
     if (ind.isValid()) {
         if (!item -> fullPath().isEmpty()) {
@@ -419,6 +420,14 @@ void View::downloadBranch(ModelItem * rootNode, QString savePath) {
 
 void View::download() {
     downloadSelected(Settings::instance() -> getDownloadPath());
+}
+
+void View::modelUpdate() {
+    qDebug() << "model update";
+    if (Player::instance() -> currentPlaylist() == this) {
+        qDebug() << "this model update";
+        Player::instance() -> removePlaylist();
+    }
 }
 
 void View::downloadSelected(QString savePath, bool markAsLiked) {
