@@ -100,14 +100,15 @@ void Slider::paintEvent(QPaintEvent * event) {
     if (orientation() == Qt::Horizontal) {
         while(temp < 16) {
             multiplyer++;
-            temp = ((float)rect.width()) / (step / multiplyer);
+            temp = ((float)(rect.width())) / (step / multiplyer);
         }
 
         step = temp;
         limit = (rect.width() / step) == 0 ? rect.width() - step : rect.width();
+        int bottom = rect.bottom() - 7, h = (rect.height() / 3) - 3;
 
         for(double pos = step; pos < limit; pos += step) {
-            p.drawLine(pos, rect.top() + 4, pos, rect.bottom() - 7);
+            p.drawLine(pos, bottom - h, pos, bottom);
         }
 
         if (multiplyer > 1) {
@@ -117,14 +118,15 @@ void Slider::paintEvent(QPaintEvent * event) {
     } else {
         while(temp < 20) {
             multiplyer++;
-            temp = ((float)rect.height()) / (step / multiplyer);
+            temp = ((float)(rect.height())) / (step / multiplyer);
         }
 
         step = temp;
         limit = (rect.height() / step) == 0 ? rect.height() - step : rect.height();
+        int right = rect.right() - 7, w = (rect.width() / 3) - 3;
 
         for(double pos = step; pos < limit; pos += step) {
-            p.drawLine(rect.left() + 4, pos, rect.right() - 7, pos);
+            p.drawLine(right - w, pos, right, pos);
         }
     }
 

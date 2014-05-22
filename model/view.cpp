@@ -316,20 +316,6 @@ void View::showContextMenu(const QPoint& pnt) {
     sepAct -> setSeparator(true);
     actions.append(sepAct);
 
-    if (model -> rowCount() > 0) {
-        openAct = new QAction(QIcon(":/collapse"), "Collapse all", this);
-        connect(openAct, SIGNAL(triggered(bool)), this, SLOT(collapseAll()));
-        actions.append(openAct);
-
-        openAct = new QAction(QIcon(":/expand"), "Expand all", this);
-        connect(openAct, SIGNAL(triggered(bool)), this, SLOT(expandAll()));
-        actions.append(openAct);
-    }
-
-    sepAct = new QAction(this);
-    sepAct -> setSeparator(true);
-    actions.append(sepAct);
-
     if (Player::instance() -> playedItem()) {
         openAct = new QAction(QIcon(":/active_tab"), "Show active elem", this);
         connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showActiveElem()));
@@ -352,20 +338,24 @@ void View::showContextMenu(const QPoint& pnt) {
             sepAct -> setSeparator(true);
             actions.append(sepAct);
 
-            if (item -> isFolder()) {
-                openAct = new QAction(QIcon(":/download"), "Download Seelcted Folder", this);
-                connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFolder()));
-                actions.append(openAct);
-            } else {
-                openAct = new QAction(QIcon(":/download"), "Download Selected", this);
-                connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadFromLocation()));
-                actions.append(openAct);
-            }
-
-            openAct = new QAction(QIcon(":/download"), "Download All", this);
-            connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadAll()));
+            openAct = new QAction(QIcon(":/download"), "Download", this);
+            connect(openAct, SIGNAL(triggered(bool)), this, SLOT(download()));
             actions.append(openAct);
         }
+    }
+
+    sepAct = new QAction(this);
+    sepAct -> setSeparator(true);
+    actions.append(sepAct);
+
+    if (model -> rowCount() > 0) {
+        openAct = new QAction(QIcon(":/collapse"), "Collapse all", this);
+        connect(openAct, SIGNAL(triggered(bool)), this, SLOT(collapseAll()));
+        actions.append(openAct);
+
+        openAct = new QAction(QIcon(":/expand"), "Expand all", this);
+        connect(openAct, SIGNAL(triggered(bool)), this, SLOT(expandAll()));
+        actions.append(openAct);
     }
 
     if (actions.count() > 0)
@@ -378,17 +368,33 @@ void View::openLocation() {
 }
 
 
-bool View::prepareDownloading() {
-    if (model -> getApi() == 0) {
-        qDebug() << "Some shit happened :(";
-        return false;
-    } else {
-        QDir dir(Settings::instance() -> getDownloadPath());
-        if (!dir.exists()) {
-            dir.mkpath(".");
+bool View::prepareDownloading(QString path) {
+    QDir dir(path);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+
+    return true;
+}
+
+void View::downloadItem(ModelItem * item, QString savePath) {
+    QString prepared_path = savePath + item -> getDownloadTitle();
+    if (QFile::exists(prepared_path)) {
+        QFile::remove(prepared_path);
+    }
+
+    if (item -> isRemote()) {
+        if (model -> getApi() == 0) {
+            qDebug() << "Some shit happened :(";
+            return;
         }
 
-        return true;
+        item -> setDownloadProgress(0);
+        model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(prepared_path));
+    } else {
+        QFile f(item -> fullPath());
+        if (!f.copy(prepared_path))
+            QMessageBox::warning(this, "Bla", f.errorString());
     }
 }
 
@@ -402,32 +408,30 @@ void View::downloadBranch(ModelItem * rootNode, QString savePath) {
         if (item -> isFolder()) {
             downloadBranch(item, savePath + item -> getDownloadTitle() + "/");
         } else {
-            item -> setDownloadProgress(0);
-            model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(savePath + item -> getDownloadTitle()));
+            downloadItem(item, savePath);
         }
     }
 }
 
-void View::downloadFromLocation() {
-    ModelItem * item = model -> getItem(this -> currentIndex());
-
-    if (prepareDownloading()) {
-        item -> setDownloadProgress(0);
-        model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(Settings::instance() -> getDownloadPath() + item -> getDownloadTitle()));
-    }
+void View::download() {
+    downloadSelected(Settings::instance() -> getDownloadPath());
 }
 
-void View::downloadFolder() {
-    ModelItem * rootNode = model -> getItem(this -> currentIndex().parent());
+void View::downloadSelected(QString savePath, bool markAsLiked) {
+    if (!prepareDownloading(savePath)) return;
 
-    if (prepareDownloading()) {
-        downloadBranch(rootNode, Settings::instance() -> getDownloadPath());
-    }
-}
+    ModelItem * item;
 
-void View::downloadAll() {
-    if (prepareDownloading()) {
-        downloadBranch(model -> root(), Settings::instance() -> getDownloadPath());
+    foreach(QModelIndex index, selectedIndexes()) {
+        item = model -> getItem(index);
+
+        if (item -> isFolder()) {
+            downloadBranch(item, savePath);
+        } else {
+            downloadItem(item, savePath);
+            if (markAsLiked)
+                item -> getState() -> setLiked();
+        }
     }
 }
 

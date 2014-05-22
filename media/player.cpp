@@ -224,10 +224,19 @@ void Player::like() {
 void Player::mute() {
     int curr = getVolume();
     setChannelVolume(prevVolumeVal);
+
+    if (muteButton == 0) return;
+
     if ((prevVolumeVal = curr) == 0)
         muteButton -> setIcon(QIcon(":/mute"));
-    else
+    else {
         muteButton -> setIcon(QIcon(":/volume"));
+    }
+}
+
+void Player::unmuteCheck() {
+    muteButton -> setIcon(QIcon(":/mute"));
+    prevVolumeVal = 0;
 }
 
 void Player::changeTrackbarValue(int pos) {

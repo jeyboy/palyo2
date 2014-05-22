@@ -23,6 +23,14 @@ QMenu * MainWindow::createPopupMenu () {
         underMouseBar = ((ToolBar*)widget);
     }
 
+//    if (underMouseBar -> isMovable()) {
+//        QAction * fixToolbarAct = new QAction(QIcon(":locked"), "Fixed bar", menu);
+//        menu -> insertAction(menu -> actions().first(), fixToolbarAct);
+//        connect(fixToolbarAct, SIGNAL(triggered(bool)), this, SLOT(removePanelButtonTriggered()));
+//    } else {
+//        QAction * movableToolbarAct = new QAction(QIcon(":unlocked"), "Movable bar", menu);
+//    }
+
     QAction * removeButtonAct = new QAction(QIcon(":drop_remove"), "Remove drop point", menu);
     removeButtonAct -> setEnabled(widgetClassName == "ToolbarButton");
     menu -> insertAction(menu->actions().first(), removeButtonAct);
@@ -242,7 +250,6 @@ QToolBar* MainWindow::createVolumeMediaBar() {
     connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
 
     QAction * act = ptb -> addAction(QPixmap(":/mute"), "Mute");
-    act -> setCheckable(true);
 
     Player::instance() -> setMuteButton(act);
 
@@ -663,4 +670,8 @@ void MainWindow::showAttCurrTabDialog() {
 //        emit showAttTabDialog(tabber -> currentTab());
 //    else
 //        QMessageBox::warning(this, "Settings", "This tab type did not have any settings...");
+}
+
+void MainWindow::changeToolbarMovable(bool state) {
+
 }

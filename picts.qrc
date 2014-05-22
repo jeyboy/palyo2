@@ -36,5 +36,7 @@
         <file alias="expand">icons/expand.png</file>
         <file alias="spinner">icons/loader.gif</file>
         <file alias="sync">icons/sync.png</file>
+        <file alias="locked">icons/locked.png</file>
+        <file alias="unlocked">icons/unlocked.png</file>
     </qresource>
 </RCC>

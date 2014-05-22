@@ -30,7 +30,7 @@ bool Library::addItem(ModelItem * item, int state) {
 }
 
 QString Library::filenameFilter(QString title) {
-    return forwardNumberPreFilter(sitesFilter(title)).remove(QRegExp("[^\\w-\\. ()]*"));
+    return forwardNumberPreFilter(sitesFilter(title)).remove(QRegExp("[^\\w-\\. ()]*")).mid(0, 240);
 }
 
 void Library::restoreItemState(LibraryItem * libItem) {

@@ -59,6 +59,7 @@ public:
     bool isStoped() const;
 
 signals:
+    void volumeChanged();
     void playbackEnded();
     void stateChanged(MediaState);
     void mediaStatusChanged(MediaStatus);
@@ -86,7 +87,7 @@ public slots:
 private:
     QUrl mediaUri;
 
-    float volumeVal = 1.0;
+    float volumeVal;
 
     int notifyInterval;
     int duration;

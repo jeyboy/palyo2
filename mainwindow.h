@@ -68,6 +68,7 @@ public slots:
     void outputActiveItem(ModelItem *, ModelItem *);
     void receiveMessage(QString);
     void showAttCurrTabDialog();
+    void changeToolbarMovable(bool);
 
 private slots:
     void showActiveElem();

@@ -69,6 +69,8 @@ public:
 
     virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
 
+    void downloadSelected(QString savePath, bool markAsLiked = false);
+
 signals:
     void showSpinner();
     void hideSpinner();
@@ -83,16 +85,15 @@ protected slots:
     void showContextMenu(const QPoint &);
     void openLocation();
 
-    bool prepareDownloading();
-
-    void downloadBranch(ModelItem * rootNode, QString savePath);
-
-    void downloadFromLocation();
-    void downloadFolder();
-    void downloadAll();
-
+    void download();
 
 protected:
+    bool prepareDownloading(QString path);
+
+    void downloadItem(ModelItem * item, QString savePath);
+    void downloadBranch(ModelItem * rootNode, QString savePath);
+
+
     ModelItem * activeItem(bool next = true);
 //    ModelItem * nextItem(QModelIndex currIndex);
     ModelItem * nextItem(ModelItem * curr);

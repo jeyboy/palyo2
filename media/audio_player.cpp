@@ -17,6 +17,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
 
     duration = -1;
     notifyInterval = 100;
+    volumeVal = 1.0;
 
     currentState = StoppedState;
 
@@ -149,14 +150,16 @@ void AudioPlayer::signalUpdate() {
 
 //0 to 10000
 void AudioPlayer::setChannelVolume(int val) {
-    volumeVal = (val / 10000.0);
+    volumeVal = val > 0 ? (val / 10000.0) : 0;
     BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
+    emit volumeChanged();
 }
 
 
 // 0 to 10000
 void AudioPlayer::setVolume(int val) {
     BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, val);
+    emit volumeChanged();
 }
 
 int AudioPlayer::getVolume() const {

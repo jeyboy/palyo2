@@ -13,7 +13,8 @@ ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent)
     setStyleSheet(
                 "QToolButton {"
                     "border: 1px solid #444;"
-                    "background-color: #F7E488;"
+                    "background: qradialgradient(cx:0, cy:0, radius: 1, fx:0.6, fy:0.6, stop:0 #FFFFFF, stop:0.8 #E7DA1E, stop:1 #F7E488);"
+//                  "background: qradialgradient(cx:0.5, cy:0.5, radius: 1, fx:0.2, fy:0.2, stop:0 #FFFFFF, stop:0.5 #B3AF76, stop:1 #F7E488);"
                     "border-radius: 8px;"
                     "font-weight: bold;"
                     "height: 24px;"
@@ -39,35 +40,14 @@ void ToolbarButton::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 void ToolbarButton::dropEvent(QDropEvent *event) {
-
     if (event -> mimeData() -> hasUrls()) {
-        QList<QUrl> list = event -> mimeData() -> urls();
+        View * view = (View *)event -> source();
 
-        foreach(QUrl url, list) {
-            copyFile(url.toLocalFile());
-        }
-
-        event->accept();
-
-        if (QString(event -> source() -> metaObject() -> className()).endsWith("View"))
-            ((View *)event -> source()) -> markSelectedAsLiked();
-        else
+        if (!QString(view -> metaObject() -> className()).endsWith("View"))
             qDebug() << "Out request";
 
-    } else {  event->ignore(); }
-}
+        view -> downloadSelected(path, true);
 
-void ToolbarButton::copyFile(QString copyPath) {
-    QString prepared_path = path + copyPath.section('/', -1, -1);
-
-    if (QFile::exists(prepared_path)) {
-        QFile::remove(prepared_path);
-    }
-
-    QFile f(copyPath);
-    if (!f.copy(prepared_path))
-        QMessageBox::warning(this, "Bla", f.errorString());
-
-//    if (!QFile::copy(copyPath, prepared_path))
-//        QMessageBox::warning(this, "Bla", "Permissions not enough");
+        event -> accept();
+    } else { event -> ignore(); }
 }

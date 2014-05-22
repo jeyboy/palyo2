@@ -71,7 +71,7 @@ QString ModelItem::fullPath() const {
 }
 
 QString ModelItem::getDownloadTitle() const {
-    QString ret = Library::instance() -> filenameFilter(getTitle()).mid(0, 240);
+    QString ret = Library::instance() -> filenameFilter(getTitle());
 
     if (!extension.isEmpty())
         ret = ret + '.' + extension;
@@ -100,7 +100,6 @@ bool ModelItem::isPlayable() const {
     bool showBatch = Settings::instance() -> isCheckboxShow();
     return (!showBatch || (showBatch && getState() -> isChecked()));
 }
-
 
 int ModelItem::getDownloadProgress() const {
     return progress;
