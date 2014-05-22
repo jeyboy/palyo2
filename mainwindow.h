@@ -68,7 +68,7 @@ public slots:
     void outputActiveItem(ModelItem *, ModelItem *);
     void receiveMessage(QString);
     void showAttCurrTabDialog();
-    void changeToolbarMovable(bool);
+    void changeToolbarMovable();
 
 private slots:
     void showActiveElem();
@@ -114,7 +114,7 @@ private:
 
     QWidget * highlighted;
 
-    QToolBar * underMouseBar;
+    QToolBar * underMouseBar, * activeBar;
     ToolbarButton * underMouseButton;
     QPoint lastClickPoint;
 

@@ -16,20 +16,35 @@ QMenu * MainWindow::createPopupMenu () {
     QWidget * widget = this -> childAt(this -> mapFromGlobal(lastClickPoint));
     QString widgetClassName = QString(widget -> metaObject() -> className());
 
+
+//    activeBar
+
+    ////////////////////////// for bar movable fixing ////////////////////////////////
+    if (widgetClassName == "QToolButton") {
+        activeBar = ((QToolBar*)widget -> parentWidget());
+    } else {
+        activeBar = ((QToolBar*)widget);
+    }
+
+    QAction * fixToolbarAct;
+
+    if (activeBar -> isMovable()) {
+        fixToolbarAct = new QAction(QIcon(":locked"), "Static bar", menu);
+    } else {
+        fixToolbarAct = new QAction(QIcon(":unlocked"), "Movable bar", menu);
+    }
+
+    menu -> insertAction(menu -> actions().first(), fixToolbarAct);
+    connect(fixToolbarAct, SIGNAL(triggered(bool)), this, SLOT(changeToolbarMovable()));
+
+    //////////////////////////////////////////////////////////////////////////////////
+
     if (widgetClassName == "ToolbarButton") {
         underMouseButton = ((ToolbarButton*)widget);
         underMouseBar = ((ToolBar*)underMouseButton -> parentWidget());
     } else {
         underMouseBar = ((ToolBar*)widget);
     }
-
-//    if (underMouseBar -> isMovable()) {
-//        QAction * fixToolbarAct = new QAction(QIcon(":locked"), "Fixed bar", menu);
-//        menu -> insertAction(menu -> actions().first(), fixToolbarAct);
-//        connect(fixToolbarAct, SIGNAL(triggered(bool)), this, SLOT(removePanelButtonTriggered()));
-//    } else {
-//        QAction * movableToolbarAct = new QAction(QIcon(":unlocked"), "Movable bar", menu);
-//    }
 
     QAction * removeButtonAct = new QAction(QIcon(":drop_remove"), "Remove drop point", menu);
     removeButtonAct -> setEnabled(widgetClassName == "ToolbarButton");
@@ -60,7 +75,7 @@ QMenu * MainWindow::createPopupMenu () {
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow) {
-    ui->setupUi(this);
+    ui -> setupUi(this);
 
     setWindowTitle("Playo");
     setAcceptDrops(true);
@@ -88,11 +103,11 @@ MainWindow::MainWindow(QWidget *parent) :
     int left = x(), top = y();
 
 
-    if (left >= desktop->width())
-        left = desktop->width() - 50;
+    if (left >= desktop -> width())
+        left = desktop -> width() - 50;
 
-    if (top >= desktop->height())
-        top = desktop->height() - 50;
+    if (top >= desktop -> height())
+        top = desktop -> height() - 50;
 
     move(left, top);
 
@@ -100,6 +115,7 @@ MainWindow::MainWindow(QWidget *parent) :
     /// toolbars
     ///////////////////////////////////////////////////////////
 
+    activeBar = 0;
     underMouseBar = 0;
     underMouseButton = 0;
 
@@ -668,6 +684,6 @@ void MainWindow::showAttCurrTabDialog() {
 //        QMessageBox::warning(this, "Settings", "This tab type did not have any settings...");
 }
 
-void MainWindow::changeToolbarMovable(bool state) {
-
+void MainWindow::changeToolbarMovable() {
+    activeBar -> setMovable(!activeBar -> isMovable());
 }
