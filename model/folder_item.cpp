@@ -1,6 +1,6 @@
 #include "folder_item.h"
-#include "web_folder_item.h"
-#include "web_file_item.h"
+#include "web/vk/vk_folder.h"
+#include "web/vk/vk_file.h"
 #include <QDebug>
 
 ///////////////////////////////////////////////////////////
@@ -13,7 +13,6 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
 
     if (parent != 0) {
         parent -> foldersList() -> insert(title, this -> toModelItem());
-//        parent -> appendChild(this -> toModelItem());
     }
 
     if (hash -> contains("c")) {
@@ -32,18 +31,19 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
                 // case CUE_ITEM: {
                 // new CueItem(&iter_obj, this -> toModelItem());
                 // break;}
-                case WEB_FOLDER_ITEM: {
-                    new WebFolderItem(&iterObj, this -> toModelItem());
+                case VK_FOLDER: {
+                    new VkFolder(&iterObj, this -> toModelItem());
                 break;}
-                case WEB_FILE_ITEM: {
-                    new WebFileItem(&iterObj, this -> toModelItem());
+                case VK_FILE: {
+                    new VkFile(&iterObj, this -> toModelItem());
                 break;}
             }
         }
     }
 }
 
-FolderItem::FolderItem(const QString folderPath, QString folderTitle, ModelItem *parent, int initState) : ModelItem(folderPath, folderTitle, parent, -1, -1, initState) {
+FolderItem::FolderItem(const QString folderPath, QString folderTitle, ModelItem *parent, int initState)
+    : ModelItem(folderPath, folderTitle, parent, -1, -1, -1, "", initState) {
     folders = new QHash<QString, ModelItem *>();
 
     if (title.isEmpty())
@@ -51,7 +51,6 @@ FolderItem::FolderItem(const QString folderPath, QString folderTitle, ModelItem 
 
     if (parent != 0) {
         parent -> foldersList() -> insert(title, this -> toModelItem());
-//        parent -> appendChild(this -> toModelItem());
     }
 }
 

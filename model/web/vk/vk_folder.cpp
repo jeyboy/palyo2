@@ -1,47 +1,47 @@
-#include "web_folder_item.h"
+#include "vk_folder.h"
 #include <QDebug>
 
 ///////////////////////////////////////////////////////////
-WebFolderItem::WebFolderItem() : FolderItem(STATE_UNPROCESSED) {
+VkFolder::VkFolder() : FolderItem(STATE_UNPROCESSED) {
     folders = new QHash<QString, ModelItem *>();
 }
 
-WebFolderItem::WebFolderItem(QJsonObject * hash, ModelItem *parent) : FolderItem(hash, parent) {
+VkFolder::VkFolder(QJsonObject * hash, ModelItem *parent) : FolderItem(hash, parent) {
     uid = hash -> value("u").toString();
 }
 
-WebFolderItem::WebFolderItem(QString filePath, QString folderID, QString folderTitle, ModelItem *parent, int initState) : FolderItem(filePath, folderTitle, parent, initState) {
+VkFolder::VkFolder(QString filePath, QString folderID, QString folderTitle, ModelItem *parent, int initState) : FolderItem(filePath, folderTitle, parent, initState) {
     uid = folderID;
 }
 
-WebFolderItem::~WebFolderItem() {}
+VkFolder::~VkFolder() {}
 
-QUrl WebFolderItem::toUrl() {
+QUrl VkFolder::toUrl() {
     return QUrl(path);
 }
 
-void WebFolderItem::openLocation() {
+void VkFolder::openLocation() {
     QDesktopServices::openUrl(toUrl());
 }
 
-bool WebFolderItem::removePhysicalObject() const {
+bool VkFolder::removePhysicalObject() const {
     //TODO: add realization
 
     return false;
 }
 
-bool WebFolderItem::isExist() const {   
+bool VkFolder::isExist() const {
     //TODO: add realization
 
     return true;
 }
 
-bool WebFolderItem::isRemote() const { return true; }
+bool VkFolder::isRemote() const { return true; }
 
-QJsonObject WebFolderItem::toJSON() {
+QJsonObject VkFolder::toJSON() {
     QJsonObject root = FolderItem::toJSON();
 
-    root["i"] = WEB_FOLDER_ITEM;
+    root["i"] = VK_FOLDER;
     root["u"] = uid;
 
     return root;

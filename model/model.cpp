@@ -309,7 +309,7 @@ ModelItem * Model::addFolder(QString folderPath, QString folderName, ModelItem *
         curr = curr -> foldersList() -> value(folderName);
     } else {
         if (!remoteID.isEmpty())
-            curr = new WebFolderItem(folderPath, remoteID, folderName, curr);
+            curr = new VkFolder(folderPath, remoteID, folderName, curr);
         else
             curr = new FolderItem(folderPath, folderName, curr);
     }

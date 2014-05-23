@@ -2,6 +2,8 @@
 #define MODEL_ITEM_H
 
 /// JSON names
+/// a - item info
+/// b - item bytes size
 /// c - children
 /// d - duration
 /// e - extension
@@ -12,6 +14,7 @@
 /// p - path
 /// s - state
 /// set - tab settings
+/// o - web item owner id
 /// t - title
 /// u - web item id
 /// vk - vk settings
@@ -40,8 +43,8 @@
 #define FILE_ITEM 100
 #define FOLDER_ITEM 200
 #define CUE_ITEM 300
-#define WEB_FOLDER_ITEM 400
-#define WEB_FILE_ITEM 500
+#define VK_FOLDER 400
+#define VK_FILE 500
 
 //TODO: add list of extensions for extension serialization to extension index in list
 
@@ -49,7 +52,7 @@ class ModelItem {
 public:   
     ModelItem(int initState = STATE_DEFAULT | STATE_CHECKED);
     ModelItem(QJsonObject * hash, ModelItem * parent = 0);
-    ModelItem(const QString filePath, QString fileName, ModelItem * parent = 0, int genre_id = -1, int itemDuration = -1, int initState = STATE_DEFAULT | STATE_CHECKED);
+    ModelItem(const QString filePath, QString fileName, ModelItem * parent = 0, int genre_id = -1, int itemDuration = -1, int itemSize = -1, QString itemInfo = "", int initState = STATE_DEFAULT | STATE_CHECKED);
     virtual ~ModelItem();
 
     QString fullPath() const;
@@ -114,7 +117,9 @@ protected:
     QString path;
     QString title;
     QString extension;
+    QString info;
 
+    int size;
     int duration;
     qint16 genreID;
 };

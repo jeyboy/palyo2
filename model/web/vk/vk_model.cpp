@@ -74,11 +74,11 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
 
 void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent) {
     QJsonObject fileIterObj;
-    WebFileItem * newItem;
+    VkFile * newItem;
 
     foreach(QJsonValue obj, ar) {
         fileIterObj = obj.toObject();
-        newItem = new WebFileItem(
+        newItem = new VkFile(
                     fileIterObj.value("url").toString(),
                     fileIterObj.value("artist").toString() + " - " + fileIterObj.value("title").toString(),
                     QString::number(fileIterObj.value("owner_id").toInt()),

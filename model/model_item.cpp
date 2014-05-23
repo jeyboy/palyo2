@@ -13,6 +13,8 @@ ModelItem::ModelItem(int initState) {
     progress = -1;
     genreID = -1;
     duration = -1;
+    size = -1;
+    info = -1;
 }
 
 ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
@@ -24,6 +26,9 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     extension = hash -> value("e").toString();
     genreID = hash -> value("g").toInt(-1);
     duration = hash -> value("d").toInt(-1);
+
+    size = hash -> value("b").toInt(-1);
+    info = hash -> value("a").toString("");
     progress = -1;
 
     if (parent != 0) {
@@ -31,9 +36,11 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     }
 }
 
-ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int genre_id, int itemDuration, int initState) {
+ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int genre_id, int itemDuration, int itemSize, QString itemInfo, int initState) {
     parentItem = parent;
     titlesCache = 0;
+    size = itemSize;
+    info = itemInfo;
     state = new ModelItemState(initState);
 
     title = fileName;
@@ -52,7 +59,6 @@ ModelItem::~ModelItem() {
     delete state;
     delete titlesCache;
 }
-
 
 QString ModelItem::fullPath() const {
 //    if (parentItem != 0) {
@@ -123,6 +129,12 @@ QJsonObject ModelItem::toJSON() {
     root["t"] = title;
     root["s"] = state -> getFuncValue();
     root["p"] = path;
+
+    if (!info.isEmpty())
+        root["a"] = info;
+
+    if (size != -1)
+        root["b"] = size;
 
     if (genreID != -1)
         root["g"] = genreID;

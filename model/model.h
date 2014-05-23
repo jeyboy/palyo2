@@ -15,8 +15,8 @@
 #include "model_item.h"
 #include "file_item.h"
 #include "folder_item.h"
-#include "web_folder_item.h"
-#include "web_file_item.h"
+#include "model/web/vk/vk_folder.h"
+#include "model/web/vk/vk_file.h"
 
 class ModelItem;
 

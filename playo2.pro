@@ -46,8 +46,6 @@ SOURCES += main.cpp\
     model/model.cpp \
     model/model_item.cpp \
     model/folder_item.cpp \
-    model/web_folder_item.cpp \
-    model/web_file_item.cpp \
     model/file_item.cpp \
     model/level_tree/level_tree_model.cpp \
     model/level_tree/level_tree_view.cpp \
@@ -57,6 +55,8 @@ SOURCES += main.cpp\
     model/list/list_view.cpp \
     model/web/vk/vk_model.cpp \
     model/web/vk/vk_view.cpp \
+    model/web/vk/vk_folder.cpp \
+    model/web/vk/vk_file.cpp \
     model/model_item_delegate.cpp \
     model/model_item_state.cpp \
     media/audio_player.cpp \
@@ -101,8 +101,6 @@ HEADERS  += mainwindow.h \
     model/model.h \
     model/model_item.h \
     model/folder_item.h \
-    model/web_folder_item.h \
-    model/web_file_item.h \
     model/file_item.h \
     model/level_tree/level_tree_model.h \
     model/level_tree/level_tree_view.h \
@@ -112,6 +110,8 @@ HEADERS  += mainwindow.h \
     model/list/list_view.h \
     model/web/vk/vk_model.h \
     model/web/vk/vk_view.h \
+    model/web/vk/vk_folder.h \
+    model/web/vk/vk_file.h \
     model/model_item_delegate.h \
     model/model_item_state.h \
     media/audio_player.h \
