@@ -13,7 +13,7 @@ ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent)
     setStyleSheet(
                 "QToolButton {"
                     "border: 1px solid #444;"
-                    "background: qradialgradient(cx:0, cy:0, radius: 1, fx:0.6, fy:0.6, stop:0 #FFFFFF, stop:0.8 #E7DA1E, stop:1 #F7E488);"
+                    "background: qradialgradient(cx:0, cy:0, radius: 1, fx:0.6, fy:0.6, stop:0 #FFF, stop:0.8 #E7DA1E, stop:1 #F7E488);"
 //                  "background: qradialgradient(cx:0.5, cy:0.5, radius: 1, fx:0.2, fy:0.2, stop:0 #FFFFFF, stop:0.5 #B3AF76, stop:1 #F7E488);"
                     "border-radius: 8px;"
                     "font-weight: bold;"
@@ -23,7 +23,7 @@ ToolbarButton::ToolbarButton(QString text, QString folderPath, QWidget * parent)
                 "}"
                 "QToolButton:hover {"
                     "color: #FFF;"
-                    "background-color: #000;"
+                    "background: qradialgradient(cx:0, cy:0, radius: 1, fx:0.6, fy:0.6, stop:0 #000, stop:0.8 #AAA, stop:1 #666);"
                 "}"
                 );
 

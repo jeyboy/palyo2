@@ -11,11 +11,11 @@ WebFileItem::WebFileItem(QJsonObject *hash, ModelItem *parent) : ModelItem(hash,
 //    }
 }
 
-WebFileItem::WebFileItem(QString filePath, QString fileName, QString fileID, ModelItem *parent, int genre_id, int itemDuration, int initState)
-    : ModelItem(filePath, fileName, parent, genre_id, initState) {
+WebFileItem::WebFileItem(QString filePath, QString fileName, QString ownerID, QString fileID, ModelItem *parent, int genre_id, int itemDuration, int initState)
+    : ModelItem(filePath, fileName, parent, genre_id, itemDuration, initState) {
 
     uid = fileID;
-    duration = itemDuration;
+    owner_uid = ownerID;
     extension = "mp3";
 
 //    if (parent != 0) {
@@ -48,7 +48,6 @@ QJsonObject WebFileItem::toJSON() {
 
     root["i"] = WEB_FILE_ITEM;
     root["u"] = uid;
-    root["d"] = duration;
 
     return root;
 }

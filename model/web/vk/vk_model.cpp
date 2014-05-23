@@ -81,7 +81,8 @@ void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent) {
         newItem = new WebFileItem(
                     fileIterObj.value("url").toString(),
                     fileIterObj.value("artist").toString() + " - " + fileIterObj.value("title").toString(),
-                    fileIterObj.value("id").toString(),
+                    QString::number(fileIterObj.value("owner_id").toInt()),
+                    QString::number(fileIterObj.value("id").toInt()),
                     parent,
                     fileIterObj.value("genre_id").toInt(-1),
                     fileIterObj.value("duration").toInt(-1)

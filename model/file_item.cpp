@@ -8,7 +8,7 @@ FileItem::FileItem(QJsonObject *hash, ModelItem *parent) : ModelItem(hash, paren
 //    }
 }
 
-FileItem::FileItem(QString filePath, ModelItem *parent, int genre_id, int initState) : ModelItem(filePath, filePath.section('/', -1, -1), parent, genre_id, initState) {
+FileItem::FileItem(QString filePath, ModelItem *parent, int genre_id, int itemDuration, int initState) : ModelItem(filePath, filePath.section('/', -1, -1), parent, genre_id, itemDuration, initState) {
     extension = title.section('.', -1, -1);
     if (extension != title)
         title = title.section('.', 0, -2);

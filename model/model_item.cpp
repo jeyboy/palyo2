@@ -11,6 +11,8 @@ ModelItem::ModelItem(int initState) {
     title = QString("--(O_o)--");
     extension = QString();
     progress = -1;
+    genreID = -1;
+    duration = -1;
 }
 
 ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
@@ -21,6 +23,7 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     title = hash -> value("t").toString();
     extension = hash -> value("e").toString();
     genreID = hash -> value("g").toInt(-1);
+    duration = hash -> value("d").toInt(-1);
     progress = -1;
 
     if (parent != 0) {
@@ -28,7 +31,7 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     }
 }
 
-ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int genre_id, int initState) {
+ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int genre_id, int itemDuration, int initState) {
     parentItem = parent;
     titlesCache = 0;
     state = new ModelItemState(initState);
@@ -37,6 +40,7 @@ ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * paren
     path = filePath;
     genreID = genre_id;
     progress = -1;
+    duration = itemDuration;
 //    extension = fileExtension;
 
     if (parent != 0) {
@@ -119,7 +123,12 @@ QJsonObject ModelItem::toJSON() {
     root["t"] = title;
     root["s"] = state -> getFuncValue();
     root["p"] = path;
-    root["g"] = genreID;
+
+    if (genreID != -1)
+        root["g"] = genreID;
+
+    if (duration != -1)
+        root["d"] = duration;
 
     if (!extension.isNull())
         root["e"] = extension;
