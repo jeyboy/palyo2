@@ -111,12 +111,28 @@ bool ModelItem::isPlayable() const {
     return (!showBatch || (showBatch && getState() -> isChecked()));
 }
 
+bool ModelItem::hasinfo() const {
+    return !info.isEmpty();
+}
+
+void ModelItem::setInfo(QString newInfo) {
+    info = newInfo;
+}
+
 int ModelItem::getDownloadProgress() const {
     return progress;
 }
 
 void ModelItem::setDownloadProgress(int percentageVal) {
     progress = percentageVal;
+}
+
+QStringList ModelItem::getInfo() const {
+    QStringList list;
+    list.append(info + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    list.append(QString::number(duration) + "1111111111111");
+
+    return list;
 }
 
 QUrl ModelItem::toUrl() {

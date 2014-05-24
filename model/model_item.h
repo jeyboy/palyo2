@@ -39,6 +39,8 @@
 #define STATEID 4
 #define TITLESCACHEID 5
 #define PROGRESSID 101
+#define INFOID 102
+#define ADDFONTID 103
 
 #define FILE_ITEM 100
 #define FOLDER_ITEM 200
@@ -65,9 +67,13 @@ public:
     virtual bool isRemote() const;
     virtual bool isFolder() const;
     bool isPlayable() const;
+    bool hasinfo() const;
+    void setInfo(QString newInfo);
 
     int getDownloadProgress() const;
     void setDownloadProgress(int percentageVal);
+
+    QStringList getInfo() const;
 
     virtual QUrl toUrl();
     virtual QJsonObject toJSON();

@@ -177,7 +177,24 @@ QHash<QString, int> * Library::getCatalog(QString name) {
     return getCatalog(c);
 }
 
-QList<QString> * Library::getNamesForObject(QString path, QString name) {
+//QList<QString> * Library::getNamesForObject(QString path, QString name) {
+//    QList<QString> * res = new QList<QString>();
+
+//    res -> append(name);
+//    QString temp = prepareName(name, true);
+//    if (temp != name)
+//        res -> append(temp);
+
+//    MediaInfo m(path);
+
+//    QString temp2 = prepareName(m.getArtist() + m.getTitle());
+//    if (!temp2.isEmpty() && temp2 != name && temp2 != temp)
+//        res -> append(temp2);
+
+//    return res;
+//}
+
+void Library::initItemInfo(ModelItem * item) {
     QList<QString> * res = new QList<QString>();
 
     res -> append(name);
@@ -185,27 +202,32 @@ QList<QString> * Library::getNamesForObject(QString path, QString name) {
     if (temp != name)
         res -> append(temp);
 
-    MediaInfo m(path);
+
+    MediaInfo m(item -> fullPath(), item -> hasInfo());
 
     QString temp2 = prepareName(m.getArtist() + m.getTitle());
     if (!temp2.isEmpty() && temp2 != name && temp2 != temp)
         res -> append(temp2);
 
+    if (!item -> hasInfo()) {
+        item -> setInfo(QString::number(m.getChannels()) + "::" + QString::number(m.getBitrate()) + "::" + QString::number(m.getSampleRate()));
+        item -> setDuration(m.getLength());
+        item -> setGenre(Genre.toInt(m.getGenre()));
+    }
+
     return res;
+
+//    QString name = prepareName(item -> data(TITLEID).toString());
+
+//    return getNamesForObject(item -> fullPath(), name);
 }
 
-QList<QString> * Library::getNamesForItem(ModelItem * item) {
-    QString name = prepareName(item -> data(TITLEID).toString());
+//QList<QString> * Library::getNamesForItem(QString path) {
+//    QString name = path.section('/', -1, -1);
+//    name = prepareName(name.section('.', 0, -2));
 
-    return getNamesForObject(item -> fullPath(), name);
-}
-
-QList<QString> * Library::getNamesForItem(QString path) {
-    QString name = path.section('/', -1, -1);
-    name = prepareName(name.section('.', 0, -2));
-
-    return getNamesForObject(path, name);
-}
+//    return getNamesForObject(path, name);
+//}
 
 QHash<QString, int> * Library::load(const QChar letter) {
     QHash<QString, int> * res = new QHash<QString, int>();

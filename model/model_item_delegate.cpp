@@ -242,6 +242,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         QPainterPath roundRect = roundRectPath(option2.rect, !checkable.isValid() ? 2 : 18);
 
         bool elem_state = option.state & (QStyle::State_Selected);
+        bool is_folder = false;
 
         QLinearGradient fill_color;
 
@@ -259,6 +260,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
                 fill_color = playedState(option.rect, elem_state);
                 break;
             default:
+                is_folder = true;
                 fill_color = unprocessedState(option.rect, elem_state);
 //                painter -> setPen(Qt::SolidLine);
 //                painter -> setPen(QColor(Qt::lightGray));
@@ -271,19 +273,44 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         painter -> fillPath(roundRect, fill_color);
 
         painter -> setPen(option.palette.foreground().color());
-//        painter -> setClipping(false);
+        painter -> setClipping(false);
         painter -> drawPath(roundRect);
 
-        painter -> restore();
+
 
         if(elem_state) {
             option2.palette.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
         }
 
-
         if (!checkable.isValid())
             option2.rect.moveLeft(option2.rect.left() + 4);
         QStyledItemDelegate::paint(painter, option2, index);
+
+        if (!is_folder) {
+            QVariant vfont = index.data(ADDFONTID);
+            QStringList infos = index.model() -> data(index, INFOID).toStringList();
+
+            QFontMetrics fmf(vfont.value<QFont>());
+            int timeWidth = fmf.width(infos.last());
+
+            int beetweeX = option.rect.right() - timeWidth - 10;
+            int top = option.rect.bottom() - 15;
+
+            QPoint topLeft(option.rect.x() + 28, top);
+            QPoint bottomRight(beetweeX - 4, option.rect.bottom());
+            QRect rectText(topLeft, bottomRight);
+            QString s = fmf.elidedText(infos.first(), option.textElideMode, rectText.width());
+
+            QPoint topTLeft(beetweeX, top);
+            QPoint bottomTRight(option.rect.right() - 8, option.rect.bottom());
+            QRect rectTimeText(topTLeft, bottomTRight);
+
+            painter -> setPen(option2.palette.color(QPalette::Text));
+            painter -> drawText(rectText, Qt::AlignLeft, s);
+            painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
+        }
+
+        painter -> restore();
 }
 
 void ModelItemDelegate::drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) {

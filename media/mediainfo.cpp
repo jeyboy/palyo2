@@ -1,23 +1,29 @@
 #include "mediainfo.h"
 #include "qdebug.h"
 
-MediaInfo::MediaInfo(QString filepath) {
+MediaInfo::MediaInfo(QString filepath, bool onlyTags = true) {
     fileName = filepath.toStdWString();
-    TagLib::FileRef f(fileName.c_str(), false, TagLib::AudioProperties::Fast);
+    TagLib::FileRef f(fileName.c_str(), !onlyTags, onlyTags ? TagLib::AudioProperties::Fast : TagLib::AudioProperties::Accurate);
 
     if (!f.isNull()) {
-        qDebug() << "In media info " << filepath;
         artist = QString::fromStdWString(f.tag() -> artist().toWString());
         title = QString::fromStdWString(f.tag() -> title().toWString());
         album = QString::fromStdWString(f.tag() -> album().toWString());
         genre = QString::fromStdWString(f.tag() -> genre().toWString());
         year = f.tag() -> year();
         track = f.tag() -> track();
+
+        if (!onlyTags)
+            readInfo(f);
     }
 }
 
 void MediaInfo::initInfo() {
     TagLib::FileRef f(fileName.c_str(), true, TagLib::AudioProperties::Accurate);
+    readInfo(f);
+}
+
+void MediaInfo::readInfo(TagLib::FileRef f) {
     bitrate = f.audioProperties() -> bitrate();
     channels = f.audioProperties() -> channels();
     length = f.audioProperties() -> length();

@@ -38,8 +38,6 @@ void VkModel::refresh() {
 }
 
 
-//TODO: create separate items for vk ?
-
 void VkModel::proceedAudioList(QJsonObject & hash) {
     qDebug() << hash.keys();
     QJsonArray filesAr, ar = hash.value("albums").toArray();

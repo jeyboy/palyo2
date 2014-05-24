@@ -9,7 +9,7 @@
 
 class MediaInfo {
 public:
-    MediaInfo(QString filepath);
+    MediaInfo(QString filepath, bool onlyTags = true);
     void initInfo();
 
     QString getArtist() const;
@@ -24,6 +24,8 @@ public:
     int getLength() const;
     int getSampleRate() const;
 private:
+    void readInfo(TagLib::FileRef f);
+
     std::wstring fileName;
 
     QString artist;

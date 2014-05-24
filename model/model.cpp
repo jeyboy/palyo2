@@ -64,17 +64,26 @@ QVariant Model::data(const QModelIndex &index, int role) const {
             item = getItem(index);
             return item -> data(TITLEID).toString();
         case Qt::SizeHintRole:
-            return QSize(0, 18);
+            item = getItem(index);
+            if (item -> isFolder())
+                return QSize(0, 18);
+            else
+                return QSize(0, 30);
         case Qt::TextAlignmentRole:
             return Qt::AlignLeft;
         case Qt::FontRole:
             return QFont("Arial", 9, QFont::Normal);
+        case ADDFONTID:
+            return QFont("Arial", 7, QFont::Normal);
         case Qt::UserRole:
             item = getItem(index);
             return item -> getState() -> currStateValue();
         case PROGRESSID:
             item = getItem(index);
             return QVariant(item -> getDownloadProgress());
+        case INFOID:
+            item = getItem(index);
+            return QVariant(item -> getInfo());
 
         default: return QVariant();
     }

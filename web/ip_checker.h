@@ -5,6 +5,7 @@
 #include <QUrl>
 #include "override/custom_network_access_manager.h"
 
+//TODO: add ip check by timer
 class IpChecker : public QObject {
     Q_OBJECT   
 public:

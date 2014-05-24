@@ -77,9 +77,10 @@ private:
     QHash<QString, int> * getCatalog(QChar letter);
     QHash<QString, int> * getCatalog(QString name);
 
-    QList<QString> * getNamesForObject(QString path, QString name);
-    QList<QString> * getNamesForItem(ModelItem * item);
-    QList<QString> * getNamesForItem(QString path);
+    void initItemInfo(ModelItem * item);
+//    QList<QString> * getNamesForObject(QString path, QString name);
+//    QList<QString> * getNamesForItem(ModelItem * item);
+//    QList<QString> * getNamesForItem(QString path);
 
     QHash<QString, int> * load(const QChar letter);
     void save();
