@@ -43,7 +43,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     setItemDelegate(new ModelItemDelegate(this));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
-//    setIconSize(QSize(0,0));
+    setIconSize(QSize(32,32));
 
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onDoubleClick(const QModelIndex&)));
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &)));

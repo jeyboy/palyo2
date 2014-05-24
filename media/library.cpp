@@ -9,18 +9,16 @@ Library *Library::instance() {
     return self;
 }
 
+//QFutureWatcher
+
 void Library::initItem(const QModelIndex & ind, ModelItem * item) {
     LibraryItem * libItem = new LibraryItem(ind, item);
 //    libItem -> item() -> getState() -> setProceed();
-    libItem -> setState(STATE_LIST_PROCEED);
-    if (!libItem -> item() -> isFolder())
-        QtConcurrent::run(this, &Library::itemsInit, libItem);
+    QtConcurrent::run(this, &Library::itemsInit, libItem);
 }
 
 bool Library::addItem(ModelItem * item, int state) {
-    if (!item -> cacheIsPrepared()) {
-        item -> setCache(getNamesForItem(item));
-    }
+    initItemInfo(item);
 
     if (state == STATE_LIKED)
         state = 1;
@@ -80,7 +78,10 @@ void Library::saveCatalogs() {
 void Library::itemsInit(LibraryItem * libItem) {
     if (libItem -> item() -> isExist()) {
         if (saveBlock.tryLock(-1)) {
-            libItem -> item() -> setCache(getNamesForItem(libItem -> item()));
+            initItemInfo(libItem -> item());
+//            libItem -> item() -> setCache(getNamesForItem(libItem -> item()));
+
+
             restoreItemState(libItem);
             saveBlock.unlock();
         }
@@ -195,39 +196,38 @@ QHash<QString, int> * Library::getCatalog(QString name) {
 //}
 
 void Library::initItemInfo(ModelItem * item) {
-    QList<QString> * res = new QList<QString>();
-
-    res -> append(name);
-    QString temp = prepareName(name, true);
-    if (temp != name)
-        res -> append(temp);
+//    if (!item -> cacheIsPrepared()) {
+//        item -> setCache(getNamesForItem(item));
+//    }
 
 
-    MediaInfo m(item -> fullPath(), item -> hasInfo());
+    if (!item -> cacheIsPrepared() || !item -> hasInfo()) {
+        MediaInfo m(item -> fullPath(), item -> hasInfo());
 
-    QString temp2 = prepareName(m.getArtist() + m.getTitle());
-    if (!temp2.isEmpty() && temp2 != name && temp2 != temp)
-        res -> append(temp2);
+        if (!item -> cacheIsPrepared()) {
+            QList<QString> * res = new QList<QString>();
+            QString name = prepareName(item -> data(TITLEID).toString());
 
-    if (!item -> hasInfo()) {
-        item -> setInfo(QString::number(m.getChannels()) + "::" + QString::number(m.getBitrate()) + "::" + QString::number(m.getSampleRate()));
-        item -> setDuration(m.getLength());
-        item -> setGenre(Genre.toInt(m.getGenre()));
+            res -> append(name);
+            QString temp = prepareName(name, true);
+            if (temp != name)
+                res -> append(temp);
+
+
+            QString temp2 = prepareName(m.getArtist() + m.getTitle());
+            if (!temp2.isEmpty() && temp2 != name && temp2 != temp)
+                res -> append(temp2);
+
+            item -> setCache(res);
+        }
+
+        if (!item -> hasInfo() && m.initiated()) {
+            item -> setInfo(QString(m.getChannels() > 1 ? "stereo" : "mono") + " :: " + QString::number(m.getBitrate()) + " :: " + QString::number(m.getSampleRate()));
+            item -> setDuration(m.getLength());
+            item -> setGenre(Genre::instance() -> toInt(m.getGenre()));
+        }
     }
-
-    return res;
-
-//    QString name = prepareName(item -> data(TITLEID).toString());
-
-//    return getNamesForObject(item -> fullPath(), name);
 }
-
-//QList<QString> * Library::getNamesForItem(QString path) {
-//    QString name = path.section('/', -1, -1);
-//    name = prepareName(name.section('.', 0, -2));
-
-//    return getNamesForObject(path, name);
-//}
 
 QHash<QString, int> * Library::load(const QChar letter) {
     QHash<QString, int> * res = new QHash<QString, int>();

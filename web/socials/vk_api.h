@@ -15,7 +15,6 @@ public:
     QString getToken();
     QString getExpire();
     QString getUserID();
-    QHash<int, QString> getGenres() const;
 
     void getUserAudioList(QString uid = "0");
 //    void getGroupAudioList(QString uid = "0");

@@ -2,6 +2,7 @@
 #define GENRE_H
 
 #include <QHash>
+#include <QString>
 
 class Genre {
 public:
@@ -17,31 +18,33 @@ public:
         delete self;
     }
 
+    int toInt(QString name) const;
+
 private:
     Genre() {
         vkGenres = new QHash<int, QString>();
 
-        vkGenres.insert(1, "Rock");
-        vkGenres.insert(2, "Pop");
-        vkGenres.insert(3, "Rap & Hip-Hop");
-        vkGenres.insert(4, "Easy Listening");
-        vkGenres.insert(5, "Dance & House");
-        vkGenres.insert(6, "Instrumental");
-        vkGenres.insert(7, "Metal");
-        vkGenres.insert(8, "Dubstep");
-        vkGenres.insert(9, "Jazz & Blues");
-        vkGenres.insert(10, "Drum & Bass");
-        vkGenres.insert(11, "Trance");
-        vkGenres.insert(12, "Chanson");
-        vkGenres.insert(13, "Ethnic");
-        vkGenres.insert(14, "Acoustic & Vocal");
-        vkGenres.insert(15, "Reggae");
-        vkGenres.insert(16, "Classical");
-        vkGenres.insert(17, "Indie Pop");
-        vkGenres.insert(18, "Other");
-        vkGenres.insert(19, "Speech");
-        vkGenres.insert(21, "Alternative");
-        vkGenres.insert(22, "Electropop & Disco");
+        vkGenres -> insert(1, QString("Rock"));
+        vkGenres -> insert(2, QString("Pop"));
+        vkGenres -> insert(3, QString("Rap & Hip-Hop"));
+        vkGenres -> insert(4, QString("Easy Listening"));
+        vkGenres -> insert(5, QString("Dance & House"));
+        vkGenres -> insert(6, QString("Instrumental"));
+        vkGenres -> insert(7, QString("Metal"));
+        vkGenres -> insert(8, QString("Dubstep"));
+        vkGenres -> insert(9, QString("Jazz & Blues"));
+        vkGenres -> insert(10, QString("Drum & Bass"));
+        vkGenres -> insert(11, QString("Trance"));
+        vkGenres -> insert(12, QString("Chanson"));
+        vkGenres -> insert(13, QString("Ethnic"));
+        vkGenres -> insert(14, QString("Acoustic & Vocal"));
+        vkGenres -> insert(15, QString("Reggae"));
+        vkGenres -> insert(16, QString("Classical"));
+        vkGenres -> insert(17, QString("Indie Pop"));
+        vkGenres -> insert(18, QString("Other"));
+        vkGenres -> insert(19, QString("Speech"));
+        vkGenres -> insert(21, QString("Alternative"));
+        vkGenres -> insert(22, QString("Electropop & Disco"));
 
 
         genres = new QHash<int, QString>();

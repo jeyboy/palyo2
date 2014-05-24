@@ -12,6 +12,8 @@ public:
     MediaInfo(QString filepath, bool onlyTags = true);
     void initInfo();
 
+    bool initiated() const;
+
     QString getArtist() const;
     QString getTitle() const;
     QString getAlbum() const;
@@ -40,6 +42,8 @@ private:
     int bitrate;
     int length;
     int sampleRate;
+
+    bool readed;
 };
 
 #endif // MEDIAINFO_H

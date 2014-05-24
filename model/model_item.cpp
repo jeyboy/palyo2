@@ -111,12 +111,19 @@ bool ModelItem::isPlayable() const {
     return (!showBatch || (showBatch && getState() -> isChecked()));
 }
 
-bool ModelItem::hasinfo() const {
+bool ModelItem::hasInfo() const {
     return !info.isEmpty();
 }
 
 void ModelItem::setInfo(QString newInfo) {
     info = newInfo;
+}
+
+void ModelItem::setDuration(int newDuration) {
+    duration = newDuration;
+}
+void ModelItem::setGenre(int newGenreID) {
+    genreID = newGenreID;
 }
 
 int ModelItem::getDownloadProgress() const {
@@ -129,8 +136,11 @@ void ModelItem::setDownloadProgress(int percentageVal) {
 
 QStringList ModelItem::getInfo() const {
     QStringList list;
-    list.append(info + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    list.append(QString::number(duration) + "1111111111111");
+    if (info.isEmpty())
+        list.append("Processing ...");
+    else
+        list.append(info);
+    list.append(QString::number(duration));
 
     return list;
 }

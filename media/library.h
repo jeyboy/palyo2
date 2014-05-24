@@ -9,6 +9,7 @@
 #include <QApplication>
 #include <QVector>
 
+#include "genre.h"
 #include "mediainfo.h"
 #include "library_item.h"
 

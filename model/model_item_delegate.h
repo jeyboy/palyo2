@@ -13,6 +13,8 @@ class ModelItemDelegate : public QStyledItemDelegate {
 public:
     explicit ModelItemDelegate(QObject *parent = 0);
 
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
 //    QWidget *createEditor(QWidget *parent,
 //                          const QStyleOptionViewItem &option,
 //                          const QModelIndex &index) const;

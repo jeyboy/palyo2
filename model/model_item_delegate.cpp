@@ -42,6 +42,15 @@ QLinearGradient ModelItemDelegate::unprocessedState(QRect rect, bool dark) {
     return grad;
 }
 
+QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+//    QSize size = QStyledItemDelegate::sizeHint(option, index);
+//    if (size.height() > 18)
+//        size.setHeight(size.height() + 4);
+//    return size;
+
+    return QStyledItemDelegate::sizeHint(option, index);
+}
+
 //QWidget * ModelItemDelegate::createEditor(QWidget *parent,
 //                      const QStyleOptionViewItem &option,
 //                      const QModelIndex &index) const {
@@ -218,14 +227,14 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
 //  //////////////////// remove focus rect
       QStyleOptionViewItem option2 = option;
-      option2.rect.setTop(option2.rect.top() + 2);
+//      option2.rect.setTop(option2.rect.top() + 2);
       option2.state = option.state & (~QStyle::State_HasFocus) & (~QStyle::State_Active) & (~QStyle::State_Selected);
 //    //  /////////////////////////////////////////////
 //    //  QStyledItemDelegate::paint(painter, option2, index);
 
 
 //        int iconSize = 16;
-        int delta = (option2.state & QStyle::State_MouseOver) ? 32 : 0;
+//        int delta = (option2.state & QStyle::State_MouseOver) ? 32 : 0;
 //        QColor semiTransparentWhite(255, 255, 255, 48 + delta);
 //        QColor semiTransparentBlack(0, 0, 0, 48 - delta);
 
@@ -276,15 +285,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         painter -> setClipping(false);
         painter -> drawPath(roundRect);
 
-
-
         if(elem_state) {
             option2.palette.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
         }
-
-        if (!checkable.isValid())
-            option2.rect.moveLeft(option2.rect.left() + 4);
-        QStyledItemDelegate::paint(painter, option2, index);
 
         if (!is_folder) {
             QVariant vfont = index.data(ADDFONTID);
@@ -294,9 +297,10 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             int timeWidth = fmf.width(infos.last());
 
             int beetweeX = option.rect.right() - timeWidth - 10;
-            int top = option.rect.bottom() - 15;
+            int top = option.rect.bottom() - 17;
 
-            QPoint topLeft(option.rect.x() + 28, top);
+//            QPoint topLeft(option.rect.x() + 28, top);
+            QPoint topLeft(option.rect.x() + 46, top);
             QPoint bottomRight(beetweeX - 4, option.rect.bottom());
             QRect rectText(topLeft, bottomRight);
             QString s = fmf.elidedText(infos.first(), option.textElideMode, rectText.width());
@@ -305,12 +309,18 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             QPoint bottomTRight(option.rect.right() - 8, option.rect.bottom());
             QRect rectTimeText(topTLeft, bottomTRight);
 
+
             painter -> setPen(option2.palette.color(QPalette::Text));
             painter -> drawText(rectText, Qt::AlignLeft, s);
             painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
         }
 
         painter -> restore();
+
+        if (!checkable.isValid())
+            option2.rect.moveLeft(option2.rect.left() + 4);
+
+        QStyledItemDelegate::paint(painter, option2, index);
 }
 
 void ModelItemDelegate::drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) {

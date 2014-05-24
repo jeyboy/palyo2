@@ -1,11 +1,13 @@
 #include "mediainfo.h"
 #include "qdebug.h"
 
-MediaInfo::MediaInfo(QString filepath, bool onlyTags = true) {
+MediaInfo::MediaInfo(QString filepath, bool onlyTags) {
+    readed = false;
     fileName = filepath.toStdWString();
     TagLib::FileRef f(fileName.c_str(), !onlyTags, onlyTags ? TagLib::AudioProperties::Fast : TagLib::AudioProperties::Accurate);
 
     if (!f.isNull()) {
+        readed = true;
         artist = QString::fromStdWString(f.tag() -> artist().toWString());
         title = QString::fromStdWString(f.tag() -> title().toWString());
         album = QString::fromStdWString(f.tag() -> album().toWString());
@@ -28,6 +30,10 @@ void MediaInfo::readInfo(TagLib::FileRef f) {
     channels = f.audioProperties() -> channels();
     length = f.audioProperties() -> length();
     sampleRate = f.audioProperties() -> sampleRate();
+}
+
+bool MediaInfo::initiated() const {
+    return readed;
 }
 
 QString MediaInfo::getArtist() const { return artist; }

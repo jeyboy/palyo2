@@ -27,7 +27,9 @@ QVariant Model::data(const QModelIndex &index, int role) const {
            item = getItem(index);
 
            if (!item -> getState() -> isProceed()) {
-               item -> proceedByLibrary(index);
+               item -> getState() -> setProceed();
+               if (!item -> isFolder())
+                   item -> proceedByLibrary(index);
 
                if (item -> getState() -> isExpanded()) {
                    emit expandNeeded(index);
@@ -68,7 +70,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
             if (item -> isFolder())
                 return QSize(0, 18);
             else
-                return QSize(0, 30);
+                return QSize(0, 34);
         case Qt::TextAlignmentRole:
             return Qt::AlignLeft;
         case Qt::FontRole:

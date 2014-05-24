@@ -16,7 +16,11 @@ ModelItem * LibraryItem::item() {
 void LibraryItem::refresh(int state) {
     if (index.isValid()) {
         setState(state);
-        emit const_cast<QAbstractItemModel *>(index.model()) -> dataChanged(index, index);
+        //TODO: some troubles with repaint
+//        emit const_cast<QAbstractItemModel *>(index.model()) -> layoutChanged();
+        emit const_cast<QAbstractItemModel *>(index.model()) -> dataChanged(index.parent(), index);
+//        emit const_cast<QAbstractItemModel *>(index.model()) -> dataChanged(index, index);
+//        emit const_cast<QAbstractItemModel *>(index.model()) -> dataChanged(index, index);
     } else {
         qDebug() << "Index is not valid";
     }

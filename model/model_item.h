@@ -67,8 +67,12 @@ public:
     virtual bool isRemote() const;
     virtual bool isFolder() const;
     bool isPlayable() const;
-    bool hasinfo() const;
+
+    bool hasInfo() const;
     void setInfo(QString newInfo);
+
+    void setDuration(int newDuration);
+    void setGenre(int newGenreID);
 
     int getDownloadProgress() const;
     void setDownloadProgress(int percentageVal);
