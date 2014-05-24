@@ -86,8 +86,6 @@ private:
     QString token;
     QString expires_in;
     QString user_id;
-
-    QHash<int, QString> genres;
 };
 
 #endif // VK_API_H

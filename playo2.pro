@@ -64,6 +64,7 @@ SOURCES += main.cpp\
     media/mediainfo.cpp \
     media/library.cpp \
     media/library_item.cpp \
+    media/genre.cpp \
     override/toolbar.cpp \
     override/toolbarbutton.cpp \
     override/notify_timer.cpp \
@@ -119,6 +120,7 @@ HEADERS  += mainwindow.h \
     media/mediainfo.h \
     media/library.h \
     media/library_item.h \
+    media/genre.h \
     override/toolbar.h \
     override/toolbarbutton.h \
     override/slider_style.h \
