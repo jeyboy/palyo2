@@ -7,6 +7,7 @@
 #include <QBrush>
 #include <QMimeData>
 #include <QUrl>
+#include <QFutureWatcher>
 
 #include "misc/icon_provider.h"
 #include "misc/settings.h"
@@ -48,8 +49,6 @@ public:
 
     void clearAll(bool emitChanges = false);
 
-    void refreshItem(ModelItem * item);
-
     ModelItem *getItem(const QModelIndex &index) const;
 //    template<class T> T *getItem(const QModelIndex &index) const;
     ModelItem * root() const;
@@ -62,6 +61,8 @@ public:
     QStringList mimeTypes() const;
     QMimeData * mimeData(const QModelIndexList &indexes) const;
 
+    void refreshItem(ModelItem * item);
+
     virtual WebApi * getApi() { return 0; } //stub
 signals:
     void itemsCountChanged(int newCount);
@@ -73,6 +74,7 @@ signals:
     void updated();
 
 public slots:
+    void libraryResponse();
     virtual void refresh();
     void expanded(const QModelIndex &index);
     void collapsed(const QModelIndex &index);

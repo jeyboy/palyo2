@@ -5,19 +5,18 @@
 #include <QFile>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrent>
+#include <QFutureWatcher>
 #include <QMutex>
 #include <QApplication>
 #include <QVector>
 
 #include "genre.h"
 #include "mediainfo.h"
-#include "library_item.h"
 
 #include "model/model_item.h"
 class ModelItem;
-class LibraryItem;
 
-class Library : QObject {
+class Library : public QObject {
     Q_OBJECT
 public:
     static Library * instance();
@@ -29,11 +28,12 @@ public:
         }
     }
 
-    void initItem(const QModelIndex & ind, ModelItem * item);
+    void initItem(ModelItem * item, const QObject * caller, char * slot);
     bool addItem(ModelItem * item, int state);
-    void restoreItemState(LibraryItem * item);
+    void restoreItemState(ModelItem * item);
 
     QString filenameFilter(QString title);
+
 private slots:
     void saveCatalogs();
 
@@ -60,7 +60,7 @@ private:
         delete timer;
     }
 
-    void itemsInit(LibraryItem * libItem);
+    ModelItem * itemsInit(ModelItem * item);
 
     QString sitesFilter(QString title);
     QString forwardNumberPreFilter(QString title);

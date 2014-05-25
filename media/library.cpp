@@ -11,10 +11,10 @@ Library *Library::instance() {
 
 //QFutureWatcher
 
-void Library::initItem(const QModelIndex & ind, ModelItem * item) {
-    LibraryItem * libItem = new LibraryItem(ind, item);
-//    libItem -> item() -> getState() -> setProceed();
-    QtConcurrent::run(this, &Library::itemsInit, libItem);
+void Library::initItem(ModelItem * item, const QObject * caller, char * slot) {
+    QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
+    connect(initiator, SIGNAL(finished()), caller, slot);
+    initiator -> setFuture(QtConcurrent::run(this, &Library::itemsInit, item));
 }
 
 bool Library::addItem(ModelItem * item, int state) {
@@ -31,14 +31,14 @@ QString Library::filenameFilter(QString title) {
     return forwardNumberPreFilter(sitesFilter(title)).remove(QRegExp("[^\\w-\\. ()]*")).mid(0, 240);
 }
 
-void Library::restoreItemState(LibraryItem * libItem) {
+void Library::restoreItemState(ModelItem * item) {
     QHash<QString, int> * cat;
     bool isListened = false;
     int temp;
     QString name;
     QList<QString>::iterator i;
 
-    for (i = libItem -> item() -> getTitlesCache() -> begin(); i != libItem -> item() -> getTitlesCache() -> end(); ++i) {
+    for (i = item -> getTitlesCache() -> begin(); i != item -> getTitlesCache() -> end(); ++i) {
         name = (*i);
         cat = getCatalog(name);
 
@@ -46,7 +46,7 @@ void Library::restoreItemState(LibraryItem * libItem) {
             temp = cat -> value(name);
 
             if (temp == 1) {
-                libItem -> refresh(STATE_LIKED);
+                item -> getState() -> setLiked();
                 return;
             }
 
@@ -55,7 +55,7 @@ void Library::restoreItemState(LibraryItem * libItem) {
     }
 
     if (isListened)
-        libItem -> refresh(STATE_LISTENED);
+        item -> getState() -> setListened();
 }
 
 //void Library::setItemState(const QString filename, int state) {
@@ -75,19 +75,19 @@ void Library::saveCatalogs() {
     }
 }
 
-void Library::itemsInit(LibraryItem * libItem) {
-    if (libItem -> item() -> isExist()) {
+ModelItem * Library::itemsInit(ModelItem * item) {
+    if (item -> isExist()) {
         if (saveBlock.tryLock(-1)) {
-            initItemInfo(libItem -> item());
-//            libItem -> item() -> setCache(getNamesForItem(libItem -> item()));
+            initItemInfo(item);
 
-
-            restoreItemState(libItem);
+            restoreItemState(item);
             saveBlock.unlock();
         }
     } else {
-        libItem -> refresh(STATE_NOT_EXIST);
+        item -> getState() -> setNotExist();
     }
+
+    return item;
 }
 
 QString Library::sitesFilter(QString title)				{ return title.remove(QRegExp("((http:\\/\\/)?(www\\.)?[\\w-]+\\.(\\w+)(\\.(\\w+))?)")); }

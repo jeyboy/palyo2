@@ -239,11 +239,6 @@ bool ModelItem::setData(int column, const QVariant &value) {
     return true;
 }
 
-
-void ModelItem::proceedByLibrary(const QModelIndex & index) {
-    Library::instance() -> initItem(index, this);
-}
-
 ModelItemState *ModelItem::getState() const {
     return state;
 }

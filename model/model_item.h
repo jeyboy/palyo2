@@ -100,7 +100,6 @@ public:
     QVariant data(int column) const;
     bool setData(int column, const QVariant &value);
 
-    void proceedByLibrary(const QModelIndex & index);
     ModelItemState *getState() const;
     void setState(int new_state, bool append_to_library = true);
 

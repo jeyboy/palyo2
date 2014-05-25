@@ -28,8 +28,9 @@ QVariant Model::data(const QModelIndex &index, int role) const {
 
            if (!item -> getState() -> isProceed()) {
                item -> getState() -> setProceed();
-               if (!item -> isFolder())
-                   item -> proceedByLibrary(index);
+               if (!item -> isFolder()) {
+                   Library::instance() -> initItem(item, this, SLOT(libraryResponse()));
+               }
 
                if (item -> getState() -> isExpanded()) {
                    emit expandNeeded(index);
@@ -90,6 +91,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         default: return QVariant();
     }
 }
+
 bool Model::setData(const QModelIndex &index, const QVariant &value, int role) {
     ModelItem * item;
 
@@ -263,6 +265,16 @@ void Model::clearAll(bool refresh) {
         this -> refresh();
 }
 
+
+// no idea how to realize this correctly
+void Model::libraryResponse() {
+    QFutureWatcher<ModelItem *> * obj = (QFutureWatcher<ModelItem *> *)sender();
+
+    refreshItem(obj -> result());
+
+    obj -> deleteLater();
+}
+
 void Model::refresh() {   
     emit updated();
     beginResetModel();
@@ -270,6 +282,7 @@ void Model::refresh() {
 }
 
 void Model::refreshItem(ModelItem * item) {
+    qDebug() << item -> fullPath();
     QModelIndex ind = index(item);
     if (ind.isValid()) {
 //        emit dataChanged(ind.parent(), ind);
