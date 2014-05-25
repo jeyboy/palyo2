@@ -222,7 +222,9 @@ void Library::initItemInfo(ModelItem * item) {
         }
 
         if (!item -> hasInfo() && m.initiated()) {
-            item -> setInfo(QString(m.getChannels() > 1 ? "stereo" : "mono") + " :: " + QString::number(m.getBitrate()) + " :: " + QString::number(m.getSampleRate()));
+            item -> setInfo(QString::number(m.getChannels()) + "ch :: "
+                            + QString::number(m.getBitrate()) + " kbps :: "
+                            + QString::number(m.getSampleRate()) + " kHz");
             item -> setDuration(m.getLength());
             item -> setGenre(Genre::instance() -> toInt(m.getGenre()));
         }
