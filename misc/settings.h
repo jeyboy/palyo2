@@ -21,6 +21,9 @@ public:
         delete self;
     }
 
+    bool isShowInfo() const;
+    void setShowInfo(bool show);
+
     bool isSpoilOnActivation() const;
     void setSpoilOnActivation(bool show);
 
@@ -57,6 +60,7 @@ private:
     static Settings *self;
 
     QString downloadPath;
+    bool showInfo;
     bool showCheckbox;
     bool showMetric;
     bool spoilOnActivation;

@@ -127,8 +127,9 @@ Tab * Tabber::commonTab() {
 void Tabber::save() {
     Player::instance() -> stop();
     store -> clear();
+    Tab * tab;
     for(int i = 0; i < tabber -> count(); i++) {
-        Tab * tab = (Tab*)(tabber -> widget(i));
+        tab = (Tab*)(tabber -> widget(i));
         if (tab == commonPlaylist) {
             // logic for common playlist // at this time common list did not save
         } else {
@@ -153,5 +154,15 @@ void Tabber::load() {
             tabber -> addTab(new_tab, tab["n"].toString());
             new_tab -> updateHeader();
         }
+    }
+}
+
+void Tabber::updateIconSize(bool isBigIcon) {
+    Tab * tab;
+    int dimension = isBigIcon ? 32 : 16;
+    QSize size(dimension, dimension);
+    for(int i = 0; i < tabber -> count(); i++) {
+        tab = (Tab*)(tabber -> widget(i));
+        tab -> getList() -> setIconSize(size);
     }
 }

@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QStyleOption>
 #include <QLinearGradient>
+#include <QTreeView>
 
 #include "model_item.h"
 

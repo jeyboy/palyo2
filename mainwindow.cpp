@@ -611,7 +611,10 @@ void MainWindow::showActiveElem() {
 
 void MainWindow::showSettingsDialog() {
     SettingsDialog dialog(this);
-    dialog.exec();
+    if (dialog.exec() == QDialog::Accepted) {
+        if (dialog.isIconSizeChanged())
+            tabber -> updateIconSize(dialog.isBigIcon());
+    }
 }
 
 void MainWindow::showVKTabDialog() {

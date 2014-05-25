@@ -114,7 +114,7 @@ bool ModelItem::isPlayable() const {
 }
 
 bool ModelItem::hasInfo() const {
-    return !info.isEmpty();
+    return !Settings::instance() -> isShowInfo() || (Settings::instance() -> isShowInfo() && !info.isEmpty());
 }
 
 void ModelItem::setInfo(QString newInfo) {

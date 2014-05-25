@@ -289,7 +289,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             option2.palette.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
         }
 
-        if (!is_folder) {
+        if (Settings::instance() -> isShowInfo() && !is_folder) {
             QVariant vfont = index.data(ADDFONTID);
             QStringList infos = index.model() -> data(index, INFOID).toStringList();
 
@@ -299,8 +299,10 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             int beetweeX = option.rect.right() - timeWidth - 10;
             int top = option.rect.bottom() - 17;
 
+            int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
+
 //            QPoint topLeft(option.rect.x() + 28, top);
-            QPoint topLeft(option.rect.x() + 46, top);
+            QPoint topLeft(option.rect.x() + icon_width + 14, top);
             QPoint bottomRight(beetweeX - 4, option.rect.bottom());
             QRect rectText(topLeft, bottomRight);
             QString s = fmf.elidedText(infos.first(), option.textElideMode, rectText.width());
@@ -308,7 +310,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             QPoint topTLeft(beetweeX, top);
             QPoint bottomTRight(option.rect.right() - 8, option.rect.bottom());
             QRect rectTimeText(topTLeft, bottomTRight);
-
 
             painter -> setPen(option2.palette.color(QPalette::Text));
             painter -> drawText(rectText, Qt::AlignLeft, s);

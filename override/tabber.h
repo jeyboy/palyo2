@@ -26,6 +26,8 @@ public:
     void load();
     void save();
 
+    void updateIconSize(bool isBigIcon);
+
 private:
     void setNoTabsStyle();
 

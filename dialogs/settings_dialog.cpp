@@ -21,6 +21,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> showCheckboxes -> setChecked(Settings::instance() -> isCheckboxShow());
   ui -> drawMetrics -> setChecked(Settings::instance() -> isMetricShow());
   ui -> spoilOnActivate -> setChecked(Settings::instance() -> isSpoilOnActivation());
+  ui -> showInfo -> setChecked(Settings::instance() -> isShowInfo());
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -66,6 +67,9 @@ void SettingsDialog::on_acceptButton_clicked() {
 
     Settings::instance() -> setSpoilOnActivation(ui -> spoilOnActivate -> isChecked());
 
+    iconSizeChanged = Settings::instance() -> isShowInfo() != ui -> showInfo -> isChecked();
+    Settings::instance() -> setShowInfo(ui -> showInfo -> isChecked());
+
     accept();
 }
 
@@ -76,4 +80,11 @@ void SettingsDialog::on_browseButton_clicked() {
             path += "/";
         ui -> downloadPath -> setText(path);
     }
+}
+
+bool SettingsDialog::isIconSizeChanged() const {
+    return iconSizeChanged;
+}
+bool SettingsDialog::isBigIcon() const {
+    return ui -> showInfo -> isChecked();
 }

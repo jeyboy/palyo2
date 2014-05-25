@@ -171,6 +171,7 @@ int AudioPlayer::getVolume() const {
 }
 
 QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
+    qDebug() << "REMOTE FILE INFO " << uri;
     QHash<QString, QString> ret;
 
     int chUID = BASS_StreamCreateURL(uri.toStdWString().c_str(), 0, 0, NULL, 0);
@@ -180,14 +181,14 @@ QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
 
     float time = BASS_ChannelBytes2Seconds(chUID, BASS_ChannelGetLength(chUID, BASS_POS_BYTE)); // playback duration
     DWORD len = BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_END); // file length
-    int duration = (len / (125 * time) + 0.5); // bitrate (Kbps)
+    int bitrate = (len / (125 * time) + 0.5); // bitrate (Kbps)
 
     ret.insert("duration", Duration::fromSeconds(time));
 
     BASS_CHANNELINFO info;
     if (BASS_ChannelGetInfo(chUID, &info)) {
         int size = len + BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_START);
-        ret.insert("info", Format::toInfo(Format::toUnits(size), duration, info.freq, info.chans));
+        ret.insert("info", Format::toInfo(Format::toUnits(size), bitrate, info.freq, info.chans));
     }
 
     BASS_StreamFree(chUID);

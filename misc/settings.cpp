@@ -8,6 +8,13 @@ Settings *Settings::instance() {
     return self;
 }
 
+bool Settings::isShowInfo() const {
+    return showInfo;
+}
+void Settings::setShowInfo(bool show) {
+    showInfo = show;
+}
+
 bool Settings::isSpoilOnActivation() const {
     return spoilOnActivation;
 }
@@ -83,6 +90,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     showCheckbox = settingsObj.value("show_checkboxes").toBool(true);
     showMetric = settingsObj.value("show_metric").toBool(true);
     spoilOnActivation = settingsObj.value("spoil_on_activation").toBool(true);
+    showInfo = settingsObj.value("show_info").toBool(true);
 }
 
 QJsonObject Settings::toJson() {
@@ -93,6 +101,7 @@ QJsonObject Settings::toJson() {
     ret.insert("show_checkboxes", QJsonValue::fromVariant(showCheckbox));
     ret.insert("show_metric", QJsonValue::fromVariant(showMetric));
     ret.insert("spoil_on_activation", QJsonValue::fromVariant(spoilOnActivation));
+    ret.insert("show_info", QJsonValue::fromVariant(showInfo));
 
     return ret;
 }

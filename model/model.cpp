@@ -69,7 +69,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
             return item -> data(TITLEID).toString();
         case Qt::SizeHintRole:
             item = getItem(index);
-            if (item -> isFolder())
+            if (item -> isFolder() || !Settings::instance() -> isShowInfo())
                 return QSize(0, 18);
             else
                 return QSize(0, 34);
