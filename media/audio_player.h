@@ -11,6 +11,9 @@
 #include "bassmix.h"
 #include "override/notify_timer.h"
 
+#include "misc/format.h"
+#include "duration.h"
+
 void __stdcall endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);
 
 class AudioPlayer : public QObject {
@@ -46,7 +49,8 @@ public:
 
     int getDuration() const;
     int getVolume() const;
-    int getBitrate() const;
+
+    QHash<QString, QString> getRemoteFileInfo(QString uri);
 
     int getNotifyInterval();
     void setNotifyInterval(signed int milis);
@@ -86,6 +90,8 @@ public slots:
     void setVolume(int val);
 
 private:
+    int getBitrate() const;
+
     QUrl mediaUri;
 
     float volumeVal;

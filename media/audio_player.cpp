@@ -150,8 +150,6 @@ void AudioPlayer::signalUpdate() {
     int curr_pos = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetPosition(chan, BASS_POS_BYTE)) * 1000;
 
     emit positionChanged(curr_pos);
-//    if (duration - curr_pos < 500)
-//        endOfPlayback();
 }
 
 //0 to 10000
@@ -172,10 +170,29 @@ int AudioPlayer::getVolume() const {
     return volumeVal * 10000;
 }
 
-int AudioPlayer::getBitrate() const {
-    float time = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)); // playback duration
-    DWORD len = BASS_StreamGetFilePosition(chan, BASS_FILEPOS_END); // file length
-    return (len/(125*time)+0.5); // bitrate (Kbps)
+QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
+    QHash<QString, QString> ret;
+
+    int chUID = BASS_StreamCreateURL(uri.toStdWString().c_str(), 0, 0, NULL, 0);
+
+    if (!chUID)
+        return ret;
+
+    float time = BASS_ChannelBytes2Seconds(chUID, BASS_ChannelGetLength(chUID, BASS_POS_BYTE)); // playback duration
+    DWORD len = BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_END); // file length
+    int duration = (len / (125 * time) + 0.5); // bitrate (Kbps)
+
+    ret.insert("duration", Duration::fromSeconds(time));
+
+    BASS_CHANNELINFO info;
+    if (BASS_ChannelGetInfo(chUID, &info)) {
+        int size = len + BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_START);
+        ret.insert("info", Format::toInfo(Format::toUnits(size), duration, info.freq, info.chans));
+    }
+
+    BASS_StreamFree(chUID);
+
+    return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -199,7 +216,6 @@ void AudioPlayer::play() {
             if (chan) {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
                 duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
-                qDebug() << "Average bitrate " << getBitrate();
                 durationChanged(duration);
                 BASS_ChannelPlay(chan, true);
                 notifyTimer -> start(notifyInterval);

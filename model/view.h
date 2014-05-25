@@ -31,6 +31,8 @@
   Q_DECLARE_METATYPE(CBHash);
 #endif // CBHASH
 
+
+class Model;
 //TODO: move filters in separate singleton
 
 class View : public QTreeView {

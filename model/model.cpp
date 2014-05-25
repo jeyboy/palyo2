@@ -1,4 +1,5 @@
 #include "model.h"
+#include "media/library.h"
 #include <QDebug>
 
 

@@ -1,4 +1,6 @@
 #include "model_item.h"
+#include "media/library.h"
+#include "media/player.h"
 #include <QDebug>
 
 /////////////////////////////////////////////////////////

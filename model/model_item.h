@@ -28,7 +28,6 @@
 #include <QDesktopServices>
 
 #include "model_item_state.h"
-#include "media/library.h"
 
 #include "misc/settings.h"
 

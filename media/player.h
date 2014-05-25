@@ -12,7 +12,6 @@
 #include "model/model.h"
 #include "model/view.h"
 #include "audio_player.h"
-#include "duration.h"
 #include "override/clickable_label.h"
 
 class View;

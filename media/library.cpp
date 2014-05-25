@@ -1,4 +1,5 @@
 #include "library.h"
+#include "player.h"
 #include "qdebug.h"
 
 Library *Library::self = 0;
@@ -196,35 +197,58 @@ QHash<QString, int> * Library::getCatalog(QString name) {
 //}
 
 void Library::initItemInfo(ModelItem * item) {
-//    if (!item -> cacheIsPrepared()) {
-//        item -> setCache(getNamesForItem(item));
-//    }
-
+    QList<QString> * res;
 
     if (!item -> cacheIsPrepared() || !item -> hasInfo()) {
-        MediaInfo m(item -> fullPath(), item -> hasInfo());
+        QString name = prepareName(item -> data(TITLEID).toString());
 
-        if (!item -> cacheIsPrepared()) {
-            QList<QString> * res = new QList<QString>();
-            QString name = prepareName(item -> data(TITLEID).toString());
+        if (item -> isRemote()) {
+            if (!item -> cacheIsPrepared()) {
+                res = new QList<QString>();
 
-            res -> append(name);
-            QString temp = prepareName(name, true);
-            if (temp != name)
-                res -> append(temp);
+                res -> append(name);
+                QString temp = prepareName(name, true);
+                if (temp != name)
+                    res -> append(temp);
+
+                item -> setCache(res);
+            }
+
+            if (!item -> hasInfo()) {
+//                item -> initFromRemote();
+                QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> fullPath());
+
+                item -> setDuration(info.value("duration"));
+                item -> setInfo(info.value("info"));
+
+                //TODO: get genre
+//                item -> setGenre();
+            }
+
+        } else {
+            MediaInfo m(item -> fullPath(), item -> hasInfo());
+
+            if (!item -> cacheIsPrepared()) {
+                res = new QList<QString>();
+
+                res -> append(name);
+                QString temp = prepareName(name, true);
+                if (temp != name)
+                    res -> append(temp);
 
 
-            QString temp2 = prepareName(m.getArtist() + m.getTitle());
-            if (!temp2.isEmpty() && temp2 != name && temp2 != temp)
-                res -> append(temp2);
+                QString temp2 = prepareName(m.getArtist() + m.getTitle());
+                if (!temp2.isEmpty() && temp2 != name && temp2 != temp)
+                    res -> append(temp2);
 
-            item -> setCache(res);
-        }
+                item -> setCache(res);
+            }
 
-        if (!item -> hasInfo() && m.initiated()) {
-            item -> setInfo(Format::toInfo(Format::toUnits(m.getSize()), m.getBitrate(), m.getSampleRate(), m.getChannels()));
-            item -> setDuration(Duration::fromSeconds(m.getDuration()));
-            item -> setGenre(Genre::instance() -> toInt(m.getGenre()));
+            if (!item -> hasInfo() && m.initiated()) {
+                item -> setInfo(Format::toInfo(Format::toUnits(m.getSize()), m.getBitrate(), m.getSampleRate(), m.getChannels()));
+                item -> setDuration(Duration::fromSeconds(m.getDuration()));
+                item -> setGenre(Genre::instance() -> toInt(m.getGenre()));
+            }
         }
     }
 }
