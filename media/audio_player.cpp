@@ -1,6 +1,12 @@
 #include "audio_player.h"
 #include <QDebug>
 
+//Get the percentage downloaded of an internet file stream, or the buffer level when streaming in blocks.
+//QWORD len=BASS_StreamGetFilePosition(stream, BASS_FILEPOS_END); // file/buffer length
+//QWORD buf=BASS_StreamGetFilePosition(stream, BASS_FILEPOS_BUFFER); // buffer level
+//float progress=buf*100.0/len; // percentage of buffer filled
+
+
 void endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user) {
 //    BASS_ChannelStop(channel);
 //    BASS_ChannelRemoveSync(channel, handle);
@@ -166,6 +172,12 @@ int AudioPlayer::getVolume() const {
     return volumeVal * 10000;
 }
 
+int AudioPlayer::getBitrate() const {
+    float time = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)); // playback duration
+    DWORD len = BASS_StreamGetFilePosition(chan, BASS_FILEPOS_END); // file length
+    return (len/(125*time)+0.5); // bitrate (Kbps)
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 void AudioPlayer::play() {
@@ -187,6 +199,7 @@ void AudioPlayer::play() {
             if (chan) {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
                 duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
+                qDebug() << "Average bitrate " << getBitrate();
                 durationChanged(duration);
                 BASS_ChannelPlay(chan, true);
                 notifyTimer -> start(notifyInterval);

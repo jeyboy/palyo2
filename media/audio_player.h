@@ -46,6 +46,7 @@ public:
 
     int getDuration() const;
     int getVolume() const;
+    int getBitrate() const;
 
     int getNotifyInterval();
     void setNotifyInterval(signed int milis);

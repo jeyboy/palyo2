@@ -11,7 +11,7 @@ Library *Library::instance() {
 
 //QFutureWatcher
 
-void Library::initItem(ModelItem * item, const QObject * caller, char * slot) {
+void Library::initItem(ModelItem * item, const QObject * caller, const char * slot) {
     QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
     connect(initiator, SIGNAL(finished()), caller, slot);
     initiator -> setFuture(QtConcurrent::run(this, &Library::itemsInit, item));
@@ -222,10 +222,8 @@ void Library::initItemInfo(ModelItem * item) {
         }
 
         if (!item -> hasInfo() && m.initiated()) {
-            item -> setInfo(QString::number(m.getChannels()) + "ch :: "
-                            + QString::number(m.getBitrate()) + " kbps :: "
-                            + QString::number(m.getSampleRate()) + " kHz");
-            item -> setDuration(Duration::fromSeconds(m.getLength()));
+            item -> setInfo(Format::toInfo(Format::toUnits(m.getSize()), m.getBitrate(), m.getSampleRate(), m.getChannels()));
+            item -> setDuration(Duration::fromSeconds(m.getDuration()));
             item -> setGenre(Genre::instance() -> toInt(m.getGenre()));
         }
     }

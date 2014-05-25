@@ -2,6 +2,9 @@
 #define DURATION_H
 
 #include <QString>
+//#include <QStringList>
+
+#include "misc/format.h"
 
 class Duration {
 public:
@@ -9,8 +12,7 @@ public:
     static QString fromMillis(int millis, bool includeHours = false);
 
     static bool hasHours(int millis);
-protected:
-    static QString formate(int h, int m, int s, bool includeHours);
+//    static int parse(QString str);
 };
 
 

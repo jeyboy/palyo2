@@ -19,11 +19,12 @@ public:
     QString getAlbum() const;
     QString getGenre() const;
 
+    long getSize() const;
     int getYear() const;
     int getTrack() const;
     int getChannels() const;
     int getBitrate() const;
-    int getLength() const;
+    int getDuration() const;
     int getSampleRate() const;
 private:
     void readInfo(TagLib::FileRef f);
@@ -40,8 +41,9 @@ private:
 
     int channels;
     int bitrate;
-    int length;
+    int duration;
     int sampleRate;
+    long size;
 
     bool readed;
 };

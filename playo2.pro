@@ -29,8 +29,9 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     data_store.cpp \
     misc/icon_provider.cpp \
-    misc/file_size.cpp \
     misc/hotkey_manager.cpp \
+    misc/settings.cpp \
+    misc/format.cpp \
     web/ip_checker.cpp \
     web/web_api.cpp \
     web/socials/vk_api.cpp \
@@ -59,11 +60,14 @@ SOURCES += main.cpp\
     model/web/vk/vk_file.cpp \
     model/model_item_delegate.cpp \
     model/model_item_state.cpp \
+    model/hotkey_model/hotkey_delegate.cpp \
+    model/hotkey_model/hotkey_editor.cpp \
     media/audio_player.cpp \
     media/player.cpp \
     media/mediainfo.cpp \
     media/library.cpp \
     media/genre.cpp \
+    media/duration.cpp \
     override/toolbar.cpp \
     override/toolbarbutton.cpp \
     override/notify_timer.cpp \
@@ -71,19 +75,16 @@ SOURCES += main.cpp\
     override/tabber.cpp \
     override/tab.cpp \
     override/custom_network_access_manager.cpp \
-    single_application.cpp \
-    misc/settings.cpp \
-    model/hotkey_model/hotkey_delegate.cpp \
-    model/hotkey_model/hotkey_editor.cpp \
     override/slider.cpp \
-    media/duration.cpp
-
+    single_application.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
     misc/icon_provider.h \
-    misc/file_size.h \
     misc/hotkey_manager.h \
+    misc/hotkey_types.h \
+    misc/settings.h \
+    misc/format.h \
     web/ip_checker.h\
     web/web_api.h\
     web/socials/vk_api.h\
@@ -115,11 +116,14 @@ HEADERS  += mainwindow.h \
     model/web/vk/vk_file.h \
     model/model_item_delegate.h \
     model/model_item_state.h \
+    model/hotkey_model/hotkey_delegate.h \
+    model/hotkey_model/hotkey_editor.h \
     media/audio_player.h \
     media/player.h \
     media/mediainfo.h \
     media/library.h \
     media/genre.h \
+    media/duration.h \
     override/toolbar.h \
     override/toolbarbutton.h \
     override/slider_style.h \
@@ -128,13 +132,8 @@ HEADERS  += mainwindow.h \
     override/tabber.h \
     override/tab.h \
     override/custom_network_access_manager.h \
-    single_application.h \
-    misc/settings.h \
-    model/hotkey_model/hotkey_delegate.h \
-    model/hotkey_model/hotkey_editor.h \
-    misc/hotkey_types.h \
     override/slider.h \
-    media/duration.h
+    single_application.h
 
 unix:!mac {
         QT += gui-private
