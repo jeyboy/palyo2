@@ -39,4 +39,18 @@
         <file alias="locked">icons/locked.png</file>
         <file alias="unlocked">icons/unlocked.png</file>
     </qresource>
+    <qresource prefix="/ext">
+        <file alias="_aac">icons/ext/Icon_1.ico</file>
+        <file alias="_ape">icons/ext/Icon_2.ico</file>
+        <file alias="_audio">icons/ext/Icon_3.ico</file>
+        <file alias="_flac">icons/ext/Icon_4.ico</file>
+        <file alias="_m4a">icons/ext/Icon_5.ico</file>
+        <file alias="_mod">icons/ext/Icon_6.ico</file>
+        <file alias="_mp3">icons/ext/Icon_7.ico</file>
+        <file alias="_mpc">icons/ext/Icon_8.ico</file>
+        <file alias="_ogg">icons/ext/Icon_9.ico</file>
+        <file alias="_playlist">icons/ext/Icon_10.ico</file>
+        <file alias="_wav">icons/ext/Icon_12.ico</file>
+        <file alias="_wma">icons/ext/Icon_13.ico</file>
+    </qresource>
 </RCC>

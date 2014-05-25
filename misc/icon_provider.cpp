@@ -39,7 +39,7 @@ QIcon IconProvider::remoteIcon() {
 }
 
 QIcon IconProvider::missedIcon() {
-    return QIcon(":file_error");
+    return QIcon(":/ext/_audio");
 }
 
 QIcon IconProvider::dirIcon() {
