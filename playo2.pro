@@ -75,7 +75,8 @@ SOURCES += main.cpp\
     misc/settings.cpp \
     model/hotkey_model/hotkey_delegate.cpp \
     model/hotkey_model/hotkey_editor.cpp \
-    override/slider.cpp
+    override/slider.cpp \
+    media/duration.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -132,7 +133,8 @@ HEADERS  += mainwindow.h \
     model/hotkey_model/hotkey_delegate.h \
     model/hotkey_model/hotkey_editor.h \
     misc/hotkey_types.h \
-    override/slider.h
+    override/slider.h \
+    media/duration.h
 
 unix:!mac {
         QT += gui-private

@@ -54,7 +54,7 @@ class ModelItem {
 public:   
     ModelItem(int initState = STATE_DEFAULT | STATE_CHECKED);
     ModelItem(QJsonObject * hash, ModelItem * parent = 0);
-    ModelItem(const QString filePath, QString fileName, ModelItem * parent = 0, int genre_id = -1, int itemDuration = -1, int itemSize = -1, QString itemInfo = "", int initState = STATE_DEFAULT | STATE_CHECKED);
+    ModelItem(const QString filePath, QString fileName, ModelItem * parent = 0, int genre_id = -1, QString itemDuration = "", int itemSize = -1, QString itemInfo = "", int initState = STATE_DEFAULT | STATE_CHECKED);
     virtual ~ModelItem();
 
     QString fullPath() const;
@@ -71,7 +71,7 @@ public:
     bool hasInfo() const;
     void setInfo(QString newInfo);
 
-    void setDuration(int newDuration);
+    void setDuration(QString newDuration);
     void setGenre(int newGenreID);
 
     int getDownloadProgress() const;
@@ -129,7 +129,7 @@ protected:
     QString info;
 
     int size;
-    int duration;
+    QString duration;
     qint16 genreID;
 };
 

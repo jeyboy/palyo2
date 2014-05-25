@@ -25,7 +25,7 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     title = hash -> value("t").toString();
     extension = hash -> value("e").toString();
     genreID = hash -> value("g").toInt(-1);
-    duration = hash -> value("d").toInt(-1);
+    duration = hash -> value("d").toString("");
 
     size = hash -> value("b").toInt(-1);
     info = hash -> value("a").toString("");
@@ -36,7 +36,7 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     }
 }
 
-ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int genre_id, int itemDuration, int itemSize, QString itemInfo, int initState) {
+ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * parent, int genre_id, QString itemDuration, int itemSize, QString itemInfo, int initState) {
     parentItem = parent;
     titlesCache = 0;
     size = itemSize;
@@ -119,7 +119,7 @@ void ModelItem::setInfo(QString newInfo) {
     info = newInfo;
 }
 
-void ModelItem::setDuration(int newDuration) {
+void ModelItem::setDuration(QString newDuration) {
     duration = newDuration;
 }
 void ModelItem::setGenre(int newGenreID) {
@@ -140,7 +140,7 @@ QStringList ModelItem::getInfo() const {
         list.append("Processing ...");
     else
         list.append(info);
-    list.append(QString::number(duration));
+    list.append(duration);
 
     return list;
 }
@@ -165,7 +165,7 @@ QJsonObject ModelItem::toJSON() {
     if (genreID != -1)
         root["g"] = genreID;
 
-    if (duration != -1)
+    if (!duration.isEmpty())
         root["d"] = duration;
 
     if (!extension.isNull())

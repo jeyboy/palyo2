@@ -294,7 +294,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             QStringList infos = index.model() -> data(index, INFOID).toStringList();
 
             QFontMetrics fmf(vfont.value<QFont>());
-            int timeWidth = fmf.width(infos.last());
+            int timeWidth = fmf.width(infos.last()) + 6;
 
             int beetweeX = option.rect.right() - timeWidth - 10;
             int top = option.rect.bottom() - 17;

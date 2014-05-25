@@ -5,6 +5,7 @@
 #include "web/socials/vk_api.h"
 #include "model/model.h"
 #include "model/tree/tree_model.h"
+#include "media/duration.h"
 
 class VkModel : public TreeModel {
     Q_OBJECT

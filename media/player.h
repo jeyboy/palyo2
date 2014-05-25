@@ -12,6 +12,7 @@
 #include "model/model.h"
 #include "model/view.h"
 #include "audio_player.h"
+#include "duration.h"
 #include "override/clickable_label.h"
 
 class View;
@@ -73,8 +74,8 @@ private:
     void updatePlaylist(View *);
 
     void updateItemState(bool played);
-    void initFormat(int millis);
-    QString intToStr(int millis);
+//    void initFormat(int millis);
+//    QString intToStr(int millis);
     void updateControls(bool played, bool paused, bool stopped);
 
     void setTimePanelVal(int millis);

@@ -225,7 +225,7 @@ void Library::initItemInfo(ModelItem * item) {
             item -> setInfo(QString::number(m.getChannels()) + "ch :: "
                             + QString::number(m.getBitrate()) + " kbps :: "
                             + QString::number(m.getSampleRate()) + " kHz");
-            item -> setDuration(m.getLength());
+            item -> setDuration(Duration::fromSeconds(m.getLength()));
             item -> setGenre(Genre::instance() -> toInt(m.getGenre()));
         }
     }

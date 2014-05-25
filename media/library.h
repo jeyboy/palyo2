@@ -12,6 +12,7 @@
 
 #include "genre.h"
 #include "mediainfo.h"
+#include "duration.h"
 
 #include "model/model_item.h"
 class ModelItem;

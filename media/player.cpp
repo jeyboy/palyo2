@@ -146,34 +146,34 @@ void Player::setTimePanel(ClickableLabel * newTimePanel) {
 void Player::setTimePanelVal(int millis) {
     if (timePanel) {
         QString val, total;
-        total = intToStr(getDuration());
+        total = Duration::fromMillis(getDuration(), extended_format);
 
         if (time_forward) {
-            val = intToStr(millis);
+            val = Duration::fromMillis(millis, extended_format);
             timePanel -> setText(val + "\n" + total);
         } else {
-            val = intToStr(getDuration() - millis);
+            val = Duration::fromMillis(getDuration() - millis, extended_format);
             timePanel -> setText(total + "\n" + val);
         }
     }
 }
 
-void Player::initFormat(int millis) {
-    int h = millis == 0 ? 0 : abs(millis / 3600000) % 24;
-    extended_format = h > 0;
-}
+//void Player::initFormat(int millis) {
+//    int h = millis == 0 ? 0 : abs(millis / 3600000) % 24;
+//    extended_format = h > 0;
+//}
 
-QString Player::intToStr(int millis) {
-    int m = millis == 0 ? 0 : abs(millis / 60000) % 60;
-    int s = millis == 0 ? 0 : abs(millis / 1000) % 60;
+//QString Player::intToStr(int millis) {
+//    int m = millis == 0 ? 0 : abs(millis / 60000) % 60;
+//    int s = millis == 0 ? 0 : abs(millis / 1000) % 60;
 
-    if (extended_format) {
-        int h = millis == 0 ? 0 : abs(millis / 3600000) % 24;
-        return QString().sprintf("%02d:%02d:%02d", h, m, s);
-    } else {
-        return QString().sprintf("%02d:%02d", m, s);
-    }
-}
+//    if (extended_format) {
+//        int h = millis == 0 ? 0 : abs(millis / 3600000) % 24;
+//        return QString().sprintf("%02d:%02d:%02d", h, m, s);
+//    } else {
+//        return QString().sprintf("%02d:%02d", m, s);
+//    }
+//}
 
 void Player::updateControls(bool played, bool paused, bool stopped) {
     playButton -> setVisible(played);
@@ -198,7 +198,7 @@ void Player::setTrackbarValue(int pos) {
 
 void Player::setTrackbarMax(int duration) {
     if (slider) {
-        initFormat(duration);
+        extended_format = Duration::hasHours(duration);
 //        slider -> setDisabled(!isSeekable());
         slider -> setMaximum(duration);
     }

@@ -83,7 +83,7 @@ void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent) {
                     QString::number(fileIterObj.value("id").toInt()),
                     parent,
                     fileIterObj.value("genre_id").toInt(-1),
-                    fileIterObj.value("duration").toInt(-1)
+                    Duration::fromSeconds(fileIterObj.value("duration").toInt(0))
                     );
 
         appendRow(newItem -> toModelItem());
