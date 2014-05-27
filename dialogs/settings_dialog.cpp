@@ -59,7 +59,14 @@ void SettingsDialog::on_cancelButton_clicked() {
 
 void SettingsDialog::on_acceptButton_clicked() {
     HotkeyModel * model = dynamic_cast<HotkeyModel *>(ui -> treeView -> model());
-    Settings::instance() -> setHotKeys(model -> toplevelItems());
+    QList<HotkeyModelItem *> list = model -> toplevelItems();
+    Settings::instance() -> setHotKeys(list);
+
+    HotkeyManager::instance() -> clear();
+
+    foreach(HotkeyModelItem * key, list) {
+        HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString());
+    }
 
     Settings::instance() -> setDownloadPath(ui -> downloadPath -> text());
     Settings::instance() -> setCheckboxShow(ui -> showCheckboxes -> isChecked());

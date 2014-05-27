@@ -7,6 +7,7 @@ HotkeyEditor::HotkeyEditor(int hotkeyType, QWidget *parent) : QLineEdit(parent) 
 
 void HotkeyEditor::keyPressEvent(QKeyEvent * event) {
     int keyInt = event -> key();
+    qDebug() << event -> text();
     Qt::Key key = static_cast<Qt::Key>(keyInt);
 
     // Handle unknown keys

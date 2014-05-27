@@ -2,18 +2,25 @@
 #define HOTKEY_MANAGER_H
 
 #include <QObject>
+#include <QHash>
 #include "globalshortcut/qxtglobalshortcut.h"
 #include "misc/hotkey_types.h"
+
+struct HotkeySlot {
+    const QObject * obj;
+    const char * slot;
+
+    HotkeySlot(const QObject * _obj = 0, const char * _slot = 0) {
+        obj = _obj;
+        slot = _slot;
+    }
+};
 
 class HotkeyManager : public QObject {
     Q_OBJECT
 public:
     ~HotkeyManager() {
-        delete next;
-        delete next_and_delete;
-        delete prev;
-        delete play;
-        delete stop;
+        qDeleteAll(shortcuts.values());
     }
 
     static HotkeyManager * instance();
@@ -23,26 +30,18 @@ public:
     }
 
     bool registerSequence(int hotkeyType, QString sequence, QObject * receiver = 0, const char* slot = 0);
+    void clear();
 
 private:
-    HotkeyManager() {
-        next = 0;
-        next_and_delete = 0;
-        prev = 0;
-        play = 0;
-        stop = 0;
-    }
+    HotkeyManager() { }
 
-    QxtGlobalShortcut * registerSequence(QObject * receiver, const char* slot);
+    QxtGlobalShortcut * registerSequence(const HotkeySlot & hotSlot);
     bool updateSequence(QxtGlobalShortcut * shortcut, QKeySequence sequence);
 
     static HotkeyManager * self;
 
-    QxtGlobalShortcut * next;
-    QxtGlobalShortcut * next_and_delete;
-    QxtGlobalShortcut * prev;
-    QxtGlobalShortcut * play;
-    QxtGlobalShortcut * stop;
+    QHash<int, HotkeySlot> relations;
+    QHash<int, QxtGlobalShortcut *> shortcuts;
 };
 
 #endif // HOTKEY_MANAGER_H
