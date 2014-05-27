@@ -9,6 +9,11 @@ LevelTreeView::~LevelTreeView() {
 
 }
 
+void LevelTreeView::removeFolderPrebuild(ModelItem * temp) {
+    temp -> parent() -> removeFolder(temp -> data(TITLEID).toString());
+    temp -> parent() -> removeChildren(temp -> row(), 1);
+}
+
 QModelIndex LevelTreeView::dropProcession(const QList<QUrl> & list) {
     QFileInfo file = QFileInfo(list.first().toLocalFile());
     QString folderName;
@@ -24,11 +29,15 @@ QModelIndex LevelTreeView::dropProcession(const QList<QUrl> & list) {
     return model -> index(index);
 }
 
-void LevelTreeView::filesRoutine(ModelItem * index, QFileInfo currFile){
+void LevelTreeView::filesRoutine(ModelItem * index, QFileInfo currFile) {
     QFileInfoList folderList = folderDirectories(currFile);
+    ModelItem * newFolder;
 
     foreach(QFileInfo file, folderList) {
-        filesRoutine(model -> addFolder("", file.fileName(), model -> root()), file);
+        newFolder = model -> addFolder("", file.fileName(), model -> root());
+        filesRoutine(newFolder, file);
+        if (newFolder -> childCount() == 0)
+            removeFolderPrebuild(newFolder);
     }
 
 
@@ -39,11 +48,15 @@ void LevelTreeView::filesRoutine(ModelItem * index, QFileInfo currFile){
     }
 }
 
-void LevelTreeView::filesRoutine(ModelItem * index, QList<QUrl> list){
+void LevelTreeView::filesRoutine(ModelItem * index, QList<QUrl> list) {
+    ModelItem * newFolder;
     foreach(QUrl url, list) {
         QFileInfo file = QFileInfo(url.toLocalFile());
         if (file.isDir()) {
-            filesRoutine(model -> addFolder("", file.fileName(), model -> root()), file);
+            newFolder = model -> addFolder("", file.fileName(), model -> root());
+            filesRoutine(newFolder, file);
+            if (newFolder -> childCount() == 0)
+                removeFolderPrebuild(newFolder);
         } else {
             model -> appendRow(createItem(file.filePath(), index));
         }

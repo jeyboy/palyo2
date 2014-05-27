@@ -19,6 +19,7 @@ public:
     ~LevelTreeView();
 
 protected:
+    void removeFolderPrebuild(ModelItem * temp);
     QModelIndex dropProcession(const QList<QUrl> & list);
     void filesRoutine(ModelItem * index, QFileInfo currFile);
     void filesRoutine(ModelItem * index, QList<QUrl> list);
