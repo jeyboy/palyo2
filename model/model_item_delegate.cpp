@@ -290,14 +290,15 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         }
 
         if (Settings::instance() -> isShowInfo() && !is_folder) {
-            QVariant vfont = index.data(ADDFONTID);
+            QFont vfont = index.data(ADDFONTID).value<QFont>();
             QStringList infos = index.model() -> data(index, INFOID).toStringList();
 
-            QFontMetrics fmf(vfont.value<QFont>());
-            int timeWidth = fmf.width(infos.last()) + 6;
+            painter -> setFont(vfont);
+            QFontMetrics fmf(vfont);
+            int timeWidth = fmf.width(infos.last());
 
             int beetweeX = option.rect.right() - timeWidth - 10;
-            int top = option.rect.bottom() - 17;
+            int top = option.rect.bottom() - 14;
 
             int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
 
