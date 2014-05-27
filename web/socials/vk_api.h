@@ -28,6 +28,13 @@ public:
         delete self;
     }
 
+    void addFriend(QString uid, QString name);
+    void addGroup(QString uid, QString name);
+//    void addLink(int uid, QString name);
+
+    void fromJson(QJsonObject hash);
+    QJsonObject toJson2();
+
 signals:
     void audioListReceived(QJsonObject &);
     void errorReceived(QJsonObject &);
@@ -85,6 +92,10 @@ private:
     QString token;
     QString expires_in;
     QString user_id;
+
+    QHash<QString, QString> friends;
+    QHash<QString, QString> groups;
+//    QHash<int, QString> links;
 };
 
 #endif // VK_API_H

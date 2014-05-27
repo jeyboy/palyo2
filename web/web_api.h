@@ -4,6 +4,8 @@
 #include <QObject>
 //#include <QtXml/QDomDocument>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <QUrl>
 
 #include "override/custom_network_access_manager.h"

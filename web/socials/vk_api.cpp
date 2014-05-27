@@ -33,6 +33,47 @@ QString VkApi::getUserID() {
     return user_id;
 }
 
+void VkApi::addFriend(QString uid, QString name) {
+    friends.insert(uid, name);
+}
+void VkApi::addGroup(QString uid, QString name) {
+    groups.insert(uid, name);
+}
+//void VkApi::addLink(int uid, QString name) {
+//    links.insert(uid, name);
+//}
+
+void VkApi::fromJson(QJsonObject hash) {
+    QJsonObject ar = hash.value("friends").toObject();
+
+    foreach(QString key, ar.keys()) {
+        addFriend(key, ar.value(key).toString());
+    }
+
+    ar = hash.value("groups").toObject();
+
+    foreach(QString key, ar.keys()) {
+        addGroup(key, ar.value(key).toString());
+    }
+}
+QJsonObject VkApi::toJson2() {
+    QJsonObject root;
+
+    QJsonObject friendsJson;
+    foreach(QString key, friends.keys()) {
+        friendsJson.insert(key, QJsonValue(friends.value(key)));
+    }
+    root.insert("friends", friendsJson);
+
+    QJsonObject groupsJson;
+    foreach(QString key, groups.keys()) {
+        groupsJson.insert(key, QJsonValue(groups.value(key)));
+    }
+    root.insert("groups", groupsJson);
+
+    return root;
+}
+
 ///////////////////////////////////////////////////////////
 /// LINKS
 ///////////////////////////////////////////////////////////
@@ -86,12 +127,21 @@ void VkApi::getAudioList(QString uid) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams();
     query.addQueryItem("code",
-                       "var folders = API.audio.getAlbums({count: 24, uid: " + uid + "}).items;" +
-                       "var sort_by_folders = {};" +
-                       "while(folders.length > 0) { var curr = folders.pop();  sort_by_folders.push(" +
+                       QString("var curr;") +
+                       "var groups = API.groups.get({user_id: " + uid + ", count: 1000, extended: 1}).items;" +
+                       "var proceed_groups = [];" +
+                       "while(groups.length > 0) { curr = groups.pop();  proceed_groups.push({id: curr.id, title: curr.name}); };" +
+
+                       "var friends = API.friends.get({user_id: " + uid + ", order: \"name\", fields: \"nickname\"}).items;" +
+                       "var proceed_friends = [];" +
+                       "while(friends.length > 0) { curr = friends.pop();  proceed_friends.push({id: curr.id, title: curr.first_name + \" \" + curr.last_name }); };" +
+
+                       "var folders = API.audio.getAlbums({count: 22, uid: " + uid + "}).items;" +
+                       "var proceed_folders = {};" +
+                       "while(folders.length > 0) { curr = folders.pop();  proceed_folders.push(" +
                        "{folder_id: curr.id, title: curr.title, items: API.audio.get({album_id: curr.id}).items});" +
                        "};" +
-                       "return {audio_list: API.audio.get({count: 6000, uid: " + uid + "}), albums: sort_by_folders};"
+                       "return {audio_list: API.audio.get({count: 6000, uid: " + uid + "}), albums: proceed_folders, groups: proceed_groups, firends: proceed_friends};"
                        );
     url.setQuery(query);
 
