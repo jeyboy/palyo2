@@ -180,6 +180,12 @@ ModelItem * ModelItem::toModelItem() {
     return dynamic_cast<ModelItem *>(this);
 }
 
+QString ModelItem::toPath() const {
+    if (parentItem == 0)
+        return "";
+    else return parentItem -> toPath() + " " + QString::number(row());
+}
+
 
 ModelItem * ModelItem::parent() {
     return parentItem;

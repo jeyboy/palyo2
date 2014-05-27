@@ -67,6 +67,10 @@ AudioPlayer::~AudioPlayer() {
     delete notifyTimer;
 }
 
+int AudioPlayer::getPosition() const {
+    return BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetPosition(chan, BASS_POS_BYTE)) * 1000;
+}
+
 int AudioPlayer::getDuration() const {
     return duration;
 }

@@ -125,7 +125,7 @@ Tab * Tabber::commonTab() {
 }
 
 void Tabber::save() {
-    Player::instance() -> stop();
+    Player::instance() -> pause();
     store -> clear();
     Tab * tab;
     for(int i = 0; i < tabber -> count(); i++) {
@@ -138,6 +138,7 @@ void Tabber::save() {
     }
 
     store -> save();
+    Player::instance() -> stop();
 }
 
 void Tabber::load() {
@@ -153,6 +154,13 @@ void Tabber::load() {
 
             tabber -> addTab(new_tab, tab["n"].toString());
             new_tab -> updateHeader();
+
+            if (tab.contains("pv")) {
+                new_tab -> getList() -> execItem(new_tab -> getList() -> fromPath(tab.value("pp").toString()), true);
+                Player::instance() -> setPosition(tab.value("pt").toInt());
+                qDebug() << "HUDO " << tab.value("pt").toInt();
+                Player::instance() -> play();
+            }
         }
     }
 }

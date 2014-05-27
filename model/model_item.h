@@ -81,6 +81,7 @@ public:
     virtual QUrl toUrl();
     virtual QJsonObject toJSON();
     ModelItem * toModelItem();
+    QString toPath() const;
 
     ModelItem * parent();
 

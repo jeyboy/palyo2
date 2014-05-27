@@ -55,6 +55,8 @@ public:
     bool isEditable();
 
 
+    ModelItem * fromPath(QString path);
+
 //    template<class T> T * getModel() const;
     Model * getModel() const;
 
@@ -63,7 +65,7 @@ public:
 
     QModelIndexList selectedItems() const;
 
-    bool execItem(ModelItem * item);
+    bool execItem(ModelItem * item, bool paused = false);
     ModelItem * removeCandidate(ModelItem * item);
     void removeItem(ModelItem * item);
 

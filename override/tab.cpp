@@ -80,6 +80,12 @@ void Tab::setNameWithCount(QString name) {
 QJsonObject Tab::toJSON(QString name) {
     QJsonObject res = list -> toJSON();
     res["n"] = name;
+    if (Player::instance() -> currentPlaylist() == getList()) {
+        res["pv"] = true;
+        res["pp"] = Player::instance() -> playedItem() -> toPath();
+        res["pt"] = Player::instance() -> getPosition();
+        qDebug() << Player::instance() -> getPosition();
+    }
     return res;
 }
 

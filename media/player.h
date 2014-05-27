@@ -21,7 +21,7 @@ class Player : public AudioPlayer {
 public:
 
     static Player * instance();
-    void playItem(View * itemPlaylist, ModelItem * item);
+    void playItem(View * itemPlaylist, ModelItem * item, bool paused = false);
 
     void setActivePlaylist(View * itemPlaylist);
     void setPlayButton(QAction * playAction);

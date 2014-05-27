@@ -97,7 +97,7 @@ void Player::updateItemState(bool isPlayed) {
     }
 }
 
-void Player::playItem(View * itemPlaylist, ModelItem * item) {
+void Player::playItem(View * itemPlaylist, ModelItem * item, bool paused) {
     switch(state()) {
         case StoppedState: { break; }
 
@@ -115,6 +115,9 @@ void Player::playItem(View * itemPlaylist, ModelItem * item) {
     updatePlaylist(itemPlaylist);
     updateItem(item);
     play();
+
+    if (paused)
+        pause();
 }
 
 void Player::setTrackBar(QSlider * trackBar) {

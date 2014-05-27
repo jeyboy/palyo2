@@ -47,6 +47,7 @@ public:
     explicit AudioPlayer(QObject *parent = 0);
     ~AudioPlayer();
 
+    int getPosition() const;
     int getDuration() const;
     int getVolume() const;
 

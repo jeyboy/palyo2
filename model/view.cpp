@@ -152,6 +152,19 @@ bool View::isEditable() {
     return settings["t"] < 4 && !isCommon();
 }
 
+ModelItem * View::fromPath(QString path) {
+    QStringList parts = path.split(' ', QString::SkipEmptyParts);
+    ModelItem * curr = getModel() -> root();
+    int level;
+
+    while(parts.length() > 0) {
+        level = parts.takeFirst().toInt();
+        curr = curr -> child(level);
+    }
+
+    return curr;
+}
+
 Model * View::getModel() const {
     return model;
 }
@@ -184,12 +197,12 @@ QModelIndexList View::selectedItems() const {
     return selectedIndexes();
 }
 
-bool View::execItem(ModelItem * item) {
+bool View::execItem(ModelItem * item, bool paused) {
     if (item) {
         if (Settings::instance() -> isSpoilOnActivation())
             scrollTo(model -> index(item));
         if (item -> isExist()) {
-            Player::instance() -> playItem(this, item);
+            Player::instance() -> playItem(this, item, paused);
             return true;
         }
         else {

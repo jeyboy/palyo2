@@ -215,11 +215,11 @@ void Library::initItemInfo(ModelItem * item) {
             }
 
             if (!item -> hasInfo()) {
-//                item -> initFromRemote();
-                QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> fullPath());
+                //TODO: decrease requests rate
+//                QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> fullPath());
 
-                item -> setDuration(info.value("duration"));
-                item -> setInfo(info.value("info"));
+//                item -> setDuration(info.value("duration"));
+//                item -> setInfo(info.value("info"));
 
                 //TODO: get genre
 //                item -> setGenre();
