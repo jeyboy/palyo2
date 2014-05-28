@@ -623,7 +623,7 @@ void MainWindow::showVKRelTabDialog() {
     if (dialog.exec() == QDialog::Accepted) {
         tabber -> addTab("VK (" + dialog.getName() + ")", TabDialog::VKSettings(dialog.getId()));
     } else {
-        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+//        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
     }
 }
 

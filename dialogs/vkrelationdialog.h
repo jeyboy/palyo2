@@ -18,6 +18,7 @@ public:
     ~VkRelationDialog();
 
     int getId() const;
+    QString getName();
 
 private slots:
     void on_cancelButton_clicked();
