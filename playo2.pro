@@ -76,7 +76,8 @@ SOURCES += main.cpp\
     override/tab.cpp \
     override/custom_network_access_manager.cpp \
     override/slider.cpp \
-    single_application.cpp
+    single_application.cpp \
+    dialogs/vkrelationdialog.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -133,7 +134,8 @@ HEADERS  += mainwindow.h \
     override/tab.h \
     override/custom_network_access_manager.h \
     override/slider.h \
-    single_application.h
+    single_application.h \
+    dialogs/vkrelationdialog.h
 
 unix:!mac {
         QT += gui-private
@@ -166,7 +168,8 @@ FORMS    += mainwindow.ui \
     dialogs/toolbardialog.ui \
     dialogs/toolbarbuttondialog.ui \
     dialogs/web_dialog.ui \
-    dialogs/settings_dialog.ui
+    dialogs/settings_dialog.ui \
+    dialogs/vkrelationdialog.ui
 
 RESOURCES += \
     picts.qrc

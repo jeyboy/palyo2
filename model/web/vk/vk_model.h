@@ -11,7 +11,7 @@ class VkModel : public TreeModel {
     Q_OBJECT
 
 public:
-    VkModel(QJsonObject * hash = 0, QObject *parent = 0);
+    VkModel(QString uid, QJsonObject * hash = 0, QObject *parent = 0);
     ~VkModel();
 
 //    ModelItem * buildPath(QString path);

@@ -367,6 +367,16 @@ void View::showContextMenu(const QPoint& pnt) {
     sepAct -> setSeparator(true);
     actions.append(sepAct);
 
+    if (model -> getApi() != 0) {
+        openAct = new QAction(QIcon(":/refresh"), "Friends (groups) audio", this);
+        connect(openAct, SIGNAL(triggered(bool)), QApplication::activeWindow(), SLOT(showVKRelTabDialog()));
+        actions.append(openAct);
+    }
+
+    sepAct = new QAction(this);
+    sepAct -> setSeparator(true);
+    actions.append(sepAct);
+
     if (model -> rowCount() > 0) {
         openAct = new QAction(QIcon(":/collapse"), "Collapse all", this);
         connect(openAct, SIGNAL(triggered(bool)), this, SLOT(collapseAll()));

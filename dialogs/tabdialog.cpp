@@ -1,12 +1,13 @@
 #include "tabdialog.h"
 #include "ui_tabdialog.h"
 
-CBHash TabDialog::VKSettings() {
+CBHash TabDialog::VKSettings(int uid) {
     CBHash res;
     res.insert("d", 0);
     res.insert("i", 0);
     res.insert("p", 1);
     res.insert("t", 4);
+    res.insert("uid", uid);
 
     return res;
 }

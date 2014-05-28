@@ -618,6 +618,15 @@ void MainWindow::showSettingsDialog() {
     }
 }
 
+void MainWindow::showVKRelTabDialog() {
+    VkRelationDialog dialog(this);
+    if (dialog.exec() == QDialog::Accepted) {
+        tabber -> addTab("VK (" + dialog.getName() + ")", TabDialog::VKSettings(dialog.getId()));
+    } else {
+        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+    }
+}
+
 void MainWindow::showVKTabDialog() {
     WebDialog dialog(this, VkApi::instance(), "VK auth");
     if (dialog.exec() == QDialog::Accepted) {

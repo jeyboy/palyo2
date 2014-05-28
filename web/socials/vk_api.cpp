@@ -50,6 +50,13 @@ void VkApi::addGroup(QString uid, QString name) {
 //    links.insert(uid, name);
 //}
 
+QHash<QString, QString> VkApi::friendsList() const {
+    return friends;
+}
+QHash<QString, QString> VkApi::groupsList() const {
+    return groups;
+}
+
 void VkApi::fromJson(QJsonObject hash) {
     user_id = hash.value("_u_").toString();
     token = hash.value("_t_").toString();

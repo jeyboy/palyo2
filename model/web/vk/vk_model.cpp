@@ -3,7 +3,7 @@
 
 ///////////////////////////////////////////////////////////
 
-VkModel::VkModel(QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) {
+VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) {
     connect(VkApi::instance(), SIGNAL(audioListReceived(QJsonObject &)), this, SLOT(proceedAudioList(QJsonObject &)));
 
     if (hash != 0) {
@@ -12,7 +12,7 @@ VkModel::VkModel(QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) 
         VkApi::instance(res);
     } else {
         qDebug() << "!In vk hash";
-        VkApi::instance() -> getUserAudioList();
+        VkApi::instance() -> getUserAudioList(uid);
     }
 
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));

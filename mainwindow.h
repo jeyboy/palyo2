@@ -19,6 +19,7 @@
 #include "dialogs/toolbarbuttondialog.h"
 #include "dialogs/web_dialog.h"
 #include "dialogs/settings_dialog.h"
+#include "dialogs/vkrelationdialog.h"
 
 #include "misc/hotkey_manager.h"
 
@@ -74,6 +75,8 @@ private slots:
     void showActiveElem();
 
     void showSettingsDialog();
+
+    void showVKRelTabDialog();
 
     void showVKTabDialog();
 

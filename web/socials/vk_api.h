@@ -33,6 +33,9 @@ public:
     void addGroup(QString uid, QString name);
 //    void addLink(int uid, QString name);
 
+    QHash<QString, QString> friendsList() const;
+    QHash<QString, QString> groupsList() const;
+
     void fromJson(QJsonObject hash);
     QJsonObject toJson();
 
