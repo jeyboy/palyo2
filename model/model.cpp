@@ -277,7 +277,6 @@ void Model::libraryResponse() {
 }
 
 void Model::refresh() {   
-    emit updated();
     beginResetModel();
     endResetModel();
 }

@@ -437,9 +437,9 @@ void View::download() {
 }
 
 void View::modelUpdate() {
-    qDebug() << "model update";
     if (Player::instance() -> currentPlaylist() == this) {
-        qDebug() << "this model update";
+        if (Player::instance() -> playedItem())
+            Player::instance() -> playedItem() -> getState() -> unsetPlayed();
         Player::instance() -> removePlaylist();
     }
 }
