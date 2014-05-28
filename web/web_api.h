@@ -46,7 +46,7 @@ signals:
     void downloadError(void * item, QString message);
 
 protected:
-    QJsonObject toJson(QByteArray data);
+    QJsonObject responseToJson(QByteArray data);
 //    QDomDocument toXml(QByteArray data);
 
 //    QByteArray sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts = 0);

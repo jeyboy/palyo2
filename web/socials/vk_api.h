@@ -23,17 +23,18 @@ public:
     ~VkApi() { }
 
     static VkApi * instance();
-    static VkApi * instance(QString pToken, QString pUserId, QString pExpired);
+    static VkApi * instance(QJsonObject obj);
     static void close() {
         delete self;
     }
 
+    void clearData();
     void addFriend(QString uid, QString name);
     void addGroup(QString uid, QString name);
 //    void addLink(int uid, QString name);
 
     void fromJson(QJsonObject hash);
-    QJsonObject toJson2();
+    QJsonObject toJson();
 
 signals:
     void audioListReceived(QJsonObject &);
@@ -77,14 +78,15 @@ protected slots:
 
 private:   
     void getAudioList(QString uid = "0");
-    void init(QString pToken = "", QString pUserId = "", QString pExpired = "");
 
-    VkApi(QString pToken, QString pUserId, QString pExpired) : WebApi() {
-        init(pToken, pUserId, pExpired);
+    VkApi(QJsonObject hash) : WebApi() {
+        fromJson(hash);
     }
 
     VkApi() : WebApi() {
-        init();
+//        token = "";
+//        expires_in = "";
+//        user_id = "";
     }
 
     static VkApi *self;

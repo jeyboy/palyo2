@@ -8,11 +8,11 @@ VkApi *VkApi::instance() {
     return self;
 }
 
-VkApi * VkApi::instance(QString pToken, QString pUserId, QString pExpired) {
+VkApi * VkApi::instance(QJsonObject obj) {
     if(!self)
-        self = new VkApi(pToken, pUserId, pExpired);
+        self = new VkApi(obj);
     else
-        VkApi::instance() -> setParams(pToken, pUserId, pExpired);
+        VkApi::instance() -> fromJson(obj);
     return self;
 }
 
@@ -33,10 +33,17 @@ QString VkApi::getUserID() {
     return user_id;
 }
 
+void VkApi::clearData() {
+    friends.clear();
+    groups.clear();
+}
+
 void VkApi::addFriend(QString uid, QString name) {
+    qDebug() << uid << " " << name;
     friends.insert(uid, name);
 }
 void VkApi::addGroup(QString uid, QString name) {
+    qDebug() << uid << " " << name;
     groups.insert(uid, name);
 }
 //void VkApi::addLink(int uid, QString name) {
@@ -44,6 +51,10 @@ void VkApi::addGroup(QString uid, QString name) {
 //}
 
 void VkApi::fromJson(QJsonObject hash) {
+    user_id = hash.value("_u_").toString();
+    token = hash.value("_t_").toString();
+    expires_in = hash.value("_e_").toString();
+
     QJsonObject ar = hash.value("friends").toObject();
 
     foreach(QString key, ar.keys()) {
@@ -56,8 +67,12 @@ void VkApi::fromJson(QJsonObject hash) {
         addGroup(key, ar.value(key).toString());
     }
 }
-QJsonObject VkApi::toJson2() {
+QJsonObject VkApi::toJson() {
     QJsonObject root;
+
+    root["_u_"] = getUserID();
+    root["_t_"] = getToken();
+    root["_e_"] = getExpire();
 
     QJsonObject friendsJson;
     foreach(QString key, friends.keys()) {
@@ -90,7 +105,7 @@ QString VkApi::authUrl() const {
     queryParams.addQueryItem("display", "page");
     queryParams.addQueryItem("client_id", "4332211");
     queryParams.addQueryItem("response_type", "token");
-    queryParams.addQueryItem("scope", "audio,video,friends,offline");
+    queryParams.addQueryItem("scope", "audio,video,friends,groups,offline");
     queryParams.addQueryItem("redirect_uri", "https://oauth.vk.com/blank.html");
 
     url.setQuery(queryParams);
@@ -128,20 +143,20 @@ void VkApi::getAudioList(QString uid) {
     QUrlQuery query = methodParams();
     query.addQueryItem("code",
                        QString("var curr;") +
-                       "var groups = API.groups.get({user_id: " + uid + ", count: 1000, extended: 1}).items;" +
+                       "var groups = API.groups.get({uid: " + uid + ", count: 1000, extended: 1}).items;" +
                        "var proceed_groups = [];" +
                        "while(groups.length > 0) { curr = groups.pop();  proceed_groups.push({id: curr.id, title: curr.name}); };" +
 
                        "var friends = API.friends.get({user_id: " + uid + ", order: \"name\", fields: \"nickname\"}).items;" +
                        "var proceed_friends = [];" +
-                       "while(friends.length > 0) { curr = friends.pop();  proceed_friends.push({id: curr.id, title: curr.first_name + \" \" + curr.last_name }); };" +
+                       "while(friends.length > 0) { curr = friends.pop();  proceed_friends.push({id: curr.id, title: curr.first_name %2b \" \" %2b curr.last_name }); };" +
 
                        "var folders = API.audio.getAlbums({count: 22, uid: " + uid + "}).items;" +
                        "var proceed_folders = {};" +
                        "while(folders.length > 0) { curr = folders.pop();  proceed_folders.push(" +
                        "{folder_id: curr.id, title: curr.title, items: API.audio.get({album_id: curr.id}).items});" +
                        "};" +
-                       "return {audio_list: API.audio.get({count: 6000, uid: " + uid + "}), albums: proceed_folders, groups: proceed_groups, firends: proceed_friends};"
+                       "return {audio_list: API.audio.get({count: 6000, uid: " + uid + "}), albums: proceed_folders, groups: proceed_groups, friends: proceed_friends};"
                        );
     url.setQuery(query);
 
@@ -152,8 +167,7 @@ void VkApi::getAudioList(QString uid) {
 void VkApi::audioListRequest() {
     QNetworkReply * reply = (QNetworkReply*)QObject::sender();
 
-    QJsonObject doc = toJson(reply -> readAll());
-    qDebug() << reply -> readAll();
+    QJsonObject doc = responseToJson(reply -> readAll());
 
     if (doc.contains("error")) {
         qDebug() << reply -> readAll();
@@ -229,11 +243,3 @@ QString VkApi::getAPIUrl() {
 //void VkApi::audioAlbumEditRequest() {}
 //void VkApi::audioAlbumRemoveRequest() {}
 //void VkApi::audioAlbumMoveToRequest() {}
-
-///////////////////////////////////////////////////////////
-
-void VkApi::init(QString pToken, QString pUserId, QString pExpired) {
-    token = pToken;
-    user_id = pUserId;
-    expires_in = pExpired;
-}

@@ -73,7 +73,7 @@ CustomNetworkAccessManager * WebApi::manager() const {
     return netManager;
 }
 
-QJsonObject WebApi::toJson(QByteArray data) {
+QJsonObject WebApi::responseToJson(QByteArray data) {
     QJsonDocument doc = QJsonDocument::fromJson(data);
     return doc.object();
 }

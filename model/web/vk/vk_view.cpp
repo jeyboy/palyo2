@@ -9,13 +9,7 @@ VkView::~VkView() {}
 
 QJsonObject VkView::toJSON() {
     QJsonObject res = TreeView::toJSON();
-
-    QJsonObject set = QJsonObject();
-    set["u"] = VkApi::instance() -> getUserID();
-    set["t"] = VkApi::instance() -> getToken();
-    set["e"] = VkApi::instance() -> getExpire();
-
-    res["vk"] = set;
+    res["vk"] = VkApi::instance() -> toJson();
     return res;
 }
 

@@ -7,15 +7,11 @@ VkModel::VkModel(QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) 
     connect(VkApi::instance(), SIGNAL(audioListReceived(QJsonObject &)), this, SLOT(proceedAudioList(QJsonObject &)));
 
     if (hash != 0) {
+        qDebug() << "In vk hash";
         QJsonObject res = hash -> value("vk").toObject();
-        VkApi::instance(res.value("t").toString(), res.value("u").toString(), res.value("e").toString());
-
-//        if (VkApi::instance() -> isRefreshRequire()) {
-//            clearAll();
-//            VkApi::instance() -> getUserAudioList();
-//        }
-
+        VkApi::instance(res);
     } else {
+        qDebug() << "!In vk hash";
         VkApi::instance() -> getUserAudioList();
     }
 
@@ -31,6 +27,7 @@ void VkModel::refresh() {
     emit showSpinner();
     qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Update !!!!!!!!!!!!!!!!!!!!";
     clearAll();
+    VkApi::instance() -> clearData();
     QApplication::processEvents();
     VkApi::instance() -> getUserAudioList();
     QApplication::processEvents();
@@ -39,10 +36,9 @@ void VkModel::refresh() {
 
 
 void VkModel::proceedAudioList(QJsonObject & hash) {
-    qDebug() << hash.keys();
     QJsonArray filesAr, ar = hash.value("albums").toArray();
-//    folder_id: curr, title: curr.title, items: API.audio.get({album_id: curr}).items
     QJsonObject iterObj;
+
 
     qDebug() << ar;
 
@@ -59,12 +55,37 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
         }
     }
 
+/////////////////////////////////////////////////////////////////////
     ar = hash.value("audio_list").toObject().value("items").toArray();
 
 //    qDebug() << ar;
 
     if (ar.count() > 0) {        
         proceedAudioList(ar, root());
+    }
+/////////////////////////////////////////////////////////////////////
+    ar = hash.value("groups").toArray();
+
+    if (ar.count() > 0) {
+        foreach(QJsonValue obj, ar) {
+            iterObj = obj.toObject();
+            VkApi::instance() -> addGroup(
+                            QString::number(iterObj.value("id").toInt()),
+                            iterObj.value("title").toString()
+                        );
+        }
+    }
+/////////////////////////////////////////////////////////////////////
+    ar = hash.value("friends").toArray();
+
+    if (ar.count() > 0) {
+        foreach(QJsonValue obj, ar) {
+            iterObj = obj.toObject();
+            VkApi::instance() -> addFriend(
+                            QString::number(iterObj.value("id").toInt()),
+                            iterObj.value("title").toString()
+                        );
+        }
     }
 
     TreeModel::refresh();
