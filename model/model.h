@@ -62,6 +62,7 @@ public:
     QMimeData * mimeData(const QModelIndexList &indexes) const;
 
     void refreshItem(ModelItem * item);
+    void removeFolderPrebuild(ModelItem * temp);
 
     virtual WebApi * getApi() { return 0; } //stub
 signals:

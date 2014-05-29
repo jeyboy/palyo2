@@ -46,10 +46,13 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
         foreach(QJsonValue obj, ar) {
             iterObj = obj.toObject();
 
-            folder = addFolder(iterObj.value("title").toString(), rootItem, QString::number(iterObj.value("folder_id").toInt()));
             filesAr = iterObj.value("items").toArray();
 
-            proceedAudioList(filesAr, folder);
+            if (filesAr.size() > 0) {
+                folder = addFolder(iterObj.value("title").toString(), rootItem, QString::number(iterObj.value("folder_id").toInt()));
+
+                proceedAudioList(filesAr, folder);
+            }
         }
     }
 

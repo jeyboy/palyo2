@@ -290,6 +290,12 @@ void Model::refreshItem(ModelItem * item) {
     }
 }
 
+// remove temp item - folder
+void Model::removeFolderPrebuild(ModelItem * temp) {
+    temp -> parent() -> removeFolder(temp -> data(TITLEID).toString());
+    temp -> parent() -> removeChildren(temp -> row(), 1);
+}
+
 /////////////////////////////////////////////////////////
 
 ModelItem * Model::getItem(const QModelIndex &index) const {
