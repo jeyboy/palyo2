@@ -157,8 +157,7 @@ void Tabber::load() {
 
             if (tab.contains("pv")) {
                 new_tab -> getList() -> execItem(new_tab -> getList() -> fromPath(tab.value("pp").toString()), true);
-                Player::instance() -> setPosition(tab.value("pt").toInt());
-                qDebug() << "HUDO " << tab.value("pt").toInt();
+                Player::instance() -> setStartPosition(tab.value("pt").toInt());
 //                Player::instance() -> play();
             }
         }

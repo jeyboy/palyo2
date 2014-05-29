@@ -120,6 +120,11 @@ void Player::playItem(View * itemPlaylist, ModelItem * item, bool paused) {
         pause();
 }
 
+void Player::setStartPosition(int position) {
+    setPosition(position);
+    emit positionChanged(position);
+}
+
 void Player::setTrackBar(QSlider * trackBar) {
     slider = trackBar;
     slider -> setMinimum(0);
