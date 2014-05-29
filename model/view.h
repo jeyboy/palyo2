@@ -81,6 +81,7 @@ signals:
     void hideSpinner();
 
 public slots:
+    void shuffle();
     void updateSelection(QModelIndex candidate);
     void startRoutine();
     void stopRoutine();

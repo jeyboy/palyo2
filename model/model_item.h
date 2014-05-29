@@ -115,6 +115,9 @@ public:
     virtual int removeFolder(QString name);  // stub
 
     virtual QList<ModelItem *> * childItemsList(); // stub
+
+    void shuffle();
+    int randInt(int low, int high);
 protected:
 
     qint8 progress;

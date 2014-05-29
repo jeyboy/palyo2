@@ -291,6 +291,11 @@ void View::stopRoutine() {
     emit hideSpinner();
 }
 
+void View::shuffle() {
+    getModel() -> root() -> shuffle();
+    getModel() -> refresh();
+}
+
 void View::updateSelection(QModelIndex candidate) {
     if (candidate.isValid()) {
         ModelItem * item = getModel() -> getItem(candidate);
@@ -339,6 +344,10 @@ void View::showContextMenu(const QPoint& pnt) {
 
     openAct = new QAction(QIcon(":/refresh"), "Refresh", this);
     connect(openAct, SIGNAL(triggered(bool)), model, SLOT(refresh()));
+    actions.append(openAct);
+
+    openAct = new QAction(QIcon(":/shuffle"), "Shuffle", this);
+    connect(openAct, SIGNAL(triggered(bool)), this, SLOT(shuffle()));
     actions.append(openAct);
 
     sepAct = new QAction(this);
