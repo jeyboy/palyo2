@@ -1,18 +1,17 @@
 #include "vk_model.h"
+#include "misc/func_container.h"
 #include <QDebug>
 
 ///////////////////////////////////////////////////////////
 
 VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) {
-    connect(VkApi::instance(), SIGNAL(audioListReceived(QJsonObject &)), this, SLOT(proceedAudioList(QJsonObject &)));
+//    connect(VkApi::instance(), SIGNAL(audioListReceived(QJsonObject &)), this, SLOT(proceedAudioList(QJsonObject &)));
 
     if (hash != 0) {
-        qDebug() << "In vk hash";
         QJsonObject res = hash -> value("vk").toObject();
         VkApi::instance(res);
     } else {
-        qDebug() << "!In vk hash";
-        VkApi::instance() -> getUserAudioList(uid);
+        VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))),uid);
     }
 
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
@@ -29,7 +28,7 @@ void VkModel::refresh() {
     clearAll();
     VkApi::instance() -> clearData();
     QApplication::processEvents();
-    VkApi::instance() -> getUserAudioList();
+    VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))));
     QApplication::processEvents();
     emit hideSpinner();
 }
@@ -58,7 +57,7 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
 /////////////////////////////////////////////////////////////////////
     ar = hash.value("audio_list").toObject().value("items").toArray();
 
-//    qDebug() << ar;
+    qDebug() << ar;
 
     if (ar.count() > 0) {        
         proceedAudioList(ar, root());

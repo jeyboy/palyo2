@@ -2,6 +2,8 @@
 #define VK_API_H
 
 #include "web/web_api.h"
+#include "misc/func_container.h"
+#include "model/view.h"
 
 class VkApi : public WebApi {
     Q_OBJECT
@@ -16,7 +18,7 @@ public:
     QString getExpire();
     QString getUserID();
 
-    void getUserAudioList(QString uid = "0");
+    void getUserAudioList(FuncContainer slot, QString uid = "0");
 //    void getGroupAudioList(QString uid = "0");
 //    void getAlbumAudioList(QString uid = "0");
 
@@ -80,7 +82,7 @@ protected slots:
 //    void audioAlbumMoveToRequest();
 
 private:   
-    void getAudioList(QString uid = "0");
+    void getAudioList(FuncContainer responseSlot, QString uid = "0");
 
     VkApi(QJsonObject hash) : WebApi() {
         fromJson(hash);
@@ -100,6 +102,8 @@ private:
 
     QHash<QString, QString> friends;
     QHash<QString, QString> groups;
+
+    QHash<QNetworkReply *, FuncContainer> responses;
 //    QHash<int, QString> links;
 };
 

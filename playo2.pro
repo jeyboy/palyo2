@@ -135,7 +135,8 @@ HEADERS  += mainwindow.h \
     override/custom_network_access_manager.h \
     override/slider.h \
     single_application.h \
-    dialogs/vkrelationdialog.h
+    dialogs/vkrelationdialog.h \
+    misc/func_container.h
 
 unix:!mac {
         QT += gui-private

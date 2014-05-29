@@ -141,33 +141,55 @@ QString VkApi::proceedAuthResponse(const QUrl & url) {
 /// AUDIO LIST
 ///////////////////////////////////////////////////////////
 
-void VkApi::getUserAudioList(QString uid) {
-    getAudioList(uid == 0 ? getUserID() : uid);
+void VkApi::getUserAudioList(FuncContainer slot, QString uid) {
+    getAudioList(slot, uid == 0 ? getUserID() : uid);
 }
 
-void VkApi::getAudioList(QString uid) {
+void VkApi::getAudioList(FuncContainer responseSlot, QString uid) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams();
-    query.addQueryItem("code",
-                       QString("var curr;") +
-                       "var groups = API.groups.get({uid: " + uid + ", count: 1000, extended: 1}).items;" +
-                       "var proceed_groups = [];" +
-                       "while(groups.length > 0) { curr = groups.pop();  proceed_groups.push({id: curr.id, title: curr.name}); };" +
 
-                       "var friends = API.friends.get({user_id: " + uid + ", order: \"name\", fields: \"nickname\"}).items;" +
-                       "var proceed_friends = [];" +
-                       "while(friends.length > 0) { curr = friends.pop();  proceed_friends.push({id: curr.id, title: curr.first_name %2b \" \" %2b curr.last_name }); };" +
+    if (uid == getUserID()) {
+        query.addQueryItem("code",
+                           QString("var curr;") +
+                           "var groups = API.groups.get({uid: " + uid + ", count: 1000, extended: 1}).items;" +
+                           "var proceed_groups = [];" +
+                           "while(groups.length > 0) { curr = groups.pop();  proceed_groups.push({id: curr.id, title: curr.name}); };" +
 
-                       "var folders = API.audio.getAlbums({count: 22, uid: " + uid + "}).items;" +
-                       "var proceed_folders = {};" +
-                       "while(folders.length > 0) { curr = folders.pop();  proceed_folders.push(" +
-                       "{folder_id: curr.id, title: curr.title, items: API.audio.get({album_id: curr.id}).items});" +
-                       "};" +
-                       "return {audio_list: API.audio.get({count: 6000, uid: " + uid + "}), albums: proceed_folders, groups: proceed_groups, friends: proceed_friends};"
-                       );
+                           "var friends = API.friends.get({user_id: " + uid + ", order: \"name\", fields: \"nickname\"}).items;" +
+                           "var proceed_friends = [];" +
+                           "while(friends.length > 0) { curr = friends.pop();  proceed_friends.push({id: curr.id, title: curr.first_name %2b \" \" %2b curr.last_name }); };" +
+
+                           "var folders = API.audio.getAlbums({count: 22, uid: " + uid + "}).items;" +
+                           "var proceed_folders = {};" +
+                           "while(folders.length > 0) { curr = folders.pop();  proceed_folders.push(" +
+                           "{folder_id: curr.id, title: curr.title, items: API.audio.get({album_id: curr.id}).items});" +
+                           "};" +
+                           "return {audio_list: API.audio.get({count: 6000, uid: " + uid + "}), albums: proceed_folders, groups: proceed_groups, friends: proceed_friends};"
+                           );
+    } else {
+        query.addQueryItem("code",
+                           QString("var curr;") +
+                           "var groups = API.groups.get({uid: " + uid + ", count: 1000, extended: 1}).items;" +
+                           "var proceed_groups = [];" +
+                           "while(groups.length > 0) { curr = groups.pop();  proceed_groups.push({id: curr.id, title: curr.name}); };" +
+
+                           "var friends = API.friends.get({user_id: " + uid + ", order: \"name\", fields: \"nickname\"}).items;" +
+                           "var proceed_friends = [];" +
+                           "while(friends.length > 0) { curr = friends.pop();  proceed_friends.push({id: curr.id, title: curr.first_name %2b \" \" %2b curr.last_name }); };" +
+
+                           "var folders = API.audio.getAlbums({count: 22, uid: " + uid + "}).items;" +
+                           "var proceed_folders = {};" +
+                           "while(folders.length > 0) { curr = folders.pop();  proceed_folders.push(" +
+                           "{folder_id: curr.id, title: curr.title, items: API.audio.get({album_id: curr.id}).items});" +
+                           "};" +
+                           "return {audio_list: API.audio.get({count: 6000, uid: " + uid + "}), albums: proceed_folders, groups: proceed_groups, friends: proceed_friends};"
+                           );
+    }
     url.setQuery(query);
 
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
+    responses.insert(m_http, responseSlot);
     QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListRequest()));
 }
 
@@ -181,7 +203,11 @@ void VkApi::audioListRequest() {
         emit errorReceived(doc);
     } else {
         doc = doc.value("response").toObject();
+        FuncContainer func = responses.take(reply);
+        //TODO: maybe need lock until send
+        connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
         emit audioListReceived(doc);
+        disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
     }
 
     reply -> close();
