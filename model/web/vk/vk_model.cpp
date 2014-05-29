@@ -38,7 +38,6 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
     QJsonArray filesAr, ar = hash.value("albums").toArray();
     QJsonObject iterObj;
 
-
     qDebug() << ar;
 
     if (ar.count() > 0) {
