@@ -3,7 +3,7 @@
 
 #include "web/web_api.h"
 #include "misc/func_container.h"
-#include "model/view.h"
+#include "model/model_item.h"
 
 class VkApi : public WebApi {
     Q_OBJECT
@@ -19,8 +19,7 @@ public:
     QString getUserID();
 
     void getUserAudioList(FuncContainer slot, QString uid = "0");
-//    void getGroupAudioList(QString uid = "0");
-//    void getAlbumAudioList(QString uid = "0");
+    void refreshAudioList(FuncContainer slot, QHash<ModelItem *, QString> uids);
 
     ~VkApi() { }
 
@@ -42,6 +41,7 @@ public:
 
 signals:
     void audioListReceived(QJsonObject &);
+    void audioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);
     void errorReceived(QJsonObject &);
 
 protected:
@@ -66,6 +66,7 @@ protected:
 
 protected slots:
     void audioListRequest();
+    void updateAudioListRequest();
 //    void audioCountRequest();
 //    void audioSearchRequest();
 //    void audioCopyRequest();
@@ -103,6 +104,7 @@ private:
     QHash<QString, QString> groups;
 
     QHash<QNetworkReply *, FuncContainer> responses;
+    QHash<QNetworkReply *, QHash<ModelItem *, QString> > collations;
 };
 
 #endif // VK_API_H

@@ -22,10 +22,17 @@ VkModel::~VkModel() {
 void VkModel::refresh() {
     emit showSpinner();
     qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Update !!!!!!!!!!!!!!!!!!!!";
-    clearAll();
-    VkApi::instance() -> clearData();
+//    clearAll();
+//    VkApi::instance() -> clearData();
     QApplication::processEvents();
-    VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))));
+
+    QHash<ModelItem*, QString> store;
+    rootItem -> accumulateUids(store);
+
+    VkApi::instance() -> refreshAudioList(
+                FuncContainer(this, SLOT(proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &))),
+                store
+                );
     QApplication::processEvents();
     emit hideSpinner();
 }
@@ -109,4 +116,17 @@ void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent) {
     }
 }
 
+void VkModel::proceedAudioListUpdate(QJsonObject & obj, QHash<ModelItem *, QString> & collation) {
+    QJsonObject iterObj;
+    QJsonArray ar = obj.value("response").toArray();
+    QString uid;
+    ModelItem * item;
 
+    foreach(QJsonValue obj, ar) {
+        iterObj = obj.toObject();
+        uid = QString::number(iterObj.value("owner_id").toInt()) + "_" + QString::number(iterObj.value("id").toInt());
+
+        item = collation.key(uid);
+        item -> setPath(iterObj.value("url").toString());
+    }
+}

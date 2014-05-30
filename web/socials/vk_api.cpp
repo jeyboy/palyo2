@@ -142,6 +142,24 @@ void VkApi::getUserAudioList(FuncContainer slot, QString uid) {
     getAudioList(slot, uid == "0" ? getUserID() : uid);
 }
 
+void VkApi::refreshAudioList(FuncContainer responseSlot, QHash<ModelItem *, QString> uids) {
+    QUrl url(getAPIUrl() + "execute");
+    QUrlQuery query = methodParams();
+    QStringList uidList(uids.values());
+
+    qDebug() << "return API.audio.getById({audios: \"" + uidList.join(',') + "\"});";
+
+    query.addQueryItem("code",
+                       "return API.audio.getById({audios: \"" + uidList.join(',') + "\"});"
+                       );
+    url.setQuery(query);
+
+    QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
+    responses.insert(m_http, responseSlot);
+    collations.insert(m_http, uids);
+    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(updateAudioListRequest()));
+}
+
 void VkApi::getAudioList(FuncContainer responseSlot, QString uid) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams();
@@ -192,10 +210,30 @@ void VkApi::audioListRequest() {
     } else {
         doc = doc.value("response").toObject();
         FuncContainer func = responses.take(reply);
-        //TODO: maybe need lock until send
         connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
         emit audioListReceived(doc);
         disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
+    }
+
+    reply -> close();
+    delete reply;
+}
+
+void VkApi::updateAudioListRequest() {
+    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
+
+    qDebug() << reply -> readAll();
+    QJsonObject doc = responseToJson(reply -> readAll());
+
+    if (doc.contains("error")) {
+        qDebug() << reply -> readAll();
+        emit errorReceived(doc);
+    } else {
+        FuncContainer func = responses.take(reply);
+        QHash<ModelItem *, QString> collation = collations.take(reply);
+        connect(this, SIGNAL(audioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &)), func.obj, func.slot);
+        emit audioListUpdate(doc, collation);
+        disconnect(this, SIGNAL(audioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &)), func.obj, func.slot);
     }
 
     reply -> close();

@@ -72,12 +72,14 @@ public:
 
     void setDuration(QString newDuration);
     void setGenre(int newGenreID);
+    void setPath(QString newPath);
 
     int getDownloadProgress() const;
     void setDownloadProgress(int percentageVal);
 
     QStringList getInfo() const;
 
+    void accumulateUids(QHash<ModelItem*, QString> & store);
     virtual QString toUID() { return ""; }
 
     virtual QUrl toUrl();

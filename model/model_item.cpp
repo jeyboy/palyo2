@@ -129,6 +129,11 @@ void ModelItem::setGenre(int newGenreID) {
     genreID = newGenreID;
 }
 
+void ModelItem::setPath(QString newPath) {
+    qDebug() << "Update Path " << newPath;
+    path = newPath;
+}
+
 int ModelItem::getDownloadProgress() const {
     return progress;
 }
@@ -146,6 +151,18 @@ QStringList ModelItem::getInfo() const {
     list.append(duration);
 
     return list;
+}
+
+void ModelItem::accumulateUids(QHash<ModelItem*, QString> & store) {
+    if (isFolder()) {
+        foreach(ModelItem * item, *childItemsList())
+            item -> accumulateUids(store);
+    } else {
+        QString currUid = toUID();
+        if (!currUid.isEmpty()) {
+            store.insert(this, currUid);
+        }
+    }
 }
 
 QUrl ModelItem::toUrl() {

@@ -22,6 +22,7 @@ public slots:
 protected slots:
     void proceedAudioList(QJsonObject &);
     void proceedAudioList(QJsonArray &, ModelItem *);
+    void proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);
 };
 
 
