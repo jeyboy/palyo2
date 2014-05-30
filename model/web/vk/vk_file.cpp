@@ -1,4 +1,5 @@
 #include "vk_file.h"
+#include "web/socials/vk_api.h"
 #include <QDebug>
 
 
@@ -30,6 +31,10 @@ bool VkFile::isExist() const {
 }
 
 bool VkFile::isRemote() const { return true; }
+
+QString VkFile::toUID() {
+    return owner_uid + "_" + uid;
+}
 
 QUrl VkFile::toUrl() {
     return QUrl(path);

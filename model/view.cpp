@@ -204,8 +204,7 @@ bool View::execItem(ModelItem * item, bool paused) {
         if (item -> isExist()) {
             Player::instance() -> playItem(this, item, paused);
             return true;
-        }
-        else {
+        } else {
             item -> getState() -> setNotExist();
             model -> refreshItem(item);
         }

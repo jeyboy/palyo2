@@ -11,7 +11,7 @@ public:
     VkView(QWidget * parent, CBHash settinsSet, QJsonObject * hash = 0);
     ~VkView();
 
-    QJsonObject toJSON();
+//    QJsonObject toJSON();
 
     QModelIndex dropProcession(const QList<QUrl> & list);
 

@@ -92,6 +92,8 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug() << "Settings ip " << settings -> read("ip").toString();
     IpChecker::instance(settings -> read("ip").toString());
 
+    VkApi::instance(settings -> read("vk").toObject());
+
     if (geometryState.isValid())
         restoreGeometry(geometryState.toByteArray());
 
@@ -404,6 +406,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
     if (IpChecker::instance() -> isInitialized())
         settings -> write("ip", IpChecker::instance() -> currentIp());
+
+    settings -> write("vk", VkApi::instance() -> toJson());
 
     QList<QToolBar *> toolbars = this -> findChildren<QToolBar *>();
     qDebug() << toolbars.length();

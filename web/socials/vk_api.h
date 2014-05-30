@@ -33,7 +33,6 @@ public:
     void clearData();
     void addFriend(QString uid, QString name);
     void addGroup(QString uid, QString name);
-//    void addLink(int uid, QString name);
 
     QHash<QString, QString> friendsList() const;
     QHash<QString, QString> groupsList() const;
@@ -104,7 +103,6 @@ private:
     QHash<QString, QString> groups;
 
     QHash<QNetworkReply *, FuncContainer> responses;
-//    QHash<int, QString> links;
 };
 
 #endif // VK_API_H

@@ -78,6 +78,8 @@ public:
 
     QStringList getInfo() const;
 
+    virtual QString toUID() { return ""; }
+
     virtual QUrl toUrl();
     virtual QJsonObject toJSON();
     ModelItem * toModelItem();

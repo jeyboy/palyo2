@@ -46,9 +46,6 @@ void VkApi::addGroup(QString uid, QString name) {
     qDebug() << uid << " " << name;
     groups.insert(uid, name);
 }
-//void VkApi::addLink(int uid, QString name) {
-//    links.insert(uid, name);
-//}
 
 QHash<QString, QString> VkApi::friendsList() const {
     return friends;
