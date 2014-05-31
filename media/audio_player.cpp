@@ -211,7 +211,7 @@ QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
 
     float time = BASS_ChannelBytes2Seconds(chUID, BASS_ChannelGetLength(chUID, BASS_POS_BYTE)); // playback duration
     DWORD len = BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_END); // file length
-    int bitrate = (len / (125 * time) + 0.5); // bitrate (Kbps)
+    int bitrate = (len / (125 * time) + 0.5); // average bitrate (Kbps)
 
     ret.insert("duration", Duration::fromSeconds(time));
 

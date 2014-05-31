@@ -16,6 +16,10 @@ void Library::initItem(ModelItem * item, const QObject * caller, const char * sl
     QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
     connect(initiator, SIGNAL(finished()), caller, slot);
     initiator -> setFuture(QtConcurrent::run(this, &Library::itemsInit, item));
+    if (item -> isRemote() && !item -> hasInfo()) {
+        remote_items.append(item);
+        remote_collations.insert(item, FuncContainer(caller, slot));
+    }
 }
 
 bool Library::addItem(ModelItem * item, int state) {
@@ -69,6 +73,27 @@ void Library::restoreItemState(ModelItem * item) {
 //////////////////////////////////////////////////////////////////////
 /// privates
 //////////////////////////////////////////////////////////////////////
+
+void Library::startRemoteInfoProc() {
+    if (!remote_items.isEmpty()) {
+        QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
+        ModelItem * item = remote_items.takeLast();
+        FuncContainer func = remote_collations.take(item);
+        connect(initiator, SIGNAL(finished()), func.obj, func.slot);
+        initiator -> setFuture(QtConcurrent::run(this, &Library::procRemoteInfo, item));
+    }
+}
+
+ModelItem * Library::procRemoteInfo(ModelItem * item) {
+    QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> fullPath());
+
+    item -> setDuration(info.value("duration"));
+    item -> setInfo(info.value("info"));
+
+//    TODO: get genre
+//    item -> setGenre();
+    return item;
+}
 
 void Library::saveCatalogs() {
     if (!catsSaveResult.isRunning()) {
@@ -214,16 +239,16 @@ void Library::initItemInfo(ModelItem * item) {
                 item -> setCache(res);
             }
 
-            if (!item -> hasInfo()) {
-                //TODO: decrease requests rate
-//                QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> fullPath());
+//            if (!item -> hasInfo()) {
+//                //TODO: decrease requests rate
+////                QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> fullPath());
 
-//                item -> setDuration(info.value("duration"));
-//                item -> setInfo(info.value("info"));
+////                item -> setDuration(info.value("duration"));
+////                item -> setInfo(info.value("info"));
 
-                //TODO: get genre
-//                item -> setGenre();
-            }
+//                //TODO: get genre
+////                item -> setGenre();
+//            }
 
         } else {
             MediaInfo m(item -> fullPath(), item -> hasInfo());

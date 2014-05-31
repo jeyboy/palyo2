@@ -16,6 +16,8 @@
 #include "duration.h"
 
 #include "model/model_item.h"
+
+#include "misc/func_container.h"
 class ModelItem;
 
 class Library : public QObject {
@@ -38,6 +40,7 @@ public:
 
 private slots:
     void saveCatalogs();
+    void startRemoteInfoProc();
 
 private:
     static Library *self;
@@ -51,6 +54,9 @@ private:
         QObject::connect(timer, SIGNAL(timeout()), this, SLOT(saveCatalogs()));
         timer -> start(10000);
 
+        QObject::connect(&remoteTimer, SIGNAL(timeout()), this, SLOT(startRemoteInfoProc()));
+        remoteTimer.start(2500);
+
         QDir dir(libraryPath());
         if (!dir.exists()) {
             dir.mkpath(".");
@@ -62,6 +68,7 @@ private:
         delete timer;
     }
 
+    ModelItem * procRemoteInfo(ModelItem * item);
     ModelItem * itemsInit(ModelItem * item);
 
     QString sitesFilter(QString title);
@@ -91,8 +98,11 @@ private:
 
     QHash<QChar, QHash<QString, int>* > * catalogs;
     QHash<QChar, QList<QString> *> catalogs_state;
+    QHash<ModelItem *, FuncContainer> remote_collations;
+    QList<ModelItem *> remote_items;
 
-    QTimer *timer;
+    QTimer * timer;
+    QTimer remoteTimer;
     QMutex saveBlock;
 
     QFuture<void> catsSaveResult;
