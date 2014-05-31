@@ -48,6 +48,26 @@ void SettingsDialog::registerHotkeys(QWidget * receiver) {
             case HOTKEY_STOP: {
                 HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), Player::instance(), SLOT(stop()));
             break;}
+            case HOTKEY_SETTINGS: {
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), receiver, SLOT(showAttCurrTabDialog()));
+            break;}
+
+
+            case HOTKEY_POS_SLIDE_FORWARD: {
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), Player::instance(), SLOT(slidePosForward()));
+            break;}
+
+            case HOTKEY_POS_SLIDE_BACKWARD: {
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), Player::instance(), SLOT(slidePosBackward()));
+            break;}
+
+            case HOTKEY_VOL_SLIDE_FORWARD: {
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), Player::instance(), SLOT(slideVolForward()));
+            break;}
+
+            case HOTKEY_VOL_SLIDE_BACKWARD: {
+                HotkeyManager::instance() -> registerSequence(key -> data(2).toInt(), key -> data(1).toString(), Player::instance(), SLOT(slideVolBackward()));
+            break;}
         }
     }
 }

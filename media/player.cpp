@@ -133,6 +133,8 @@ void Player::setTrackBar(QSlider * trackBar) {
 void Player::setVolumeTrackBar(QSlider * trackBar) {
     volumeSlider = trackBar;
     connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(setChannelVolume(int)));
+    connect(this, SIGNAL(volumeChanged(int)), this, SLOT(setVolTrackbarValue(int)));
+
     volumeSlider -> setMaximum(10000);
     volumeSlider -> setValue(10000);
 }
@@ -199,6 +201,12 @@ void Player::setTrackbarValue(int pos) {
     slider -> blockSignals(false);
 }
 
+void Player::setVolTrackbarValue(int pos) {
+    volumeSlider -> blockSignals(true);
+    volumeSlider -> setValue(pos);
+    volumeSlider -> blockSignals(false);
+}
+
 void Player::setTrackbarMax(int duration) {
     if (slider) {
         extended_format = Duration::hasHours(duration);
@@ -237,7 +245,7 @@ void Player::mute() {
     }
 }
 
-void Player::unmuteCheck() {
+void Player::unmuteCheck(int) {
     muteButton -> setIcon(QIcon(":/mute"));
     prevVolumeVal = 0;
 }

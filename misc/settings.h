@@ -50,8 +50,11 @@ private:
         humanizeHotkeyText.insert(HOTKEY_PREV, "Activate prev item");
         humanizeHotkeyText.insert(HOTKEY_PLAY, "Play/pause");
         humanizeHotkeyText.insert(HOTKEY_STOP, "Stop");
-
-//        setHotKeys();
+        humanizeHotkeyText.insert(HOTKEY_SETTINGS, "Active tab settings");
+        humanizeHotkeyText.insert(HOTKEY_POS_SLIDE_FORWARD, "Move position slider at 10 % forward");
+        humanizeHotkeyText.insert(HOTKEY_POS_SLIDE_BACKWARD, "Move position slider at 10 % backward");
+        humanizeHotkeyText.insert(HOTKEY_VOL_SLIDE_FORWARD, "Move volume slider at 10 % forward");
+        humanizeHotkeyText.insert(HOTKEY_VOL_SLIDE_BACKWARD, "Move volume slider at 10 % backward");
     }
 
     void setHotKeys(QJsonObject hotkeysHash = QJsonObject());

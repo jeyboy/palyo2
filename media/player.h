@@ -57,7 +57,8 @@ private slots:
     void like();
     void mute();
 
-    void unmuteCheck();
+    void unmuteCheck(int);
+    void setVolTrackbarValue(int pos);
 
     void changeTrackbarValue(int);
     void setTrackbarValue(int);
@@ -101,7 +102,7 @@ private:
         setNotifyInterval(500);
         connect(this, SIGNAL(stateChanged(MediaState)), this, SLOT(onStateChanged(MediaState)));
         connect(this, SIGNAL(mediaStatusChanged(MediaStatus)), this, SLOT(onMediaStatusChanged(MediaStatus)));
-        connect(this, SIGNAL(volumeChanged()), this, SLOT(unmuteCheck()));
+        connect(this, SIGNAL(volumeChanged(int)), this, SLOT(unmuteCheck(int)));
     }
 
     static Player * self;
