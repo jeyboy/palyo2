@@ -143,7 +143,7 @@ bool SettingsDialog::isBigIcon() const {
 
 
 void SettingsDialog::on_defaultColorButton_clicked() {
-    QColorDialog col;
+    QColorDialog col(this);
     col.setCurrentColor(defaultColor);
     if (col.exec() == QColorDialog::Accepted) {
         defaultColor = col.selectedColor();
@@ -152,7 +152,7 @@ void SettingsDialog::on_defaultColorButton_clicked() {
 }
 
 void SettingsDialog::on_listenedColorButton_clicked() {
-    QColorDialog col;
+    QColorDialog col(this);
     col.setCurrentColor(listenedColor);
     if (col.exec() == QColorDialog::Accepted) {
         listenedColor = col.selectedColor();
@@ -161,7 +161,7 @@ void SettingsDialog::on_listenedColorButton_clicked() {
 }
 
 void SettingsDialog::on_likedColorButton_clicked() {
-    QColorDialog col;
+    QColorDialog col(this);
     col.setCurrentColor(likedColor);
     if (col.exec() == QColorDialog::Accepted) {
         likedColor = col.selectedColor();
@@ -170,7 +170,7 @@ void SettingsDialog::on_likedColorButton_clicked() {
 }
 
 void SettingsDialog::on_playedColorButton_clicked() {
-    QColorDialog col;
+    QColorDialog col(this);
     col.setCurrentColor(playedColor);
     if (col.exec() == QColorDialog::Accepted) {
         playedColor = col.selectedColor();
@@ -179,7 +179,7 @@ void SettingsDialog::on_playedColorButton_clicked() {
 }
 
 void SettingsDialog::on_folderColorButton_clicked() {
-    QColorDialog col;
+    QColorDialog col(this);
     col.setCurrentColor(folderColor);
     if (col.exec() == QColorDialog::Accepted) {
         folderColor = col.selectedColor();

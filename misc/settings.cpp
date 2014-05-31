@@ -14,7 +14,7 @@ QBrush Settings::buildGradient(QRect rect, QColor color, bool dark) {
     grad.setColorAt(0, color);
     if (dark)
         grad.setColorAt(1, QColor::fromRgba(qRgba(0, 0, 0, 192)));
-    else
+    else if (useGradient)
         grad.setColorAt(1, Qt::white);
 
     return grad;
