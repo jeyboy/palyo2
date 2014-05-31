@@ -5,15 +5,6 @@ ModelItemDelegate::ModelItemDelegate(QObject* parent)
     : QStyledItemDelegate(parent) {
 }
 
-QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-//    QSize size = QStyledItemDelegate::sizeHint(option, index);
-//    if (size.height() > 18)
-//        size.setHeight(size.height() + 4);
-//    return size;
-
-    return QStyledItemDelegate::sizeHint(option, index);
-}
-
 //QWidget * ModelItemDelegate::createEditor(QWidget *parent,
 //                      const QStyleOptionViewItem &option,
 //                      const QModelIndex &index) const {
@@ -244,6 +235,15 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
         painter -> fillPath(roundRect, fill_color);
 
+        if (!is_folder) {
+            QRect orect(option2.rect.topLeft(), QSize(option2.rect.height() * 1.1, option2.rect.height()));
+            QPainterPath round = roundRectPath(orect, !checkable.isValid() ? 2 : 18);
+            painter -> drawPath(round);
+
+            option2.rect.moveRight(option.rect.right() + orect.width());
+        }
+
+
         painter -> setPen(option.palette.foreground().color());
         painter -> setClipping(false);
         painter -> drawPath(roundRect);
@@ -260,19 +260,19 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             QFontMetrics fmf(vfont);
             int timeWidth = fmf.width(infos.last());
 
-            int beetweeX = option.rect.right() - timeWidth - 10;
-            int top = option.rect.bottom() - 14;
+            int beetweeX = option2.rect.right() - timeWidth - 10;
+            int top = option2.rect.bottom() - 14;
 
-            int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
+            int icon_width = 0;//((QTreeView *)option2.widget) -> iconSize().width();
 
 //            QPoint topLeft(option.rect.x() + 28, top);
-            QPoint topLeft(option.rect.x() + icon_width + 14, top);
-            QPoint bottomRight(beetweeX - 4, option.rect.bottom());
+            QPoint topLeft(option2.rect.x() + icon_width + 14, top);
+            QPoint bottomRight(beetweeX - 4, option2.rect.bottom());
             QRect rectText(topLeft, bottomRight);
-            QString s = fmf.elidedText(infos.first(), option.textElideMode, rectText.width());
+            QString s = fmf.elidedText(infos.first(), option2.textElideMode, rectText.width());
 
             QPoint topTLeft(beetweeX, top);
-            QPoint bottomTRight(option.rect.right() - 8, option.rect.bottom());
+            QPoint bottomTRight(option2.rect.right() - 8, option2.rect.bottom());
             QRect rectTimeText(topTLeft, bottomTRight);
 
             painter -> setPen(option2.palette.color(QPalette::Text));
