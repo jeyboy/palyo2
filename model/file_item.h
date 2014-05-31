@@ -12,7 +12,7 @@ public:
     FileItem(const QString filepath, ModelItem *parent = 0, int genre_id = -1, QString itemDuration = "", int itemSize = -1, QString itemInfo = "", int init_state = STATE_DEFAULT | STATE_CHECKED);
     ~FileItem();
 
-    bool removePhysicalObject() const;
+    bool removePhysicalObject();
 
     bool isExist() const;
 

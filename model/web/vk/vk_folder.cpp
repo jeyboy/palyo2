@@ -24,7 +24,7 @@ void VkFolder::openLocation() {
     QDesktopServices::openUrl(toUrl());
 }
 
-bool VkFolder::removePhysicalObject() const {
+bool VkFolder::removePhysicalObject() {
     //TODO: add realization
 
     return false;

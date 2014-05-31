@@ -12,7 +12,7 @@ public:
 
     QUrl toUrl();
     void openLocation();
-    bool removePhysicalObject() const;
+    bool removePhysicalObject();
 
     bool isExist() const;
     bool isRemote() const;

@@ -12,7 +12,7 @@ public:
     ~FolderItem();
 
     void openLocation();
-    bool removePhysicalObject() const;
+    bool removePhysicalObject();
 
     bool isExist() const;
     bool isFolder() const;

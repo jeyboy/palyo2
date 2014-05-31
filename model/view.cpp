@@ -252,18 +252,22 @@ void View::removeItem(ModelItem * item) {
             Player::instance() -> removePlaylist();
     }
 
-    if (model -> removeRow(row, parentIndex)) {
-        if (isRemoveFileWithItem()) {
-            if (isFolder) {
-                QDir delDir(delPath);
-                if (delPath.split('/').length() >= 2) {
-                    delDir.removeRecursively();
-                }
-            } else {
-                QFile::remove(delPath);
-            }
-        }
+    if (isRemoveFileWithItem()) {
+        item -> removePhysicalObject();
 
+//        if (isFolder) {
+////                QDir delDir(delPath);
+////                if (delPath.split('/').length() >= 2) {
+////                    delDir.removeRecursively();
+////                }
+
+
+//        } else {
+//            QFile::remove(delPath);
+//        }
+    }
+
+    if (model -> removeRow(row, parentIndex)) {
         if (isFolder) {
             updateSelection(selCandidate);
         } else {

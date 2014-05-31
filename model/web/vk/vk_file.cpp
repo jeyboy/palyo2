@@ -18,7 +18,7 @@ VkFile::VkFile(QString filePath, QString fileName, QString ownerID, QString file
 
 VkFile::~VkFile() {}
 
-bool VkFile::removePhysicalObject() const {
+bool VkFile::removePhysicalObject() {
     //TODO: realization require
     return false;
 //    return QFile::remove(fullPath());

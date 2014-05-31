@@ -17,7 +17,7 @@ FileItem::~FileItem() {
 
 }
 
-bool FileItem::removePhysicalObject() const {
+bool FileItem::removePhysicalObject() {
     return QFile::remove(fullPath());
 }
 

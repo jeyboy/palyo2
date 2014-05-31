@@ -64,13 +64,21 @@ void FolderItem::openLocation() {
     QDesktopServices::openUrl(toUrl());
 }
 
-bool FolderItem::removePhysicalObject() const {
-    QDir delDir(fullPath());
-    if (fullPath().split('/').length() >= 2) {
-        return delDir.removeRecursively();
+bool FolderItem::removePhysicalObject() {
+    bool res = true;
+
+    foreach(ModelItem * item, *childItemsList()) {
+        res &= item -> removePhysicalObject();
     }
 
-    return false;
+
+
+//    QDir delDir(fullPath());
+//    if (fullPath().split('/').length() >= 2) {
+//        return delDir.removeRecursively();
+//    }
+
+    return res;
 }
 
 bool FolderItem::isExist() const {

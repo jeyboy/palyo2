@@ -60,7 +60,7 @@ public:
     QString getDownloadTitle() const;
     QString getTitle() const;
     void openLocation();
-    virtual bool removePhysicalObject() const = 0;
+    virtual bool removePhysicalObject() = 0;
 
     virtual bool isExist() const = 0;
     virtual bool isRemote() const;
