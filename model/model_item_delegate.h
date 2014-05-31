@@ -4,7 +4,6 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QStyleOption>
-#include <QLinearGradient>
 #include <QTreeView>
 
 #include "model_item.h"
@@ -41,12 +40,6 @@ public:
 private:
     static void drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     static QPainterPath roundRectPath(const QRect &rect, int offset);
-    static QLinearGradient buildGradient(QRect rect, QColor color, bool dark);
-    static QLinearGradient defaultState(QRect rect, bool dark);
-    static QLinearGradient listenedState(QRect rect, bool dark);
-    static QLinearGradient likedState(QRect rect, bool dark);
-    static QLinearGradient playedState(QRect rect, bool dark);
-    static QLinearGradient unprocessedState(QRect rect, bool dark);
 };
 
 #endif // MODEL_ITEM_DELEGATE_H

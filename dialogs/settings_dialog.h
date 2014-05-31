@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QFileDialog>
+#include <QColorDialog>
 
 #include "model/hotkey_model/hotkey_model.h"
 #include "model/hotkey_model/hotkey_model_item.h"
@@ -34,9 +35,20 @@ private slots:
 
     void on_browseButton_clicked();
 
+    void on_defaultColorButton_clicked();
+
+    void on_listenedColorButton_clicked();
+
+    void on_likedColorButton_clicked();
+
+    void on_playedColorButton_clicked();
+
+    void on_folderColorButton_clicked();
+
 private:
     Ui::SettingsDialog *ui;
     bool iconSizeChanged;
+    QColor defaultColor, listenedColor, likedColor, playedColor, folderColor;
 };
 
 

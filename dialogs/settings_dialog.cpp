@@ -22,6 +22,23 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> drawMetrics -> setChecked(Settings::instance() -> isMetricShow());
   ui -> spoilOnActivate -> setChecked(Settings::instance() -> isSpoilOnActivation());
   ui -> showInfo -> setChecked(Settings::instance() -> isShowInfo());
+
+  ui -> useGradientCheck -> setChecked(Settings::instance() -> isUseGradient());
+
+  defaultColor = Settings::instance() -> getDefaultColor();
+  ui -> defaultColorButton -> setStyleSheet("background-color: " + defaultColor.name() + ";");
+
+  listenedColor = Settings::instance() -> getListenedColor();
+  ui -> listenedColorButton -> setStyleSheet("background-color: " + listenedColor.name() + ";");
+
+  likedColor = Settings::instance() -> getLikedColor();
+  ui -> likedColorButton -> setStyleSheet("background-color: " + likedColor.name() + ";");
+
+  playedColor = Settings::instance() -> getPlayedColor();
+  ui -> playedColorButton -> setStyleSheet("background-color: " + playedColor.name() + ";");
+
+  folderColor = Settings::instance() -> getFolderColor();
+  ui -> folderColorButton -> setStyleSheet("background-color: " + folderColor.name() + ";");
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -97,6 +114,14 @@ void SettingsDialog::on_acceptButton_clicked() {
     iconSizeChanged = Settings::instance() -> isShowInfo() != ui -> showInfo -> isChecked();
     Settings::instance() -> setShowInfo(ui -> showInfo -> isChecked());
 
+    Settings::instance() -> setUseGradient(ui -> useGradientCheck -> isChecked());
+
+    Settings::instance() -> setDefaultColor(defaultColor);
+    Settings::instance() -> setListenedColor(listenedColor);
+    Settings::instance() -> setLikedColor(likedColor);
+    Settings::instance() -> setPlayedColor(playedColor);
+    Settings::instance() -> setFolderColor(folderColor);
+
     accept();
 }
 
@@ -114,4 +139,50 @@ bool SettingsDialog::isIconSizeChanged() const {
 }
 bool SettingsDialog::isBigIcon() const {
     return ui -> showInfo -> isChecked();
+}
+
+
+void SettingsDialog::on_defaultColorButton_clicked() {
+    QColorDialog col;
+    col.setCurrentColor(defaultColor);
+    if (col.exec() == QColorDialog::Accepted) {
+        defaultColor = col.selectedColor();
+        ui -> defaultColorButton -> setStyleSheet("background-color: " + defaultColor.name() + ";");
+    }
+}
+
+void SettingsDialog::on_listenedColorButton_clicked() {
+    QColorDialog col;
+    col.setCurrentColor(listenedColor);
+    if (col.exec() == QColorDialog::Accepted) {
+        listenedColor = col.selectedColor();
+        ui -> listenedColorButton -> setStyleSheet("background-color: " + listenedColor.name() + ";");
+    }
+}
+
+void SettingsDialog::on_likedColorButton_clicked() {
+    QColorDialog col;
+    col.setCurrentColor(likedColor);
+    if (col.exec() == QColorDialog::Accepted) {
+        likedColor = col.selectedColor();
+        ui -> likedColorButton -> setStyleSheet("background-color: " + likedColor.name() + ";");
+    }
+}
+
+void SettingsDialog::on_playedColorButton_clicked() {
+    QColorDialog col;
+    col.setCurrentColor(playedColor);
+    if (col.exec() == QColorDialog::Accepted) {
+        playedColor = col.selectedColor();
+        ui -> playedColorButton -> setStyleSheet("background-color: " + playedColor.name() + ";");
+    }
+}
+
+void SettingsDialog::on_folderColorButton_clicked() {
+    QColorDialog col;
+    col.setCurrentColor(folderColor);
+    if (col.exec() == QColorDialog::Accepted) {
+        folderColor = col.selectedColor();
+        ui -> folderColorButton -> setStyleSheet("background-color: " + folderColor.name() + ";");
+    }
 }
