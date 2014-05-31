@@ -322,6 +322,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         if (!checkable.isValid())
             option2.rect.moveLeft(option2.rect.left() + 4);
 
+        if (is_folder)
+            option2.textElideMode = Qt::ElideLeft;
+
         QStyledItemDelegate::paint(painter, option2, index);
 }
 

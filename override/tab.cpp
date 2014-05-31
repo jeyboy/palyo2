@@ -3,13 +3,16 @@
 
 void Tab::init(CBHash params, QJsonObject * hash) {
     switch(params["t"]) {
-        case 1: {
+        case VIEW_LIST: {
             list = (View *)new ListView(this, params, hash);
         break;}
-        case 2: {
+        case VIEW_LEVEL_TREE: {
             list = (View *)new LevelTreeView(this, params, hash);
         break;}
-        case 4: {
+        case VIEW_LEVEL_TREE_BREADCRUMB: {
+            list = (View *)new LevelTreeBreadcrumbView(this, params, hash);
+        break;}
+        case VIEW_VK: {
             list = (View *)new VkView(this, params, hash);
         break;}
         default: {

@@ -54,6 +54,7 @@ public:
     ModelItem * root() const;
 
     ModelItem * buildPath(QString path);
+    bool isFolderExist(QString folderName, ModelItem * parent);
     ModelItem * addFolder(QString folderPath, QString folderName, ModelItem * parent, QString remoteID = "");
     ModelItem * addFolder(QString folder_name, ModelItem * parent, QString remoteID = "");
 

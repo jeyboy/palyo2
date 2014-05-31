@@ -323,13 +323,17 @@ ModelItem * Model::buildPath(QString path) {
     return curr;
 }
 
+bool Model::isFolderExist(QString folderName, ModelItem * parent) {
+    return parent -> foldersList() -> contains(folderName);
+}
+
 //TODO: improve model insertion (add emit of rows insertion)
 
 
 ModelItem * Model::addFolder(QString folderPath, QString folderName, ModelItem * parent, QString remoteID) {
     ModelItem * curr = parent;
 
-    if (curr -> foldersList() -> contains(folderName)) {
+    if (isFolderExist(folderName, curr)) {
         curr = curr -> foldersList() -> value(folderName);
     } else {
         if (!remoteID.isEmpty())

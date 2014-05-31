@@ -50,6 +50,8 @@ SOURCES += main.cpp\
     model/file_item.cpp \
     model/level_tree/level_tree_model.cpp \
     model/level_tree/level_tree_view.cpp \
+    model/level_tree_breadcrumb/level_tree_breadcrumb_model.cpp \
+    model/level_tree_breadcrumb/level_tree_breadcrumb_view.cpp \
     model/tree/tree_model.cpp \
     model/tree/tree_view.cpp \
     model/list/list_model.cpp \
@@ -106,6 +108,8 @@ HEADERS  += mainwindow.h \
     model/file_item.h \
     model/level_tree/level_tree_model.h \
     model/level_tree/level_tree_view.h \
+    model/level_tree_breadcrumb/level_tree_breadcrumb_model.h \
+    model/level_tree_breadcrumb/level_tree_breadcrumb_view.h \
     model/tree/tree_model.h \
     model/tree/tree_view.h \
     model/list/list_model.h \
@@ -133,7 +137,8 @@ HEADERS  += mainwindow.h \
     override/tab.h \
     override/custom_network_access_manager.h \
     override/slider.h \
-    single_application.h
+    single_application.h \
+    model/view_types.h
 
 unix:!mac {
         QT += gui-private
