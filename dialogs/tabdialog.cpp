@@ -18,6 +18,7 @@ TabDialog::TabDialog(QWidget *parent) :
 
   setWindowTitle("Tab settings");
   ui -> interactive -> setEnabled(false);
+  ui -> isVkRadio -> setEnabled(false);
 }
 
 TabDialog::~TabDialog() {
@@ -39,12 +40,14 @@ CBHash TabDialog::getSettings() {
   res.insert("p", ui -> playlist -> checkState() == Qt::Checked ? 1 : 0);
 
   if (ui -> isListRadio -> isChecked())
-      res.insert("t", 1);
-  else if (ui -> IsOneLevelTreeRadio -> isChecked())
-      res.insert("t", 2);
+      res.insert("t", VIEW_LIST);
+  else if (ui -> isOneLevelTreeRadio -> isChecked())
+      res.insert("t", VIEW_LEVEL_TREE);
   else if (ui -> isTreeRadio -> isChecked())
-      res.insert("t", 3);
-  else res.insert("t", 4);
+      res.insert("t", VIEW_TREE);
+  else if (ui -> isOneLevelTreeBreadcrumbRadio -> isChecked())
+      res.insert("t", VIEW_LEVEL_TREE_BREADCRUMB);
+  else res.insert("t", VIEW_VK);
 
   return res;
 }
@@ -54,11 +57,15 @@ void TabDialog::setSettings(CBHash hash) {
   ui -> interactive -> setChecked(hash.value("i") == 1);
   ui -> playlist -> setChecked(hash.value("p") == 1);
 
-  ui -> isListRadio -> setChecked(hash.value("t") == 1);
-  ui -> IsOneLevelTreeRadio -> setChecked(hash.value("t") == 2);
-  ui -> isTreeRadio -> setChecked(hash.value("t") == 3);
+  ui -> isListRadio -> setChecked(hash.value("t") == VIEW_LIST);
+  ui -> isOneLevelTreeRadio -> setChecked(hash.value("t") == VIEW_LEVEL_TREE);
+  ui -> isOneLevelTreeBreadcrumbRadio -> setChecked(hash.value("t") == VIEW_LEVEL_TREE_BREADCRUMB);
+  ui -> isVkRadio -> setChecked(hash.value("t") == VIEW_VK);
+  ui -> isTreeRadio -> setChecked(hash.value("t") == VIEW_TREE);
 
   ui -> isListRadio -> setEnabled(false);
   ui -> isTreeRadio -> setEnabled(false);
-  ui -> IsOneLevelTreeRadio -> setEnabled(false);
+  ui -> isOneLevelTreeRadio -> setEnabled(false);
+  ui -> isOneLevelTreeBreadcrumbRadio -> setEnabled(false);
+  ui -> isVkRadio -> setEnabled(false);
 }

@@ -5,43 +5,6 @@ ModelItemDelegate::ModelItemDelegate(QObject* parent)
     : QStyledItemDelegate(parent) {
 }
 
-QLinearGradient ModelItemDelegate::buildGradient(QRect rect, QColor color, bool dark) {
-    QLinearGradient grad(rect.left(), rect.top(), rect.left(), rect.bottom());
-
-    grad.setColorAt(0, color);
-    if (dark)
-        grad.setColorAt(1, QColor::fromRgba(qRgba(0, 0, 0, 192)));
-    else
-        grad.setColorAt(1, Qt::white);
-
-    return grad;
-}
-
-QLinearGradient ModelItemDelegate::defaultState(QRect rect, bool dark) {
-    return buildGradient(rect, QColor(98, 173, 248), dark);
-}
-QLinearGradient ModelItemDelegate::listenedState(QRect rect, bool dark) {
-    return buildGradient(rect, QColor(240, 128, 128), dark);
-}
-QLinearGradient ModelItemDelegate::likedState(QRect rect, bool dark) {
-    return buildGradient(rect, QColor(232, 196, 0), dark);
-}
-QLinearGradient ModelItemDelegate::playedState(QRect rect, bool dark) {
-    return buildGradient(rect, QColor(144, 238, 144), dark);
-}
-
-QLinearGradient ModelItemDelegate::unprocessedState(QRect rect, bool dark) {
-    QLinearGradient grad(rect.left(), rect.top(), rect.left(), rect.bottom());
-
-    if (dark) {
-        grad.setColorAt(0, QColor(128, 128,128, 92));
-        grad.setColorAt(0.8, Qt::black);
-    } else
-        grad.setColorAt(0, Qt::white);
-
-    return grad;
-}
-
 QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
 //    QSize size = QStyledItemDelegate::sizeHint(option, index);
 //    if (size.height() > 18)
@@ -253,24 +216,24 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         bool elem_state = option.state & (QStyle::State_Selected);
         bool is_folder = false;
 
-        QLinearGradient fill_color;
+        QBrush fill_color;
 
         switch (background_state) {
             case STATE_DEFAULT:
-                fill_color = defaultState(option.rect, elem_state);
+                fill_color = Settings::instance() -> defaultState(option.rect, elem_state);
                 break;
             case STATE_LISTENED:
-                fill_color = listenedState(option.rect, elem_state);
+                fill_color = Settings::instance() -> listenedState(option.rect, elem_state);
                 break;
             case STATE_LIKED:
-                fill_color = likedState(option.rect, elem_state);
+                fill_color = Settings::instance() -> likedState(option.rect, elem_state);
                 break;
             case STATE_PLAYED:
-                fill_color = playedState(option.rect, elem_state);
+                fill_color = Settings::instance() -> playedState(option.rect, elem_state);
                 break;
             default:
                 is_folder = true;
-                fill_color = unprocessedState(option.rect, elem_state);
+                fill_color = Settings::instance() -> unprocessedState(option.rect, elem_state);
 //                painter -> setPen(Qt::SolidLine);
 //                painter -> setPen(QColor(Qt::lightGray));
 
@@ -321,6 +284,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
         if (!checkable.isValid())
             option2.rect.moveLeft(option2.rect.left() + 4);
+
+        if (is_folder)
+            option2.textElideMode = Qt::ElideLeft;
 
         QStyledItemDelegate::paint(painter, option2, index);
 }

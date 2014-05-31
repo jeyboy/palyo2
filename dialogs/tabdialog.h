@@ -2,6 +2,7 @@
 #define TABDIALOG_H
 
 #include <QDialog>
+#include "model/view_types.h"
 
 #ifndef CBHASH
 #define CBHASH

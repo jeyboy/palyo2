@@ -8,10 +8,12 @@
 #include "model/list/list_view.h"
 #include "model/tree/tree_view.h"
 #include "model/level_tree/level_tree_view.h"
+#include "model/level_tree_breadcrumb/level_tree_breadcrumb_view.h"
 #include "model/web/vk/vk_view.h"
 
 #include "model/model.h"
 #include "model/model_item.h"
+#include "model/view_types.h"
 
 
 #ifndef CBHASH

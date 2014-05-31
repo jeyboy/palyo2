@@ -70,9 +70,9 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>140</x>
      <y>40</y>
-     <width>141</width>
+     <width>151</width>
      <height>101</height>
     </rect>
    </property>
@@ -85,9 +85,9 @@
    <widget class="QRadioButton" name="isListRadio">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>121</width>
+      <x>60</x>
+      <y>20</y>
+      <width>41</width>
       <height>17</height>
      </rect>
     </property>
@@ -103,7 +103,7 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>121</width>
+      <width>41</width>
       <height>17</height>
      </rect>
     </property>
@@ -117,11 +117,11 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QRadioButton" name="IsOneLevelTreeRadio">
+   <widget class="QRadioButton" name="isOneLevelTreeRadio">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
+      <y>44</y>
       <width>121</width>
       <height>17</height>
      </rect>
@@ -133,13 +133,46 @@
      <string>One Level Tree</string>
     </property>
    </widget>
+   <widget class="QRadioButton" name="isVkRadio">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>20</y>
+      <width>41</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In this case you will see items, without any relation to the folder&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>Vk</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="isOneLevelTreeBreadcrumbRadio">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>65</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In this case you will see only parent folder of item. If you include two folders with the same name - it will be shown as one folder and will contain items from both folders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>One Level Tree With 
+ Breadcrumb</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>40</y>
-     <width>141</width>
+     <width>131</width>
      <height>101</height>
     </rect>
    </property>

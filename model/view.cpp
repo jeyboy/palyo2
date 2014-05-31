@@ -640,6 +640,7 @@ void View::dragMoveEvent(QDragMoveEvent * event) {
 void View::dropEvent(QDropEvent *event) {
     if (event -> source() != this && event -> mimeData() -> hasUrls()) {
         QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
+        qDebug() << "HUY " << modelIndex.isValid();
         model -> refresh();
         scrollTo(modelIndex);
         expand(modelIndex);

@@ -156,18 +156,44 @@ void AudioPlayer::signalUpdate() {
     emit positionChanged(curr_pos);
 }
 
+void AudioPlayer::slidePosForward() {
+    if (currentState == PlayingState || currentState == PausedState) {
+        int dur = getDuration();
+        int pos = getPosition() + dur / 10;
+        if (pos < dur)
+            setPosition(pos);
+    }
+}
+void AudioPlayer::slidePosBackward() {
+    if (currentState == PlayingState || currentState == PausedState) {
+        int pos = getPosition() - (getDuration() / 10);
+        if (pos < 0) pos = 0;
+        setPosition(pos);
+    }
+}
+
 //0 to 10000
 void AudioPlayer::setChannelVolume(int val) {
     volumeVal = val > 0 ? (val / 10000.0) : 0;
     BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
-    emit volumeChanged();
+    emit volumeChanged(val);
 }
 
+void AudioPlayer::slideVolForward() {
+    int newVolLevel = getVolume() + 1000;
+    if (newVolLevel > 10000) newVolLevel = 10000;
+    setChannelVolume(newVolLevel);
+}
+void AudioPlayer::slideVolBackward() {
+    int newVolLevel = getVolume() - 1000;
+    if (newVolLevel < 0) newVolLevel = 0;
+    setChannelVolume(newVolLevel);
+}
 
 // 0 to 10000
 void AudioPlayer::setVolume(int val) {
     BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, val);
-    emit volumeChanged();
+    emit volumeChanged(val);
 }
 
 int AudioPlayer::getVolume() const {

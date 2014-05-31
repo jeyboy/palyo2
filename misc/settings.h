@@ -5,6 +5,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QList>
+#include <QLinearGradient>
+#include <QBrush>
 #include <QApplication>
 
 #include "model/hotkey_model/hotkey_model_item.h"
@@ -20,6 +22,32 @@ public:
     static void close() {
         delete self;
     }
+
+    QBrush buildGradient(QRect rect, QColor color, bool dark);
+    QBrush defaultState(QRect rect, bool dark);
+    QBrush listenedState(QRect rect, bool dark);
+    QBrush likedState(QRect rect, bool dark);
+    QBrush playedState(QRect rect, bool dark);
+    QBrush unprocessedState(QRect rect, bool dark);
+
+    bool isUseGradient() const;
+    void setUseGradient(bool use);
+
+    QColor getDefaultColor() const;
+    void setDefaultColor(QColor newColor);
+
+    QColor getListenedColor() const;
+    void setListenedColor(QColor newColor);
+
+    QColor getLikedColor() const;
+    void setLikedColor(QColor newColor);
+
+    QColor getPlayedColor() const;
+    void setPlayedColor(QColor newColor);
+
+    QColor getFolderColor() const;
+    void setFolderColor(QColor newColor);
+
 
     bool isShowInfo() const;
     void setShowInfo(bool show);
@@ -50,8 +78,11 @@ private:
         humanizeHotkeyText.insert(HOTKEY_PREV, "Activate prev item");
         humanizeHotkeyText.insert(HOTKEY_PLAY, "Play/pause");
         humanizeHotkeyText.insert(HOTKEY_STOP, "Stop");
-
-//        setHotKeys();
+        humanizeHotkeyText.insert(HOTKEY_SETTINGS, "Active tab settings");
+        humanizeHotkeyText.insert(HOTKEY_POS_SLIDE_FORWARD, "Move position slider at 10 % forward");
+        humanizeHotkeyText.insert(HOTKEY_POS_SLIDE_BACKWARD, "Move position slider at 10 % backward");
+        humanizeHotkeyText.insert(HOTKEY_VOL_SLIDE_FORWARD, "Move volume slider at 10 % forward");
+        humanizeHotkeyText.insert(HOTKEY_VOL_SLIDE_BACKWARD, "Move volume slider at 10 % backward");
     }
 
     void setHotKeys(QJsonObject hotkeysHash = QJsonObject());
@@ -64,8 +95,11 @@ private:
     bool showCheckbox;
     bool showMetric;
     bool spoilOnActivation;
+    bool useGradient;
     QJsonObject hotkeys;
     QHash<int, QString> humanizeHotkeyText;
+
+    QColor defaultColor1, listenedColor1, likedColor1, playedColor1, folderColor1;
 };
 
 #endif // SETTINGS_H

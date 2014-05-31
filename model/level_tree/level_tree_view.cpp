@@ -21,17 +21,22 @@ QModelIndex LevelTreeView::dropProcession(const QList<QUrl> & list) {
     ModelItem * index = model -> addFolder("", folderName, model -> root());
 
     filesRoutine(index, list);
-    return model -> index(index);
+    if (index -> childCount() == 0) {
+        model -> removeFolderPrebuild(index);
+        return QModelIndex();
+    } else return model -> index(index);
 }
 
 void LevelTreeView::filesRoutine(ModelItem * index, QFileInfo currFile) {
     QFileInfoList folderList = folderDirectories(currFile);
     ModelItem * newFolder;
+    bool already_exist;
 
     foreach(QFileInfo file, folderList) {
+        already_exist = model -> isFolderExist(file.fileName(), model -> root());
         newFolder = model -> addFolder("", file.fileName(), model -> root());
         filesRoutine(newFolder, file);
-        if (newFolder -> childCount() == 0)
+        if (!already_exist && newFolder -> childCount() == 0)
             model -> removeFolderPrebuild(newFolder);
     }
 
@@ -45,12 +50,15 @@ void LevelTreeView::filesRoutine(ModelItem * index, QFileInfo currFile) {
 
 void LevelTreeView::filesRoutine(ModelItem * index, QList<QUrl> list) {
     ModelItem * newFolder;
+    bool already_exist;
+
     foreach(QUrl url, list) {
         QFileInfo file = QFileInfo(url.toLocalFile());
         if (file.isDir()) {
+            already_exist = model -> isFolderExist(file.fileName(), model -> root());
             newFolder = model -> addFolder("", file.fileName(), model -> root());
             filesRoutine(newFolder, file);
-            if (newFolder -> childCount() == 0)
+            if (!already_exist && newFolder -> childCount() == 0)
                 model -> removeFolderPrebuild(newFolder);
         } else {
             model -> appendRow(createItem(file.filePath(), index));

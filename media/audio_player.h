@@ -65,7 +65,7 @@ public:
     bool isStoped() const;
 
 signals:
-    void volumeChanged();
+    void volumeChanged(int);
     void playbackEnded();
     void stateChanged(MediaState);
     void mediaStatusChanged(MediaStatus);
@@ -86,7 +86,12 @@ public slots:
     void stop();
     void endOfPlayback();
 
+    void slidePosForward();
+    void slidePosBackward();
     void setPosition(int position);
+
+    void slideVolForward();
+    void slideVolBackward();
     void setChannelVolume(int val);
     void setVolume(int val);
 
