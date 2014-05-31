@@ -16,6 +16,7 @@ public:
 
 //    ModelItem * buildPath(QString path);
     WebApi * getApi() { return VkApi::instance(); }
+    QString getTabUid() const;
 public slots:
     void refresh();
 
@@ -23,6 +24,8 @@ protected slots:
     void proceedAudioList(QJsonObject &);
     void proceedAudioList(QJsonArray &, ModelItem *);
     void proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);
+protected:
+    QString tabUid;
 };
 
 

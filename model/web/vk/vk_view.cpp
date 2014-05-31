@@ -7,11 +7,13 @@ VkView::VkView(QWidget *parent, CBHash settingsSet, QJsonObject *hash)
 
 VkView::~VkView() {}
 
-//QJsonObject VkView::toJSON() {
-//    QJsonObject res = TreeView::toJSON();
+QJsonObject VkView::toJSON() {
+    QJsonObject res = TreeView::toJSON();
 
-//    return res;
-//}
+    res.insert("uid", ((VkModel *)model) -> getTabUid());
+
+    return res;
+}
 
 QModelIndex VkView::dropProcession(const QList<QUrl> & list) {
 //    ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path());

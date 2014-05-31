@@ -13,6 +13,8 @@ void Tab::init(CBHash params, QJsonObject * hash) {
             list = (View *)new LevelTreeBreadcrumbView(this, params, hash);
         break;}
         case VIEW_VK: {
+            if (hash != 0 && hash -> contains("uid"))
+                params.insert("uid", hash -> value("uid").toString().toInt());
             list = (View *)new VkView(this, params, hash);
         break;}
         default: {

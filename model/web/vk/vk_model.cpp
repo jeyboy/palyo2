@@ -5,10 +5,11 @@
 ///////////////////////////////////////////////////////////
 
 VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) {
-//    connect(VkApi::instance(), SIGNAL(audioListReceived(QJsonObject &)), this, SLOT(proceedAudioList(QJsonObject &)));
+    qDebug() << "VK UID " << uid;
+    tabUid = uid;
 
     if (hash == 0) {
-        VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), uid);
+        VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
     }
 
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
@@ -18,24 +19,40 @@ VkModel::~VkModel() {
 
 }
 
+QString VkModel::getTabUid() const {
+    return tabUid;
+}
+
 //TODO: update only links
 void VkModel::refresh() {
     emit showSpinner();
-    qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Update !!!!!!!!!!!!!!!!!!!!";
-//    clearAll();
-//    VkApi::instance() -> clearData();
+    clearAll();
+    VkApi::instance() -> clearData();
     QApplication::processEvents();
 
-    QHash<ModelItem*, QString> store;
-    rootItem -> accumulateUids(store);
-
-    VkApi::instance() -> refreshAudioList(
-                FuncContainer(this, SLOT(proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &))),
-                store
-                );
+    VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
     QApplication::processEvents();
     emit hideSpinner();
 }
+
+
+//void VkModel::refresh() {
+//    emit showSpinner();
+//    qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Update !!!!!!!!!!!!!!!!!!!!";
+////    clearAll();
+////    VkApi::instance() -> clearData();
+//    QApplication::processEvents();
+
+//    QHash<ModelItem*, QString> store;
+//    rootItem -> accumulateUids(store);
+
+//    VkApi::instance() -> refreshAudioList(
+//                FuncContainer(this, SLOT(proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &))),
+//                store
+//                );
+//    QApplication::processEvents();
+//    emit hideSpinner();
+//}
 
 
 void VkModel::proceedAudioList(QJsonObject & hash) {
