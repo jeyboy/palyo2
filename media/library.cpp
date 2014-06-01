@@ -19,6 +19,12 @@ void Library::initItem(ModelItem * item, const QObject * caller, const char * sl
     if (item -> isRemote() && !item -> hasInfo()) {
         remote_items.append(item);
         remote_collations.insert(item, FuncContainer(caller, slot));
+
+        if (remote_items.count() > remote_items_max) {
+            ModelItem * i = remote_items.takeFirst();
+            remote_collations.take(i);
+            i -> getState() -> unsetProceed();
+        }
     }
 }
 
@@ -34,6 +40,10 @@ bool Library::addItem(ModelItem * item, int state) {
 
 QString Library::filenameFilter(QString title) {
     return forwardNumberPreFilter(sitesFilter(title)).remove(QRegExp("[^\\w-\\. ()]*")).mid(0, 240);
+}
+
+void Library::setRemoteItemMax(int newMax) {
+    remote_items_max = newMax;
 }
 
 void Library::restoreItemState(ModelItem * item) {
@@ -76,11 +86,13 @@ void Library::restoreItemState(ModelItem * item) {
 
 void Library::startRemoteInfoProc() {
     if (!remote_items.isEmpty()) {
-        QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
         ModelItem * item = remote_items.takeLast();
         FuncContainer func = remote_collations.take(item);
-        connect(initiator, SIGNAL(finished()), func.obj, func.slot);
-        initiator -> setFuture(QtConcurrent::run(this, &Library::procRemoteInfo, item));
+        if (!item -> hasInfo()) {
+            QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
+            connect(initiator, SIGNAL(finished()), func.obj, func.slot);
+            initiator -> setFuture(QtConcurrent::run(this, &Library::procRemoteInfo, item));
+        }
     }
 }
 

@@ -95,6 +95,7 @@ protected slots:
     void modelUpdate();
 
 protected:
+    void resizeEvent(QResizeEvent *);
     bool prepareDownloading(QString path);
 
     void downloadItem(ModelItem * item, QString savePath);

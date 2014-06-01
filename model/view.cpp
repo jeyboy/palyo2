@@ -1,4 +1,5 @@
 #include "view.h"
+#include "media/library.h"
 #include <QDebug>
 
 View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(parent) {
@@ -408,6 +409,13 @@ void View::openLocation() {
     item -> openLocation();
 }
 
+
+void View::resizeEvent(QResizeEvent * event) {
+    if (event -> size().height() > 0) {
+        int count = (event -> size().height() / 38) + 2;
+        Library::instance() -> setRemoteItemMax(count);
+    }
+}
 
 bool View::prepareDownloading(QString path) {
     QDir dir(path);

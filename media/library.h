@@ -38,6 +38,8 @@ public:
 
     QString filenameFilter(QString title);
 
+    void setRemoteItemMax(int newMax);
+
 private slots:
     void saveCatalogs();
     void startRemoteInfoProc();
@@ -100,6 +102,7 @@ private:
     QHash<QChar, QList<QString> *> catalogs_state;
     QHash<ModelItem *, FuncContainer> remote_collations;
     QList<ModelItem *> remote_items;
+    int remote_items_max = 10;
 
     QTimer * timer;
     QTimer remoteTimer;
