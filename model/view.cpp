@@ -1,5 +1,6 @@
 #include "view.h"
 #include "media/library.h"
+#include "web/download.h"
 #include <QDebug>
 
 View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(parent) {
@@ -373,6 +374,9 @@ void View::showContextMenu(const QPoint& pnt) {
             openAct = new QAction(QIcon(":/download"), "Download", this);
             connect(openAct, SIGNAL(triggered(bool)), this, SLOT(download()));
             actions.append(openAct);
+            openAct = new QAction(QIcon(":/download"), "Download All", this);
+            connect(openAct, SIGNAL(triggered(bool)), this, SLOT(downloadAll()));
+            actions.append(openAct);
         }
     }
 
@@ -438,8 +442,7 @@ void View::downloadItem(ModelItem * item, QString savePath) {
             return;
         }
 
-        item -> setDownloadProgress(0);
-        model -> getApi() -> downloadFile(model, item, item -> toUrl(), QUrl::fromLocalFile(prepared_path));
+        Download::instance() -> start(model, item, QUrl::fromLocalFile(prepared_path));
     } else {
         QFile f(item -> fullPath());
         if (!f.copy(prepared_path))
@@ -464,6 +467,12 @@ void View::downloadBranch(ModelItem * rootNode, QString savePath) {
 
 void View::download() {
     downloadSelected(Settings::instance() -> getDownloadPath());
+}
+
+void View::downloadAll() {
+    QString savePath = Settings::instance() -> getDownloadPath();
+    if (!prepareDownloading(savePath)) return;
+    downloadBranch(model -> root(), savePath);
 }
 
 void View::modelUpdate() {

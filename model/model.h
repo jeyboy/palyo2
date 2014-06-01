@@ -81,8 +81,8 @@ public slots:
     void expanded(const QModelIndex &index);
     void collapsed(const QModelIndex &index);
 
-    void itemDownloadProgress(void * itemObj, int percentage);
-    void itemDownloadFinished(void * itemObj, bool success);
+    void itemDownloadProgress(ModelItem * itemObj, int percentage);
+    void itemDownloadFinished(ModelItem * itemObj, bool success);
 
 protected:
     int count;

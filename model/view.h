@@ -92,6 +92,7 @@ protected slots:
     void openLocation();
 
     void download();
+    void downloadAll();
     void modelUpdate();
 
 protected:

@@ -10,16 +10,6 @@
 
 #include "override/custom_network_access_manager.h"
 
-struct DownloadPosition {
-    DownloadPosition(void * obj, QUrl path) {
-        item = obj;
-        savePath = path;
-    }
-
-    void * item;
-    QUrl savePath;
-};
-
 class WebApi : public QObject {
     Q_OBJECT   
 public:
@@ -32,18 +22,7 @@ public:
     virtual QString authUrl() const = 0;
     virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
-    void downloadFile(QObject * caller, void * item, QUrl uri, QUrl savePath);
-
     CustomNetworkAccessManager * manager() const;
-
-protected slots:
-    void downloadConnectionResponsed();
-
-signals:
-
-    void downloadProgress(void * item, int percentDone);
-    void downloadFinished(void * item, bool success);
-    void downloadError(void * item, QString message);
 
 protected:
     QJsonObject responseToJson(QByteArray data);
@@ -53,8 +32,6 @@ protected:
     CustomNetworkAccessManager * netManager;
 
     QString error;
-
-    QHash<void *, DownloadPosition *> * downloads;
 };
 
 #endif // WEB_API_H

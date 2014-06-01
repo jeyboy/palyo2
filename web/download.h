@@ -6,48 +6,84 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QFutureWatcher>
 
+#include "model/model.h"
+#include "model/model_item.h"
 #include "override/custom_network_access_manager.h"
 
 struct DownloadPosition {
-    DownloadPosition(QObject * _caller, const char * _slot, QUrl _uri, QUrl _savePath) {
-        caller = _caller;
-        slot = _slot;
-        uri = _uri;
+    DownloadPosition(Model * _model, ModelItem * _item, QUrl _savePath) {
+        item = _item;
         savePath = _savePath;
+        model = _model;
     }
 
-    QObject * caller;
-    const char * slot;
-    QUrl uri;
+    Model * model;
+    ModelItem * item;
     QUrl savePath;
 };
 
 class Download : public QObject {
     Q_OBJECT   
 public:
-    Download();
-    ~Download();
+    ~Download() {
+        delete netManager;
+        qDeleteAll(downloads -> values());
+        delete downloads;
+        delete queue;
+    }
 
+    static Download * instance();
     QString getError();
 
-    void start(QObject * caller, const char * slot, QUrl uri, QUrl savePath);
+    void start(Model * model, ModelItem * item, QUrl savePath);
 
     CustomNetworkAccessManager * manager() const;
 
+    static void close() {
+        delete self;
+    }
+
+    int getProgress() const;
+    int getQueueLength() const;
+
 protected slots:
     void downloadConnectionResponsed();
+    void onTimer();
+    void finishDownload();
 
 signals:
-    void downloadProgress(void * item, int percentDone);
-    void downloadFinished(void * item, bool success);
-    void downloadError(void * item, QString message);
+    void downloadProgress(ModelItem * item, int percentDone);
+    void downloadFinished(ModelItem * item, bool success);
+    void downloadError(ModelItem * item, QString message);
 
 protected:
+    QNetworkReply * downloading(QNetworkReply * reply);
+
     CustomNetworkAccessManager * netManager;
 
     QString error;
 
     QHash<void *, DownloadPosition *> * downloads;
+    QList<ModelItem *> * queue;
+
+private:
+    Download() {
+        netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
+        downloads = new QHash<void *, DownloadPosition *>();
+        queue = new QList<ModelItem *>();
+
+        QObject::connect(&remoteTimer, SIGNAL(timeout()), this, SLOT(onTimer()));
+        remoteTimer.start(1000);
+        progress = 0;
+        downloader = 0;
+        isReady = true;
+    }
+
+    QFutureWatcher<QNetworkReply *> * downloader;
+    static Download *self;
+    QTimer remoteTimer;
+    int progress;
+    bool isReady;
 };
 
 #endif // DOWNLOAD_H

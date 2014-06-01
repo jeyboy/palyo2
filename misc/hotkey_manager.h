@@ -6,6 +6,7 @@
 #include "globalshortcut/qxtglobalshortcut.h"
 #include "misc/hotkey_types.h"
 
+//TODO: change on misc/func_container
 struct HotkeySlot {
     const QObject * obj;
     const char * slot;

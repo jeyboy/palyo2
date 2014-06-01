@@ -366,14 +366,12 @@ void Model::collapsed(const QModelIndex &index) {
     item -> getState() -> unsetExpanded();
 }
 
-void Model::itemDownloadProgress(void * itemObj, int percentage) {
-    ModelItem * item = (ModelItem *)itemObj;
+void Model::itemDownloadProgress(ModelItem * item, int percentage) {
     item -> setDownloadProgress(percentage);
     qDebug() << percentage;
     refreshItem(item);
 }
-void Model::itemDownloadFinished(void * itemObj, bool success) {
-    ModelItem * item = (ModelItem *)itemObj;
+void Model::itemDownloadFinished(ModelItem * item, bool success) {
     item -> setDownloadProgress(-1);
     refreshItem(item);
 }
