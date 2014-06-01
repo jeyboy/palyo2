@@ -35,7 +35,6 @@ SOURCES += main.cpp\
     web/ip_checker.cpp \
     web/web_api.cpp \
     web/socials/vk_api.cpp \
-    web/remote_download.cpp \
     globalshortcut/qxtglobalshortcut.cpp \
     dialogs/tabdialog.cpp \
     dialogs/toolbardialog.cpp \
@@ -80,7 +79,8 @@ SOURCES += main.cpp\
     override/custom_network_access_manager.cpp \
     override/slider.cpp \
     single_application.cpp \
-    dialogs/vkrelationdialog.cpp
+    dialogs/vkrelationdialog.cpp \
+    web/download.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -92,7 +92,6 @@ HEADERS  += mainwindow.h \
     web/ip_checker.h\
     web/web_api.h\
     web/socials/vk_api.h\
-    web/remote_download.h \
 #    file_registration/file_registration.h \
     globalshortcut/qxtglobal.h \
     globalshortcut/qxtglobalshortcut.h \
@@ -142,7 +141,8 @@ HEADERS  += mainwindow.h \
     override/slider.h \
     single_application.h \
     dialogs/vkrelationdialog.h \
-    misc/func_container.h
+    misc/func_container.h \
+    web/download.h
     model/view_types.h
 
 unix:!mac {

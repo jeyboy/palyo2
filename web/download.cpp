@@ -1,19 +1,26 @@
-#include "web/web_api.h"
+#include "download.h"
 
-WebApi::WebApi() {
+Download::Download() {
     netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
     downloads = new QHash<void *, DownloadPosition *>();
 }
 
-WebApi::~WebApi() {
+Download::~Download() {
     delete netManager;
+    qDeleteAll(downloads -> values());
+    delete downloads;
 }
 
-QString WebApi::getError() {
+QString Download::getError() {
     return error;
 }
 
-void WebApi::downloadFile(QObject * caller, void * item, QUrl uri, QUrl savePath) {
+
+
+
+
+
+void Download::start(QObject * caller, void * item, QUrl uri, QUrl savePath) {
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(uri));
     QCoreApplication::processEvents(QEventLoop::AllEvents, 200);
     downloads -> insert(m_http, new DownloadPosition(item, savePath));
@@ -73,43 +80,3 @@ CustomNetworkAccessManager * WebApi::manager() const {
     return netManager;
 }
 
-QJsonObject WebApi::responseToJson(QByteArray data) {
-    QJsonDocument doc = QJsonDocument::fromJson(data);
-    return doc.object();
-}
-//QDomDocument WebApi::toXml(QByteArray data) {
-//    QDomDocument dom;
-//    dom.setContent(data);
-//    return dom;
-
-////    QDomElement  root         = dom.firstChildElement(); // <response> root element
-////    QDomNode  audioElement = root.firstChildElement(); // <audio>
-
-////    while(!audioElement.isNull()){
-////         QString url =  audioElement
-////                            .toElement()
-////                            .elementsByTagName("url")
-////                            .item(0)
-////                            .toElement()  //<url>
-////                            .text();
-////         list.append(url);
-////         audioElement = audioElement.nextSibling(); //next element
-////    }
-//}
-
-//QByteArray WebApi::sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts) {
-//    QNetworkReply * reply;
-//    QNetworkRequest req(request);
-
-//    if (sendMethod == "get") {
-//        reply = netManager -> get(req);
-//    } else if (sendMethod == "post") {
-//        reply = netManager -> post(req, parts);
-//    } else if (sendMethod == "put") {
-//        reply = netManager -> put(req, parts);
-//    } if (sendMethod == "delete") {
-//        reply = netManager -> deleteResource(req);
-//    }
-
-//    return reply -> readAll();
-//}
