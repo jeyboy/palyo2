@@ -37,7 +37,6 @@ QString VkFile::toUID() {
 }
 
 QUrl VkFile::toUrl() {
-    qDebug() << "VKFILE " << path;
     return QUrl(path);
 }
 
