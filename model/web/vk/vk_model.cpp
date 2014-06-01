@@ -27,7 +27,7 @@ QString VkModel::getTabUid() const {
 void VkModel::refresh() {
     emit showSpinner();
     clearAll();
-    VkApi::instance() -> clearData();
+//    VkApi::instance() -> clearData();
     QApplication::processEvents();
 
     VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
