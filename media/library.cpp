@@ -97,8 +97,8 @@ void Library::startRemoteInfoProc() {
 }
 
 ModelItem * Library::procRemoteInfo(ModelItem * item) {
-    QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> fullPath());
-
+    QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> toUrl().toString());
+    qDebug() << info.values();
     item -> setDuration(info.value("duration"));
     item -> setInfo(info.value("info"));
 

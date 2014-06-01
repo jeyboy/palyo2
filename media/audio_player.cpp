@@ -201,7 +201,6 @@ int AudioPlayer::getVolume() const {
 }
 
 QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
-    qDebug() << "REMOTE FILE INFO " << uri;
     QHash<QString, QString> ret;
 
     int chUID = BASS_StreamCreateURL(uri.toStdWString().c_str(), 0, 0, NULL, 0);
