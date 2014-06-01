@@ -23,10 +23,8 @@ void Library::initItem(ModelItem * item, const QObject * caller, const char * sl
         if (remote_items.count() > remote_items_max) {
             ModelItem * i = remote_items.takeFirst();
             remote_collations.take(i);
-            qDebug() << i -> fullPath();
+            i -> getState() -> unsetProceed();
         }
-
-        qDebug() << "MAX " << remote_items_max << " COUNT " << remote_items.count();
     }
 }
 
