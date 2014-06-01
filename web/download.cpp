@@ -21,17 +21,8 @@ void Download::onTimer() {
         QNetworkReply * m_http = manager() -> get(QNetworkRequest(item -> toUrl()));
         DownloadPosition * pos = downloads -> take(item);
         downloads -> insert(m_http, pos);
-    //    QCoreApplication::processEvents(QEventLoop::AllEvents, 200);
         QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
     }
-
-
-//    QNetworkReply * m_http = manager() -> get(QNetworkRequest(uri));
-////    QCoreApplication::processEvents(QEventLoop::AllEvents, 200);
-//    downloads -> insert(m_http, new DownloadPosition(item, savePath));
-//    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
-//    QObject::connect(this, SIGNAL(downloadFinished(void *, bool)), caller, SLOT(itemDownloadFinished(void *, bool)));
-//    QObject::connect(this, SIGNAL(downloadProgress(void *, int)), caller, SLOT(itemDownloadProgress(void *, int)));
 }
 
 void Download::finishDownload() {
@@ -58,6 +49,7 @@ void Download::downloadConnectionResponsed() {
 
 QNetworkReply * Download::downloading(QNetworkReply * reply) {
     DownloadPosition * position = downloads -> value(reply);
+    qDebug() <<"SAVEPATH "<< position -> savePath;
     QObject::connect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
     QObject::connect(this, SIGNAL(downloadProgress(ModelItem *, int)), position -> model, SLOT(itemDownloadProgress(ModelItem *, int)));
 
@@ -68,39 +60,41 @@ QNetworkReply * Download::downloading(QNetworkReply * reply) {
     if (!file.open(QIODevice::WriteOnly)) {
         emit downloadError(position -> item, file.errorString());
         emit downloadFinished(position -> item, false);
-        return reply;
-    }
-
-    if (!file.resize(reply -> bytesAvailable())) {
-        emit downloadError(position -> item, file.errorString());
-        emit downloadFinished(position -> item, false);
-        return reply;
-    }
-
-    QByteArray buffer;
-    qint64 pos = 0;
-    double limit = reply -> bytesAvailable();
-    int bufferLength = 1024 * 1024 * 1; //1 mb
-
-    while(!reply -> atEnd()) {
-        try {
-            buffer = reply -> read(bufferLength);
-            pos += buffer.length();
-            file.write(buffer);
-
-            progress = (pos/limit) * 100;
-            emit downloadProgress(position -> item, progress);
-        }
-
-        catch(...) {
-            emit downloadError(position -> item, "Some error occured while download...");
+    } else {
+        if (!file.resize(reply -> bytesAvailable())) {
+            emit downloadError(position -> item, file.errorString());
             emit downloadFinished(position -> item, false);
+        } else {
+            QByteArray buffer;
+            qint64 pos = 0;
+            double limit = reply -> bytesAvailable();
+            int bufferLength = 1024 * 1024 * 1; //1 mb
+
+            while(!reply -> atEnd()) {
+                try {
+                    buffer = reply -> read(bufferLength);
+                    pos += buffer.length();
+                    file.write(buffer);
+
+                    progress = (pos/limit) * 100;
+                    emit downloadProgress(position -> item, progress);
+                }
+
+                catch(...) {
+                    emit downloadError(position -> item, "Some error occured while download...");
+                    emit downloadFinished(position -> item, false);
+                }
+            }
+
+            file.close();
+            reply -> close();
+            emit downloadFinished(position -> item, true);
         }
     }
 
-    file.close();
-    reply -> close();
-    emit downloadFinished(position -> item, true);
+
+    QObject::disconnect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
+    QObject::disconnect(this, SIGNAL(downloadProgress(ModelItem *, int)), position -> model, SLOT(itemDownloadProgress(ModelItem *, int)));
     return reply;
 }
 

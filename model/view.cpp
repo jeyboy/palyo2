@@ -451,6 +451,7 @@ void View::downloadItem(ModelItem * item, QString savePath) {
 }
 
 void View::downloadBranch(ModelItem * rootNode, QString savePath) {
+    prepareDownloading(savePath);
     QList<ModelItem *> * children = rootNode -> childItemsList();
     ModelItem * item;
 
