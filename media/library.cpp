@@ -39,7 +39,7 @@ bool Library::addItem(ModelItem * item, int state) {
 }
 
 QString Library::filenameFilter(QString title) {
-    return forwardNumberPreFilter(sitesFilter(title)).remove(QRegExp("[^\\w-\\. ()]*")).mid(0, 240);
+    return forwardNumberPreFilter(sitesFilter(title)).remove(QRegExp("[^\\w-\\. ()]*")).mid(0, 200);
 }
 
 void Library::setRemoteItemMax(int newMax) {
