@@ -85,6 +85,7 @@ public slots:
     void updateSelection(QModelIndex candidate);
     void startRoutine();
     void stopRoutine();
+    void setHeaderText(QString);
 
 protected slots:
     void onDoubleClick(const QModelIndex &index);

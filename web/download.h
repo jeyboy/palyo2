@@ -52,6 +52,7 @@ protected slots:
     void finishDownload();
 
 signals:
+    void slotChanged(QString message);
     void downloadProgress(ModelItem * item, int percentDone);
     void downloadFinished(ModelItem * item, bool success);
     void downloadError(ModelItem * item, QString message);

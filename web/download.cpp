@@ -13,15 +13,20 @@ QString Download::getError() {
 }
 
 void Download::onTimer() {
-    if (isReady && !queue -> isEmpty()) {
-        isReady = false;
+    if (isReady) {
+        if (!queue -> isEmpty()) {
+            isReady = false;
 
-        ModelItem * item = queue -> takeFirst();
-        item -> setDownloadProgress(0);
-        QNetworkReply * m_http = manager() -> get(QNetworkRequest(item -> toUrl()));
-        DownloadPosition * pos = downloads -> take(item);
-        downloads -> insert(m_http, pos);
-        QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
+            ModelItem * item = queue -> takeFirst();
+            item -> setDownloadProgress(0);
+            QNetworkReply * m_http = manager() -> get(QNetworkRequest(item -> toUrl()));
+            DownloadPosition * pos = downloads -> take(item);
+            downloads -> insert(m_http, pos);
+            QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
+            emit slotChanged("( Last " + QString::number(queue -> count()) + ") " + item -> data(TITLEID).toString());
+        } else {
+            emit slotChanged("(O_o)");
+        }
     }
 }
 

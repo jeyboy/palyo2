@@ -59,6 +59,8 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     connect(model, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
     connect(model, SIGNAL(updated()), this, SLOT(modelUpdate()));
 
+    connect(Download::instance(), SIGNAL(slotChanged(QString)), this, SLOT(setHeaderText(QString)));
+
 //    connect(model, SIGNAL(selectionChangeNeeded(const QModelIndex &index)), this, SLOT(changeSelection(const QModelIndex &index)));
 //    connect(model, SIGNAL(selectionUpdateNeeded()), this, SLOT(updateSelection()));
 
@@ -294,6 +296,11 @@ void View::startRoutine() {
 }
 void View::stopRoutine() {
     emit hideSpinner();
+}
+
+void View::setHeaderText(QString newText) {
+    model -> root() -> setData(0, newText);
+    setRootIndex(rootIndex());
 }
 
 void View::shuffle() {
