@@ -23,7 +23,7 @@ void Download::onTimer() {
             DownloadPosition * pos = downloads -> take(item);
             downloads -> insert(m_http, pos);
             QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
-            emit slotChanged("( Last " + QString::number(queue -> count()) + ") " + item -> data(TITLEID).toString());
+            emit slotChanged("(Downloads remain: " + QString::number(queue -> count()) + ") " + item -> data(TITLEID).toString());
         } else {
             emit slotChanged("(O_o)");
         }
