@@ -93,7 +93,7 @@ QNetworkReply * Download::downloading(QNetworkReply * reply) {
     }
 
 
-    QObject::disconnect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
+//    QObject::disconnect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
     QObject::disconnect(this, SIGNAL(downloadProgress(ModelItem *, int)), position -> model, SLOT(itemDownloadProgress(ModelItem *, int)));
     return reply;
 }
