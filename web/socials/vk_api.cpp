@@ -39,11 +39,9 @@ void VkApi::clearData() {
 }
 
 void VkApi::addFriend(QString uid, QString name) {
-    qDebug() << uid << " " << name;
     friends.insert(uid, name);
 }
 void VkApi::addGroup(QString uid, QString name) {
-    qDebug() << uid << " " << name;
     groups.insert(uid, name);
 }
 
@@ -142,12 +140,11 @@ void VkApi::getUserAudioList(FuncContainer slot, QString uid) {
     getAudioList(slot, uid == "0" ? getUserID() : uid);
 }
 
+//TODO: has somw troubles with ids amount in request
 void VkApi::refreshAudioList(FuncContainer responseSlot, QHash<ModelItem *, QString> uids) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams();
     QStringList uidList(uids.values());
-
-    qDebug() << "return API.audio.getById({audios: \"" + uidList.join(',') + "\"});";
 
     query.addQueryItem("code",
                        "return API.audio.getById({audios: \"" + uidList.join(',') + "\"});"

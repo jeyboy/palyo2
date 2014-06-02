@@ -54,7 +54,6 @@ void Download::downloadConnectionResponsed() {
 
 QNetworkReply * Download::downloading(QNetworkReply * reply) {
     DownloadPosition * position = downloads -> value(reply);
-    qDebug() <<"SAVEPATH "<< position -> savePath;
     QObject::connect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
     QObject::connect(this, SIGNAL(downloadProgress(ModelItem *, int)), position -> model, SLOT(itemDownloadProgress(ModelItem *, int)));
 
@@ -98,7 +97,7 @@ QNetworkReply * Download::downloading(QNetworkReply * reply) {
     }
 
 
-//    QObject::disconnect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
+    QObject::disconnect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
     QObject::disconnect(this, SIGNAL(downloadProgress(ModelItem *, int)), position -> model, SLOT(itemDownloadProgress(ModelItem *, int)));
     return reply;
 }
