@@ -5,7 +5,13 @@
 
 View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(parent) {
     settings = settingsSet;
-    setModel((model = newModel));
+    model = newModel;
+
+    proxy = new QSortFilterProxyModel(this);
+    proxy -> setSourceModel(model);
+    setModel(proxy);
+
+    setSortingEnabled(true);
 
     setIndentation(8);
 
@@ -86,6 +92,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
 
 View::~View() {
     delete model;
+    delete proxy;
 }
 
 QJsonObject View::toJSON() {
@@ -420,6 +427,23 @@ void View::openLocation() {
     item -> openLocation();
 }
 
+
+void View::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const {
+    ModelItem * item = model -> getItem(index);
+
+    if (!item -> getState() -> isProceed()) {
+        item -> getState() -> setProceed();
+        if (!item -> isFolder()) {
+            Library::instance() -> initItem(item, this, SLOT(libraryResponse()));
+        }
+
+        if (item -> getState() -> isExpanded()) {
+            emit model -> expandNeeded(index);
+        }
+    }
+
+    QTreeView::drawRow(painter, options, index);
+}
 
 void View::resizeEvent(QResizeEvent * event) {
     if (event -> size().height() > 0) {

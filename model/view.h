@@ -97,6 +97,9 @@ protected slots:
     void modelUpdate();
 
 protected:
+    virtual void drawRow(QPainter *painter,
+                         const QStyleOptionViewItem &options,
+                         const QModelIndex &index) const;
     void resizeEvent(QResizeEvent *);
     bool prepareDownloading(QString path);
 
@@ -122,6 +125,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent * event);
 
+    QSortFilterProxyModel * proxy;
     Model * model;
     CBHash settings;
     QStringList filtersList;
