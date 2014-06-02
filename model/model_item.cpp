@@ -46,7 +46,7 @@ ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * paren
     info = itemInfo;
     state = new ModelItemState(initState);
 
-    title = fileName;
+    title = fileName.replace("\n", " ");
     path = filePath;
     genreID = genre_id;
     progress = -1;
