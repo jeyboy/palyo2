@@ -371,6 +371,17 @@ ModelItem * Model::fromPath(QString path) {
     return curr;
 }
 
+ModelItem * Model::removeCandidate(ModelItem * item) {
+    ModelItem * parent = item -> parent();
+
+    while(parent -> childCount() == 1 && parent -> parent() != 0) {
+        item = parent;
+        parent = parent -> parent();
+    }
+
+    return item;
+}
+
 ModelItem * Model::getItem(const QModelIndex &index) const {
     if (index.isValid()) {
         return static_cast<ModelItem *>(index.internalPointer());

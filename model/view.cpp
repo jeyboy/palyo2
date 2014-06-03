@@ -193,19 +193,8 @@ bool View::execItem(ModelItem * item, bool paused) {
     return false;
 }
 
-ModelItem * View::removeCandidate(ModelItem * item) {
-    ModelItem * parent = item -> parent();
-
-    while(parent -> childCount() == 1 && parent -> parent() != 0) {
-        item = parent;
-        parent = parent -> parent();
-    }
-
-    return item;
-}
-
 void View::removeItem(ModelItem * item) {
-    item = removeCandidate(item);
+    item = model -> removeCandidate(item);
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullPath();
     bool isFolder = item -> isFolder();

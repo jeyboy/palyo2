@@ -63,7 +63,6 @@ public:
     QModelIndexList selectedItems() const;
 
     bool execItem(ModelItem * item, bool paused = false);
-    ModelItem * removeCandidate(ModelItem * item);
     void removeItem(ModelItem * item);
 
     int itemsCount() const;

@@ -69,6 +69,8 @@ public:
     ModelItem * prevItem(ModelItem * curr);
     ModelItem * fromPath(QString path);
 
+    ModelItem * removeCandidate(ModelItem * item);
+
     virtual WebApi * getApi() { return 0; } //stub
 signals:
     void itemsCountChanged(int newCount);
