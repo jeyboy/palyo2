@@ -106,8 +106,6 @@ protected:
 
     ModelItem * activeItem(bool next = true);
 //    ModelItem * nextItem(QModelIndex currIndex);
-    ModelItem * nextItem(ModelItem * curr);
-    ModelItem * prevItem(ModelItem * curr);
 
     QFileInfoList folderFiles(QFileInfo file);
     QFileInfoList folderDirectories(QFileInfo file);

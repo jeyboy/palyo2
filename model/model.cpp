@@ -298,6 +298,66 @@ void Model::removeFolderPrebuild(ModelItem * temp) {
 
 /////////////////////////////////////////////////////////
 
+ModelItem * Model::nextItem(ModelItem * curr) {
+    ModelItem * item = curr;
+    bool first_elem = curr -> parent() == 0 || curr -> isFolder();
+
+    while(true) {
+        if (first_elem) {
+            first_elem = false;
+        } else {
+            item = item -> parent() -> child(item -> row() + 1);
+        }
+
+        if (item != 0) {
+            if (!item -> isFolder() && item -> isPlayable()) {
+                return item;
+            } else {
+                curr = item;
+                item = curr -> child(0);
+                first_elem = true;
+            }
+        } else {
+            if (curr -> parent() == 0)
+                return 0;
+
+            item = curr;
+            curr = curr -> parent();
+        }
+    }
+}
+ModelItem * Model::prevItem(ModelItem * curr) {
+    ModelItem * item = curr;
+    bool last_elem = false;
+
+    if (curr -> parent() == 0)
+        return 0;
+
+    while(true) {
+        if (last_elem) {
+            last_elem = false;
+        } else {
+            item = item -> parent() -> child(item -> row() - 1);
+        }
+
+        if (item != 0) {
+            if (!item -> isFolder() && item -> isPlayable()) {
+                return item;
+            } else {
+                curr = item;
+                item = curr -> child(item -> childCount() - 1);
+                last_elem = true;
+            }
+        } else {
+            if (curr -> parent() == 0)
+                return 0;
+
+            item = curr;
+            curr = curr -> parent();
+        }
+    }
+}
+
 ModelItem * Model::getItem(const QModelIndex &index) const {
     if (index.isValid()) {
         return static_cast<ModelItem *>(index.internalPointer());

@@ -65,6 +65,9 @@ public:
     void refreshItem(ModelItem * item);
     void removeFolderPrebuild(ModelItem * temp);
 
+    ModelItem * nextItem(ModelItem * curr);
+    ModelItem * prevItem(ModelItem * curr);
+
     virtual WebApi * getApi() { return 0; } //stub
 signals:
     void itemsCountChanged(int newCount);

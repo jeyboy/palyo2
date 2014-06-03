@@ -113,7 +113,7 @@ void View::proceedPrev() {
 
     if (item == 0) return;
 
-    item = prevItem(item);
+    item = model -> prevItem(item);
     execItem(item);
 }
 
@@ -121,7 +121,7 @@ void View::proceedNext() {
     ModelItem * item = activeItem();
     if (item == 0) return;
 
-    item = nextItem(item);
+    item = model -> nextItem(item);
     execItem(item);
 }
 
@@ -129,7 +129,7 @@ void View::deleteCurrentProceedNext() {
     ModelItem * item = activeItem();
     if (item == 0) return;
 
-    item = nextItem(item);
+    item = model -> nextItem(item);
 
     if (Player::instance() -> currentPlaylist() == this) {
         if (Player::instance() -> playedItem()) {
@@ -313,7 +313,7 @@ void View::updateSelection(QModelIndex candidate) {
         ModelItem * item = getModel() -> getItem(candidate);
 
         if (item -> isFolder()) {
-            if ((item = nextItem(item)))
+            if ((item = model -> nextItem(item)))
               setCurrentIndex(getModel() -> index(item));
         }
     }
@@ -580,66 +580,6 @@ ModelItem * View::activeItem(bool next) {
 //        }
 //    }
 //}
-
-ModelItem * View::nextItem(ModelItem * curr) {
-    ModelItem * item = curr;
-    bool first_elem = curr -> parent() == 0 || curr -> isFolder();
-
-    while(true) {
-        if (first_elem) {
-            first_elem = false;
-        } else {
-            item = item -> parent() -> child(item -> row() + 1);
-        }
-
-        if (item != 0) {
-            if (!item -> isFolder() && item -> isPlayable()) {
-                return item;
-            } else {
-                curr = item;
-                item = curr -> child(0);
-                first_elem = true;
-            }
-        } else {
-            if (curr -> parent() == 0)
-                return 0;
-
-            item = curr;
-            curr = curr -> parent();
-        }
-    }
-}
-ModelItem * View::prevItem(ModelItem * curr) {
-    ModelItem * item = curr;
-    bool last_elem = false;
-
-    if (curr -> parent() == 0)
-        return 0;
-
-    while(true) {
-        if (last_elem) {
-            last_elem = false;
-        } else {
-            item = item -> parent() -> child(item -> row() - 1);
-        }
-
-        if (item != 0) {
-            if (!item -> isFolder() && item -> isPlayable()) {
-                return item;
-            } else {
-                curr = item;
-                item = curr -> child(item -> childCount() - 1);
-                last_elem = true;
-            }
-        } else {
-            if (curr -> parent() == 0)
-                return 0;
-
-            item = curr;
-            curr = curr -> parent();
-        }
-    }
-}
 
 QFileInfoList View::folderFiles(QFileInfo file) {
     return QDir(file.filePath()).entryInfoList(filtersList, QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
