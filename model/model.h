@@ -67,6 +67,7 @@ public:
 
     ModelItem * nextItem(ModelItem * curr);
     ModelItem * prevItem(ModelItem * curr);
+    ModelItem * fromPath(QString path);
 
     virtual WebApi * getApi() { return 0; } //stub
 signals:

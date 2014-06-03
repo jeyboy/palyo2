@@ -358,6 +358,19 @@ ModelItem * Model::prevItem(ModelItem * curr) {
     }
 }
 
+ModelItem * Model::fromPath(QString path) {
+    QStringList parts = path.split(' ', QString::SkipEmptyParts);
+    ModelItem * curr = rootItem;
+    int level;
+
+    while(parts.length() > 0) {
+        level = parts.takeFirst().toInt();
+        curr = curr -> child(level);
+    }
+
+    return curr;
+}
+
 ModelItem * Model::getItem(const QModelIndex &index) const {
     if (index.isValid()) {
         return static_cast<ModelItem *>(index.internalPointer());

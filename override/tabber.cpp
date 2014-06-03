@@ -156,7 +156,7 @@ void Tabber::load() {
             new_tab -> updateHeader();
 
             if (tab.contains("pv")) {
-                new_tab -> getList() -> execItem(new_tab -> getList() -> fromPath(tab.value("pp").toString()), true);
+                new_tab -> getList() -> execItem(new_tab -> getList() -> getModel() -> fromPath(tab.value("pp").toString()), true);
                 Player::instance() -> setStartPosition(tab.value("pt").toInt());
 //                Player::instance() -> play();
             }

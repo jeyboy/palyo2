@@ -54,9 +54,6 @@ public:
     bool isCommon();
     bool isEditable();
 
-
-    ModelItem * fromPath(QString path);
-
 //    template<class T> T * getModel() const;
     Model * getModel() const;
 

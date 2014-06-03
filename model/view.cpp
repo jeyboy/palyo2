@@ -110,9 +110,7 @@ void View::scrollToActive() {
 
 void View::proceedPrev() {
     ModelItem * item = activeItem(false);
-
     if (item == 0) return;
-
     item = model -> prevItem(item);
     execItem(item);
 }
@@ -120,7 +118,6 @@ void View::proceedPrev() {
 void View::proceedNext() {
     ModelItem * item = activeItem();
     if (item == 0) return;
-
     item = model -> nextItem(item);
     execItem(item);
 }
@@ -140,34 +137,13 @@ void View::deleteCurrentProceedNext() {
     execItem(item);
 }
 
-bool View::isRemoveFileWithItem() {
-    return settings["d"] == 1;
-}
+bool View::isRemoveFileWithItem() { return settings["d"] == 1; }
 
-bool View::isPlaylist() {
-    return settings["p"] == 1;
-}
+bool View::isPlaylist() { return settings["p"] == 1; }
 
-bool View::isCommon() {
-    return settings["c"] == 1;
-}
+bool View::isCommon() { return settings["c"] == 1; }
 
-bool View::isEditable() {
-    return settings["t"] < 4 && !isCommon();
-}
-
-ModelItem * View::fromPath(QString path) {
-    QStringList parts = path.split(' ', QString::SkipEmptyParts);
-    ModelItem * curr = getModel() -> root();
-    int level;
-
-    while(parts.length() > 0) {
-        level = parts.takeFirst().toInt();
-        curr = curr -> child(level);
-    }
-
-    return curr;
-}
+bool View::isEditable() { return settings["t"] < 4 && !isCommon(); }
 
 Model * View::getModel() const {
     return model;
