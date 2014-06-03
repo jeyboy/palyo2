@@ -17,6 +17,7 @@
 
 #include "media/player.h"
 #include "model.h"
+#include "model_proxy.h"
 #include "model_item_delegate.h"
 
 #include "model_item.h"
@@ -125,7 +126,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent * event);
 
-    QSortFilterProxyModel * proxy;
+    ModelProxy * proxy;
     Model * model;
     CBHash settings;
     QStringList filtersList;

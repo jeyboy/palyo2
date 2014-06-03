@@ -88,6 +88,9 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case INFOID:
             item = getItem(index);
             return QVariant(item -> getInfo());
+        case FOLDERID:
+            item = getItem(index);
+            return item -> isFolder();
 
         default: return QVariant();
     }

@@ -7,7 +7,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     settings = settingsSet;
     model = newModel;
 
-    proxy = new QSortFilterProxyModel(this);
+    proxy = new ModelProxy(this);
     proxy -> setSourceModel(model);
     setModel(proxy);
 
@@ -96,7 +96,8 @@ View::~View() {
 }
 
 QJsonObject View::toJSON() {
-    QJsonObject res = model -> getItem(rootIndex()) -> toJSON();
+//    QJsonObject res = model -> getItem!(rootIndex()) -> toJSON();
+    QJsonObject res = model -> root() -> toJSON();
 
     QJsonObject set = QJsonObject();
     foreach(QString c, settings.keys()) {
@@ -195,7 +196,7 @@ void View::setSettings(CBHash newSettings) {
 //    ModelItem *temp;
 //    foreach (const QModelIndex &index, selectedIndexes()) {
 //        if (index.isValid()) {
-//            temp = model -> getItem(index);
+//            temp = model -> getItem!(index);
 //            if (!temp -> isFolder()) {
 //                temp -> setState(STATE_LIKED);
 //                model -> refreshItem(temp);
@@ -315,19 +316,20 @@ void View::shuffle() {
     getModel() -> refresh();
 }
 
-void View::updateSelection(QModelIndex candidate) {
+void View::updateSelection(QModelIndex & candidate) {
     if (candidate.isValid()) {
-        ModelItem * item = getModel() -> getItem(candidate);
+        QModelIndex item = candidate;
+//        ModelItem * item = getModel() -> getItem!(candidate);
 
-        if (item -> isFolder()) {
+        if (item.data(FOLDERID).toBool()) {
             if ((item = nextItem(item)))
-              setCurrentIndex(getModel() -> index(item));
+              setCurrentIndex(item);
         }
     }
 }
 
 void View::onDoubleClick(const QModelIndex &index) {
-    ModelItem * item = model -> getItem(index);
+    ModelItem * item = model -> getItem(proxy -> mapToSource(index));
 
     if (!item -> isFolder()) {
         execItem(item);
@@ -337,7 +339,7 @@ void View::onDoubleClick(const QModelIndex &index) {
 void View::showContextMenu(const QPoint& pnt) {
     QList<QAction *> actions;
     QModelIndex ind = indexAt(pnt);
-    ModelItem * item = model -> getItem(ind);
+    ModelItem * item = model -> getItem!(ind);
     QAction * openAct;
     QAction * sepAct;
 
@@ -423,13 +425,13 @@ void View::showContextMenu(const QPoint& pnt) {
 }
 
 void View::openLocation() {
-    ModelItem * item = model -> getItem(this -> currentIndex());
+    ModelItem * item = model -> getItem!(this -> currentIndex());
     item -> openLocation();
 }
 
 
 void View::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const {
-    ModelItem * item = model -> getItem(index);
+    ModelItem * item = model -> getItem!(index);
 
     if (!item -> getState() -> isProceed()) {
         item -> getState() -> setProceed();
@@ -521,7 +523,7 @@ void View::downloadSelected(QString savePath, bool markAsLiked) {
     ModelItem * item;
 
     foreach(QModelIndex index, selectedIndexes()) {
-        item = model -> getItem(index);
+        item = model -> getItem!(index);
 
         if (item -> isFolder()) {
             downloadBranch(item, savePath);
@@ -558,7 +560,7 @@ ModelItem * View::activeItem(bool next) {
         QModelIndexList list = selectedIndexes();
 
         if (list.count() > 0) {
-            item = model -> getItem(list.first());
+            item = model -> getItem!(list.first());
 
             if (!item -> isFolder()) {
                 QModelIndex m;
@@ -567,13 +569,13 @@ ModelItem * View::activeItem(bool next) {
                 } else { m = this -> indexBelow(list.first()); }
 
                 if (m.isValid()) {
-                   item = model -> getItem(m);
+                   item = model -> getItem!(m);
                 } else {
-                   item = model -> getItem(list.first().parent());
+                   item = model -> getItem!(list.first().parent());
                 }
             }
         } else {
-            item = model -> getItem(this -> rootIndex());
+            item = model -> getItem!(this -> rootIndex());
         }
     }
 
@@ -588,7 +590,7 @@ ModelItem * View::activeItem(bool next) {
 //        newIndex = currIndex.parent().child(currIndex.row()+1, 0); //indexBelow(currIndex);
 
 //        if (newIndex.isValid()) {
-//            item = model -> getItem(newIndex);
+//            item = model -> getItem!(newIndex);
 //            qDebug() << item -> data(0);
 //            if (!item->getState() -> isUnprocessed()) {
 //                return item;
@@ -597,7 +599,7 @@ ModelItem * View::activeItem(bool next) {
 //            }
 //        } else {
 //            currIndex = currIndex.parent();
-//            item = model -> getItem(newIndex);
+//            item = model -> getItem!(newIndex);
 
 //            if (!currIndex.isValid())
 //                return model -> root();
@@ -693,7 +695,6 @@ void View::dragMoveEvent(QDragMoveEvent * event) {
 void View::dropEvent(QDropEvent *event) {
     if (event -> source() != this && event -> mimeData() -> hasUrls()) {
         QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
-        qDebug() << "HUY " << modelIndex.isValid();
         model -> refresh();
         scrollTo(modelIndex);
         expand(modelIndex);
@@ -706,7 +707,7 @@ void View::keyPressEvent(QKeyEvent *event) {
         QModelIndexList list = selectedIndexes();
 
         if (list.count() > 0) {
-            ModelItem * item = model -> getItem(list.first());
+            ModelItem * item = model -> getItem(proxy -> mapToSource(list.first()));
             execItem(item);
         }
     } else if (event -> key() == Qt::Key_Delete) {
@@ -715,7 +716,7 @@ void View::keyPressEvent(QKeyEvent *event) {
 
         for(int i = list.count() - 1; i >= 0; i--) {
             modelIndex = list.at(i);
-            removeItem(model -> getItem(modelIndex));
+            removeItem(model -> getItem(proxy -> mapToSource(modelIndex)));
         }
     } else { QTreeView::keyPressEvent(event); }
 }

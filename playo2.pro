@@ -80,7 +80,8 @@ SOURCES += main.cpp\
     override/slider.cpp \
     single_application.cpp \
     dialogs/vkrelationdialog.cpp \
-    web/download.cpp
+    web/download.cpp \
+    model/model_proxy.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -142,7 +143,8 @@ HEADERS  += mainwindow.h \
     single_application.h \
     dialogs/vkrelationdialog.h \
     misc/func_container.h \
-    web/download.h
+    web/download.h \
+    model/model_proxy.h
     model/view_types.h
 
 unix:!mac {
