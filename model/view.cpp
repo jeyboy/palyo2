@@ -562,16 +562,13 @@ QModelIndex View::activeItem(bool next) {
 
 QModelIndex View::nextItem(QModelIndex & curr) {
     QModelIndex item = curr;
-//    bool first_elem = !curr.parent().isValid() || curr.data(FOLDERID).toBool();
     bool first_elem = curr.data(FOLDERID).toBool();
 
     while(true) {
         if (first_elem) {
             first_elem = false;
         } else {
-//            item = item.parent().child(item.row() + 1, 0); //indexBelow(item);
             item = indexBelow(item);
-//            item = indexBelow(item);
         }
 
         if (item.isValid()) {
@@ -595,15 +592,14 @@ QModelIndex View::prevItem(QModelIndex & curr) {
     QModelIndex item = curr;
     bool last_elem = false;
 
-    if (!curr.parent().isValid())
+    if (!curr.isValid())
         return QModelIndex();
 
     while(true) {
         if (last_elem) {
             last_elem = false;
         } else {
-            item = item.parent().child(item.row() - 1, 0); //indexAbove(item);
-//            item = item -> parent() -> child(item -> row() - 1);
+              item = indexAbove(item);
         }
 
         if (item.isValid()) {
@@ -611,8 +607,7 @@ QModelIndex View::prevItem(QModelIndex & curr) {
                 return item;
             } else {
                 curr = item;
-                item = curr.child(curr.data(LASTCHILDID).toInt(), 0);
-//                item = curr -> child(item -> childCount() - 1);
+                item = indexAbove(item);
                 last_elem = true;
             }
         } else {
@@ -624,31 +619,6 @@ QModelIndex View::prevItem(QModelIndex & curr) {
         }
     }
 }
-
-//ModelItem * View::nextItem(QModelIndex currIndex) {
-//    QModelIndex newIndex;
-//    ModelItem * item;
-
-//    while(true) {
-//        newIndex = currIndex.parent().child(currIndex.row()+1, 0); //indexBelow(currIndex);
-
-//        if (newIndex.isValid()) {
-//            item = model -> getItem(newIndex);
-//            qDebug() << item -> data(0);
-//            if (!item->getState() -> isUnprocessed()) {
-//                return item;
-//            } else {
-//                currIndex = newIndex.child(0, 0);
-//            }
-//        } else {
-//            currIndex = currIndex.parent();
-//            item = model -> getItem(newIndex);
-
-//            if (!currIndex.isValid())
-//                return model -> root();
-//        }
-//    }
-//}
 
 QFileInfoList View::folderFiles(QFileInfo file) {
     return QDir(file.filePath()).entryInfoList(filtersList, QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
