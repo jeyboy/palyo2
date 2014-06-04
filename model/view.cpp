@@ -109,24 +109,33 @@ void View::scrollToActive() {
 }
 
 void View::proceedPrev() {
-    ModelItem * item = model -> getItem(activeItem(false));
-    if (item == 0) return;
-    item = model -> prevItem(item);
-    execItem(item);
+    QModelIndex item = activeItem(false);
+    if (!item.isValid()) return;
+    item = prevItem(item);
+    execItem(model -> getItem(item));
+
+//    ModelItem * item = model -> getItem(activeItem(false));
+//    if (item == 0) return;
+//    item = model -> prevItem(item);
+//    execItem(item);
 }
 
 void View::proceedNext() {
-    ModelItem * item = model -> getItem(activeItem());
-    if (item == 0) return;
-    item = model -> nextItem(item);
-    execItem(item);
+    QModelIndex item = activeItem(false);
+    if (!item.isValid()) return;
+    item = nextItem(item);
+    execItem(model -> getItem(item));
+
+//    ModelItem * item = model -> getItem(activeItem());
+//    if (item == 0) return;
+//    item = model -> nextItem(item);
+//    execItem(item);
 }
 
 void View::deleteCurrentProceedNext() {
-    ModelItem * item = model -> getItem(activeItem());
-    if (item == 0) return;
-
-    item = model -> nextItem(item);
+    QModelIndex item = activeItem(false);
+    if (!item.isValid()) return;
+    item = nextItem(item);
 
     if (Player::instance() -> currentPlaylist() == this) {
         if (Player::instance() -> playedItem()) {
@@ -134,7 +143,21 @@ void View::deleteCurrentProceedNext() {
         }
     }
 
-    execItem(item);
+    execItem(model -> getItem(item));
+
+
+//    ModelItem * item = model -> getItem(activeItem());
+//    if (item == 0) return;
+
+//    item = model -> nextItem(item);
+
+//    if (Player::instance() -> currentPlaylist() == this) {
+//        if (Player::instance() -> playedItem()) {
+//            removeItem(Player::instance() -> playedItem());
+//        }
+//    }
+
+//    execItem(item);
 }
 
 bool View::isRemoveFileWithItem() { return settings["d"] == 1; }
@@ -502,7 +525,7 @@ void View::copyItemsFrom(View * otherView) {
 /// PROTECTED
 //////////////////////////////////////////////////////
 
-QModelIndex & View::activeItem(bool next) {
+QModelIndex View::activeItem(bool next) {
     QModelIndex item;
 
     if (Player::instance() -> currentPlaylist() == this) {
@@ -529,48 +552,79 @@ QModelIndex & View::activeItem(bool next) {
                 }
             }
         } else {
-            item = this -> rootIndex();
+            item = model -> index(model -> root());//this -> rootIndex();
         }
     }
 
+    qDebug() << item;
     return item;
 }
 
-//ModelItem * View::activeItem(bool next) {
-//    ModelItem * item = 0;
+QModelIndex View::nextItem(QModelIndex & curr) {
+    QModelIndex item = curr;
+//    bool first_elem = !curr.parent().isValid() || curr.data(FOLDERID).toBool();
+    bool first_elem = curr.data(FOLDERID).toBool();
 
-//    if (Player::instance() -> currentPlaylist() == this) {
-//        if (Player::instance() -> playedItem()) {
-//            item = Player::instance() -> playedItem();
-//        }
-//    }
+    while(true) {
+        if (first_elem) {
+            first_elem = false;
+        } else {
+//            item = item.parent().child(item.row() + 1, 0); //indexBelow(item);
+            item = indexBelow(item);
+//            item = indexBelow(item);
+        }
 
-//    if (item == 0) {
-//        QModelIndexList list = selectedIndexes();
+        if (item.isValid()) {
+            if (item.data(PLAYABLEID).toBool()) {
+                return item;
+            } else {
+                curr = item;
+                item = curr.child(0, 0);
+                first_elem = true;
+            }
+        } else {
+            if (!curr.isValid())
+                return QModelIndex();
 
-//        if (list.count() > 0) {
-//            item = model -> getItem(list.first());
+            item = curr;
+            curr = curr.parent();
+        }
+    }
+}
+QModelIndex View::prevItem(QModelIndex & curr) {
+    QModelIndex item = curr;
+    bool last_elem = false;
 
-//            if (!item -> isFolder()) {
-//                QModelIndex m;
-//                if (next) {
-//                    m = this -> indexAbove(list.first());
-//                } else { m = this -> indexBelow(list.first()); }
+    if (!curr.parent().isValid())
+        return QModelIndex();
 
-//                if (m.isValid()) {
-//                   item = model -> getItem(m);
-//                } else {
-//                   item = model -> getItem(list.first().parent());
-//                }
-//            }
-//        } else {
-//            item = model -> getItem(this -> rootIndex());
-//        }
-//    }
+    while(true) {
+        if (last_elem) {
+            last_elem = false;
+        } else {
+            item = item.parent().child(item.row() - 1, 0); //indexAbove(item);
+//            item = item -> parent() -> child(item -> row() - 1);
+        }
 
-//    return item;
-//}
-//// test needed / update need
+        if (item.isValid()) {
+            if (item.data(PLAYABLEID).toBool()) {
+                return item;
+            } else {
+                curr = item;
+                item = curr.child(curr.data(LASTCHILDID).toInt(), 0);
+//                item = curr -> child(item -> childCount() - 1);
+                last_elem = true;
+            }
+        } else {
+            if (!curr.isValid())
+                return QModelIndex();
+
+            item = curr;
+            curr = curr.parent();
+        }
+    }
+}
+
 //ModelItem * View::nextItem(QModelIndex currIndex) {
 //    QModelIndex newIndex;
 //    ModelItem * item;

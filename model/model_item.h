@@ -40,6 +40,8 @@
 #define INFOID 102
 #define ADDFONTID 103
 #define FOLDERID 104
+#define PLAYABLEID 105
+#define LASTCHILDID 106
 
 #define FILE_ITEM 100
 #define FOLDER_ITEM 200

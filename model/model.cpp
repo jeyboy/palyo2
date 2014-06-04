@@ -90,6 +90,12 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case FOLDERID:
             item = getItem(index);
             return item -> isFolder();
+        case PLAYABLEID:
+            item = getItem(index);
+            return item -> isPlayable();
+        case LASTCHILDID:
+            item = getItem(index);
+            return item -> childCount() - 1;
 
         default: return QVariant();
     }
@@ -157,7 +163,7 @@ QModelIndex Model::parent(const QModelIndex &index) const {
     ModelItem *childItem = getItem(index);
     ModelItem *parentItem = childItem -> parent();
 
-    if (parentItem == rootItem)
+    if (parentItem == rootItem || parentItem == 0)
         return QModelIndex();
 
 //    return createIndex(parentItem->row(), index.column(), parentItem);
@@ -312,7 +318,7 @@ ModelItem * Model::nextItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item -> isFolder() && item -> isPlayable()) {
+            if (item -> isPlayable()) {
                 return item;
             } else {
                 curr = item;
@@ -343,7 +349,7 @@ ModelItem * Model::prevItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item -> isFolder() && item -> isPlayable()) {
+            if (item -> isPlayable()) {
                 return item;
             } else {
                 curr = item;

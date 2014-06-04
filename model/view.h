@@ -101,9 +101,9 @@ protected:
     void downloadBranch(ModelItem * rootNode, QString savePath);
 
 
-    QModelIndex & activeItem(bool next = true);
-//    ModelItem * activeItem(bool next = true);
-//    ModelItem * nextItem(QModelIndex currIndex);
+    QModelIndex activeItem(bool next = true);
+    QModelIndex nextItem(QModelIndex & curr);
+    QModelIndex prevItem(QModelIndex & curr);
 
     QFileInfoList folderFiles(QFileInfo file);
     QFileInfoList folderDirectories(QFileInfo file);
