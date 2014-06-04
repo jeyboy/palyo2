@@ -34,12 +34,12 @@
 #define TITLEID 0
 #define EXTENSIONID 1
 #define PATHID 2
-#define FOLDERID 3
 #define STATEID 4
 #define TITLESCACHEID 5
 #define PROGRESSID 101
 #define INFOID 102
 #define ADDFONTID 103
+#define FOLDERID 104
 
 #define FILE_ITEM 100
 #define FOLDER_ITEM 200

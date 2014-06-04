@@ -109,21 +109,21 @@ void View::scrollToActive() {
 }
 
 void View::proceedPrev() {
-    ModelItem * item = activeItem(false);
+    ModelItem * item = model -> getItem(activeItem(false));
     if (item == 0) return;
     item = model -> prevItem(item);
     execItem(item);
 }
 
 void View::proceedNext() {
-    ModelItem * item = activeItem();
+    ModelItem * item = model -> getItem(activeItem());
     if (item == 0) return;
     item = model -> nextItem(item);
     execItem(item);
 }
 
 void View::deleteCurrentProceedNext() {
-    ModelItem * item = activeItem();
+    ModelItem * item = model -> getItem(activeItem());
     if (item == 0) return;
 
     item = model -> nextItem(item);
@@ -502,40 +502,74 @@ void View::copyItemsFrom(View * otherView) {
 /// PROTECTED
 //////////////////////////////////////////////////////
 
-ModelItem * View::activeItem(bool next) {
-    ModelItem * item = 0;
+QModelIndex & View::activeItem(bool next) {
+    QModelIndex item;
 
     if (Player::instance() -> currentPlaylist() == this) {
         if (Player::instance() -> playedItem()) {
-            item = Player::instance() -> playedItem();
+            item = model -> index(Player::instance() -> playedItem());
         }
     }
 
-    if (item == 0) {
+    if (!item.isValid()) {
         QModelIndexList list = selectedIndexes();
 
         if (list.count() > 0) {
-            item = model -> getItem(list.first());
-
-            if (!item -> isFolder()) {
+            item = list.first();
+            if (!item.data(FOLDERID).toBool()) {
                 QModelIndex m;
                 if (next) {
                     m = this -> indexAbove(list.first());
                 } else { m = this -> indexBelow(list.first()); }
 
                 if (m.isValid()) {
-                   item = model -> getItem(m);
+                   item = m;
                 } else {
-                   item = model -> getItem(list.first().parent());
+                   item = list.first().parent();
                 }
             }
         } else {
-            item = model -> getItem(this -> rootIndex());
+            item = this -> rootIndex();
         }
     }
 
     return item;
 }
+
+//ModelItem * View::activeItem(bool next) {
+//    ModelItem * item = 0;
+
+//    if (Player::instance() -> currentPlaylist() == this) {
+//        if (Player::instance() -> playedItem()) {
+//            item = Player::instance() -> playedItem();
+//        }
+//    }
+
+//    if (item == 0) {
+//        QModelIndexList list = selectedIndexes();
+
+//        if (list.count() > 0) {
+//            item = model -> getItem(list.first());
+
+//            if (!item -> isFolder()) {
+//                QModelIndex m;
+//                if (next) {
+//                    m = this -> indexAbove(list.first());
+//                } else { m = this -> indexBelow(list.first()); }
+
+//                if (m.isValid()) {
+//                   item = model -> getItem(m);
+//                } else {
+//                   item = model -> getItem(list.first().parent());
+//                }
+//            }
+//        } else {
+//            item = model -> getItem(this -> rootIndex());
+//        }
+//    }
+
+//    return item;
+//}
 //// test needed / update need
 //ModelItem * View::nextItem(QModelIndex currIndex) {
 //    QModelIndex newIndex;
