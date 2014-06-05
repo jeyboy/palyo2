@@ -229,6 +229,7 @@ ModelItem * View::removeCandidate(ModelItem * item) {
 }
 
 void View::removeItem(ModelItem * item) {
+    Library::instance() -> removeRemoteItem(item);
     item = removeCandidate(item);
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullPath();

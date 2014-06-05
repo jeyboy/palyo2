@@ -32,6 +32,7 @@ public:
         }
     }
 
+    void removeRemoteItem(ModelItem * item);
     void initItem(ModelItem * item, const QObject * caller, const char * slot);
     bool addItem(ModelItem * item, int state);
     void restoreItemState(ModelItem * item);
@@ -57,7 +58,7 @@ private:
         timer -> start(10000);
 
         QObject::connect(&remoteTimer, SIGNAL(timeout()), this, SLOT(startRemoteInfoProc()));
-        remoteTimer.start(2500);
+        remoteTimer.start(2000);
 
         QDir dir(libraryPath());
         if (!dir.exists()) {
@@ -104,6 +105,7 @@ private:
     QList<ModelItem *> remote_items;
     int remote_items_max = 10;
 
+    ModelItem * currRemote;
     QTimer * timer;
     QTimer remoteTimer;
     QMutex saveBlock;
