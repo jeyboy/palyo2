@@ -194,6 +194,7 @@ bool View::execItem(ModelItem * item, bool paused) {
 
 //TODO: change on QModelIndex deletion
 void View::removeItem(ModelItem * item) {
+    Library::instance() -> removeRemoteItem(item);
     item = model -> removeCandidate(item);
     QModelIndex modelIndex = model -> index(item);
     QString delPath = item -> fullPath();

@@ -12,6 +12,15 @@ Library *Library::instance() {
 
 //QFutureWatcher
 
+void Library::removeRemoteItem(ModelItem * item) {
+    if (item == currRemote) {
+        currRemote = 0;
+    } else {
+        remote_items.removeAll(item);
+        remote_collations.take(item);
+    }
+}
+
 void Library::initItem(ModelItem * item, const QObject * caller, const char * slot) {
     QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
     connect(initiator, SIGNAL(finished()), caller, slot);
@@ -86,19 +95,22 @@ void Library::restoreItemState(ModelItem * item) {
 
 void Library::startRemoteInfoProc() {
     if (!remote_items.isEmpty()) {
-        ModelItem * item = remote_items.takeLast();
-        FuncContainer func = remote_collations.take(item);
-        if (!item -> hasInfo()) {
+        currRemote = remote_items.takeLast();
+        FuncContainer func = remote_collations.take(currRemote);
+        if (!currRemote -> hasInfo()) {
             QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
             connect(initiator, SIGNAL(finished()), func.obj, func.slot);
-            initiator -> setFuture(QtConcurrent::run(this, &Library::procRemoteInfo, item));
+            initiator -> setFuture(QtConcurrent::run(this, &Library::procRemoteInfo, currRemote));
         }
     }
 }
 
 ModelItem * Library::procRemoteInfo(ModelItem * item) {
+    if (currRemote == 0) return 0;
     QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> toUrl().toString());
+    if (currRemote == 0) return 0;
     item -> setDuration(info.value("duration"));
+    if (currRemote == 0) return 0;
     item -> setInfo(info.value("info"));
 
 //    TODO: get genre

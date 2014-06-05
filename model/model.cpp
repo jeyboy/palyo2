@@ -279,7 +279,8 @@ void Model::clearAll(bool refresh) {
 void Model::libraryResponse() {
     QFutureWatcher<ModelItem *> * obj = (QFutureWatcher<ModelItem *> *)sender();
 
-    refreshItem(obj -> result());
+    if (obj -> result() != 0)
+        refreshItem(obj -> result());
 
     obj -> deleteLater();
 }

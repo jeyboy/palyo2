@@ -41,13 +41,12 @@ void ToolbarButton::dragEnterEvent(QDragEnterEvent *event) {
 
 void ToolbarButton::dropEvent(QDropEvent *event) {
     if (event -> mimeData() -> hasUrls()) {
+        event -> accept();
         View * view = (View *)event -> source();
 
         if (!QString(view -> metaObject() -> className()).endsWith("View"))
             qDebug() << "Out request";
 
         view -> downloadSelected(path, true);
-
-        event -> accept();
     } else { event -> ignore(); }
 }
