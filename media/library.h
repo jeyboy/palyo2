@@ -32,6 +32,7 @@ public:
         }
     }
 
+    void clearRemote();
     void removeRemoteItem(ModelItem * item);
     void initItem(ModelItem * item, const QObject * caller, const char * slot);
     bool addItem(ModelItem * item, int state);

@@ -1,4 +1,5 @@
 #include "vk_model.h"
+#include "media/library.h"
 #include "misc/func_container.h"
 #include <QDebug>
 
@@ -27,6 +28,7 @@ QString VkModel::getTabUid() const {
 void VkModel::refresh() {
     emit showSpinner();
     clearAll();
+    Library::instance() -> clearRemote();
 //    VkApi::instance() -> clearData();
     QApplication::processEvents();
 

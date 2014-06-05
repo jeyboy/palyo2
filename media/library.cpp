@@ -12,6 +12,12 @@ Library *Library::instance() {
 
 //QFutureWatcher
 
+void Library::clearRemote() {
+    currRemote = 0;
+    remote_items.clear();
+    remote_collations.clear();
+}
+
 void Library::removeRemoteItem(ModelItem * item) {
     if (item == currRemote) {
         currRemote = 0;
