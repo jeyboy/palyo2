@@ -113,11 +113,6 @@ void View::proceedPrev() {
     if (!item.isValid()) return;
     item = prevItem(item);
     execItem(model -> getItem(item));
-
-//    ModelItem * item = model -> getItem(activeItem(false));
-//    if (item == 0) return;
-//    item = model -> prevItem(item);
-//    execItem(item);
 }
 
 void View::proceedNext() {
@@ -125,11 +120,6 @@ void View::proceedNext() {
     if (!item.isValid()) return;
     item = nextItem(item);
     execItem(model -> getItem(item));
-
-//    ModelItem * item = model -> getItem(activeItem());
-//    if (item == 0) return;
-//    item = model -> nextItem(item);
-//    execItem(item);
 }
 
 void View::deleteCurrentProceedNext() {
@@ -144,20 +134,6 @@ void View::deleteCurrentProceedNext() {
     }
 
     execItem(model -> getItem(item));
-
-
-//    ModelItem * item = model -> getItem(activeItem());
-//    if (item == 0) return;
-
-//    item = model -> nextItem(item);
-
-//    if (Player::instance() -> currentPlaylist() == this) {
-//        if (Player::instance() -> playedItem()) {
-//            removeItem(Player::instance() -> playedItem());
-//        }
-//    }
-
-//    execItem(item);
 }
 
 bool View::isRemoveFileWithItem() { return settings["d"] == 1; }
@@ -216,6 +192,7 @@ bool View::execItem(ModelItem * item, bool paused) {
     return false;
 }
 
+//TODO: change on QModelIndex deletion
 void View::removeItem(ModelItem * item) {
     item = model -> removeCandidate(item);
     QModelIndex modelIndex = model -> index(item);
@@ -246,17 +223,6 @@ void View::removeItem(ModelItem * item) {
 
     if (isRemoveFileWithItem()) {
         item -> removePhysicalObject();
-
-//        if (isFolder) {
-////                QDir delDir(delPath);
-////                if (delPath.split('/').length() >= 2) {
-////                    delDir.removeRecursively();
-////                }
-
-
-//        } else {
-//            QFile::remove(delPath);
-//        }
     }
 
     if (model -> removeRow(row, parentIndex)) {
@@ -291,11 +257,12 @@ void View::setHeaderText(QString newText) {
     setRootIndex(rootIndex());
 }
 
+//TODO: change on QModelIndex shuffle
 void View::shuffle() {
     getModel() -> root() -> shuffle();
     getModel() -> refresh();
 }
-
+//TODO: change on QModelIndex
 void View::updateSelection(QModelIndex candidate) {
     if (candidate.isValid()) {
         ModelItem * item = getModel() -> getItem(candidate);
