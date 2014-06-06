@@ -200,8 +200,31 @@ void AudioPlayer::setVolume(int val) {
     emit volumeChanged(val);
 }
 
+float AudioPlayer::getSize() const {
+    return size;
+}
+
 int AudioPlayer::getVolume() const {
     return volumeVal * 10000;
+}
+
+//from 0 to 1
+float AudioPlayer::getRemoteFileDownloadPosition() {
+    if (size == -1) {
+        prevDownloadPos = 0;
+        DWORD len = BASS_StreamGetFilePosition(chan, BASS_FILEPOS_END);
+        size = len + BASS_StreamGetFilePosition(chan, BASS_FILEPOS_START);
+    }
+
+    if (prevDownloadPos != 1) {
+        float currDownloadPos = ((BASS_StreamGetFilePosition(chan, BASS_FILEPOS_DOWNLOAD)) / size);
+        qDebug() << "PREV " << prevDownloadPos << " CURR " << currDownloadPos;
+        if (prevDownloadPos == currDownloadPos && currDownloadPos > 0.8)
+            prevDownloadPos = 1;
+        else
+            prevDownloadPos = currDownloadPos;
+    }
+    return prevDownloadPos;
 }
 
 QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
@@ -243,9 +266,13 @@ void AudioPlayer::play() {
 
             if (mediaUri.isLocalFile()) {
                 openChannel(mediaUri.toLocalFile());
+                size = 0;
+                prevDownloadPos = 1;
             } else {
                 openRemoteChannel(mediaUri.toString());
+                size = -1;
             }
+
 
             if (chan) {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);

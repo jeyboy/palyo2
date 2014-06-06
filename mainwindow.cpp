@@ -311,7 +311,7 @@ QToolBar* MainWindow::createPositionMediaBar() {
     connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
     ptb -> setMinimumHeight(30);
 
-    Slider * slider = new Slider();
+    Slider * slider = new Slider(ptb, true);
     slider -> setStyle(new SliderStyle());
     slider -> setTickInterval(60000);
     slider -> setOrientation(Qt::Horizontal);

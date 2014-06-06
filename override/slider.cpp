@@ -1,7 +1,10 @@
 #include "slider.h"
 #include "qdebug.h"
+#include "media/player.h"
 
-Slider::Slider(QWidget * parent) : QSlider(parent) {
+Slider::Slider(QWidget * parent, bool isPositionSlider) : QSlider(parent) {
+    position_slider = isPositionSlider;
+    fillColor = QColor::fromRgb(0,0,0);
 //    setToolTipDuration(1000);
 
     setStyleSheet(QString(
@@ -117,6 +120,15 @@ void Slider::paintEvent(QPaintEvent * event) {
             flag = Qt::AlignHCenter | Qt::AlignVCenter;
 //            p.drawText(4, rect.top() + 18, "x " + QString::number(multiplyer));
         }
+
+        if (position_slider) {
+            float pos = Player::instance() -> getRemoteFileDownloadPosition();
+            if (Player::instance() -> getSize() > 0 && pos < 1) {
+                p.drawRect(rect.x() - 10, rect.y(), rect.width() - 1, 3);
+                p.fillRect(rect.x() - 10, rect.y(), (rect.width() - 1) * pos, 3, fillColor);
+            }
+        }
+
     } else {
         while(temp < 20) {
             multiplyer++;
@@ -129,6 +141,14 @@ void Slider::paintEvent(QPaintEvent * event) {
 
         for(double pos = step; pos < limit; pos += step) {
             p.drawLine(right - w, pos, right, pos);
+        }
+
+        if (position_slider) {
+            float pos = Player::instance() -> getRemoteFileDownloadPosition();
+            if (Player::instance() -> getSize() > 0 && pos < 1) {
+                p.drawRect(rect.x(), rect.y() - 10, 3, rect.height() - 1);
+                p.fillRect(rect.x(), rect.y() - 10 + rect.height(), 3, -((rect.height() - 1) * pos), fillColor);
+            }
         }
     }
 
