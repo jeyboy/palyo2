@@ -14,6 +14,7 @@ VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(h
     }
 
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
+    connect(VkApi::instance(), SIGNAL(errorReceived(QJsonObject &)), this, SLOT(errorReceived(QJsonObject &)));
 }
 
 VkModel::~VkModel() {
@@ -27,14 +28,13 @@ QString VkModel::getTabUid() const {
 //TODO: update only links
 void VkModel::refresh() {
     emit showSpinner();
-    clearAll();
-    Library::instance() -> clearRemote();
+//    clearAll();
+//    Library::instance() -> clearRemote();
 //    VkApi::instance() -> clearData();
     QApplication::processEvents();
 
     VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
     QApplication::processEvents();
-    emit hideSpinner();
 }
 
 
@@ -58,6 +58,9 @@ void VkModel::refresh() {
 
 
 void VkModel::proceedAudioList(QJsonObject & hash) {
+    QHash<ModelItem*, QString> store;
+    rootItem -> accumulateUids(store);
+
     QJsonArray filesAr, ar = hash.value("albums").toArray();
     QJsonObject iterObj;
 
@@ -74,7 +77,7 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
             if (filesAr.size() > 0) {
                 folder = addFolder(iterObj.value("title").toString(), rootItem, QString::number(iterObj.value("folder_id").toInt()));
 
-                proceedAudioList(filesAr, folder);
+                proceedAudioList(filesAr, folder, store);
             }
         }
     }
@@ -85,7 +88,7 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
     qDebug() << ar;
 
     if (ar.count() > 0) {        
-        proceedAudioList(ar, root());
+        proceedAudioList(ar, root(), store);
     }
 /////////////////////////////////////////////////////////////////////
     ar = hash.value("groups").toArray();
@@ -112,26 +115,48 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
         }
     }
 
+    qDebug() << "STORE LENGTH: " << store.count();
+    foreach(ModelItem * item, store.keys()) {
+        QModelIndex ind = index(item);
+        removeRow(ind.row(), ind.parent());
+    }
+
     TreeModel::refresh();
+    emit hideSpinner();
 }
 
-void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent) {
+void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent, QHash<ModelItem*, QString> & store) {
     QJsonObject fileIterObj;
     VkFile * newItem;
+    QString id, owner;
+    QList<ModelItem *> items;
 
     foreach(QJsonValue obj, ar) {
         fileIterObj = obj.toObject();
-        newItem = new VkFile(
-                    fileIterObj.value("url").toString(),
-                    fileIterObj.value("artist").toString() + " - " + fileIterObj.value("title").toString(),
-                    QString::number(fileIterObj.value("owner_id").toInt()),
-                    QString::number(fileIterObj.value("id").toInt()),
-                    parent,
-                    fileIterObj.value("genre_id").toInt(-1),
-                    Duration::fromSeconds(fileIterObj.value("duration").toInt(0))
-                    );
+        owner = QString::number(fileIterObj.value("owner_id").toInt());
+        id = QString::number(fileIterObj.value("id").toInt());
+        items = store.keys(ModelItem::buildUid(owner, id));
+        if (items.isEmpty()) {
+            newItem = new VkFile(
+                        fileIterObj.value("url").toString(),
+                        fileIterObj.value("artist").toString() + " - " + fileIterObj.value("title").toString(),
+                        owner,
+                        id,
+                        parent,
+                        fileIterObj.value("genre_id").toInt(-1),
+                        Duration::fromSeconds(fileIterObj.value("duration").toInt(0))
+                        );
 
-        appendRow(newItem -> toModelItem());
+            appendRow(newItem -> toModelItem());
+            qDebug() << "NEW ITEM " << newItem -> data(0);
+        } else {
+            foreach(ModelItem * item, items) {
+//                store.remove(item);
+                item -> setPath(fileIterObj.value("url").toString());
+                item -> setGenre(fileIterObj.value("genre_id").toInt(-1));
+            }
+            store.remove(items.first());
+        }
     }
 }
 
@@ -148,4 +173,9 @@ void VkModel::proceedAudioListUpdate(QJsonObject & obj, QHash<ModelItem *, QStri
         item = collation.key(uid);
         item -> setPath(iterObj.value("url").toString());
     }
+}
+
+void VkModel::errorReceived(QJsonObject & obj) {
+    qDebug() << "!!!!!!!!!!! Some shit happened :( " << obj;
+    emit hideSpinner();
 }
