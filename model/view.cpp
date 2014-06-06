@@ -58,6 +58,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     connect(model, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
     connect(model, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
     connect(model, SIGNAL(updated()), this, SLOT(modelUpdate()));
+    connect(model, SIGNAL(showMessage(QString)), this, SLOT(showMessage(QString)));
 
     connect(Download::instance(), SIGNAL(slotChanged(QString)), this, SLOT(setHeaderText(QString)));
 
@@ -302,6 +303,10 @@ void View::stopRoutine() {
 void View::setHeaderText(QString newText) {
     model -> root() -> setData(0, newText);
     setRootIndex(rootIndex());
+}
+
+void View::showMessage(QString text) {
+    QMessageBox::warning(this, "Bla bla bla", text);
 }
 
 void View::shuffle() {

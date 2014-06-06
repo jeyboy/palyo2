@@ -228,13 +228,20 @@ void VkApi::audioListRequest() {
 
     QByteArray ar = reply -> readAll();
     QJsonObject doc = responseToJson(ar);
+    FuncContainer func = responses.take(reply);
 
     if (doc.contains("error")) {
         qDebug() << ar;
-        emit errorReceived(doc);
+
+        QJsonObject error = doc.value("error").toObject();
+        int err_code = error.value("error_code").toInt();
+        QString err_msg = error.value("error_msg").toString();
+
+        connect(this, SIGNAL(errorReceived(int,QString&)), func.obj, SLOT(errorReceived(int,QString&)));
+        emit errorReceived(err_code, err_msg);
+        disconnect(this, SIGNAL(errorReceived(int,QString&)), func.obj, SLOT(errorReceived(int,QString&)));
     } else {
         doc = doc.value("response").toObject();
-        FuncContainer func = responses.take(reply);
         connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
         emit audioListReceived(doc);
         disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
@@ -249,12 +256,19 @@ void VkApi::updateAudioListRequest() {
 
     qDebug() << reply -> readAll();
     QJsonObject doc = responseToJson(reply -> readAll());
+    FuncContainer func = responses.take(reply);
 
     if (doc.contains("error")) {
         qDebug() << reply -> readAll();
-        emit errorReceived(doc);
+
+        QJsonObject error = doc.value("error").toObject();
+        int err_code = error.value("error_code").toInt();
+        QString err_msg = error.value("error_msg").toString();
+
+        connect(this, SIGNAL(errorReceived(int,QString&)), func.obj, SLOT(errorReceived(int,QString&)));
+        emit errorReceived(err_code, err_msg);
+        disconnect(this, SIGNAL(errorReceived(int,QString&)), func.obj, SLOT(errorReceived(int,QString&)));
     } else {
-        FuncContainer func = responses.take(reply);
         QHash<ModelItem *, QString> collation = collations.take(reply);
         connect(this, SIGNAL(audioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &)), func.obj, func.slot);
         emit audioListUpdate(doc, collation);
