@@ -65,6 +65,8 @@ public:
     bool isStoped() const;
 
 signals:
+    void remoteUnprocessed();
+
     void volumeChanged(int);
     void playbackEnded();
     void stateChanged(MediaState);

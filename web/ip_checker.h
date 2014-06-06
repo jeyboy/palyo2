@@ -27,6 +27,7 @@ public:
 
 protected slots:
     void ipResponse();
+    void ipChecking();
 
 signals:
     void ipChanged();
@@ -42,8 +43,10 @@ protected:
         inProgress = false;
         netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
 
-        if (!initialized || (initialized && !hasIp()))
-            initIp();
+        ipChecking();
+
+        QObject::connect(&checkTimer, SIGNAL(timeout()), this, SLOT(ipChecking()));
+        checkTimer.start(60000); // every 1 minute
     }
 
     static IpChecker *self;
@@ -52,6 +55,7 @@ protected:
 
     QString ip;
     bool noInternet, inProgress, initialized;
+    QTimer checkTimer;
 };
 
 #endif // IP_CHECKER_H

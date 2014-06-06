@@ -1,5 +1,6 @@
 #include "vk_model.h"
 #include "media/library.h"
+#include "media/player.h"
 #include "misc/func_container.h"
 #include <QDebug>
 
@@ -14,6 +15,7 @@ VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(h
     }
 
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
+    connect(Player::instance(), SIGNAL(remoteUnprocessed()), this, SLOT(refresh()));
 }
 
 VkModel::~VkModel() {

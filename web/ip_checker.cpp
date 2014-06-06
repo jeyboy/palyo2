@@ -83,3 +83,9 @@ void IpChecker::ipResponse() {
     inProgress = false;
     qDebug() << "IP: " << ip;
 }
+
+void IpChecker::ipChecking() {
+    qDebug() << "CHECK IP";
+    if (!initialized || (initialized && !hasIp()))
+        initIp();
+}

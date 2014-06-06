@@ -116,8 +116,12 @@ int AudioPlayer::openRemoteChannel(QString path) {
 //    BASS_Encode_StartCAFile(channel, 'mp4f', 'aac ', 0, 128000, "output.mp4"); // only macos
 //    BASS_Encode_StartCAFile(channel, 'm4af', 'alac', 0, 0, "output.m4a"); // only macos
 
-    if (!chan)
+    if (!chan) {
+        int status = BASS_ErrorGetCode();
+        if (status == BASS_ERROR_FILEOPEN || status == BASS_ERROR_NONET)
+            emit remoteUnprocessed();
         qDebug() << "Can't play stream" <<  BASS_ErrorGetCode() << path.toUtf8();
+    }
     return chan;
 }
 

@@ -157,6 +157,8 @@ void VkApi::refreshAudioList(FuncContainer responseSlot, QHash<ModelItem *, QStr
     QObject::connect(m_http, SIGNAL(finished()), this, SLOT(updateAudioListRequest()));
 }
 
+
+//TODO: add wall parse
 void VkApi::getAudioList(FuncContainer responseSlot, QString uid) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams();
