@@ -249,9 +249,9 @@ QToolBar* MainWindow::createMediaBar() {
     ptb -> setMinimumHeight(30);
 
 
-    Player::instance() -> setPlayButton(ptb -> addAction(QPixmap(":/play"), "Play"));
-    Player::instance() -> setPauseButton(ptb -> addAction(QPixmap(":/pause"), "Pause"));
-    Player::instance() -> setStopButton(ptb -> addAction(QPixmap(":/stop"), "Stop"));
+    Player::instance() -> setPlayButton(ptb -> addAction(QIcon(":/play"), "Play"));
+    Player::instance() -> setPauseButton(ptb -> addAction(QIcon(":/pause"), "Pause"));
+    Player::instance() -> setStopButton(ptb -> addAction(QIcon(":/stop"), "Stop"));
 
     ptb -> adjustSize();
 
@@ -268,7 +268,7 @@ QToolBar* MainWindow::createVolumeMediaBar() {
 
     connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
 
-    QAction * act = ptb -> addAction(QPixmap(":/mute"), "Mute");
+    QAction * act = ptb -> addAction(QIcon(":/mute"), "Mute");
 
     Player::instance() -> setMuteButton(act);
 
@@ -335,9 +335,9 @@ QToolBar* MainWindow::createAdditionalMediaBar() {
 //    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
     ptb -> setMinimumHeight(30);
 
-    ptb -> addAction(QPixmap(":/prev"), "Prev track", this, SLOT(prevItemTriggered()));
-    Player::instance() -> setLikeButton(ptb -> addAction(QPixmap(":/like"), "Liked"));
-    ptb -> addAction(QPixmap(":/next"), "Next track", this, SLOT(nextItemTriggered()));
+    ptb -> addAction(QIcon(":/prev"), "Prev track", this, SLOT(prevItemTriggered()));
+    Player::instance() -> setLikeButton(ptb -> addAction(QIcon(":/like"), "Liked"));
+    ptb -> addAction(QIcon(":/next"), "Next track", this, SLOT(nextItemTriggered()));
     ptb -> adjustSize();
 
     return ptb;
@@ -350,10 +350,10 @@ QToolBar* MainWindow::createControlToolBar() {
     ptb -> setPalette(pal);
 //    ptb -> setMinimumWidth(75);
 
-    ptb -> addAction(QPixmap(QString(":/add")), "Add new local tab", this, SLOT(showAttTabDialog()));
-    ptb -> addAction(QPixmap(QString(":/add_vk")), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
+    ptb -> addAction(QIcon(QString(":/add")), "Add new local tab", this, SLOT(showAttTabDialog()));
+    ptb -> addAction(QIcon(VkApi::instance() -> isConnected() ? ":/add_vk_on" : ":/add_vk"), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
     ptb -> addSeparator();
-    ptb -> addAction(QPixmap(QString(":/settings")), "Common setting", this, SLOT(showSettingsDialog()));
+    ptb -> addAction(QIcon(QString(":/settings")), "Common setting", this, SLOT(showSettingsDialog()));
     ptb -> adjustSize();
 
     return ptb;
@@ -638,6 +638,7 @@ void MainWindow::showVKTabDialog() {
         WebDialog dialog(this, VkApi::instance(), "VK auth");
         if (dialog.exec() == QDialog::Accepted) {
             tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
+            ((QAction *)sender()) -> setIcon(QIcon(":/add_vk_on"));
         } else {
             QMessageBox::information(this, "VK", VkApi::instance() -> getError());
         }

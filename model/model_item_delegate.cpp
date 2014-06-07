@@ -263,6 +263,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             int top = option.rect.bottom() - 14;
 
             int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
+            if (Settings::instance() -> isCheckboxShow())
+                icon_width += 14;
 
 //            QPoint topLeft(option.rect.x() + 28, top);
             QPoint topLeft(option.rect.x() + icon_width + 14, top);
