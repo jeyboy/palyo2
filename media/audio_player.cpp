@@ -6,8 +6,8 @@
 //QWORD buf=BASS_StreamGetFilePosition(stream, BASS_FILEPOS_BUFFER); // buffer level
 //float progress=buf*100.0/len; // percentage of buffer filled
 
-
-void endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user) {
+//void endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user)
+void endTrackSync(HSYNC, DWORD, DWORD, void * user) {
 //    BASS_ChannelStop(channel);
 //    BASS_ChannelRemoveSync(channel, handle);
     AudioPlayer * player = static_cast<AudioPlayer *>(user);
@@ -118,7 +118,7 @@ int AudioPlayer::openRemoteChannel(QString path) {
 
     if (!chan) {
         int status = BASS_ErrorGetCode();
-        if (status == BASS_ERROR_FILEOPEN || status == BASS_ERROR_NONET)
+        if (status == BASS_ERROR_FILEOPEN)// || status == BASS_ERROR_NONET)
             emit remoteUnprocessed();
         qDebug() << "Can't play stream" <<  BASS_ErrorGetCode() << path.toUtf8();
     }

@@ -21,6 +21,8 @@ public slots:
     void refresh();
 
 protected slots:
+    void proceedWallList(QJsonObject &);
+
     void proceedAudioList(QJsonObject &);
     void proceedAudioList(QJsonArray &, ModelItem *, QHash<ModelItem*, QString> &);
     void proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);

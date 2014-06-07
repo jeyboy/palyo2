@@ -18,7 +18,9 @@ public:
     QString getExpire();
     QString getUserID();
 
-    void getUserAudioList(FuncContainer slot, QString uid = "0");
+    void getWallAttachmentsList(FuncContainer responseSlot, QString uid = "0");
+
+    void getAudioList(FuncContainer responseSlot, QString uid = "0");
     void refreshAudioList(FuncContainer slot, QHash<ModelItem *, QString> uids);
 
     ~VkApi() { }
@@ -48,6 +50,7 @@ protected:
     QString apiVersion() const;
     QUrlQuery methodParams();
     QString getAPIUrl();
+    void errorSend(QJsonObject & doc, const QObject * obj);
 
 //    QUrl getAudioListUrl() const;
 //    QUrl getAudioCountUrl() const;
@@ -66,7 +69,8 @@ protected:
 
 protected slots:
     void audioListRequest();
-    void updateAudioListRequest();
+    void wallRequest();
+
 //    void audioCountRequest();
 //    void audioSearchRequest();
 //    void audioCopyRequest();
@@ -82,8 +86,6 @@ protected slots:
 //    void audioAlbumMoveToRequest();
 
 private:   
-    void getAudioList(FuncContainer responseSlot, QString uid = "0");
-
     VkApi(QJsonObject hash) : WebApi() {
         fromJson(hash);
     }

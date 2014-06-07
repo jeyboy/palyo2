@@ -7,11 +7,11 @@
 ///////////////////////////////////////////////////////////
 
 VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) {
-    qDebug() << "VK UID " << uid;
     tabUid = uid;
 
     if (hash == 0) {
-        VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
+        VkApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
+        VkApi::instance() -> getWallAttachmentsList(FuncContainer(this, SLOT(proceedWallList(QJsonObject &))), tabUid);
     }
 
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
@@ -26,15 +26,14 @@ QString VkModel::getTabUid() const {
     return tabUid;
 }
 
-//TODO: update only links
 void VkModel::refresh() {
     emit showSpinner();
 //    clearAll();
 //    Library::instance() -> clearRemote();
 //    VkApi::instance() -> clearData();
     QApplication::processEvents();
-
-    VkApi::instance() -> getUserAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
+    VkApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
+    VkApi::instance() -> getWallAttachmentsList(FuncContainer(this, SLOT(proceedWallList(QJsonObject &))), tabUid);
     QApplication::processEvents();
 }
 
@@ -57,6 +56,37 @@ void VkModel::refresh() {
 //    emit hideSpinner();
 //}
 
+void VkModel::proceedWallList(QJsonObject & hash) {
+//    hash.value("date").toInt()// top date
+    qDebug() << "DATE " << QDateTime::fromTime_t(hash.value("date").toInt());
+    QJsonArray filesAr, ar = hash.value("posts").toArray();
+    QJsonObject iterObj;
+
+    ModelItem * rootFolder = addFolder("!!!WALL!!!", rootItem);
+
+    QHash<ModelItem*, QString> store;
+    rootFolder -> accumulateUids(store);
+
+    if (ar.count() > 0) {
+        ModelItem * folder;
+        QString title;
+
+        foreach(QJsonValue obj, ar) {
+            iterObj = obj.toObject();
+
+            filesAr = iterObj.value("audios").toArray();
+
+            title = iterObj.value("title").toString();
+            if (title.isEmpty())
+                title = QDateTime::fromTime_t(iterObj.value("date").toInt()).toString();
+
+            folder = addFolder(title, rootFolder);
+            proceedAudioList(filesAr, folder, store);
+            if (folder -> childCount() == 0)
+                removeFolderPrebuild(folder);
+        }
+    }
+}
 
 void VkModel::proceedAudioList(QJsonObject & hash) {
     QHash<ModelItem*, QString> store;
@@ -137,6 +167,9 @@ void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent, QHash<ModelI
 
     foreach(QJsonValue obj, ar) {
         fileIterObj = obj.toObject();
+
+        if (fileIterObj.isEmpty()) continue;
+
         owner = QString::number(fileIterObj.value("owner_id").toInt());
         id = QString::number(fileIterObj.value("id").toInt());
         items = store.keys(ModelItem::buildUid(owner, id));
