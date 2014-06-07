@@ -41,6 +41,8 @@ public:
     void fromJson(QJsonObject hash);
     QJsonObject toJson();
 
+    bool isConnected() const;
+
 signals:
     void audioListReceived(QJsonObject &);
     void audioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);

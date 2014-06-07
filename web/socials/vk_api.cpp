@@ -91,6 +91,10 @@ QJsonObject VkApi::toJson() {
     return root;
 }
 
+bool VkApi::isConnected() const {
+    return !token.isEmpty() && !user_id.isEmpty();
+}
+
 ///////////////////////////////////////////////////////////
 /// LINKS
 ///////////////////////////////////////////////////////////

@@ -544,7 +544,7 @@ void MainWindow::panelHighlight(QAction *action) {
         highlighted = action -> parentWidget();
         highlighted -> setStyleSheet(
                     "QToolBar {"
-                      "border: 2px solid red;"
+                      "border: 2px dashed red;"
                     "}"
                    );
     }
@@ -632,11 +632,15 @@ void MainWindow::showVKRelTabDialog() {
 }
 
 void MainWindow::showVKTabDialog() {
-    WebDialog dialog(this, VkApi::instance(), "VK auth");
-    if (dialog.exec() == QDialog::Accepted) {
+    if (VkApi::instance() -> isConnected()) {
         tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
     } else {
-        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+        WebDialog dialog(this, VkApi::instance(), "VK auth");
+        if (dialog.exec() == QDialog::Accepted) {
+            tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
+        } else {
+            QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+        }
     }
 }
 

@@ -22,6 +22,8 @@ public:
     virtual QString authUrl() const = 0;
     virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
+    virtual bool isConnected() const { return false; }
+
     CustomNetworkAccessManager * manager() const;
 
 protected:
