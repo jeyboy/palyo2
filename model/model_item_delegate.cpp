@@ -211,8 +211,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         int background_state = index.data(Qt::UserRole).toInt();
         QVariant checkable = index.data(Qt::CheckStateRole);
 
-        QPainterPath roundRect = roundRectPath(option2.rect, !checkable.isValid() ? 2 : 18);
-
         bool elem_state = option.state & (QStyle::State_Selected);
         bool is_folder = false;
 
@@ -242,6 +240,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
                 break;
         }
 
+        QPainterPath roundRect = roundRectPath(option2.rect, !checkable.isValid() ? 2 : 18);
         painter -> fillPath(roundRect, fill_color);
 
         painter -> setPen(option.palette.foreground().color());
@@ -285,8 +284,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         if (!checkable.isValid())
             option2.rect.moveLeft(option2.rect.left() + 4);
 
-        if (is_folder)
+        if (is_folder) {
             option2.textElideMode = Qt::ElideLeft;
+        }
 
         QStyledItemDelegate::paint(painter, option2, index);
 }

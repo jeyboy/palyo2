@@ -151,7 +151,7 @@ void VkApi::getWallAttachmentsList(FuncContainer responseSlot, QString uid) {
                            "  var curr = post_items.pop();" +
                            "  var audios = curr.attachments@.audio %2b curr.copy_history[0].attachments@.audio %2b curr.copy_history[1].attachments@.audio;" +
                            "  if (audios.length > 0) {" +
-                           "    response.push({title: curr.text, date: curr.date, audios: audios});" +
+                           "    response.unshift({title: curr.text, date: curr.date, audios: audios});" +
                            " }" +
                            "}" +
 

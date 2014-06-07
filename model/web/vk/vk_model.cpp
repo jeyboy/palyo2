@@ -163,7 +163,7 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
     emit hideSpinner();
 
     if (count == 0)
-        emit showMessage(QString("This object did not have any items"));
+        emit showMessage(QString("This object did not have any items. Use wall parse from context menu"));
 }
 
 void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent, QHash<ModelItem*, QString> & store) {
@@ -221,8 +221,8 @@ void VkModel::proceedAudioListUpdate(QJsonObject & obj, QHash<ModelItem *, QStri
 
 void VkModel::errorReceived(int code, QString & msg) {
     if (code != 13)
-//        emit showMessage("This object did not have any items");
-//    else
+        emit showMessage("This object did not have any items. Use wall parse from context menu");
+    else
         emit showMessage("!!!!!!!!!!! Some shit happened :( " + msg);
     emit hideSpinner();
 }
