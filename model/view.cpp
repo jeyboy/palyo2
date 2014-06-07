@@ -364,6 +364,12 @@ void View::showContextMenu(const QPoint& pnt) {
     connect(openAct, SIGNAL(triggered(bool)), model, SLOT(refresh()));
     actions.append(openAct);
 
+    if (QString(metaObject() -> className()) == QString("VkView")) {
+        openAct = new QAction(QIcon(":/refresh"), "Parse/Refresh Wall", this);
+        connect(openAct, SIGNAL(triggered(bool)), model, SLOT(refreshWall()));
+        actions.append(openAct);
+    }
+
     openAct = new QAction(QIcon(":/shuffle"), "Shuffle", this);
     connect(openAct, SIGNAL(triggered(bool)), this, SLOT(shuffle()));
     actions.append(openAct);

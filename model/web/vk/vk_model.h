@@ -19,6 +19,7 @@ public:
     QString getTabUid() const;
 public slots:
     void refresh();
+    void refreshWall();
 
 protected slots:
     void proceedWallList(QJsonObject &);

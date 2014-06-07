@@ -11,7 +11,6 @@ VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(h
 
     if (hash == 0) {
         VkApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
-        VkApi::instance() -> getWallAttachmentsList(FuncContainer(this, SLOT(proceedWallList(QJsonObject &))), tabUid);
     }
 
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
@@ -33,10 +32,15 @@ void VkModel::refresh() {
 //    VkApi::instance() -> clearData();
     QApplication::processEvents();
     VkApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
-    VkApi::instance() -> getWallAttachmentsList(FuncContainer(this, SLOT(proceedWallList(QJsonObject &))), tabUid);
     QApplication::processEvents();
 }
 
+void VkModel::refreshWall() {
+    emit showSpinner();
+    QApplication::processEvents();
+    VkApi::instance() -> getWallAttachmentsList(FuncContainer(this, SLOT(proceedWallList(QJsonObject &))), tabUid);
+    QApplication::processEvents();
+}
 
 //void VkModel::refresh() {
 //    emit showSpinner();
@@ -73,7 +77,6 @@ void VkModel::proceedWallList(QJsonObject & hash) {
 
         foreach(QJsonValue obj, ar) {
             iterObj = obj.toObject();
-
             filesAr = iterObj.value("audios").toArray();
 
             title = iterObj.value("title").toString();
@@ -86,6 +89,10 @@ void VkModel::proceedWallList(QJsonObject & hash) {
                 removeFolderPrebuild(folder);
         }
     }
+
+    TreeModel::refresh();
+    emit expandNeeded(index(rootFolder));
+    emit hideSpinner();
 }
 
 void VkModel::proceedAudioList(QJsonObject & hash) {
@@ -213,9 +220,9 @@ void VkModel::proceedAudioListUpdate(QJsonObject & obj, QHash<ModelItem *, QStri
 }
 
 void VkModel::errorReceived(int code, QString & msg) {
-    if (code == 13)
-        emit showMessage("This object did not have any items");
-    else
+    if (code != 13)
+//        emit showMessage("This object did not have any items");
+//    else
         emit showMessage("!!!!!!!!!!! Some shit happened :( " + msg);
     emit hideSpinner();
 }
