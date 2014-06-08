@@ -17,7 +17,7 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *);
-//    void mouseMoveEvent(QMouseEvent *);
+    void mouseMoveEvent(QMouseEvent *);
 private:
     bool position_slider;
     QColor fillColor;

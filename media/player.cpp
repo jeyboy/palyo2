@@ -132,6 +132,7 @@ void Player::setTrackBar(QSlider * trackBar) {
 
     connect(this, SIGNAL(positionChanged(int)), this, SLOT(setTrackbarValue(int)));
     connect(this, SIGNAL(durationChanged(int)), this, SLOT(setTrackbarMax(int)));
+
     connect(trackBar, SIGNAL(valueChanged(int)), this, SLOT(changeTrackbarValue(int)));
 }
 

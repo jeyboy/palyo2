@@ -308,7 +308,6 @@ QToolBar* MainWindow::createPositionMediaBar() {
     slider -> setTickInterval(60000);
     slider -> setOrientation(Qt::Horizontal);
     slider -> setMinimumSize(30, 30);
-//    slider -> setTracking(false); // send change value only on release slider
 
     Player::instance() -> setTrackBar(slider);
 
