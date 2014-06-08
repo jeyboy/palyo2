@@ -283,7 +283,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     selectedItemTextColor = selectedItemTextColorVar.isValid() ? selectedItemTextColorVar.value<QColor>() : QColor(255, 255, 255);
 
     itemInfoFontName = settingsObj.value("item_info_font_name").toString("Arial");
-    itemInfoFontSize = settingsObj.value("item_info_font_size").toInt(9);
+    itemInfoFontSize = settingsObj.value("item_info_font_size").toInt(7);
 
     itemTextColorVar = settingsObj.value("item_info_text_color").toVariant();
     itemInfoColor = itemTextColorVar.isValid() ? itemTextColorVar.value<QColor>() : QColor(0, 0, 0);
