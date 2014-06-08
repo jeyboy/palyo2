@@ -171,6 +171,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ///////////////////////////////////////////////////////////
 
     tabber = new Tabber(ui -> tabber);
+    ui -> tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
     registrateTray();
 
     QApplication::setWindowIcon(QIcon(":icon"));
@@ -377,8 +378,9 @@ QToolBar* MainWindow::createToolBar(QString name) {
 }
 
 QToolButton * MainWindow::createVkButton(QToolButton * vkButton) {
-    if (vkButton == 0)
+    if (vkButton == 0) {
         vkButton = new QToolButton(this);
+    }
     else
         disconnect(vkButton, SIGNAL(clicked()), this, SLOT(showVKTabDialog()));
 
@@ -638,6 +640,8 @@ void MainWindow::showSettingsDialog() {
     if (dialog.exec() == QDialog::Accepted) {
         if (dialog.isIconSizeChanged())
             tabber -> updateIconSize(dialog.isBigIcon());
+
+        ui -> tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
     }
 }
 

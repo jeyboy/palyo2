@@ -125,6 +125,84 @@ void Settings::setDownloadPath(QString newPath) {
     downloadPath = newPath;
 }
 
+
+
+
+
+
+QString Settings::getItemFontName() {
+    return itemFontName;
+}
+
+void Settings::setItemFontName(QString newFontName) {
+    itemFontName = newFontName;
+}
+
+int Settings::getItemFontSize() {
+    return itemFontSize;
+}
+
+void Settings::setItemFontSize(int newFontSize) {
+    itemFontSize = newFontSize;
+}
+
+QColor Settings::getItemTextColor() {
+    return itemTextColor;
+}
+
+void Settings::setItemTextColor(QColor newColor) {
+    itemTextColor = newColor;
+}
+
+QColor Settings::getSelectedItemTextColor() {
+    return selectedItemTextColor;
+}
+
+void Settings::setSelectedItemTextColor(QColor newColor) {
+    selectedItemTextColor = newColor;
+}
+
+QString Settings::getItemInfoFontName() {
+    return itemInfoFontName;
+}
+
+void Settings::setItemInfoFontName(QString newFontName) {
+    itemInfoFontName = newFontName;
+}
+
+int Settings::getItemInfoFontSize() {
+    return itemInfoFontSize;
+}
+
+void Settings::setItemInfoFontSize(int newFontSize) {
+    itemInfoFontSize = newFontSize;
+}
+
+QColor Settings::getItemInfoTextColor() {
+    return itemInfoColor;
+}
+
+void Settings::setItemInfoTextColor(QColor newColor) {
+    itemInfoColor = newColor;
+}
+
+QColor Settings::getSelectedItemInfoTextColor() {
+    return selectedItemInfoColor;
+}
+
+void Settings::setSelectedItemInfoTextColor(QColor newColor) {
+    selectedItemInfoColor = newColor;
+}
+
+int Settings::getTabPosition() {
+    return tabPosition;
+}
+void Settings::setTabPosition(int newPositionsType) {
+    tabPosition = newPositionsType;
+}
+
+
+
 QList<HotkeyModelItem *> * Settings::getHotKeys() const {
     QVector<QVariant> itemVals;
     QList<HotkeyModelItem *> * ret = new QList<HotkeyModelItem *>();
@@ -194,6 +272,26 @@ void Settings::fromJson(QJsonObject settingsObj) {
 
     QVariant folderColor1Var = settingsObj.value("folder_color1").toVariant();
     folderColor1 = folderColor1Var.isValid() ? folderColor1Var.value<QColor>() : QColor(128, 128, 128, 92);
+
+    itemFontName = settingsObj.value("item_font_name").toString("Arial");
+    itemFontSize = settingsObj.value("item_font_size").toInt(9);
+
+    QVariant itemTextColorVar = settingsObj.value("item_text_color").toVariant();
+    itemTextColor = itemTextColorVar.isValid() ? itemTextColorVar.value<QColor>() : QColor(0, 0, 0);
+
+    QVariant selectedItemTextColorVar = settingsObj.value("selected_item_text_color").toVariant();
+    selectedItemTextColor = selectedItemTextColorVar.isValid() ? selectedItemTextColorVar.value<QColor>() : QColor(255, 255, 255);
+
+    itemInfoFontName = settingsObj.value("item_info_font_name").toString("Arial");
+    itemInfoFontSize = settingsObj.value("item_info_font_size").toInt(9);
+
+    itemTextColorVar = settingsObj.value("item_info_text_color").toVariant();
+    itemInfoColor = itemTextColorVar.isValid() ? itemTextColorVar.value<QColor>() : QColor(0, 0, 0);
+
+    selectedItemTextColorVar = settingsObj.value("selected_item_info_text_color").toVariant();
+    selectedItemInfoColor = selectedItemTextColorVar.isValid() ? selectedItemTextColorVar.value<QColor>() : QColor(255, 255, 255);
+
+    tabPosition = settingsObj.value("tab_position").toInt(0);
 }
 
 QJsonObject Settings::toJson() {
@@ -212,5 +310,26 @@ QJsonObject Settings::toJson() {
     ret.insert("played_color1", QJsonValue::fromVariant(playedColor1));
     ret.insert("folder_color1", QJsonValue::fromVariant(folderColor1));
 
+
+    ret.insert("item_font_name", QJsonValue::fromVariant(itemFontName));
+    ret.insert("item_font_size", QJsonValue::fromVariant(itemFontSize));
+    ret.insert("item_text_color", QJsonValue::fromVariant(itemTextColor));
+    ret.insert("selected_item_text_color", QJsonValue::fromVariant(selectedItemTextColor));
+
+    ret.insert("item_info_font_name", QJsonValue::fromVariant(itemInfoFontName));
+    ret.insert("item_info_font_size", QJsonValue::fromVariant(itemInfoFontSize));
+    ret.insert("item_info_text_color", QJsonValue::fromVariant(itemInfoColor));
+    ret.insert("selected_item_info_text_color", QJsonValue::fromVariant(selectedItemInfoColor));
+
+    ret.insert("tab_position", QJsonValue::fromVariant(tabPosition));
+
     return ret;
+}
+
+QFont Settings::getItemFont() {
+    return QFont(getItemFontName(), getItemFontSize(), QFont::Normal);
+}
+
+QFont Settings::getItemInfoFont() {
+    return QFont(getItemInfoFontName(), getItemInfoFontSize(), QFont::Bold);
 }

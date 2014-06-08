@@ -8,6 +8,7 @@
 #include <QLinearGradient>
 #include <QBrush>
 #include <QApplication>
+#include <QFont>
 
 #include "model/hotkey_model/hotkey_model_item.h"
 #include "misc/hotkey_types.h"
@@ -64,11 +65,42 @@ public:
     QString getDownloadPath() const;
     void setDownloadPath(QString newPath);
 
+
+    QString getItemFontName();
+    void setItemFontName(QString newFontName);
+
+    int getItemFontSize();
+    void setItemFontSize(int newFontSize);
+
+    QColor getItemTextColor();
+    void setItemTextColor(QColor newColor);
+
+    QColor getSelectedItemTextColor();
+    void setSelectedItemTextColor(QColor newColor);
+
+    QString getItemInfoFontName();
+    void setItemInfoFontName(QString newFontName);
+
+    int getItemInfoFontSize();
+    void setItemInfoFontSize(int newFontSize);
+
+    QColor getItemInfoTextColor();
+    void setItemInfoTextColor(QColor newColor);
+
+    QColor getSelectedItemInfoTextColor();
+    void setSelectedItemInfoTextColor(QColor newColor);
+
+    int getTabPosition();
+    void setTabPosition(int newPositionsType);
+
     QList<HotkeyModelItem *> * getHotKeys() const;
     void setHotKeys(QList<HotkeyModelItem *>);
 
     void fromJson(QJsonObject settingsObj = QJsonObject());
     QJsonObject toJson();
+
+    QFont getItemFont();
+    QFont getItemInfoFont();
 
 private:
     Settings() {
@@ -100,6 +132,18 @@ private:
     QHash<int, QString> humanizeHotkeyText;
 
     QColor defaultColor1, listenedColor1, likedColor1, playedColor1, folderColor1;
+
+    int tabPosition;
+
+    QString itemFontName;
+    int itemFontSize;
+    QColor itemTextColor;
+    QColor selectedItemTextColor;
+
+    QString itemInfoFontName;
+    int itemInfoFontSize;
+    QColor itemInfoColor;
+    QColor selectedItemInfoColor;
 };
 
 #endif // SETTINGS_H

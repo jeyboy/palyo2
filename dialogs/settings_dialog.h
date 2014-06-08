@@ -45,10 +45,21 @@ private slots:
 
     void on_folderColorButton_clicked();
 
+    void on_defaultItemTextColorButton_clicked();
+
+    void on_selectedItemTextColorButton_clicked();
+
+    void on_defaultItemInfoTextColorButton_clicked();
+
+    void on_selectedItemInfoTextColorButton_clicked();
+
 private:
+    bool execColorDialog(QColor & color);
+
     Ui::SettingsDialog *ui;
     bool iconSizeChanged;
     QColor defaultColor, listenedColor, likedColor, playedColor, folderColor;
+    QColor itemTextColor, selectedItemTextColor, itemInfoTextColor, selectedItemInfoTextColor;
 };
 
 

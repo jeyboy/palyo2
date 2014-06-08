@@ -248,7 +248,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         painter -> drawPath(roundRect);
 
         if(elem_state) {
-            option2.palette.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
+            option2.palette.setColor(QPalette::Text, Settings::instance() -> getSelectedItemTextColor());
+        } else {
+            option2.palette.setColor(QPalette::Text, Settings::instance() -> getItemTextColor());
         }
 
         if (Settings::instance() -> isShowInfo() && !is_folder) {
@@ -277,6 +279,13 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             QRect rectTimeText(topTLeft, bottomTRight);
 
             painter -> setPen(option2.palette.color(QPalette::Text));
+
+            if(elem_state) {
+                painter -> setPen(Settings::instance() -> getSelectedItemInfoTextColor());
+            } else {
+                painter -> setPen(Settings::instance() -> getItemInfoTextColor());
+            }
+
             painter -> drawText(rectText, Qt::AlignLeft, s);
             painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
         }
