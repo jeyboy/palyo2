@@ -13,13 +13,14 @@
 class Slider : public QSlider {
     Q_OBJECT
 public:
-    Slider(QWidget * parent = 0);
+    Slider(QWidget * parent = 0, bool isPositionSlider = false);
 
 protected:
     void paintEvent(QPaintEvent *);
 //    void mouseMoveEvent(QMouseEvent *);
-public:
-
+private:
+    bool position_slider;
+    QColor fillColor;
 };
 
 #endif // SLIDER_H

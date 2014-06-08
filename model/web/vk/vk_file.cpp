@@ -33,7 +33,7 @@ bool VkFile::isExist() const {
 bool VkFile::isRemote() const { return true; }
 
 QString VkFile::toUID() {
-    return owner_uid + "_" + uid;
+    return buildUid(owner_uid, uid);
 }
 
 QUrl VkFile::toUrl() {

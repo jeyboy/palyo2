@@ -6,8 +6,8 @@
 //QWORD buf=BASS_StreamGetFilePosition(stream, BASS_FILEPOS_BUFFER); // buffer level
 //float progress=buf*100.0/len; // percentage of buffer filled
 
-
-void endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user) {
+//void endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user)
+void endTrackSync(HSYNC, DWORD, DWORD, void * user) {
 //    BASS_ChannelStop(channel);
 //    BASS_ChannelRemoveSync(channel, handle);
     AudioPlayer * player = static_cast<AudioPlayer *>(user);
@@ -116,8 +116,12 @@ int AudioPlayer::openRemoteChannel(QString path) {
 //    BASS_Encode_StartCAFile(channel, 'mp4f', 'aac ', 0, 128000, "output.mp4"); // only macos
 //    BASS_Encode_StartCAFile(channel, 'm4af', 'alac', 0, 0, "output.m4a"); // only macos
 
-    if (!chan)
+    if (!chan) {
+        int status = BASS_ErrorGetCode();
+        if (status == BASS_ERROR_FILEOPEN)// || status == BASS_ERROR_NONET)
+            emit remoteUnprocessed();
         qDebug() << "Can't play stream" <<  BASS_ErrorGetCode() << path.toUtf8();
+    }
     return chan;
 }
 
@@ -196,8 +200,31 @@ void AudioPlayer::setVolume(int val) {
     emit volumeChanged(val);
 }
 
+float AudioPlayer::getSize() const {
+    return size;
+}
+
 int AudioPlayer::getVolume() const {
     return volumeVal * 10000;
+}
+
+//from 0 to 1
+float AudioPlayer::getRemoteFileDownloadPosition() {
+    if (size == -1) {
+        prevDownloadPos = 0;
+        DWORD len = BASS_StreamGetFilePosition(chan, BASS_FILEPOS_END);
+        size = len + BASS_StreamGetFilePosition(chan, BASS_FILEPOS_START);
+    }
+
+    if (prevDownloadPos != 1) {
+        float currDownloadPos = ((BASS_StreamGetFilePosition(chan, BASS_FILEPOS_DOWNLOAD)) / size);
+        qDebug() << "PREV " << prevDownloadPos << " CURR " << currDownloadPos;
+        if (prevDownloadPos == currDownloadPos && currDownloadPos > 0.8)
+            prevDownloadPos = 1;
+        else
+            prevDownloadPos = currDownloadPos;
+    }
+    return prevDownloadPos;
 }
 
 QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
@@ -239,9 +266,13 @@ void AudioPlayer::play() {
 
             if (mediaUri.isLocalFile()) {
                 openChannel(mediaUri.toLocalFile());
+                size = 0;
+                prevDownloadPos = 1;
             } else {
                 openRemoteChannel(mediaUri.toString());
+                size = -1;
             }
+
 
             if (chan) {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);

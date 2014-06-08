@@ -211,8 +211,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         int background_state = index.data(Qt::UserRole).toInt();
         QVariant checkable = index.data(Qt::CheckStateRole);
 
-        QPainterPath roundRect = roundRectPath(option2.rect, !checkable.isValid() ? 2 : 18);
-
         bool elem_state = option.state & (QStyle::State_Selected);
         bool is_folder = false;
 
@@ -242,6 +240,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
                 break;
         }
 
+        QPainterPath roundRect = roundRectPath(option2.rect, !checkable.isValid() ? 2 : 18);
         painter -> fillPath(roundRect, fill_color);
 
         painter -> setPen(option.palette.foreground().color());
@@ -249,7 +248,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         painter -> drawPath(roundRect);
 
         if(elem_state) {
-            option2.palette.setColor(QPalette::Text, QColor::fromRgb(255, 255, 255));
+            option2.palette.setColor(QPalette::Text, Settings::instance() -> getSelectedItemTextColor());
+        } else {
+            option2.palette.setColor(QPalette::Text, Settings::instance() -> getItemTextColor());
         }
 
         if (Settings::instance() -> isShowInfo() && !is_folder) {
@@ -264,6 +265,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             int top = option.rect.bottom() - 14;
 
             int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
+            if (Settings::instance() -> isCheckboxShow())
+                icon_width += 14;
 
 //            QPoint topLeft(option.rect.x() + 28, top);
             QPoint topLeft(option.rect.x() + icon_width + 14, top);
@@ -276,6 +279,13 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             QRect rectTimeText(topTLeft, bottomTRight);
 
             painter -> setPen(option2.palette.color(QPalette::Text));
+
+            if(elem_state) {
+                painter -> setPen(Settings::instance() -> getSelectedItemInfoTextColor());
+            } else {
+                painter -> setPen(Settings::instance() -> getItemInfoTextColor());
+            }
+
             painter -> drawText(rectText, Qt::AlignLeft, s);
             painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
         }
@@ -285,8 +295,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         if (!checkable.isValid())
             option2.rect.moveLeft(option2.rect.left() + 4);
 
-        if (is_folder)
+        if (is_folder) {
             option2.textElideMode = Qt::ElideLeft;
+        }
 
         QStyledItemDelegate::paint(painter, option2, index);
 }

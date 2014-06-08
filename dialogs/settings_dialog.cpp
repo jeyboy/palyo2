@@ -1,5 +1,6 @@
 #include "settings_dialog.h"
 #include "ui_settings_dialog.h"
+#include <QFontDatabase>
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::SettingsDialog) {
@@ -25,6 +26,25 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
   ui -> useGradientCheck -> setChecked(Settings::instance() -> isUseGradient());
 
+  ui -> itemFontSize -> setValue(Settings::instance() -> getItemFontSize());
+  ui -> itemInfoFontSize -> setValue(Settings::instance() -> getItemInfoFontSize());
+
+  QStringList positions;
+  positions.append("Above");
+  positions.append("Below");
+  positions.append("Left");
+  positions.append("Right");
+
+  ui -> tabPositionSelect -> insertItems(0, positions);
+  ui -> tabPositionSelect -> setCurrentIndex(Settings::instance() -> getTabPosition());
+
+  QFontDatabase fontDatabase;
+
+  ui -> itemFontSelect -> insertItems(0, fontDatabase.families());
+  ui -> itemFontSelect -> setCurrentIndex(fontDatabase.families().indexOf(QRegExp(Settings::instance() -> getItemFontName())));
+  ui -> itemInfoFontSelect -> insertItems(0, fontDatabase.families());
+  ui -> itemInfoFontSelect -> setCurrentIndex(fontDatabase.families().indexOf(QRegExp(Settings::instance() -> getItemInfoFontName())));
+
   defaultColor = Settings::instance() -> getDefaultColor();
   ui -> defaultColorButton -> setStyleSheet("background-color: " + defaultColor.name() + ";");
 
@@ -39,6 +59,19 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
   folderColor = Settings::instance() -> getFolderColor();
   ui -> folderColorButton -> setStyleSheet("background-color: " + folderColor.name() + ";");
+  
+  
+  itemTextColor = Settings::instance() -> getItemTextColor();
+  ui -> defaultItemTextColorButton -> setStyleSheet("background-color: " + itemTextColor.name() + ";");
+
+  selectedItemTextColor = Settings::instance() -> getSelectedItemTextColor();
+  ui -> selectedItemTextColorButton -> setStyleSheet("background-color: " + selectedItemTextColor.name() + ";");
+
+  itemInfoTextColor = Settings::instance() -> getItemInfoTextColor();
+  ui -> defaultItemInfoTextColorButton -> setStyleSheet("background-color: " + itemInfoTextColor.name() + ";");
+
+  selectedItemInfoTextColor = Settings::instance() -> getSelectedItemInfoTextColor();
+  ui -> selectedItemInfoTextColorButton -> setStyleSheet("background-color: " + selectedItemInfoTextColor.name() + ";");
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -89,7 +122,6 @@ void SettingsDialog::registerHotkeys(QWidget * receiver) {
     }
 }
 
-
 void SettingsDialog::on_cancelButton_clicked() {
     reject();
 }
@@ -122,6 +154,20 @@ void SettingsDialog::on_acceptButton_clicked() {
     Settings::instance() -> setPlayedColor(playedColor);
     Settings::instance() -> setFolderColor(folderColor);
 
+    Settings::instance() -> setItemFontName(ui -> itemFontSelect -> currentText());
+    Settings::instance() -> setItemFontSize(ui -> itemFontSize -> value());
+
+    Settings::instance() -> setItemInfoFontName(ui -> itemInfoFontSelect -> currentText());
+    Settings::instance() -> setItemInfoFontSize(ui -> itemInfoFontSize -> value());
+
+    Settings::instance() -> setItemTextColor(itemTextColor);
+    Settings::instance() -> setItemInfoTextColor(itemInfoTextColor);
+
+    Settings::instance() -> setSelectedItemTextColor(selectedItemTextColor);
+    Settings::instance() -> setSelectedItemInfoTextColor(selectedItemInfoTextColor);
+
+    Settings::instance() -> setTabPosition(ui -> tabPositionSelect -> currentIndex());
+
     accept();
 }
 
@@ -143,46 +189,57 @@ bool SettingsDialog::isBigIcon() const {
 
 
 void SettingsDialog::on_defaultColorButton_clicked() {
-    QColorDialog col(this);
-    col.setCurrentColor(defaultColor);
-    if (col.exec() == QColorDialog::Accepted) {
-        defaultColor = col.selectedColor();
+    if (execColorDialog(defaultColor))
         ui -> defaultColorButton -> setStyleSheet("background-color: " + defaultColor.name() + ";");
-    }
 }
 
 void SettingsDialog::on_listenedColorButton_clicked() {
-    QColorDialog col(this);
-    col.setCurrentColor(listenedColor);
-    if (col.exec() == QColorDialog::Accepted) {
-        listenedColor = col.selectedColor();
+    if (execColorDialog(listenedColor))
         ui -> listenedColorButton -> setStyleSheet("background-color: " + listenedColor.name() + ";");
-    }
 }
 
 void SettingsDialog::on_likedColorButton_clicked() {
-    QColorDialog col(this);
-    col.setCurrentColor(likedColor);
-    if (col.exec() == QColorDialog::Accepted) {
-        likedColor = col.selectedColor();
+    if (execColorDialog(likedColor))
         ui -> likedColorButton -> setStyleSheet("background-color: " + likedColor.name() + ";");
-    }
 }
 
 void SettingsDialog::on_playedColorButton_clicked() {
-    QColorDialog col(this);
-    col.setCurrentColor(playedColor);
-    if (col.exec() == QColorDialog::Accepted) {
-        playedColor = col.selectedColor();
+    if (execColorDialog(playedColor))
         ui -> playedColorButton -> setStyleSheet("background-color: " + playedColor.name() + ";");
-    }
 }
 
 void SettingsDialog::on_folderColorButton_clicked() {
-    QColorDialog col(this);
-    col.setCurrentColor(folderColor);
-    if (col.exec() == QColorDialog::Accepted) {
-        folderColor = col.selectedColor();
+    if (execColorDialog(folderColor))
         ui -> folderColorButton -> setStyleSheet("background-color: " + folderColor.name() + ";");
+}
+
+void SettingsDialog::on_defaultItemTextColorButton_clicked() {
+    if (execColorDialog(itemTextColor))
+        ui -> defaultItemTextColorButton -> setStyleSheet("background-color: " + itemTextColor.name() + ";");
+}
+
+void SettingsDialog::on_selectedItemTextColorButton_clicked() {
+    if (execColorDialog(selectedItemTextColor))
+        ui -> selectedItemTextColorButton -> setStyleSheet("background-color: " + selectedItemTextColor.name() + ";");
+}
+
+void SettingsDialog::on_defaultItemInfoTextColorButton_clicked() {
+    if (execColorDialog(itemInfoTextColor))
+        ui -> defaultItemInfoTextColorButton -> setStyleSheet("background-color: " + itemInfoTextColor.name() + ";");
+}
+
+void SettingsDialog::on_selectedItemInfoTextColorButton_clicked() {
+    if (execColorDialog(selectedItemInfoTextColor))
+        ui -> selectedItemInfoTextColorButton -> setStyleSheet("background-color: " + selectedItemInfoTextColor.name() + ";");
+}
+
+bool SettingsDialog::execColorDialog(QColor & color) {
+    QColorDialog col(this);
+    col.setCurrentColor(color);
+    if (col.exec() == QColorDialog::Accepted) {
+        color = col.selectedColor();
+        return true;
     }
+
+    return false;
 }

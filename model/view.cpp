@@ -58,6 +58,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     connect(model, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
     connect(model, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
     connect(model, SIGNAL(updated()), this, SLOT(modelUpdate()));
+    connect(model, SIGNAL(showMessage(QString)), this, SLOT(showMessage(QString)));
 
     connect(Download::instance(), SIGNAL(slotChanged(QString)), this, SLOT(setHeaderText(QString)));
 
@@ -258,6 +259,10 @@ void View::setHeaderText(QString newText) {
     setRootIndex(rootIndex());
 }
 
+void View::showMessage(QString text) {
+    QMessageBox::warning(this, "Bla bla bla", text);
+}
+
 //TODO: change on QModelIndex shuffle
 void View::shuffle() {
     getModel() -> root() -> shuffle();
@@ -313,6 +318,12 @@ void View::showContextMenu(const QPoint& pnt) {
     openAct = new QAction(QIcon(":/refresh"), "Refresh", this);
     connect(openAct, SIGNAL(triggered(bool)), model, SLOT(refresh()));
     actions.append(openAct);
+
+    if (QString(metaObject() -> className()) == QString("VkView")) {
+        openAct = new QAction(QIcon(":/refresh"), "Parse/Refresh Wall", this);
+        connect(openAct, SIGNAL(triggered(bool)), model, SLOT(refreshWall()));
+        actions.append(openAct);
+    }
 
     openAct = new QAction(QIcon(":/shuffle"), "Shuffle", this);
     connect(openAct, SIGNAL(triggered(bool)), this, SLOT(shuffle()));

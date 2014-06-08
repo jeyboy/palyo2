@@ -50,6 +50,8 @@ public:
     int getPosition() const;
     int getDuration() const;
     int getVolume() const;
+    float getSize() const;
+    float getRemoteFileDownloadPosition();
 
     QHash<QString, QString> getRemoteFileInfo(QString uri);
 
@@ -65,6 +67,8 @@ public:
     bool isStoped() const;
 
 signals:
+    void remoteUnprocessed();
+
     void volumeChanged(int);
     void playbackEnded();
     void stateChanged(MediaState);
@@ -104,6 +108,8 @@ private:
 
     int notifyInterval;
     int duration;
+    float size;
+    float prevDownloadPos;
 
     MediaState currentState;
 

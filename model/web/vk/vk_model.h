@@ -19,11 +19,15 @@ public:
     QString getTabUid() const;
 public slots:
     void refresh();
+    void refreshWall();
 
 protected slots:
+    void proceedWallList(QJsonObject &);
+
     void proceedAudioList(QJsonObject &);
-    void proceedAudioList(QJsonArray &, ModelItem *);
+    void proceedAudioList(QJsonArray &, ModelItem *, QHash<ModelItem*, QString> &);
     void proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);
+    void errorReceived(int, QString &);
 protected:
     QString tabUid;
 };

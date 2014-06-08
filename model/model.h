@@ -75,6 +75,7 @@ public:
 signals:
     void itemsCountChanged(int newCount);
     void expandNeeded(const QModelIndex &index) const;
+    void showMessage(QString);
 
     void showSpinner();
     void hideSpinner();

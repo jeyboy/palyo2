@@ -82,6 +82,7 @@ public slots:
     void startRoutine();
     void stopRoutine();
     void setHeaderText(QString);
+    void showMessage(QString);
 
 protected slots:
     void onDoubleClick(const QModelIndex &index);

@@ -81,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
     pal.setColor(QPalette::Button, QColor("#E1E0E0"));
     highlighted = 0;
+    vkToolButton = 0;
 
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
 
@@ -89,7 +90,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     settings = new DataStore("settings.json");
 
-    qDebug() << "Settings ip " << settings -> read("ip").toString();
     IpChecker::instance(settings -> read("ip").toString());
 
     VkApi::instance(settings -> read("vk").toObject());
@@ -171,6 +171,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ///////////////////////////////////////////////////////////
 
     tabber = new Tabber(ui -> tabber);
+    ui -> tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
     registrateTray();
 
     QApplication::setWindowIcon(QIcon(":icon"));
@@ -200,16 +201,7 @@ void MainWindow::registrateTray() {
 }
 
 void MainWindow::createToolbars() {
-
 //    addDockWidget(Qt::LeftDockWidgetArea, createDockWidget());
-
-//  QToolBar * barTest = addToolBar(tr("aaaa"));
-//  .....// some actions in the first row
-//  this->addToolBarBreak();
-//  QToolBar * barTest2 = addToolBar(tr("bbbb"));
-//  .....// some other actions in the second row
-
-//  addDockWidget
 
   addToolBar(Qt::TopToolBarArea, createMediaBar());
   addToolBar(Qt::TopToolBarArea, createTimeMediaBar());
@@ -249,9 +241,9 @@ QToolBar* MainWindow::createMediaBar() {
     ptb -> setMinimumHeight(30);
 
 
-    Player::instance() -> setPlayButton(ptb -> addAction(QPixmap(":/play"), "Play"));
-    Player::instance() -> setPauseButton(ptb -> addAction(QPixmap(":/pause"), "Pause"));
-    Player::instance() -> setStopButton(ptb -> addAction(QPixmap(":/stop"), "Stop"));
+    Player::instance() -> setPlayButton(ptb -> addAction(QIcon(":/play"), "Play"));
+    Player::instance() -> setPauseButton(ptb -> addAction(QIcon(":/pause"), "Pause"));
+    Player::instance() -> setStopButton(ptb -> addAction(QIcon(":/stop"), "Stop"));
 
     ptb -> adjustSize();
 
@@ -268,7 +260,7 @@ QToolBar* MainWindow::createVolumeMediaBar() {
 
     connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
 
-    QAction * act = ptb -> addAction(QPixmap(":/mute"), "Mute");
+    QAction * act = ptb -> addAction(QIcon(":/mute"), "Mute");
 
     Player::instance() -> setMuteButton(act);
 
@@ -311,7 +303,7 @@ QToolBar* MainWindow::createPositionMediaBar() {
     connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
     ptb -> setMinimumHeight(30);
 
-    Slider * slider = new Slider();
+    Slider * slider = new Slider(ptb, true);
     slider -> setStyle(new SliderStyle());
     slider -> setTickInterval(60000);
     slider -> setOrientation(Qt::Horizontal);
@@ -335,9 +327,9 @@ QToolBar* MainWindow::createAdditionalMediaBar() {
 //    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
     ptb -> setMinimumHeight(30);
 
-    ptb -> addAction(QPixmap(":/prev"), "Prev track", this, SLOT(prevItemTriggered()));
-    Player::instance() -> setLikeButton(ptb -> addAction(QPixmap(":/like"), "Liked"));
-    ptb -> addAction(QPixmap(":/next"), "Next track", this, SLOT(nextItemTriggered()));
+    ptb -> addAction(QIcon(":/prev"), "Prev track", this, SLOT(prevItemTriggered()));
+    Player::instance() -> setLikeButton(ptb -> addAction(QIcon(":/like"), "Liked"));
+    ptb -> addAction(QIcon(":/next"), "Next track", this, SLOT(nextItemTriggered()));
     ptb -> adjustSize();
 
     return ptb;
@@ -350,10 +342,12 @@ QToolBar* MainWindow::createControlToolBar() {
     ptb -> setPalette(pal);
 //    ptb -> setMinimumWidth(75);
 
-    ptb -> addAction(QPixmap(QString(":/add")), "Add new local tab", this, SLOT(showAttTabDialog()));
-    ptb -> addAction(QPixmap(QString(":/add_vk")), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
+    ptb -> addAction(QIcon(QString(":/add")), "Add new local tab", this, SLOT(showAttTabDialog()));
+    vkToolButton = createVkButton(vkToolButton);
+    ptb -> addWidget(vkToolButton);
+//    ptb -> addAction(QIcon(VkApi::instance() -> isConnected() ? ":/add_vk_on" : ":/add_vk"), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
     ptb -> addSeparator();
-    ptb -> addAction(QPixmap(QString(":/settings")), "Common setting", this, SLOT(showSettingsDialog()));
+    ptb -> addAction(QIcon(QString(":/settings")), "Common setting", this, SLOT(showSettingsDialog()));
     ptb -> adjustSize();
 
     return ptb;
@@ -381,6 +375,30 @@ QToolBar* MainWindow::createToolBar(QString name) {
 //    ptb -> adjustSize();
 //    connect(ptb, SIGNAL(eventTriggered(QEvent *)), this, SLOT(ToolbarEvent(QEvent *)));
     return ptb;
+}
+
+QToolButton * MainWindow::createVkButton(QToolButton * vkButton) {
+    if (vkButton == 0) {
+        vkButton = new QToolButton(this);
+    }
+    else
+        disconnect(vkButton, SIGNAL(clicked()), this, SLOT(showVKTabDialog()));
+
+    if (VkApi::instance() -> isConnected()) {
+        vkButton -> setIcon(QIcon(":/add_vk_on"));
+        vkButton -> setPopupMode(QToolButton::InstantPopup);
+
+        QMenu * vkMenu = new QMenu(vkButton);
+        vkMenu -> addAction("Open your tab", this, SLOT(showVKTabDialog()));
+//        vkMenu.addAction("Parse/refresh current tab", tabber -> currentTab() -> getList() -> getModel(), SLOT(refresh()));
+        vkMenu -> addAction("Open friend/group tab", this, SLOT(showVKRelTabDialog()));
+        vkButton -> setMenu(vkMenu);
+    } else {
+        vkButton -> setIcon(QIcon(":/add_vk"));
+        connect(vkButton, SIGNAL(clicked()), this, SLOT(showVKTabDialog()));
+    }
+
+    return vkButton;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent * event) {
@@ -494,6 +512,9 @@ MainWindow::~MainWindow() {
     delete settings;
     delete tabber;
     delete underMouseBar;
+    if (vkToolButton)
+        delete vkToolButton -> menu();
+    delete vkToolButton;
 }
 
 void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {
@@ -544,7 +565,7 @@ void MainWindow::panelHighlight(QAction *action) {
         highlighted = action -> parentWidget();
         highlighted -> setStyleSheet(
                     "QToolBar {"
-                      "border: 2px solid red;"
+                      "border: 2px dashed red;"
                     "}"
                    );
     }
@@ -619,6 +640,8 @@ void MainWindow::showSettingsDialog() {
     if (dialog.exec() == QDialog::Accepted) {
         if (dialog.isIconSizeChanged())
             tabber -> updateIconSize(dialog.isBigIcon());
+
+        ui -> tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
     }
 }
 
@@ -632,11 +655,17 @@ void MainWindow::showVKRelTabDialog() {
 }
 
 void MainWindow::showVKTabDialog() {
-    WebDialog dialog(this, VkApi::instance(), "VK auth");
-    if (dialog.exec() == QDialog::Accepted) {
+    if (VkApi::instance() -> isConnected()) {
         tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
     } else {
-        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+        WebDialog dialog(this, VkApi::instance(), "VK auth");
+        if (dialog.exec() == QDialog::Accepted) {
+            tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
+            vkToolButton = createVkButton(vkToolButton);
+//            ((QAction *)sender()) -> setIcon(QIcon(":/add_vk_on"));
+        } else {
+            QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+        }
     }
 }
 
