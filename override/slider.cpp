@@ -1,8 +1,10 @@
 #include "slider.h"
 #include "qdebug.h"
 #include "media/player.h"
+#include "media/duration.h"
 
 Slider::Slider(QWidget * parent, bool isPositionSlider) : QSlider(parent) {
+    setMouseTracking(isPositionSlider);
     position_slider = isPositionSlider;
     fillColor = QColor::fromRgb(0,0,0);
 //    setToolTipDuration(1000);
@@ -168,9 +170,7 @@ void Slider::paintEvent(QPaintEvent * event) {
 //    int avl=styl->pixelMetric(QStyle::PM_SliderSpaceAvailable, &opt, this);
 }
 
-// mouse tracking required :(
-//void Slider::mouseMoveEvent(QMouseEvent * ev) {
-//    qDebug() << "hudo";
-//    QPointF p = ev -> localPos();
-//    QToolTip::showText(QString::number(p.x()));
-//}
+void Slider::mouseMoveEvent(QMouseEvent * ev) {
+    QPointF p = ev -> localPos();
+    QToolTip::showText(ev -> globalPos(), Duration::fromMillis(maximum() *(p.x() / width())));
+}
