@@ -50,6 +50,8 @@ public:
 
     void registrateTray();
 
+    QToolButton * createVkButton(QToolButton * vkButton = 0);
+
     QDockWidget * createDockWidget();
     QToolBar* createToolBar(QString name);
     QToolBar* createMediaBar();
@@ -119,6 +121,7 @@ private:
 
     QToolBar * underMouseBar, * activeBar;
     ToolbarButton * underMouseButton;
+    QToolButton * vkToolButton;
     QPoint lastClickPoint;
 
     QxtGlobalShortcut * next;

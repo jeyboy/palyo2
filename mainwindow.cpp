@@ -81,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
     pal.setColor(QPalette::Button, QColor("#E1E0E0"));
     highlighted = 0;
+    vkToolButton = 0;
 
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
 
@@ -89,7 +90,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     settings = new DataStore("settings.json");
 
-    qDebug() << "Settings ip " << settings -> read("ip").toString();
     IpChecker::instance(settings -> read("ip").toString());
 
     VkApi::instance(settings -> read("vk").toObject());
@@ -200,16 +200,7 @@ void MainWindow::registrateTray() {
 }
 
 void MainWindow::createToolbars() {
-
 //    addDockWidget(Qt::LeftDockWidgetArea, createDockWidget());
-
-//  QToolBar * barTest = addToolBar(tr("aaaa"));
-//  .....// some actions in the first row
-//  this->addToolBarBreak();
-//  QToolBar * barTest2 = addToolBar(tr("bbbb"));
-//  .....// some other actions in the second row
-
-//  addDockWidget
 
   addToolBar(Qt::TopToolBarArea, createMediaBar());
   addToolBar(Qt::TopToolBarArea, createTimeMediaBar());
@@ -351,7 +342,9 @@ QToolBar* MainWindow::createControlToolBar() {
 //    ptb -> setMinimumWidth(75);
 
     ptb -> addAction(QIcon(QString(":/add")), "Add new local tab", this, SLOT(showAttTabDialog()));
-    ptb -> addAction(QIcon(VkApi::instance() -> isConnected() ? ":/add_vk_on" : ":/add_vk"), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
+    vkToolButton = createVkButton(vkToolButton);
+    ptb -> addWidget(vkToolButton);
+//    ptb -> addAction(QIcon(VkApi::instance() -> isConnected() ? ":/add_vk_on" : ":/add_vk"), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
     ptb -> addSeparator();
     ptb -> addAction(QIcon(QString(":/settings")), "Common setting", this, SLOT(showSettingsDialog()));
     ptb -> adjustSize();
@@ -381,6 +374,29 @@ QToolBar* MainWindow::createToolBar(QString name) {
 //    ptb -> adjustSize();
 //    connect(ptb, SIGNAL(eventTriggered(QEvent *)), this, SLOT(ToolbarEvent(QEvent *)));
     return ptb;
+}
+
+QToolButton * MainWindow::createVkButton(QToolButton * vkButton) {
+    if (vkButton == 0)
+        vkButton = new QToolButton(this);
+    else
+        disconnect(vkButton, SIGNAL(clicked()), this, SLOT(showVKTabDialog()));
+
+    if (VkApi::instance() -> isConnected()) {
+        vkButton -> setIcon(QIcon(":/add_vk_on"));
+        vkButton -> setPopupMode(QToolButton::InstantPopup);
+
+        QMenu * vkMenu = new QMenu(vkButton);
+        vkMenu -> addAction("Open your tab", this, SLOT(showVKTabDialog()));
+//        vkMenu.addAction("Parse/refresh current tab", tabber -> currentTab() -> getList() -> getModel(), SLOT(refresh()));
+        vkMenu -> addAction("Open friend/group tab", this, SLOT(showVKRelTabDialog()));
+        vkButton -> setMenu(vkMenu);
+    } else {
+        vkButton -> setIcon(QIcon(":/add_vk"));
+        connect(vkButton, SIGNAL(clicked()), this, SLOT(showVKTabDialog()));
+    }
+
+    return vkButton;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent * event) {
@@ -494,6 +510,9 @@ MainWindow::~MainWindow() {
     delete settings;
     delete tabber;
     delete underMouseBar;
+    if (vkToolButton)
+        delete vkToolButton -> menu();
+    delete vkToolButton;
 }
 
 void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {
@@ -638,7 +657,8 @@ void MainWindow::showVKTabDialog() {
         WebDialog dialog(this, VkApi::instance(), "VK auth");
         if (dialog.exec() == QDialog::Accepted) {
             tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
-            ((QAction *)sender()) -> setIcon(QIcon(":/add_vk_on"));
+            vkToolButton = createVkButton(vkToolButton);
+//            ((QAction *)sender()) -> setIcon(QIcon(":/add_vk_on"));
         } else {
             QMessageBox::information(this, "VK", VkApi::instance() -> getError());
         }
