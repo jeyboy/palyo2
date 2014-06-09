@@ -151,6 +151,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 curr_bar = createToolBar(barName);
             }
 
+            curr_bar -> setMovable(obj.value("movable").toBool());
+
             addToolBar((Qt::ToolBarArea)obj.value("area").toInt(), curr_bar);
 
             if (obj.contains("actions")) {
@@ -440,6 +442,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
             curr_tab.insert("area", toolBarArea(bar));
             curr_tab.insert("title", bar -> windowTitle());
+            curr_tab.insert("movable", bar -> isMovable());
 
             if (bar -> windowTitle() != "Media"
                     && bar -> windowTitle() != "Media+"
