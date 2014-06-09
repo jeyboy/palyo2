@@ -88,6 +88,8 @@ Slider::Slider(QWidget * parent, bool isPositionSlider) : QSlider(parent) {
     ));
 }
 
+
+//TODO: problem with download line start if bar is not movable
 void Slider::paintEvent(QPaintEvent * event) {
     QSlider::paintEvent(event);
 

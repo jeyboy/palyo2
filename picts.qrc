@@ -39,6 +39,8 @@
         <file alias="locked">icons/locked.png</file>
         <file alias="unlocked">icons/unlocked.png</file>
         <file alias="add_vk_on">icons/add_vk_on.png</file>
+        <file alias="add_soundcloud">icons/add_soundcloud.png</file>
+        <file alias="add_soundcloud_on">icons/add_soundcloud_on.png</file>
     </qresource>
     <qresource prefix="/ext">
         <file alias="_aac">icons/ext/Icon_1.ico</file>

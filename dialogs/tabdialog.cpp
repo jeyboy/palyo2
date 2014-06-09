@@ -6,8 +6,18 @@ CBHash TabDialog::VKSettings(int uid) {
     res.insert("d", 0);
     res.insert("i", 0);
     res.insert("p", 1);
-    res.insert("t", 4);
+    res.insert("t", VIEW_VK);
     res.insert("uid", uid);
+
+    return res;
+}
+
+CBHash TabDialog::soundcloudSettings() {
+    CBHash res;
+    res.insert("d", 0);
+    res.insert("i", 0);
+    res.insert("p", 1);
+    res.insert("t", VIEW_SOUNDCLOUD);
 
     return res;
 }

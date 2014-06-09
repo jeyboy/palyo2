@@ -15,6 +15,7 @@ WebDialog::WebDialog(QWidget *parent, WebApi * apiClass, QString title) :
 
   connect(view, SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
 
+  qDebug() << "AUTH URL " << api -> authUrl();
   view -> load(QUrl(api -> authUrl()));
   view -> show();
 }
@@ -28,6 +29,7 @@ WebDialog::~WebDialog() {
 ////////////////////////////////////////////////////////////
 
 void WebDialog::urlChanged(const QUrl& url) {
+    qDebug() << "NEW URL " << url;
     QString res = api -> proceedAuthResponse(url);
     qDebug() << "Hula: " << res;
     if (res == "accept") {

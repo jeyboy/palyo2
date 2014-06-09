@@ -35,6 +35,7 @@ SOURCES += main.cpp\
     web/ip_checker.cpp \
     web/web_api.cpp \
     web/socials/vk_api.cpp \
+    web/socials/soundcloud_api.cpp \
     globalshortcut/qxtglobalshortcut.cpp \
     dialogs/tabdialog.cpp \
     dialogs/toolbardialog.cpp \
@@ -92,6 +93,7 @@ HEADERS  += mainwindow.h \
     web/ip_checker.h\
     web/web_api.h\
     web/socials/vk_api.h\
+    web/socials/soundcloud_api.h \
 #    file_registration/file_registration.h \
     globalshortcut/qxtglobal.h \
     globalshortcut/qxtglobalshortcut.h \

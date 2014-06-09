@@ -36,6 +36,7 @@
 #include "media/mediainfo.h"
 
 #include "web/socials/vk_api.h"
+#include "web/socials/soundcloud_api.h"
 
 namespace Ui {
   class MainWindow;
@@ -51,6 +52,8 @@ public:
     void registrateTray();
 
     QToolButton * createVkButton(QToolButton * vkButton = 0);
+    QToolButton * createSoundcloudButton(QToolButton * soundcloudButton = 0);
+
 
     QDockWidget * createDockWidget();
     QToolBar* createToolBar(QString name);
@@ -81,6 +84,7 @@ private slots:
     void showVKRelTabDialog();
 
     void showVKTabDialog();
+    void showSoundcloudTabDialog();
 
     void showAttTabDialog(Tab * tab = 0);
 
@@ -122,6 +126,7 @@ private:
     QToolBar * underMouseBar, * activeBar;
     ToolbarButton * underMouseButton;
     QToolButton * vkToolButton;
+    QToolButton * soundcloudToolButton;
     QPoint lastClickPoint;
 
     QxtGlobalShortcut * next;

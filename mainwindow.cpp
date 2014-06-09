@@ -82,6 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     pal.setColor(QPalette::Button, QColor("#E1E0E0"));
     highlighted = 0;
     vkToolButton = 0;
+    soundcloudToolButton = 0;
 
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
 
@@ -346,7 +347,9 @@ QToolBar* MainWindow::createControlToolBar() {
     ptb -> addAction(QIcon(QString(":/add")), "Add new local tab", this, SLOT(showAttTabDialog()));
     vkToolButton = createVkButton(vkToolButton);
     ptb -> addWidget(vkToolButton);
-//    ptb -> addAction(QIcon(VkApi::instance() -> isConnected() ? ":/add_vk_on" : ":/add_vk"), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
+//    ptb -> addAction(QIcon(":/add_vk"), "Add Soundcloud(soundcloud.com) tab", this, SLOT(showSoundcloudTabDialog()));
+    soundcloudToolButton = createSoundcloudButton(soundcloudToolButton);
+    ptb -> addWidget(soundcloudToolButton);
     ptb -> addSeparator();
     ptb -> addAction(QIcon(QString(":/settings")), "Common setting", this, SLOT(showSettingsDialog()));
     ptb -> adjustSize();
@@ -396,10 +399,34 @@ QToolButton * MainWindow::createVkButton(QToolButton * vkButton) {
         vkButton -> setMenu(vkMenu);
     } else {
         vkButton -> setIcon(QIcon(":/add_vk"));
+        vkButton -> setToolTip("Connect to VKontakte(vk.com)");
         connect(vkButton, SIGNAL(clicked()), this, SLOT(showVKTabDialog()));
     }
 
     return vkButton;
+}
+
+QToolButton * MainWindow::createSoundcloudButton(QToolButton * soundcloudButton) {
+    if (soundcloudButton == 0) {
+        soundcloudButton = new QToolButton(this);
+    }
+    else
+        disconnect(soundcloudButton, SIGNAL(clicked()), this, SLOT(showSoundcloudTabDialog()));
+
+    if (SoundcloudApi::instance() -> isConnected()) {
+        soundcloudButton -> setIcon(QIcon(":/add_soundcloud_on"));
+        soundcloudButton -> setPopupMode(QToolButton::InstantPopup);
+
+        QMenu * vkMenu = new QMenu(soundcloudButton);
+        vkMenu -> addAction("Open your tab", this, SLOT(showSoundcloudTabDialog()));
+        soundcloudButton -> setMenu(vkMenu);
+    } else {
+        soundcloudButton -> setIcon(QIcon(":/add_soundcloud"));
+        soundcloudButton -> setToolTip("Connect to Soundcloud(soundcloud.com)");
+        connect(soundcloudButton, SIGNAL(clicked()), this, SLOT(showSoundcloudTabDialog()));
+    }
+
+    return soundcloudButton;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent * event) {
@@ -509,6 +536,7 @@ MainWindow::~MainWindow() {
         HotkeyManager::close();
 
         VkApi::close();
+        SoundcloudApi::close();
     ///////////////////////////////////////////////
 
     delete settings;
@@ -517,6 +545,10 @@ MainWindow::~MainWindow() {
     if (vkToolButton)
         delete vkToolButton -> menu();
     delete vkToolButton;
+
+    if (soundcloudToolButton)
+        delete soundcloudToolButton -> menu();
+    delete soundcloudToolButton;
 }
 
 void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {
@@ -664,9 +696,23 @@ void MainWindow::showVKTabDialog() {
         if (dialog.exec() == QDialog::Accepted) {
             tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
             vkToolButton = createVkButton(vkToolButton);
-//            ((QAction *)sender()) -> setIcon(QIcon(":/add_vk_on"));
         } else {
             QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+        }
+    }
+}
+
+
+void MainWindow::showSoundcloudTabDialog() {
+    if (SoundcloudApi::instance() -> isConnected()) {
+        tabber -> addTab("Soundcloud", TabDialog::soundcloudSettings());
+    } else {
+        WebDialog dialog(this, SoundcloudApi::instance(), "Soundcloud auth");
+        if (dialog.exec() == QDialog::Accepted) {
+            tabber -> addTab("Soundcloud", TabDialog::soundcloudSettings());
+            soundcloudToolButton = createSoundcloudButton(soundcloudToolButton);
+        } else {
+            QMessageBox::information(this, "Soundcloud", SoundcloudApi::instance() -> getError());
         }
     }
 }

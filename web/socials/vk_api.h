@@ -93,9 +93,7 @@ private:
     }
 
     VkApi() : WebApi() {
-//        token = "";
-//        expires_in = "";
-//        user_id = "";
+
     }
 
     static VkApi *self;
