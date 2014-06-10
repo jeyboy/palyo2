@@ -23,6 +23,10 @@ void SoundcloudApi::setParams(QString accessToken, QString userID, QString expir
     expires_in = expiresIn;
 }
 
+QString SoundcloudApi::getClientId() const {
+    return "8f84790a84f5a5acd1c92e850b5a91b7";
+}
+
 QString SoundcloudApi::getToken() {
     return token;
 }
@@ -87,6 +91,7 @@ QString SoundcloudApi::authUrl() const {
     queryParams.addQueryItem("response_type", "code");
     queryParams.addQueryItem("scope", "non-expiring");
     queryParams.addQueryItem("redirect_uri", "http://sos.com");
+    queryParams.addQueryItem("display", "popup");
 
     url.setQuery(queryParams);
     return url.toString();
@@ -146,6 +151,20 @@ QString SoundcloudApi::proceedAuthResponse(const QUrl & url) {
 
         if (doc.contains("access_token")) {
             token = doc.value("access_token").toString();
+            qDebug() << "TOKEN " << token;
+
+            QNetworkRequest request("https://api.soundcloud.com/me.json?oauth_token=" + token);
+            m_http = manager() -> get(request);
+            connect(m_http, SIGNAL(finished()), &loop, SLOT(quit()));
+            loop.exec();
+
+            ar = m_http -> readAll();
+            doc = responseToJson(ar);
+
+            qDebug() << doc;
+
+            user_id = QString::number(doc.value("id").toInt());
+
             return "accept";
         }
 

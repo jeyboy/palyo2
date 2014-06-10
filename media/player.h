@@ -81,7 +81,7 @@ private:
 
     void setTimePanelVal(int millis);
 
-    Player() {
+    Player() : AudioPlayer() {
         time_forward = true;
         extended_format = true;
         prevVolumeVal = 0;

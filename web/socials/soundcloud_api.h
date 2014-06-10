@@ -16,6 +16,7 @@ public:
 
     void setParams(QString accessToken, QString userID, QString expiresIn);
 
+    QString getClientId() const;
     QString getToken();
     QString getExpire();
     QString getUserID();

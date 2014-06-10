@@ -18,6 +18,8 @@
 #include "folder_item.h"
 #include "model/web/vk/vk_folder.h"
 #include "model/web/vk/vk_file.h"
+#include "model/web/soundcloud/soundcloud_playlist.h"
+#include "model/web/soundcloud/soundcloud_file.h"
 
 class ModelItem;
 

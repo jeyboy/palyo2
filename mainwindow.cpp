@@ -94,6 +94,7 @@ MainWindow::MainWindow(QWidget *parent) :
     IpChecker::instance(settings -> read("ip").toString());
 
     VkApi::instance(settings -> read("vk").toObject());
+    SoundcloudApi::instance(settings -> read("soundcloud").toObject());
 
     if (geometryState.isValid())
         restoreGeometry(geometryState.toByteArray());
@@ -183,6 +184,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    qDebug() << Library::instance() -> prepareName("5ugar, Eva Kade  (2012) http://vk.com/clubmusicthebestin - All Around feat Evil T (Andrea Bertolini Remix)");
     showActiveElem();
+
+//    AudioPlayer * player;
+//    player -> setMedia(QUrl("https://api.soundcloud.com/tracks/153612141/stream?client_id=8f84790a84f5a5acd1c92e850b5a91b7"));
+//    player -> play();
 }
 
 //TODO: menu finish needed
@@ -454,6 +459,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
         settings -> write("ip", IpChecker::instance() -> currentIp());
 
     settings -> write("vk", VkApi::instance() -> toJson());
+    settings -> write("soundcloud", SoundcloudApi::instance() -> toJson());
 
     QList<QToolBar *> toolbars = this -> findChildren<QToolBar *>();
     qDebug() << toolbars.length();

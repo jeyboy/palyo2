@@ -46,6 +46,8 @@
 #define CUE_ITEM 300
 #define VK_FOLDER 400
 #define VK_FILE 500
+#define SOUNDCLOUD_PLAYLIST 600
+#define SOUNDCLOUD_FILE 700
 
 //TODO: add list of extensions for extension serialization to extension index in list
 

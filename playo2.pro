@@ -61,6 +61,10 @@ SOURCES += main.cpp\
     model/web/vk/vk_view.cpp \
     model/web/vk/vk_folder.cpp \
     model/web/vk/vk_file.cpp \
+    model/web/soundcloud/soundcloud_model.cpp \
+    model/web/soundcloud/soundcloud_view.cpp \
+    model/web/soundcloud/soundcloud_playlist.cpp \
+    model/web/soundcloud/soundcloud_file.cpp \
     model/model_item_delegate.cpp \
     model/model_item_state.cpp \
     model/hotkey_model/hotkey_delegate.cpp \
@@ -122,6 +126,10 @@ HEADERS  += mainwindow.h \
     model/web/vk/vk_view.h \
     model/web/vk/vk_folder.h \
     model/web/vk/vk_file.h \
+    model/web/soundcloud/soundcloud_model.h \
+    model/web/soundcloud/soundcloud_view.h \
+    model/web/soundcloud/soundcloud_playlist.h \
+    model/web/soundcloud/soundcloud_file.h \
     model/model_item_delegate.h \
     model/model_item_state.h \
     model/hotkey_model/hotkey_delegate.h \
