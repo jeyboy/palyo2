@@ -45,10 +45,20 @@ void Download::start(Model * model, ModelItem * item, QUrl savePath) {
 
 void Download::downloadConnectionResponsed() {
     QNetworkReply * reply = (QNetworkReply*)QObject::sender();
+    QVariant possibleRedirectUrl = reply -> attribute(QNetworkRequest::RedirectionTargetAttribute);
+    if (possibleRedirectUrl.isValid()) {
+        DownloadPosition * pos = downloads -> take(reply);
+        reply -> close();
+        delete reply;
 
-    downloader = new QFutureWatcher<QNetworkReply *>();
-    connect(downloader, SIGNAL(finished()), this, SLOT(finishDownload()));
-    downloader -> setFuture(QtConcurrent::run(this, &Download::downloading, reply));
+        QNetworkReply * m_http = manager() -> get(QNetworkRequest(possibleRedirectUrl.toUrl()));
+        downloads -> insert(m_http, pos);
+        QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
+    } else {
+        downloader = new QFutureWatcher<QNetworkReply *>();
+        connect(downloader, SIGNAL(finished()), this, SLOT(finishDownload()));
+        downloader -> setFuture(QtConcurrent::run(this, &Download::downloading, reply));
+    }
 }
 
 

@@ -26,6 +26,8 @@ public:
 
     CustomNetworkAccessManager * manager() const;
 
+    QNetworkReply * syncRequest(QNetworkReply * m_http);
+
 protected:
     QJsonObject responseToJson(QByteArray data);
 //    QDomDocument toXml(QByteArray data);

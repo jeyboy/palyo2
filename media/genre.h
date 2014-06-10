@@ -56,7 +56,9 @@ private:
         genres -> insert(4,   "Disco");
         genres -> insert(5,   "Funk");
         genres -> insert(6,   "Grunge");
-        genres -> insert(7,   "Hip-Hop");
+        genres -> insertMulti(7,   "Hip-Hop");
+        genres -> insertMulti(7,   "HipHop");
+
         genres -> insert(8,   "Jazz");
         genres -> insert(9,   "Metal");
         genres -> insert(10,  "New Age");
@@ -76,7 +78,8 @@ private:
         genres -> insert(24,  "Soundtrack");
         genres -> insert(25,  "Euro-Techno");
         genres -> insert(26,  "Ambient");
-        genres -> insert(27,  "Trip-Hop");
+        genres -> insertMulti(27,  "Trip-Hop");
+        genres -> insertMulti(27,  "TripHop");
         genres -> insert(28,  "Vocal");
         genres -> insert(29,  "Jazz & Funk");
         genres -> insert(30,  "Fusion");

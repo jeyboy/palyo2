@@ -17,6 +17,11 @@ void Tab::init(CBHash params, QJsonObject * hash) {
                 params.insert("uid", hash -> value("uid").toString().toInt());
             list = (View *)new VkView(this, params, hash);
         break;}
+        case VIEW_SOUNDCLOUD: {
+            if (hash != 0 && hash -> contains("uid"))
+                params.insert("uid", hash -> value("uid").toString().toInt());
+            list = (View *)new SoundcloudView(this, params, hash);
+        break;}
         default: {
             list = (View *)new TreeView(this, params, hash);
         break;}

@@ -1,6 +1,8 @@
 #include "folder_item.h"
 #include "web/vk/vk_folder.h"
 #include "web/vk/vk_file.h"
+#include "web/soundcloud/soundcloud_file.h"
+#include "web/soundcloud/soundcloud_playlist.h"
 #include <QDebug>
 
 ///////////////////////////////////////////////////////////
@@ -36,6 +38,13 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
                 break;}
                 case VK_FILE: {
                     new VkFile(&iterObj, this -> toModelItem());
+                break;}
+
+                case SOUNDCLOUD_FILE: {
+                    new SoundcloudFile(&iterObj, this -> toModelItem());
+                break;}
+                case SOUNDCLOUD_PLAYLIST: {
+                    new SoundcloudPlaylist(&iterObj, this -> toModelItem());
                 break;}
             }
         }

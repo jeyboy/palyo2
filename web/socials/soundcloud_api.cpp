@@ -142,27 +142,18 @@ QString SoundcloudApi::proceedAuthResponse(const QUrl & url) {
         QNetworkRequest request(authTokenUrl());
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
         QNetworkReply * m_http = manager() -> post(request, authTokenUrlParams(query.queryItemValue("code")));
-        QEventLoop loop;
-        connect(m_http, SIGNAL(finished()), &loop, SLOT(quit()));
-        loop.exec();
+        syncRequest(m_http);
 
-        QByteArray ar = m_http -> readAll();
-        QJsonObject doc = responseToJson(ar);
+        QJsonObject doc = responseToJson(m_http -> readAll());
 
         if (doc.contains("access_token")) {
             token = doc.value("access_token").toString();
-            qDebug() << "TOKEN " << token;
 
             QNetworkRequest request("https://api.soundcloud.com/me.json?oauth_token=" + token);
             m_http = manager() -> get(request);
-            connect(m_http, SIGNAL(finished()), &loop, SLOT(quit()));
-            loop.exec();
+            syncRequest(m_http);
 
-            ar = m_http -> readAll();
-            doc = responseToJson(ar);
-
-            qDebug() << doc;
-
+            doc = responseToJson(m_http -> readAll());
             user_id = QString::number(doc.value("id").toInt());
 
             return "accept";
@@ -178,92 +169,110 @@ QString SoundcloudApi::proceedAuthResponse(const QUrl & url) {
 /// AUDIO LIST
 ///////////////////////////////////////////////////////////
 
-void SoundcloudApi::getAudioList(FuncContainer responseSlot, QString uid) {
-    uid = uid == "0" ? getUserID() : uid;
-    QUrl url(getAPIUrl() + "execute");
-    QUrlQuery query = methodParams();
+void SoundcloudApi::getUidInfo(FuncContainer func, QString uid) {
+//    uid = uid == "0" ? getUserID() : uid; // 183
+    uid = "183";
+    QJsonObject res;
 
-    if (uid == getUserID()) {
-        query.addQueryItem("code",
-                           QString("var curr;") +
-                           "var groups = API.groups.get({owner_id: " + uid + ", count: 1000, extended: 1}).items;" +
-                           "var proceed_groups = [];" +
-                           "while(groups.length > 0) { curr = groups.pop();  proceed_groups.push({id: curr.id, title: curr.name}); };" +
+    QUrlQuery query = commonMethodParams();
 
-                           "var friends = API.friends.get({user_id: " + uid + ", order: \"name\", fields: \"nickname\"});" +
-                           "var proceed_friends = [];" +
-                           "if (friends.count > 0) {while(friends.items.length > 0) { curr = friends.items.pop();  proceed_friends.push({id: curr.id, title: curr.first_name %2b \" \" %2b curr.last_name }); }; };" +
-
-                           "var folders_result = API.audio.getAlbums({count: 20, owner_id: " + uid + "});" +
-                           "var folders_count = folders_result.count;" +
-                           "var proceed_folders = {};" +
-                           "if (folders_count > 0) {while(folders_result.items.length > 0) { curr = folders_result.items.pop();  proceed_folders.push(" +
-                           "{folder_id: curr.id, title: curr.title, items: API.audio.get({album_id: curr.id}).items});" +
-                           "}; };" +
-                           "return {audio_list: API.audio.get({count: 6000, owner_id: " + uid + "}), albums: proceed_folders, groups: proceed_groups, friends: proceed_friends, albums_count: folders_count};"
-                           );
-    } else {
-        query.addQueryItem("code",
-                           "var folders_result = API.audio.getAlbums({count: 20, owner_id: " + uid + "});" +
-                           "var folders_count = folders_result.count;" +
-                           "var sort_by_folders = {};" +
-                           "if (folders_count > 0) {while(folders_result.items.length > 0) { var curr = folders_result.items.pop();  sort_by_folders.push(" +
-                           "{folder_id: curr.id, title: curr.title, items: API.audio.get({owner_id: " + uid + ", album_id: curr.id}).items});" +
-                           "}; };" +
-                           "return {audio_list: API.audio.get({count: 6000, owner_id: " + uid + "}), albums: sort_by_folders, albums_count: folders_count};"
-                           );
-    }
+    QUrl url(getAPIUrl() + "users/" + uid + "/tracks.json");
     url.setQuery(query);
 
+    qDebug() << "UID " << uid;
+
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
-    responses.insert(m_http, responseSlot);
-    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListRequest()));
-}
+    syncRequest(m_http);
 
-void SoundcloudApi::audioListRequest() {
-    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
+    QByteArray ar = m_http -> readAll();
+    ar.prepend("{\"response\":"); ar.append("}");
+    res.insert("audio_list", responseToJson(ar).value("response").toArray());
+    delete m_http;
 
-    QByteArray ar = reply -> readAll();
-    QJsonObject doc = responseToJson(ar);
-    FuncContainer func = responses.take(reply);
+//    //////////////////////////////////////////////////////////////
 
-    if (doc.contains("error")) {
-        qDebug() << ar;
-        errorSend(doc, func.obj);
-    } else {
-        doc = doc.value("response").toObject();
-        connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
-        emit audioListReceived(doc);
-        disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
-    }
+//    url.setUrl(getAPIUrl() + "users/" + uid + "/playlists.json");
+//    url.setQuery(query);
+//    m_http = manager() -> get(QNetworkRequest(url));
+//    syncRequest(m_http);
 
-    reply -> close();
-    delete reply;
+//    ar = m_http -> readAll();
+//    ar.prepend("{\"response\":"); ar.append("}");
+//    res.insert("playlists", responseToJson(ar).value("response").toArray());
+//    delete m_http;
+
+//    //////////////////////////////////////////////////////////////
+//    QThread::sleep(1);
+//    //////////////////////////////////////////////////////////////
+
+//    url.setUrl(getAPIUrl() + "users/" + uid + "/followings.json");
+//    url.setQuery(query);
+//    m_http = manager() -> get(QNetworkRequest(url));
+//    syncRequest(m_http);
+
+//    ar = m_http -> readAll();
+//    ar.prepend("{\"response\":"); ar.append("}");
+//    res.insert("followings", responseToJson(ar).value("response").toArray());
+//    delete m_http;
+
+//    //////////////////////////////////////////////////////////////
+
+//    url.setUrl(getAPIUrl() + "users/" + uid + "/followers.json");
+//    url.setQuery(query);
+//    m_http = manager() -> get(QNetworkRequest(url));
+//    syncRequest(m_http);
+
+//    ar = m_http -> readAll();
+//    ar.prepend("{\"response\":"); ar.append("}");
+//    res.insert("followers", responseToJson(ar).value("response").toArray());
+//    delete m_http;
+
+//    //////////////////////////////////////////////////////////////
+//    QThread::sleep(1);
+//    //////////////////////////////////////////////////////////////
+
+//    url.setUrl(getAPIUrl() + "users/" + uid + "/groups.json");
+//    url.setQuery(query);
+//    m_http = manager() -> get(QNetworkRequest(url));
+//    syncRequest(m_http);
+
+//    ar = m_http -> readAll();
+//    ar.prepend("{\"response\":"); ar.append("}");
+//    res.insert("groups", responseToJson(ar).value("response").toArray());
+//    delete m_http;
+
+//    //////////////////////////////////////////////////////////////
+
+    connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
+    emit audioListReceived(res);
+    disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
 }
 
 ///////////////////////////////////////////////////////////
-
-
-
-
-
-
 
 ///////////////////////////////////////////////////////////
 /// PROTECTED
 ///////////////////////////////////////////////////////////
 
-QUrlQuery SoundcloudApi::methodParams() {
+QUrlQuery SoundcloudApi::userMethodParams() {
     QUrlQuery query = QUrlQuery();
 
-//    query.addQueryItem("v", apiVersion());
-//    query.addQueryItem("access_token", getToken());
+    query.addQueryItem("oauth_token", getToken());
+
+    return query;
+}
+
+
+QUrlQuery SoundcloudApi::commonMethodParams() {
+    QUrlQuery query = QUrlQuery();
+
+    query.addQueryItem("client_id", getClientId());
 
     return query;
 }
 
 QString SoundcloudApi::getAPIUrl() {
-    return "https://api.vk.com/method/";
+    return "https://api.soundcloud.com/";
 }
 
 void SoundcloudApi::errorSend(QJsonObject & doc, const QObject * obj) {

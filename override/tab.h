@@ -10,6 +10,7 @@
 #include "model/level_tree/level_tree_view.h"
 #include "model/level_tree_breadcrumb/level_tree_breadcrumb_view.h"
 #include "model/web/vk/vk_view.h"
+#include "model/web/soundcloud/soundcloud_view.h"
 
 #include "model/model.h"
 #include "model/model_item.h"

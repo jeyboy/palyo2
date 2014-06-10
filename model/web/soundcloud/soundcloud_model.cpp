@@ -10,62 +10,60 @@ SoundcloudModel::SoundcloudModel(QString uid, QJsonObject * hash, QObject *paren
     tabUid = uid;
 
     if (hash == 0) {
-        SoundcloudApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
+        SoundcloudApi::instance() -> getUidInfo(FuncContainer(this, SLOT(proceedResponse(QJsonObject &))), tabUid);
     }
 
 //    connect(Player::instance(), SIGNAL(remoteUnprocessed()), this, SLOT(refresh()));
 }
 
-SoundcloudModel::~SoundcloudModel() {
+SoundcloudModel::~SoundcloudModel() { }
 
-}
-
-QString SoundcloudModel::getTabUid() const {
-    return tabUid;
-}
+QString SoundcloudModel::getTabUid() const { return tabUid; }
 
 void SoundcloudModel::refresh() {
-    emit showSpinner();
-//    clearAll();
-//    Library::instance() -> clearRemote();
-//    VkApi::instance() -> clearData();
-    QApplication::processEvents();
-    SoundcloudApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
-    QApplication::processEvents();
+    TreeModel::refresh();
+//    emit showSpinner();
+//    QApplication::processEvents();
+//    SoundcloudApi::instance() -> getUidInfo(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
+//    QApplication::processEvents();
 }
 
-void SoundcloudModel::proceedAudioList(QJsonObject & hash) {
+void SoundcloudModel::proceedResponse(QJsonObject & hash) {
     QHash<ModelItem*, QString> store;
     rootItem -> accumulateUids(store);
 
-    QJsonArray filesAr, ar = hash.value("albums").toArray();
+    QJsonArray filesAr, ar;
     QJsonObject iterObj;
 
-    qDebug() << ar;
+//    QJsonArray filesAr, ar = hash.value("albums").toArray();
+//    QJsonObject iterObj;
 
-    if (ar.count() > 0) {
-        ModelItem * folder;
+//    qDebug() << ar;
 
-        foreach(QJsonValue obj, ar) {
-            iterObj = obj.toObject();
+//    if (ar.count() > 0) {
+//        ModelItem * folder;
 
-            filesAr = iterObj.value("items").toArray();
+//        foreach(QJsonValue obj, ar) {
+//            iterObj = obj.toObject();
 
-            if (filesAr.size() > 0) {
-                folder = addFolder(iterObj.value("title").toString(), rootItem, QString::number(iterObj.value("folder_id").toInt()));
+//            filesAr = iterObj.value("items").toArray();
 
-                proceedAudioList(filesAr, folder, store);
-            }
-        }
-    }
+//            if (filesAr.size() > 0) {
+//                folder = addFolder(iterObj.value("title").toString(), rootItem, QString::number(iterObj.value("folder_id").toInt()));
+
+//                proceedAudioList(filesAr, folder, store);
+//            }
+//        }
+//    }
 
 /////////////////////////////////////////////////////////////////////
-    ar = hash.value("audio_list").toObject().value("items").toArray();
+    qDebug() << "HASH " << hash;
+    ar = hash.value("audio_list").toArray();
 
     qDebug() << ar;
 
     if (ar.count() > 0) {
-        proceedAudioList(ar, root(), store);
+        proceedResponse(ar, root(), store);
     }
 /////////////////////////////////////////////////////////////////////
 //    ar = hash.value("groups").toArray();
@@ -105,33 +103,46 @@ void SoundcloudModel::proceedAudioList(QJsonObject & hash) {
         emit showMessage(QString("This object did not have any items. Use wall parse from context menu"));
 }
 
-void SoundcloudModel::proceedAudioList(QJsonArray & ar, ModelItem * parent, QHash<ModelItem*, QString> & store) {
+void SoundcloudModel::proceedResponse(QJsonArray & ar, ModelItem * parent, QHash<ModelItem*, QString> & store) {
     QJsonObject fileIterObj;
-    VkFile * newItem;
-    QString id, owner;
+    SoundcloudFile * newItem;
+    QString id, owner, url;
     QList<ModelItem *> items;
+    bool original;
 
     foreach(QJsonValue obj, ar) {
         fileIterObj = obj.toObject();
 
         if (fileIterObj.isEmpty()) continue;
 
-        owner = QString::number(fileIterObj.value("owner_id").toInt());
+        owner = QString::number(fileIterObj.value("user_id").toInt());
         id = QString::number(fileIterObj.value("id").toInt());
         items = store.keys(ModelItem::buildUid(owner, id));
         if (items.isEmpty()) {
-//            newItem = new SoundcloudFile(
-////                        fileIterObj.value("url").toString(),
-////                        fileIterObj.value("artist").toString() + " - " + fileIterObj.value("title").toString(),
-////                        owner,
-////                        id,
-////                        parent,
-////                        fileIterObj.value("genre_id").toInt(-1),
-////                        Duration::fromSeconds(fileIterObj.value("duration").toInt(0))
-//                        );
+            url = fileIterObj.value("download_url").toString();
+            if (url.isEmpty()) {
+                url = fileIterObj.value("stream_url").toString();
+                original = false;
+            } else { original = true;}
+            if (url.isEmpty()) continue;
+
+//            video_url
+//            bpm
+
+            newItem = new SoundcloudFile(
+                            url,
+                            fileIterObj.value("title").toString(),
+                            original ? fileIterObj.value("original_format").toString() : "mp3",
+                            owner,
+                            id,
+                            parent,
+                            Genre::instance() -> toInt(fileIterObj.value("genre").toString()),
+                            Duration::fromMillis(fileIterObj.value("duration").toInt(0)),
+                            original ? fileIterObj.value("original_content_size").toInt() : -1
+                        );
 
             appendRow(newItem -> toModelItem());
-            qDebug() << "NEW ITEM " << newItem -> data(0);
+            qDebug() << "NEW ITEM " << original << " " << newItem -> data(0);
         } else {
             foreach(ModelItem * item, items) {
 //                store.remove(item);

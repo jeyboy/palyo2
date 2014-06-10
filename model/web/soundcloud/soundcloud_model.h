@@ -20,8 +20,8 @@ public slots:
     void refresh();
 
 protected slots:
-    void proceedAudioList(QJsonObject &);
-    void proceedAudioList(QJsonArray &, ModelItem *, QHash<ModelItem*, QString> &);
+    void proceedResponse(QJsonObject &);
+    void proceedResponse(QJsonArray &, ModelItem *, QHash<ModelItem*, QString> &);
     void errorReceived(int, QString &);
 protected:
     QString tabUid;

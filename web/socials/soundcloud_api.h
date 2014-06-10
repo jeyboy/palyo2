@@ -21,7 +21,7 @@ public:
     QString getExpire();
     QString getUserID();
 
-    void getAudioList(FuncContainer responseSlot, QString uid = "0");
+    void getUidInfo(FuncContainer responseSlot, QString uid = "0");
 
     ~SoundcloudApi() { }
 
@@ -36,17 +36,19 @@ public:
 
     bool isConnected() const;
 
+    QUrlQuery userMethodParams();
+    QUrlQuery commonMethodParams();
+
 signals:
     void audioListReceived(QJsonObject &);
     void errorReceived(int, QString &);
 
 protected:
-    QUrlQuery methodParams();
     QString getAPIUrl();
     void errorSend(QJsonObject & doc, const QObject * obj);
 
-protected slots:
-    void audioListRequest();
+//protected slots:
+//    void audioListRequest();
 private:   
     SoundcloudApi(QJsonObject hash) : WebApi() {
         fromJson(hash);

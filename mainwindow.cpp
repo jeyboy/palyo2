@@ -540,6 +540,7 @@ MainWindow::~MainWindow() {
 
         Settings::close();
         HotkeyManager::close();
+        Genre::close();
 
         VkApi::close();
         SoundcloudApi::close();

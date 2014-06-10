@@ -16,6 +16,13 @@ CustomNetworkAccessManager * WebApi::manager() const {
     return netManager;
 }
 
+QNetworkReply * WebApi::syncRequest(QNetworkReply * m_http) {
+    QEventLoop loop;
+    connect(m_http, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+    return m_http;
+}
+
 QJsonObject WebApi::responseToJson(QByteArray data) {
     QJsonDocument doc = QJsonDocument::fromJson(data);
     return doc.object();
