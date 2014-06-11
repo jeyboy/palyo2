@@ -23,6 +23,25 @@ QNetworkReply * WebApi::syncRequest(QNetworkReply * m_http) {
     return m_http;
 }
 
+void WebApi::clearData() {
+    friends.clear();
+    groups.clear();
+}
+
+void WebApi::addFriend(QString uid, QString name) {
+    friends.insert(uid, name);
+}
+void WebApi::addGroup(QString uid, QString name) {
+    groups.insert(uid, name);
+}
+
+QHash<QString, QString> WebApi::friendsList() const {
+    return friends;
+}
+QHash<QString, QString> WebApi::groupsList() const {
+    return groups;
+}
+
 QJsonObject WebApi::responseToJson(QByteArray data) {
     QJsonDocument doc = QJsonDocument::fromJson(data);
     return doc.object();

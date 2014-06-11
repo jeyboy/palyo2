@@ -19,7 +19,7 @@
 #include "dialogs/toolbarbuttondialog.h"
 #include "dialogs/web_dialog.h"
 #include "dialogs/settings_dialog.h"
-#include "dialogs/vkrelationdialog.h"
+#include "dialogs/relationdialog.h"
 
 #include "misc/hotkey_manager.h"
 
@@ -82,6 +82,7 @@ private slots:
     void showSettingsDialog();
 
     void showVKRelTabDialog();
+    void showSoundcloudRelTabDialog();
 
     void showVKTabDialog();
     void showSoundcloudTabDialog();

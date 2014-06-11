@@ -28,12 +28,22 @@ public:
 
     QNetworkReply * syncRequest(QNetworkReply * m_http);
 
+    void clearData();
+    void addFriend(QString uid, QString name);
+    void addGroup(QString uid, QString name);
+
+    QHash<QString, QString> friendsList() const;
+    QHash<QString, QString> groupsList() const;
+
 protected:
     QJsonObject responseToJson(QByteArray data);
 //    QDomDocument toXml(QByteArray data);
 
 //    QByteArray sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts = 0);
     CustomNetworkAccessManager * netManager;
+
+    QHash<QString, QString> friends;
+    QHash<QString, QString> groups;
 
     QString error;
 };

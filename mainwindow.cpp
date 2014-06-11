@@ -426,6 +426,7 @@ QToolButton * MainWindow::createSoundcloudButton(QToolButton * soundcloudButton)
 
         QMenu * vkMenu = new QMenu(soundcloudButton);
         vkMenu -> addAction("Open your tab", this, SLOT(showSoundcloudTabDialog()));
+        vkMenu -> addAction("Open friend/group tab", this, SLOT(showSoundcloudRelTabDialog()));
         soundcloudButton -> setMenu(vkMenu);
     } else {
         soundcloudButton -> setIcon(QIcon(":/add_soundcloud"));
@@ -689,9 +690,18 @@ void MainWindow::showSettingsDialog() {
 }
 
 void MainWindow::showVKRelTabDialog() {
-    VkRelationDialog dialog(this);
+    RelationDialog dialog(VkApi::instance(), this);
     if (dialog.exec() == QDialog::Accepted) {
         tabber -> addTab("VK [" + dialog.getName() + "]", TabDialog::VKSettings(dialog.getId()));
+    } else {
+//        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+    }
+}
+
+void MainWindow::showSoundcloudRelTabDialog() {
+    RelationDialog dialog(SoundcloudApi::instance(), this);
+    if (dialog.exec() == QDialog::Accepted) {
+        tabber -> addTab("Soundcloud [" + dialog.getName() + "]", TabDialog::soundcloudSettings(dialog.getId()));
     } else {
 //        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
     }

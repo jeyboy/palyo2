@@ -12,12 +12,13 @@ CBHash TabDialog::VKSettings(int uid) {
     return res;
 }
 
-CBHash TabDialog::soundcloudSettings() {
+CBHash TabDialog::soundcloudSettings(int uid) {
     CBHash res;
     res.insert("d", 0);
     res.insert("i", 0);
     res.insert("p", 1);
     res.insert("t", VIEW_SOUNDCLOUD);
+    res.insert("uid", uid);
 
     return res;
 }

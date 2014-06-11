@@ -84,8 +84,8 @@ SOURCES += main.cpp\
     override/custom_network_access_manager.cpp \
     override/slider.cpp \
     single_application.cpp \
-    dialogs/vkrelationdialog.cpp \
-    web/download.cpp
+    web/download.cpp \
+    dialogs/relationdialog.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -150,9 +150,9 @@ HEADERS  += mainwindow.h \
     override/custom_network_access_manager.h \
     override/slider.h \
     single_application.h \
-    dialogs/vkrelationdialog.h \
     misc/func_container.h \
-    web/download.h
+    web/download.h \
+    dialogs/relationdialog.h
     model/view_types.h
 
 unix:!mac {
@@ -187,7 +187,7 @@ FORMS    += mainwindow.ui \
     dialogs/toolbarbuttondialog.ui \
     dialogs/web_dialog.ui \
     dialogs/settings_dialog.ui \
-    dialogs/vkrelationdialog.ui
+    dialogs/relationdialog.ui
 
 RESOURCES += \
     picts.qrc

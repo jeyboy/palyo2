@@ -33,25 +33,6 @@ QString VkApi::getUserID() {
     return user_id;
 }
 
-void VkApi::clearData() {
-    friends.clear();
-    groups.clear();
-}
-
-void VkApi::addFriend(QString uid, QString name) {
-    friends.insert(uid, name);
-}
-void VkApi::addGroup(QString uid, QString name) {
-    groups.insert(uid, name);
-}
-
-QHash<QString, QString> VkApi::friendsList() const {
-    return friends;
-}
-QHash<QString, QString> VkApi::groupsList() const {
-    return groups;
-}
-
 void VkApi::fromJson(QJsonObject hash) {
     user_id = hash.value("_u_").toString();
     token = hash.value("_t_").toString();
