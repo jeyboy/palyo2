@@ -129,7 +129,7 @@ void Slider::paintEvent(QPaintEvent * event) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
                 p.drawRect(rect.x() - 10, rect.y(), rect.width() - 1, 3);
-                p.fillRect(rect.x() - 10, rect.y(), (rect.width() - 1) * pos, 3, fillColor);
+                p.fillRect(rect.right() - rect.width(), rect.y(), (rect.width() - 1) * pos, 3, fillColor);
             }
         }
 
@@ -174,5 +174,13 @@ void Slider::paintEvent(QPaintEvent * event) {
 
 void Slider::mouseMoveEvent(QMouseEvent * ev) {
     QPointF p = ev -> localPos();
-    QToolTip::showText(ev -> globalPos(), Duration::fromMillis(maximum() *(p.x() / width())));
+
+    int dur;
+    if (orientation() == Qt::Vertical) {
+        dur = maximum() *((height() - p.y()) / height());
+    } else {
+        dur = maximum() *(p.x() / width());
+    }
+
+    QToolTip::showText(ev -> globalPos(), Duration::fromMillis(dur));
 }
