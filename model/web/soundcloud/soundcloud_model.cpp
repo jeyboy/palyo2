@@ -32,29 +32,26 @@ void SoundcloudModel::proceedResponse(QJsonObject & hash) {
     QHash<ModelItem*, QString> store;
     rootItem -> accumulateUids(store);
 
-    QJsonArray filesAr, ar;
+    QJsonArray filesAr, ar = hash.value("playlists").toArray();
     QJsonObject iterObj;
 
-//    QJsonArray filesAr, ar = hash.value("albums").toArray();
-//    QJsonObject iterObj;
+    qDebug() << ar;
 
-//    qDebug() << ar;
+    if (ar.count() > 0) {
+        ModelItem * folder;
 
-//    if (ar.count() > 0) {
-//        ModelItem * folder;
+        foreach(QJsonValue obj, ar) {
+            iterObj = obj.toObject();
 
-//        foreach(QJsonValue obj, ar) {
-//            iterObj = obj.toObject();
+            filesAr = iterObj.value("tracks").toArray();
 
-//            filesAr = iterObj.value("items").toArray();
+            if (filesAr.size() > 0) {
+                folder = addFolder(iterObj.value("title").toString(), rootItem, QString::number(iterObj.value("id").toInt()));
 
-//            if (filesAr.size() > 0) {
-//                folder = addFolder(iterObj.value("title").toString(), rootItem, QString::number(iterObj.value("folder_id").toInt()));
-
-//                proceedAudioList(filesAr, folder, store);
-//            }
-//        }
-//    }
+                proceedResponse(filesAr, folder, store);
+            }
+        }
+    }
 
 /////////////////////////////////////////////////////////////////////
     ar = hash.value("audio_list").toArray();
@@ -65,29 +62,50 @@ void SoundcloudModel::proceedResponse(QJsonObject & hash) {
         proceedResponse(ar, root(), store);
     }
 /////////////////////////////////////////////////////////////////////
-//    ar = hash.value("groups").toArray();
+    ar = hash.value("groups").toArray();
 
-//    if (ar.count() > 0) {
-//        foreach(QJsonValue obj, ar) {
-//            iterObj = obj.toObject();
-//            VkApi::instance() -> addGroup(
-//                            QString::number(iterObj.value("id").toInt()),
-//                            iterObj.value("title").toString()
-//                        );
-//        }
-//    }
+    if (ar.count() > 0) {
+        foreach(QJsonValue obj, ar) {
+            iterObj = obj.toObject();
+            SoundcloudApi::instance() -> addGroup(
+                            QString::number(iterObj.value("id").toInt()),
+                            iterObj.value("name").toString()
+                        );
+        }
+    }
 /////////////////////////////////////////////////////////////////////
-//    ar = hash.value("friends").toArray();
+    QString name;
+    ar = hash.value("followings").toArray();
 
-//    if (ar.count() > 0) {
-//        foreach(QJsonValue obj, ar) {
-//            iterObj = obj.toObject();
-//            VkApi::instance() -> addFriend(
-//                            QString::number(iterObj.value("id").toInt()),
-//                            iterObj.value("title").toString()
-//                        );
-//        }
-//    }
+    if (ar.count() > 0) {
+        foreach(QJsonValue obj, ar) {
+            iterObj = obj.toObject();
+            name = iterObj.value("full_name").toString();
+            if (name.isEmpty())
+                name = iterObj.value("username").toString();
+
+            SoundcloudApi::instance() -> addFriend(
+                            QString::number(iterObj.value("id").toInt()),
+                            name
+                        );
+        }
+    }
+/////////////////////////////////////////////////////////////////////
+    ar = hash.value("followers").toArray();
+
+    if (ar.count() > 0) {
+        foreach(QJsonValue obj, ar) {
+            iterObj = obj.toObject();
+            name = iterObj.value("full_name").toString();
+            if (name.isEmpty())
+                name = iterObj.value("username").toString();
+
+            SoundcloudApi::instance() -> addFriend(
+                            QString::number(iterObj.value("id").toInt()),
+                            name
+                        );
+        }
+    }
 
     qDebug() << "STORE LENGTH: " << store.count();
     foreach(ModelItem * item, store.keys()) {

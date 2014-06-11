@@ -31,6 +31,13 @@ public:
         delete self;
     }
 
+    void clearData();
+    void addFriend(QString uid, QString name);
+    void addGroup(QString uid, QString name);
+
+    QHash<QString, QString> friendsList() const;
+    QHash<QString, QString> groupsList() const;
+
     void fromJson(QJsonObject hash);
     QJsonObject toJson();
 
@@ -54,15 +61,16 @@ private:
         fromJson(hash);
     }
 
-    SoundcloudApi() : WebApi() {
-
-    }
+    SoundcloudApi() : WebApi() { }
 
     static SoundcloudApi *self;
 
     QString token;
     QString expires_in;
     QString user_id;
+
+    QHash<QString, QString> friends;
+    QHash<QString, QString> groups;
 
     QHash<QNetworkReply *, FuncContainer> responses;
 };

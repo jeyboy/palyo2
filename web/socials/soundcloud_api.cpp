@@ -37,22 +37,43 @@ QString SoundcloudApi::getUserID() {
     return user_id;
 }
 
+void SoundcloudApi::clearData() {
+    friends.clear();
+    groups.clear();
+}
+
+void SoundcloudApi::addFriend(QString uid, QString name) {
+    qDebug() << "FRIEND " << uid << " _ " << name;
+    friends.insert(uid, name);
+}
+void SoundcloudApi::addGroup(QString uid, QString name) {
+    qDebug() << "GROUP " << uid << " _ " << name;
+    groups.insert(uid, name);
+}
+
+QHash<QString, QString> SoundcloudApi::friendsList() const {
+    return friends;
+}
+QHash<QString, QString> SoundcloudApi::groupsList() const {
+    return groups;
+}
+
 void SoundcloudApi::fromJson(QJsonObject hash) {
     user_id = hash.value("_u_").toString();
     token = hash.value("_t_").toString();
     expires_in = hash.value("_e_").toString();
 
-//    QJsonObject ar = hash.value("friends").toObject();
+    QJsonObject ar = hash.value("friends").toObject();
 
-//    foreach(QString key, ar.keys()) {
-//        addFriend(key, ar.value(key).toString());
-//    }
+    foreach(QString key, ar.keys()) {
+        addFriend(key, ar.value(key).toString());
+    }
 
-//    ar = hash.value("groups").toObject();
+    ar = hash.value("groups").toObject();
 
-//    foreach(QString key, ar.keys()) {
-//        addGroup(key, ar.value(key).toString());
-//    }
+    foreach(QString key, ar.keys()) {
+        addGroup(key, ar.value(key).toString());
+    }
 }
 QJsonObject SoundcloudApi::toJson() {
     QJsonObject root;
@@ -61,17 +82,17 @@ QJsonObject SoundcloudApi::toJson() {
     root["_t_"] = getToken();
     root["_e_"] = getExpire();
 
-//    QJsonObject friendsJson;
-//    foreach(QString key, friends.keys()) {
-//        friendsJson.insert(key, QJsonValue(friends.value(key)));
-//    }
-//    root.insert("friends", friendsJson);
+    QJsonObject friendsJson;
+    foreach(QString key, friends.keys()) {
+        friendsJson.insert(key, QJsonValue(friends.value(key)));
+    }
+    root.insert("friends", friendsJson);
 
-//    QJsonObject groupsJson;
-//    foreach(QString key, groups.keys()) {
-//        groupsJson.insert(key, QJsonValue(groups.value(key)));
-//    }
-//    root.insert("groups", groupsJson);
+    QJsonObject groupsJson;
+    foreach(QString key, groups.keys()) {
+        groupsJson.insert(key, QJsonValue(groups.value(key)));
+    }
+    root.insert("groups", groupsJson);
 
     return root;
 }
@@ -179,8 +200,6 @@ void SoundcloudApi::getUidInfo(FuncContainer func, QString uid) {
     QUrl url(getAPIUrl() + "users/" + uid + "/tracks.json");
     url.setQuery(query);
 
-    qDebug() << "UID " << uid;
-
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
     syncRequest(m_http);
 
@@ -189,59 +208,59 @@ void SoundcloudApi::getUidInfo(FuncContainer func, QString uid) {
     res.insert("audio_list", responseToJson(ar).value("response").toArray());
     delete m_http;
 
-//    //////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
 
-//    url.setUrl(getAPIUrl() + "users/" + uid + "/playlists.json");
-//    url.setQuery(query);
-//    m_http = manager() -> get(QNetworkRequest(url));
-//    syncRequest(m_http);
+    url.setUrl(getAPIUrl() + "users/" + uid + "/playlists.json");
+    url.setQuery(query);
+    m_http = manager() -> get(QNetworkRequest(url));
+    syncRequest(m_http);
 
-//    ar = m_http -> readAll();
-//    ar.prepend("{\"response\":"); ar.append("}");
-//    res.insert("playlists", responseToJson(ar).value("response").toArray());
-//    delete m_http;
+    ar = m_http -> readAll();
+    ar.prepend("{\"response\":"); ar.append("}");
+    res.insert("playlists", responseToJson(ar).value("response").toArray());
+    delete m_http;
 
-//    //////////////////////////////////////////////////////////////
-//    QThread::sleep(1);
-//    //////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
+    QThread::sleep(1);
+    //////////////////////////////////////////////////////////////
 
-//    url.setUrl(getAPIUrl() + "users/" + uid + "/followings.json");
-//    url.setQuery(query);
-//    m_http = manager() -> get(QNetworkRequest(url));
-//    syncRequest(m_http);
+    url.setUrl(getAPIUrl() + "users/" + uid + "/followings.json");
+    url.setQuery(query);
+    m_http = manager() -> get(QNetworkRequest(url));
+    syncRequest(m_http);
 
-//    ar = m_http -> readAll();
-//    ar.prepend("{\"response\":"); ar.append("}");
-//    res.insert("followings", responseToJson(ar).value("response").toArray());
-//    delete m_http;
+    ar = m_http -> readAll();
+    ar.prepend("{\"response\":"); ar.append("}");
+    res.insert("followings", responseToJson(ar).value("response").toArray());
+    delete m_http;
 
-//    //////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
 
-//    url.setUrl(getAPIUrl() + "users/" + uid + "/followers.json");
-//    url.setQuery(query);
-//    m_http = manager() -> get(QNetworkRequest(url));
-//    syncRequest(m_http);
+    url.setUrl(getAPIUrl() + "users/" + uid + "/followers.json");
+    url.setQuery(query);
+    m_http = manager() -> get(QNetworkRequest(url));
+    syncRequest(m_http);
 
-//    ar = m_http -> readAll();
-//    ar.prepend("{\"response\":"); ar.append("}");
-//    res.insert("followers", responseToJson(ar).value("response").toArray());
-//    delete m_http;
+    ar = m_http -> readAll();
+    ar.prepend("{\"response\":"); ar.append("}");
+    res.insert("followers", responseToJson(ar).value("response").toArray());
+    delete m_http;
 
-//    //////////////////////////////////////////////////////////////
-//    QThread::sleep(1);
-//    //////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
+    QThread::sleep(1);
+    //////////////////////////////////////////////////////////////
 
-//    url.setUrl(getAPIUrl() + "users/" + uid + "/groups.json");
-//    url.setQuery(query);
-//    m_http = manager() -> get(QNetworkRequest(url));
-//    syncRequest(m_http);
+    url.setUrl(getAPIUrl() + "users/" + uid + "/groups.json");
+    url.setQuery(query);
+    m_http = manager() -> get(QNetworkRequest(url));
+    syncRequest(m_http);
 
-//    ar = m_http -> readAll();
-//    ar.prepend("{\"response\":"); ar.append("}");
-//    res.insert("groups", responseToJson(ar).value("response").toArray());
-//    delete m_http;
+    ar = m_http -> readAll();
+    ar.prepend("{\"response\":"); ar.append("}");
+    res.insert("groups", responseToJson(ar).value("response").toArray());
+    delete m_http;
 
-//    //////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
 
     connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
     emit audioListReceived(res);

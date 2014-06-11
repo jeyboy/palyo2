@@ -103,8 +103,6 @@ void Slider::paintEvent(QPaintEvent * event) {
     p.setPen(QColor::fromRgb(0, 0, 0));
     QRect rect = geometry();
 
-    qDebug() << "MARG " << rect;
-
     double limit, temp = 0, step = ((double)maximum()) / tickInterval();
     int multiplyer = 0, flag = Qt::AlignVertical_Mask | Qt::AlignHCenter;
 
