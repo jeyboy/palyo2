@@ -103,6 +103,8 @@ void Slider::paintEvent(QPaintEvent * event) {
     p.setPen(QColor::fromRgb(0, 0, 0));
     QRect rect = geometry();
 
+    qDebug() << "MARG " << rect;
+
     double limit, temp = 0, step = ((double)maximum()) / tickInterval();
     int multiplyer = 0, flag = Qt::AlignVertical_Mask | Qt::AlignHCenter;
 
@@ -128,8 +130,8 @@ void Slider::paintEvent(QPaintEvent * event) {
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(rect.x() - 10, rect.y(), rect.width() - 1, 3);
-                p.fillRect(rect.right() - rect.width(), rect.y(), (rect.width() - 1) * pos, 3, fillColor);
+                p.drawRect(0, rect.y(), rect.width() - 1, 3);
+                p.fillRect(0, rect.y(), (rect.width() - 1) * pos, 3, fillColor);
             }
         }
 
@@ -150,8 +152,8 @@ void Slider::paintEvent(QPaintEvent * event) {
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(rect.x(), rect.y() - 10, 3, rect.height() - 1);
-                p.fillRect(rect.x(), rect.y() - 10 + rect.height(), 3, -((rect.height() - 1) * pos), fillColor);
+                p.drawRect(rect.x(), 0, 3, rect.height() - 1);
+                p.fillRect(rect.x(), rect.height(), 3, -((rect.height() - 1) * pos), fillColor);
             }
         }
     }
