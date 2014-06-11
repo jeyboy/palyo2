@@ -57,7 +57,6 @@ void SoundcloudModel::proceedResponse(QJsonObject & hash) {
 //    }
 
 /////////////////////////////////////////////////////////////////////
-    qDebug() << "HASH " << hash;
     ar = hash.value("audio_list").toArray();
 
     qDebug() << ar;

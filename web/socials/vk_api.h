@@ -70,8 +70,8 @@ protected:
 //    QUrl getAudioSaveUrl() const;
 
 protected slots:
-    void audioListRequest();
-    void wallRequest();
+    void audioListResponse();
+    void wallResponse();
 
 //    void audioCountRequest();
 //    void audioSearchRequest();

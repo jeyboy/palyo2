@@ -166,10 +166,10 @@ void VkApi::getWallAttachmentsList(FuncContainer responseSlot, QString uid) {
 
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
     responses.insert(m_http, responseSlot);
-    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(wallRequest()));
+    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(wallResponse()));
 }
 
-void VkApi::wallRequest() {
+void VkApi::wallResponse() {
     QNetworkReply * reply = (QNetworkReply*)QObject::sender();
 
     QByteArray ar = reply -> readAll();
@@ -208,7 +208,7 @@ void VkApi::refreshAudioList(FuncContainer responseSlot, QHash<ModelItem *, QStr
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
     responses.insert(m_http, responseSlot);
     collations.insert(m_http, uids);
-    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListRequest()));
+    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListResponse()));
 }
 
 void VkApi::getAudioList(FuncContainer responseSlot, QString uid) {
@@ -250,7 +250,7 @@ void VkApi::getAudioList(FuncContainer responseSlot, QString uid) {
 
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
     responses.insert(m_http, responseSlot);
-    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListRequest()));
+    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListResponse()));
 }
 
 //void VkApi::getAudioAlbums(FuncContainer responseSlot, QString uid, int offset) {
@@ -276,7 +276,7 @@ void VkApi::getAudioList(FuncContainer responseSlot, QString uid) {
 //    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListRequest()));
 //}
 
-void VkApi::audioListRequest() {
+void VkApi::audioListResponse() {
     QNetworkReply * reply = (QNetworkReply*)QObject::sender();
 
     QByteArray ar = reply -> readAll();

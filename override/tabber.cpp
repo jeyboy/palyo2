@@ -90,6 +90,7 @@ Tabber::~Tabber() {
 
 int Tabber::addTab(QString name, CBHash settings) {
     int index = tabber -> addTab(new Tab(settings, tabber), name);
+    (static_cast<Tab *>(tabber -> widget(index))) -> updateHeader();
     tabber -> setCurrentIndex(index);
     tabber -> setStyleSheet("");
     return index;

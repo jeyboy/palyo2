@@ -203,8 +203,9 @@ int Model::rowCount(const QModelIndex &parent) const {
 void Model::appendRow(ModelItem * item) {
 //    int position = parentItem -> childCount();
 //    beginInsertRows(index(parentItem), position, position);
-    if (!item -> isFolder())
+    if (!item -> isFolder()) {
         emit itemsCountChanged(++count);
+    }
 //    endInsertRows();
 
 //    emit dataChanged(parent, parent);
@@ -280,6 +281,7 @@ void Model::libraryResponse() {
 void Model::refresh() {   
     beginResetModel();
     endResetModel();
+//    emit itemsCountChanged(count);
 }
 
 void Model::refreshItem(ModelItem * item) {
