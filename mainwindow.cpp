@@ -396,6 +396,7 @@ QToolButton * MainWindow::createVkButton(QToolButton * vkButton) {
     if (VkApi::instance() -> isConnected()) {
         vkButton -> setIcon(QIcon(":/add_vk_on"));
         vkButton -> setPopupMode(QToolButton::InstantPopup);
+        vkButton -> setToolTip("VKontakte(vk.com)");
 
         QMenu * vkMenu = new QMenu(vkButton);
         vkMenu -> addAction("Open your tab", this, SLOT(showVKTabDialog()));
@@ -420,6 +421,7 @@ QToolButton * MainWindow::createSoundcloudButton(QToolButton * soundcloudButton)
 
     if (SoundcloudApi::instance() -> isConnected()) {
         soundcloudButton -> setIcon(QIcon(":/add_soundcloud_on"));
+        soundcloudButton -> setToolTip("Soundcloud(soundcloud.com)");
         soundcloudButton -> setPopupMode(QToolButton::InstantPopup);
 
         QMenu * vkMenu = new QMenu(soundcloudButton);
