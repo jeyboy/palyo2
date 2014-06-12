@@ -440,6 +440,8 @@ void View::resizeEvent(QResizeEvent * event) {
             Library::instance() -> setRemoteItemMax(count);
         }
     }
+
+    QTreeView::resizeEvent(event);
 }
 
 bool View::prepareDownloading(QString path) {
@@ -523,6 +525,7 @@ void View::downloadSelected(QString savePath, bool markAsLiked) {
     }
 }
 
+//TODO: add copy func
 void View::copyItemsFrom(View * otherView) {
     QModelIndexList indexes = otherView -> selectedItems();
 
