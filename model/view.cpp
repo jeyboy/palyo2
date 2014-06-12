@@ -434,9 +434,11 @@ void View::openLocation() {
 
 
 void View::resizeEvent(QResizeEvent * event) {
-    if (event -> size().height() > 0) {
-        int count = (event -> size().height() / 38) + 2;
-        Library::instance() -> setRemoteItemMax(count);
+    if (event -> oldSize().height() != size().height()) {
+        if (event -> size().height() > 0) {
+            int count = (event -> size().height() / 38) + 2;
+            Library::instance() -> setRemoteItemMax(count);
+        }
     }
 }
 

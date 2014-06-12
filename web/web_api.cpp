@@ -32,6 +32,7 @@ void WebApi::addFriend(QString uid, QString name) {
     friends.insert(uid, name);
 }
 void WebApi::addGroup(QString uid, QString name) {
+    qDebug() << "GROUP " << uid << " " << name;
     groups.insert(uid, name);
 }
 

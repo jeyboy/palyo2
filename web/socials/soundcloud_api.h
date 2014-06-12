@@ -21,6 +21,7 @@ public:
     QString getExpire();
     QString getUserID();
 
+    void getGroupInfo(FuncContainer func, QString uid);
     void getUidInfo(FuncContainer responseSlot, QString uid = "0");
 
     ~SoundcloudApi() { }
