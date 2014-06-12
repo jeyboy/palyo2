@@ -26,7 +26,6 @@ public:
     static void registerHotkeys(QWidget * receiver);
 
     bool isIconSizeChanged() const;
-    bool isBigIcon() const;
 
 private slots:
     void on_cancelButton_clicked();

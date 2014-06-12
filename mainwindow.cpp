@@ -683,7 +683,7 @@ void MainWindow::showSettingsDialog() {
     SettingsDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
         if (dialog.isIconSizeChanged())
-            tabber -> updateIconSize(dialog.isBigIcon());
+            tabber -> updateIconSize();
 
         ui -> tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
     }
@@ -720,7 +720,6 @@ void MainWindow::showVKTabDialog() {
         }
     }
 }
-
 
 void MainWindow::showSoundcloudTabDialog() {
     if (SoundcloudApi::instance() -> isConnected()) {
@@ -789,12 +788,12 @@ void MainWindow::showAttTabDialog(Tab * tab) {
 }
 
 void MainWindow::showAttCurrTabDialog() {
-    emit showAttTabDialog(tabber -> currentTab());
+//    emit showAttTabDialog(tabber -> currentTab());
 
-//    if (tabber -> currentTab() -> isEditable())
-//        emit showAttTabDialog(tabber -> currentTab());
-//    else
-//        QMessageBox::warning(this, "Settings", "This tab type did not have any settings...");
+    if (tabber -> currentTab() -> isEditable())
+        emit showAttTabDialog(tabber -> currentTab());
+    else
+        QMessageBox::warning(this, "Settings", "This tab type did not have any settings...");
 }
 
 void MainWindow::changeToolbarMovable() {

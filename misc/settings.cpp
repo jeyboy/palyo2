@@ -201,7 +201,20 @@ void Settings::setTabPosition(int newPositionsType) {
     tabPosition = newPositionsType;
 }
 
+int Settings::getItemHeight() {
+    return itemHeight;
+}
+void Settings::setItemHeight(int newHeight) {
+    itemHeight = newHeight;
+}
 
+int Settings::getTotalItemHeight() {
+    return getItemHeight() + (isShowInfo() ? getItemInfoFontSize() * 2 : 0);
+}
+
+int Settings::getIconHeight() {
+    return getTotalItemHeight() - 1;
+}
 
 QList<HotkeyModelItem *> * Settings::getHotKeys() const {
     QVector<QVariant> itemVals;
@@ -292,6 +305,8 @@ void Settings::fromJson(QJsonObject settingsObj) {
     selectedItemInfoColor = selectedItemTextColorVar.isValid() ? selectedItemTextColorVar.value<QColor>() : QColor(255, 255, 255);
 
     tabPosition = settingsObj.value("tab_position").toInt(0);
+
+    itemHeight = settingsObj.value("item_height").toInt(18);
 }
 
 QJsonObject Settings::toJson() {
@@ -322,6 +337,7 @@ QJsonObject Settings::toJson() {
     ret.insert("selected_item_info_text_color", QJsonValue::fromVariant(selectedItemInfoColor));
 
     ret.insert("tab_position", QJsonValue::fromVariant(tabPosition));
+    ret.insert("item_height", QJsonValue::fromVariant(itemHeight));
 
     return ret;
 }

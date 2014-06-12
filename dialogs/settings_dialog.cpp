@@ -72,6 +72,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
   selectedItemInfoTextColor = Settings::instance() -> getSelectedItemInfoTextColor();
   ui -> selectedItemInfoTextColorButton -> setStyleSheet("background-color: " + selectedItemInfoTextColor.name() + ";");
+
+  ui -> itemHeightSize -> setValue(Settings::instance() -> getItemHeight());
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -143,7 +145,8 @@ void SettingsDialog::on_acceptButton_clicked() {
 
     Settings::instance() -> setSpoilOnActivation(ui -> spoilOnActivate -> isChecked());
 
-    iconSizeChanged = Settings::instance() -> isShowInfo() != ui -> showInfo -> isChecked();
+    iconSizeChanged = Settings::instance() -> isShowInfo() != ui -> showInfo -> isChecked()
+            || Settings::instance() -> getItemHeight() != ui -> itemHeightSize -> value();
     Settings::instance() -> setShowInfo(ui -> showInfo -> isChecked());
 
     Settings::instance() -> setUseGradient(ui -> useGradientCheck -> isChecked());
@@ -168,6 +171,8 @@ void SettingsDialog::on_acceptButton_clicked() {
 
     Settings::instance() -> setTabPosition(ui -> tabPositionSelect -> currentIndex());
 
+    Settings::instance() -> setItemHeight(ui -> itemHeightSize -> value());
+
     accept();
 }
 
@@ -183,10 +188,6 @@ void SettingsDialog::on_browseButton_clicked() {
 bool SettingsDialog::isIconSizeChanged() const {
     return iconSizeChanged;
 }
-bool SettingsDialog::isBigIcon() const {
-    return ui -> showInfo -> isChecked();
-}
-
 
 void SettingsDialog::on_defaultColorButton_clicked() {
     if (execColorDialog(defaultColor))

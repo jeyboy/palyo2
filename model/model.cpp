@@ -69,12 +69,16 @@ QVariant Model::data(const QModelIndex &index, int role) const {
             return item -> data(TITLEID).toString();
         case Qt::SizeHintRole:
             item = getItem(index);
-            if (item -> isFolder() || !Settings::instance() -> isShowInfo())
-                return QSize(0, 18);
+            if (item -> isFolder())
+                return QSize(0, Settings::instance() -> getItemHeight());
             else
-                return QSize(0, 34);
+                return QSize(0, Settings::instance() -> getTotalItemHeight());
         case Qt::TextAlignmentRole:
-            return Qt::AlignLeft;
+            item = getItem(index);
+            if (item -> isFolder() || !Settings::instance() -> isShowInfo())
+                return Qt::AlignVCenter;
+            else
+                return Qt::AlignLeft;
         case Qt::FontRole:
             return Settings::instance() -> getItemFont();
         case ADDFONTID:

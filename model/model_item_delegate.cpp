@@ -263,7 +263,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         int timeWidth = fmf.width(infos.last());
 
         int beetweeX = option.rect.right() - timeWidth - 10;
-        int top = option.rect.bottom() - 14;
+        int top = option.rect.bottom() - fmf.height() - 2;
 
         int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
         if (Settings::instance() -> isCheckboxShow())
@@ -299,6 +299,15 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     if (is_folder) {
         option2.textElideMode = Qt::ElideLeft;
     }
+
+//    option2.features &= (~QStyleOptionViewItem::HasDisplay);
+
+//            None = 0x00,
+//            WrapText = 0x01,
+//            Alternate = 0x02,
+//            HasCheckIndicator = 0x04,
+//            HasDisplay = 0x08,
+//            HasDecoration = 0x10
 
     QStyledItemDelegate::paint(painter, option2, index);
 }

@@ -165,9 +165,9 @@ void Tabber::load() {
     }
 }
 
-void Tabber::updateIconSize(bool isBigIcon) {
+void Tabber::updateIconSize() {
     Tab * tab;
-    int dimension = isBigIcon ? 32 : 16;
+    int dimension = Settings::instance() -> getIconHeight();
     QSize size(dimension, dimension);
     for(int i = 0; i < tabber -> count(); i++) {
         tab = (Tab*)(tabber -> widget(i));

@@ -93,6 +93,13 @@ public:
     int getTabPosition();
     void setTabPosition(int newPositionsType);
 
+    int getItemHeight();
+    void setItemHeight(int newHeight);
+
+    int getTotalItemHeight();
+
+    int getIconHeight();
+
     QList<HotkeyModelItem *> * getHotKeys() const;
     void setHotKeys(QList<HotkeyModelItem *>);
 
@@ -134,6 +141,8 @@ private:
     QColor defaultColor1, listenedColor1, likedColor1, playedColor1, folderColor1;
 
     int tabPosition;
+
+    int itemHeight;
 
     QString itemFontName;
     int itemFontSize;
