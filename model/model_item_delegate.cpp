@@ -192,6 +192,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
       QStyleOptionViewItem option2 = option;
 //      option2.rect.setTop(option2.rect.top() + 2);
       option2.state = option.state & (~QStyle::State_HasFocus) & (~QStyle::State_Active) & (~QStyle::State_Selected);
+      option2.rect.setWidth(option2.rect.width() - 4);
 //    //  /////////////////////////////////////////////
 //    //  QStyledItemDelegate::paint(painter, option2, index);
 
@@ -240,7 +241,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             break;
     }
 
-    QPainterPath roundRect = roundRectPath(option2.rect, !checkable.isValid() ? 2 : 18);
+    QPainterPath roundRect = roundRectPath(option.rect, !checkable.isValid() ? 2 : 18);
     painter -> fillPath(roundRect, fill_color);
 
     painter -> setPen(option.palette.foreground().color());
