@@ -436,7 +436,7 @@ void View::openLocation() {
 void View::resizeEvent(QResizeEvent * event) {
     if (event -> oldSize().height() != size().height()) {
         if (event -> size().height() > 0) {
-            int count = (event -> size().height() / 38) + 2;
+            int count = (event -> size().height() / Settings::instance() -> getTotalItemHeight()) + 2;
             Library::instance() -> setRemoteItemMax(count);
         }
     }
@@ -686,7 +686,6 @@ void View::dragMoveEvent(QDragMoveEvent * event) {
 void View::dropEvent(QDropEvent *event) {
     if (event -> source() != this && event -> mimeData() -> hasUrls()) {
         QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
-        qDebug() << "HUY " << modelIndex.isValid();
         model -> refresh();
         scrollTo(modelIndex);
         expand(modelIndex);
