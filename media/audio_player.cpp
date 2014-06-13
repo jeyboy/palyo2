@@ -1,4 +1,5 @@
 #include "audio_player.h"
+#include <QtMath>
 #include <QDebug>
 
 //Get the percentage downloaded of an internet file stream, or the buffer level when streaming in blocks.
@@ -109,7 +110,7 @@ bool AudioPlayer::isStoped() const {
 
 int AudioPlayer::openRemoteChannel(QString path) {
     BASS_ChannelStop(chan);
-    chan = BASS_StreamCreateURL(path.toStdWString().c_str(), 0, 0, NULL, 0);
+    chan = BASS_StreamCreateURL(path.toStdWString().c_str(), 0, BASS_SAMPLE_FLOAT, NULL, 0);
 
 //    BASS_Encode_Start(channel, "output.wav", BASS_ENCODE_PCM, NULL, 0);
 
@@ -250,6 +251,67 @@ QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
     BASS_StreamFree(chUID);
 
     return ret;
+}
+
+float AudioPlayer::getBpmValue(QUrl uri) {
+    int cochan;
+
+    if (uri.isLocalFile())
+        cochan = BASS_StreamCreateFile(false, uri.toLocalFile().toStdWString().c_str(), 0, 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN | BASS_SAMPLE_MONO);
+    else
+        cochan = BASS_StreamCreateURL(uri.toString().toStdWString().c_str(), 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | BASS_SAMPLE_MONO, NULL, 0);
+
+
+    if (cochan) {
+        int playBackDuration = BASS_ChannelBytes2Seconds(cochan, BASS_ChannelGetLength(cochan, BASS_POS_BYTE));
+        BASS_ChannelSetAttribute(cochan, BASS_ATTRIB_VOL, 0);
+        qDebug() << playBackDuration;
+        return BASS_FX_BPM_DecodeGet(cochan,
+                              0,
+                              60,
+                              0, //MAKEWORD(60, 230),
+                              BASS_FX_FREESOURCE, //BASS_FX_BPM_BKGRND // BASS_FX_BPM_MULT2
+                              NULL, NULL);
+
+//        float last = BASS_FX_BPM_DecodeGet(cochan,
+//                              0.0,
+//                              playBackDuration,
+//                              MAKELONG(85, 90),
+//                              BASS_FX_FREESOURCE, //BASS_FX_BPM_BKGRND // BASS_FX_BPM_MULT2
+//                              NULL, NULL);
+
+//        qDebug() << last << " " << first;
+    } else return 0;
+}
+
+/// \brief AudioPlayer::getSpectrum
+/// \param width - output window width
+/// \param height - output window height
+/// \return
+///
+QList<int> AudioPlayer::getSpectrum(int channel, int height) {
+    float fft[1024];
+    BASS_ChannelGetData(channel, fft, BASS_DATA_FFT2048);
+    QList<int> res;
+
+    int b0 = 0, x, y;
+
+    for (x = 0; x < BANDS; x++) {
+        float peak = 0;
+        int b1 = qPow(2, x * 10.0 / (BANDS-1));
+        if (b1 > 1023) b1 = 1023;
+        if (b1 <= b0) b1 = b0 + 1; // make sure it uses at least 1 FFT bin
+        for (; b0 < b1; b0++)
+            if (peak < fft[1 + b0])
+                peak = fft[1 + b0];
+
+        y = qSqrt(peak) * 3 * height - 4; // scale it (sqrt to make low values more visible)
+        if (y > height) y = height; // cap it
+
+        res.append(y);
+    }
+
+    return res;
 }
 
 ////////////////////////////////////////////////////////////////////////

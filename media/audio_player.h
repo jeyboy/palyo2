@@ -1,6 +1,8 @@
 #ifndef AUDIO_PLAYER_H
 #define AUDIO_PLAYER_H
 
+#define BANDS 28
+
 #include <QApplication>
 #include <QObject>
 #include <QUrl>
@@ -52,6 +54,8 @@ public:
     int getVolume() const;
     float getSize() const;
     float getRemoteFileDownloadPosition();
+    float getBpmValue(QUrl uri);
+    QList<int> getSpectrum(int channel, int height);
 
     QHash<QString, QString> getRemoteFileInfo(QString uri);
 

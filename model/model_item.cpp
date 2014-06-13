@@ -18,6 +18,7 @@ ModelItem::ModelItem(int initState) {
     duration = -1;
     size = -1;
     info = -1;
+    bpm = 0;
 }
 
 ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
@@ -32,6 +33,7 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
 
     size = hash -> value("b").toInt(-1);
     info = hash -> value("a").toString("");
+    bpm = hash -> value("m").toInt(0);
     progress = -1;
 
     if (parent != 0) {
@@ -50,6 +52,7 @@ ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * paren
     path = filePath;
     genreID = genre_id;
     progress = -1;
+    bpm = 0;
     duration = itemDuration;
 //    extension = fileExtension;
 
@@ -122,6 +125,10 @@ void ModelItem::setInfo(QString newInfo) {
     info = newInfo;
 }
 
+void ModelItem::setBpm(int newBeat) {
+    bpm = newBeat;
+}
+
 void ModelItem::setDuration(QString newDuration) {
     duration = newDuration;
 }
@@ -178,6 +185,9 @@ QJsonObject ModelItem::toJSON() {
 
     if (!info.isEmpty())
         root["a"] = info;
+
+    if (bpm != 0)
+        root["m"] = bpm;
 
     if (size != -1)
         root["b"] = size;

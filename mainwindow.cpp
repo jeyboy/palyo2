@@ -185,8 +185,13 @@ MainWindow::MainWindow(QWidget *parent) :
 //    qDebug() << Library::instance() -> prepareName("5ugar, Eva Kade  (2012) http://vk.com/clubmusicthebestin - All Around feat Evil T (Andrea Bertolini Remix)");
     showActiveElem();
 
-//    AudioPlayer * player;
-//    player -> setMedia(QUrl("https://api.soundcloud.com/tracks/153612141/stream?client_id=8f84790a84f5a5acd1c92e850b5a91b7"));
+    AudioPlayer * player;
+    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("C:/Users/JB/Desktop/Dj Maze feat. Dina Rae - Falling In Love.mp3")); // ~70
+    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("F:/katy_perry_-_last_friday_night_(zaycev.net).mp3")); // ~126
+    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("F:/katy_perry_feat._kanye_west_-_e.t._(zaycev.net).mp3")); // ~76
+    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("F:/Shakra – Trapped.mp3")); // ~105
+    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("Yellow Claw feat. Rochelle - Shotgun .mp3")); // ~145
+//    player -> setMedia(QUrl("C:/Users/JB/Desktop/Akon_Ft_French_Montana_-_Hurt_Somebody.mp3"));
 //    player -> play();
 }
 

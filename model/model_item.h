@@ -11,6 +11,7 @@
 /// i - item type
 /// l - tab items count
 /// n - tab name
+/// m - beat per minute
 /// p - path
 /// s - state
 /// set - tab settings
@@ -74,6 +75,7 @@ public:
     bool hasInfo() const;
     void setInfo(QString newInfo);
 
+    void setBpm(int newBeat);
     void setDuration(QString newDuration);
     void setGenre(int newGenreID);
     void setPath(QString newPath);
@@ -139,6 +141,7 @@ protected:
     QString extension;
     QString info;
 
+    qint16 bpm;
     int size;
     QString duration;
     qint16 genreID;

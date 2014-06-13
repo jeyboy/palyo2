@@ -432,7 +432,6 @@ void View::openLocation() {
     item -> openLocation();
 }
 
-
 void View::resizeEvent(QResizeEvent * event) {
     if (event -> oldSize().height() != size().height()) {
         if (event -> size().height() > 0) {
