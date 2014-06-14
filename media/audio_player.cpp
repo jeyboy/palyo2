@@ -25,6 +25,8 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     duration = -1;
     notifyInterval = 100;
     volumeVal = 1.0;
+    spectrumHeight = 0;
+    spectrumBandsCount = 28;
 
     currentState = StoppedState;
 
@@ -60,12 +62,19 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     connect(notifyTimer, SIGNAL(timeout()), this, SLOT(signalUpdate()));
     connect(notifyTimer, SIGNAL(started()), this, SLOT(started()));
     connect(notifyTimer, SIGNAL(stoped()), this, SLOT(stoped()));
+
+    spectrumTimer = new NotifyTimer(this);
+    connect(spectrumTimer, SIGNAL(timeout()), this, SLOT(calcSpectrum()));
+    spectrumTimer -> start(25); //40 Hz
 }
 
 AudioPlayer::~AudioPlayer() {
     BASS_PluginFree(0);
     notifyTimer -> stop();
     delete notifyTimer;
+
+    spectrumTimer -> stop();
+    delete spectrumTimer;
 }
 
 int AudioPlayer::getPosition() const {
@@ -87,6 +96,13 @@ void AudioPlayer::setNotifyInterval(signed int milis) {
 
 void AudioPlayer::setMedia(QUrl mediaPath) {
     mediaUri = mediaPath;
+}
+
+void AudioPlayer::setSpectrumBandsCount(int bandsCount) {
+    spectrumBandsCount = bandsCount;
+}
+void AudioPlayer::setSpectrumHeight(int newHeight) {
+    spectrumHeight = newHeight;
 }
 
 
@@ -161,6 +177,11 @@ void AudioPlayer::signalUpdate() {
     emit positionChanged(curr_pos);
 }
 
+void AudioPlayer::calcSpectrum() {
+    if (spectrumHeight > 0)
+        emit spectrumChanged(getSpectrum());
+}
+
 void AudioPlayer::slidePosForward() {
     if (currentState == PlayingState || currentState == PausedState) {
         int dur = getDuration();
@@ -219,7 +240,6 @@ float AudioPlayer::getRemoteFileDownloadPosition() {
 
     if (prevDownloadPos != 1) {
         float currDownloadPos = ((BASS_StreamGetFilePosition(chan, BASS_FILEPOS_DOWNLOAD)) / size);
-        qDebug() << "PREV " << prevDownloadPos << " CURR " << currDownloadPos;
         if (prevDownloadPos == currDownloadPos && currDownloadPos > 0.8)
             prevDownloadPos = 1;
         else
@@ -284,29 +304,24 @@ float AudioPlayer::getBpmValue(QUrl uri) {
     } else return 0;
 }
 
-/// \brief AudioPlayer::getSpectrum
-/// \param width - output window width
-/// \param height - output window height
-/// \return
-///
-QList<int> AudioPlayer::getSpectrum(int channel, int height) {
+QList<int> AudioPlayer::getSpectrum() {
     float fft[1024];
-    BASS_ChannelGetData(channel, fft, BASS_DATA_FFT2048);
+    BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048);
     QList<int> res;
 
     int b0 = 0, x, y;
 
-    for (x = 0; x < BANDS; x++) {
+    for (x = 0; x < spectrumBandsCount; x++) {
         float peak = 0;
-        int b1 = qPow(2, x * 10.0 / (BANDS-1));
+        int b1 = qPow(2, x * 10.0 / (spectrumBandsCount - 1));
         if (b1 > 1023) b1 = 1023;
         if (b1 <= b0) b1 = b0 + 1; // make sure it uses at least 1 FFT bin
         for (; b0 < b1; b0++)
             if (peak < fft[1 + b0])
                 peak = fft[1 + b0];
 
-        y = qSqrt(peak) * 3 * height - 4; // scale it (sqrt to make low values more visible)
-        if (y > height) y = height; // cap it
+        y = qSqrt(peak) * 3 * spectrumHeight - 4; // scale it (sqrt to make low values more visible)
+        if (y > spectrumHeight) y = spectrumHeight; // cap it
 
         res.append(y);
     }
@@ -344,6 +359,7 @@ void AudioPlayer::play() {
                 notifyTimer -> start(notifyInterval);
                 //TODO: remove sync and check end of file by timer
                 syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
+//                BASS_SYNC_DOWNLOAD
             } else {
                 qDebug() << "Can't play file";
             }

@@ -30,6 +30,7 @@
 #include "override/slider_style.h"
 #include "override/clickable_label.h"
 #include "override/slider.h"
+#include "override/spectrum.h"
 
 #include "media/library.h"
 #include "media/player.h"
@@ -104,7 +105,6 @@ private slots:
     void nextItemTriggered();
     void nextItemWithDelTriggered();
     void prevItemTriggered();
-
 
 //    void dropEvent(QDropEvent * event);
 

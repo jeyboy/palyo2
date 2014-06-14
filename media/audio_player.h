@@ -1,8 +1,6 @@
 #ifndef AUDIO_PLAYER_H
 #define AUDIO_PLAYER_H
 
-#define BANDS 28
-
 #include <QApplication>
 #include <QObject>
 #include <QUrl>
@@ -55,7 +53,6 @@ public:
     float getSize() const;
     float getRemoteFileDownloadPosition();
     float getBpmValue(QUrl uri);
-    QList<int> getSpectrum(int channel, int height);
 
     QHash<QString, QString> getRemoteFileInfo(QString uri);
 
@@ -63,6 +60,8 @@ public:
     void setNotifyInterval(signed int milis);
 
     void setMedia(QUrl mediaPath);
+    void setSpectrumBandsCount(int bandsCount);
+    void setSpectrumHeight(int newHeight);
 
     MediaState state() const;
 
@@ -77,6 +76,7 @@ signals:
     void playbackEnded();
     void stateChanged(MediaState);
     void mediaStatusChanged(MediaStatus);
+    void spectrumChanged(QList<int>);
 
     void positionChanged(int);
     void durationChanged(int);
@@ -86,6 +86,7 @@ private slots:
     void started();
     void stoped();
     void signalUpdate();
+    void calcSpectrum();
 
 public slots:
     void play();
@@ -104,6 +105,7 @@ public slots:
     void setVolume(int val);
 
 private:
+    QList<int> getSpectrum();
     int getBitrate() const;
 
     QUrl mediaUri;
@@ -115,11 +117,15 @@ private:
     float size;
     float prevDownloadPos;
 
+    int spectrumBandsCount;
+    int spectrumHeight;
+
     MediaState currentState;
 
     unsigned long chan;
     HSYNC syncHandle;
     NotifyTimer * notifyTimer;
+    NotifyTimer * spectrumTimer;
 };
 
 #endif // AUDIO_PLAYER_H

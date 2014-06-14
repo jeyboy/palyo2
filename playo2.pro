@@ -85,7 +85,8 @@ SOURCES += main.cpp\
     override/slider.cpp \
     single_application.cpp \
     web/download.cpp \
-    dialogs/relationdialog.cpp
+    dialogs/relationdialog.cpp \
+    override/spectrum.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -152,7 +153,8 @@ HEADERS  += mainwindow.h \
     single_application.h \
     misc/func_container.h \
     web/download.h \
-    dialogs/relationdialog.h
+    dialogs/relationdialog.h \
+    override/spectrum.h
     model/view_types.h
 
 unix:!mac {
