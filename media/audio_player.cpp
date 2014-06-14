@@ -178,8 +178,13 @@ void AudioPlayer::signalUpdate() {
 }
 
 void AudioPlayer::calcSpectrum() {
-    if (spectrumHeight > 0)
-        emit spectrumChanged(getSpectrum());
+    if (spectrumHeight > 0) {
+        if (currentState == StoppedState) {
+            QVector<int> l;
+            emit spectrumChanged(l.fill(-2, spectrumBandsCount).toList());
+        } else
+            emit spectrumChanged(getSpectrum());
+    }
 }
 
 void AudioPlayer::slidePosForward() {
