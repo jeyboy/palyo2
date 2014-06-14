@@ -3,6 +3,7 @@
 
 #include <QToolBar>
 #include <QPainter>
+#include <QLinearGradient>
 
 class Spectrum : public QToolBar {
     Q_OBJECT

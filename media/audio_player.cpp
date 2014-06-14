@@ -325,7 +325,8 @@ QList<int> AudioPlayer::getSpectrum() {
             if (peak < fft[1 + b0])
                 peak = fft[1 + b0];
 
-        y = qSqrt(peak) * 3 * spectrumHeight - 4; // scale it (sqrt to make low values more visible)
+        y = qSqrt(peak) * 2.5 * spectrumHeight - 4; // scale it (sqrt to make low values more visible)
+//        y = qSqrt(peak) * 3 * spectrumHeight - 4; // scale it (sqrt to make low values more visible)
         if (y > spectrumHeight) y = spectrumHeight; // cap it
 
         res.append(y);
