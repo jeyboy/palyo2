@@ -129,6 +129,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QJsonArray bars = settings -> read("bars").toArray();
 
     if (bars.count() > 0) {
+        QList<QString> barsList;
+        barsList.append("Media"); barsList.append("Media+"); barsList.append("Media+Position"); barsList.append("Media+Time");
+        barsList.append("Media+Volume"); barsList.append("Controls"); barsList.append("Spectrum");
+
         QJsonObject obj, actionObj;
         QString barName;
         QToolBar * curr_bar;
@@ -136,25 +140,8 @@ MainWindow::MainWindow(QWidget *parent) :
         foreach(QJsonValue bar, bars) {
             obj = bar.toObject();
             barName = obj.value("title").toString();
-
-            if (barName == "Media") {
-                curr_bar = createMediaBar();
-            } else if (barName == "Media+") {
-                curr_bar = createAdditionalMediaBar();
-            } else if (barName == "Media+Position") {
-                curr_bar = createPositionMediaBar();
-            } else if (barName == "Media+Time") {
-                curr_bar = createTimeMediaBar();
-            } else if (barName == "Media+Volume") {
-                curr_bar = createVolumeMediaBar();
-            } else if (barName == "Controls") {
-                curr_bar = createControlToolBar();
-            } else if (barName == "Spectrum") {
-                curr_bar = new Spectrum(this);
-            } else {
-                curr_bar = createToolBar(barName);
-            }
-
+            barsList.removeOne(barName);
+            curr_bar = linkNameToToolbars(barName);
             curr_bar -> setMovable(obj.value("movable").toBool());
 
             addToolBar((Qt::ToolBarArea)obj.value("area").toInt(), curr_bar);
@@ -168,6 +155,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 }
             }
         }
+
+        recreateToolbars(barsList);
 
         if (objState.isValid())
             restoreState(objState.toByteArray());
@@ -195,6 +184,32 @@ MainWindow::MainWindow(QWidget *parent) :
 //    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("Yellow Claw feat. Rochelle - Shotgun .mp3")); // ~145
 //    player -> setMedia(QUrl("C:/Users/JB/Desktop/Akon_Ft_French_Montana_-_Hurt_Somebody.mp3"));
 //    player -> play();
+}
+
+void MainWindow::recreateToolbars(QList<QString> required) {
+    while(required.length() > 0) {
+        addToolBar(Qt::BottomToolBarArea, linkNameToToolbars(required.takeFirst()));
+    }
+}
+
+QToolBar * MainWindow::linkNameToToolbars(QString barName) {
+    if (barName == "Media") {
+        return createMediaBar();
+    } else if (barName == "Media+") {
+        return createAdditionalMediaBar();
+    } else if (barName == "Media+Position") {
+        return createPositionMediaBar();
+    } else if (barName == "Media+Time") {
+        return createTimeMediaBar();
+    } else if (barName == "Media+Volume") {
+        return createVolumeMediaBar();
+    } else if (barName == "Controls") {
+        return createControlToolBar();
+    } else if (barName == "Spectrum") {
+        return new Spectrum(this);
+    } else {
+        return createToolBar(barName);
+    }
 }
 
 //TODO: menu finish needed

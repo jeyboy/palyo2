@@ -16,6 +16,7 @@ Spectrum::~Spectrum() {
 }
 
 void Spectrum::dataUpdated(QList<int> bars) {
+//    qDebug() << bars;
     peaks = bars;
     repaint();
 }

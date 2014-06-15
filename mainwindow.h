@@ -56,6 +56,9 @@ public:
     QToolButton * createSoundcloudButton(QToolButton * soundcloudButton = 0);
 
 
+    void recreateToolbars(QList<QString> required);
+    QToolBar * linkNameToToolbars(QString barName);
+
     QDockWidget * createDockWidget();
     QToolBar* createToolBar(QString name);
     QToolBar* createMediaBar();
