@@ -96,6 +96,24 @@ public:
     int getItemHeight();
     void setItemHeight(int newHeight);
 
+    bool getScrollButtonUsage();
+    void setScrollButtonUsage(bool use);
+
+    bool getMonocolorSpectrum();
+    void setMonocolorSpectrum(bool use);
+
+    QColor getSpectrumColor();
+    void setSpectrumColor(QColor newColor);
+
+    int getSpectrumFreqRate();
+    void setSpectrumFreqRate(int newRate);
+
+    int getSpectrumBarsCount();
+    void setSpectrumBarsCount(int newCount);
+
+    int getSpectrumHeight();
+    void setSpectrumHeight(int newHeight);
+
     int getTotalItemHeight();
 
     int getIconHeight();
@@ -135,6 +153,7 @@ private:
     bool showMetric;
     bool spoilOnActivation;
     bool useGradient;
+    bool useScrollButtons;
     QJsonObject hotkeys;
     QHash<int, QString> humanizeHotkeyText;
 
@@ -153,6 +172,12 @@ private:
     int itemInfoFontSize;
     QColor itemInfoColor;
     QColor selectedItemInfoColor;
+
+    QColor spectrumColor;
+    int spectrumFreqRate;
+    int spectrumBarsCount;
+    int spectrumHeight;
+    bool monocolorSpectrum;
 };
 
 #endif // SETTINGS_H

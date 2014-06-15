@@ -65,7 +65,8 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
 
     spectrumTimer = new NotifyTimer(this);
     connect(spectrumTimer, SIGNAL(timeout()), this, SLOT(calcSpectrum()));
-    spectrumTimer -> start(25); //40 Hz
+//    spectrumTimer -> start(25); //40 Hz
+    spectrumTimer -> start(20);
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -103,6 +104,10 @@ void AudioPlayer::setSpectrumBandsCount(int bandsCount) {
 }
 void AudioPlayer::setSpectrumHeight(int newHeight) {
     spectrumHeight = newHeight;
+}
+
+void AudioPlayer::setSpectrumFreq(int millis) {
+    spectrumTimer -> setInterval(millis);
 }
 
 
@@ -286,27 +291,64 @@ float AudioPlayer::getBpmValue(QUrl uri) {
     else
         cochan = BASS_StreamCreateURL(uri.toString().toStdWString().c_str(), 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | BASS_SAMPLE_MONO, NULL, 0);
 
-
     if (cochan) {
+//        return calcBpm(cochan);
+
         int playBackDuration = BASS_ChannelBytes2Seconds(cochan, BASS_ChannelGetLength(cochan, BASS_POS_BYTE));
-        BASS_ChannelSetAttribute(cochan, BASS_ATTRIB_VOL, 0);
-        qDebug() << playBackDuration;
+
         return BASS_FX_BPM_DecodeGet(cochan,
                               0,
-                              60,
-                              0, //MAKEWORD(60, 230),
+                              playBackDuration,
+                              MAKEWORD(20, 180),
                               BASS_FX_FREESOURCE, //BASS_FX_BPM_BKGRND // BASS_FX_BPM_MULT2
                               NULL, NULL);
-
-//        float last = BASS_FX_BPM_DecodeGet(cochan,
-//                              0.0,
-//                              playBackDuration,
-//                              MAKELONG(85, 90),
-//                              BASS_FX_FREESOURCE, //BASS_FX_BPM_BKGRND // BASS_FX_BPM_MULT2
-//                              NULL, NULL);
-
-//        qDebug() << last << " " << first;
     } else return 0;
+}
+
+// did not work :(
+float AudioPlayer::calcBpm(int channel) {
+    int ret, C = 1.1;
+    int history_lim = 43, bands_count = 32, fft_length = 1024, cadr_len = fft_length / bands_count;
+    float history_aprox = 1.0 / history_lim, beats = 0;
+    float energy_aprox = (float)bands_count / fft_length;
+
+    QVector<QVector<float> > history;
+    history.fill(QVector<float>(), bands_count);
+
+    while(true) {
+        float fft[fft_length];
+        ret = BASS_ChannelGetData(channel, fft, BASS_DATA_FFT2048); // fft_length * 2
+        if (ret == -1) break;
+        int fft_pos = 0;
+
+        for (int band = 0; band < bands_count; band++) {
+            float energy = 0;
+
+            for(int limit = 0; limit < cadr_len; limit++, fft_pos++)
+                energy += fft[fft_pos];
+
+            float history_total = 0;
+
+            for(int history_pos = 0; history_pos < history[band].length(); history_pos++)
+                history_total += history[band][history_pos];
+
+            if ((energy_aprox * energy) > (history_aprox * history_total * C))
+                beats += 1;
+
+            history[band].append(energy);
+            if (history[band].length() > history_lim)
+                history[band].removeFirst();
+        }
+
+//        delete [] fft;
+    }
+
+    int playBackDuration = BASS_ChannelBytes2Seconds(channel, BASS_ChannelGetLength(channel, BASS_POS_BYTE));
+    qDebug() << "!!!!!!!!!!!!!!!!BEAT COUNT " << beats;
+
+    if (beats != 0)
+        return beats / (playBackDuration / 60.0);
+    else return 0;
 }
 
 QList<int> AudioPlayer::getSpectrum() {

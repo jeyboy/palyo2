@@ -29,8 +29,6 @@ public:
     void updateIconSize();
 
 private:
-    void setNoTabsStyle();
-
     Tab * commonPlaylist;
     QTabWidget * tabber;
     DataStore * store;

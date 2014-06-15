@@ -208,6 +208,50 @@ void Settings::setItemHeight(int newHeight) {
     itemHeight = newHeight;
 }
 
+bool Settings::getScrollButtonUsage() {
+    return useScrollButtons;
+}
+void Settings::setScrollButtonUsage(bool use) {
+    useScrollButtons = use;
+}
+
+
+bool Settings::getMonocolorSpectrum() {
+    return monocolorSpectrum;
+}
+void Settings::setMonocolorSpectrum(bool use) {
+    monocolorSpectrum = use;
+}
+
+QColor Settings::getSpectrumColor() {
+    return spectrumColor;
+}
+void Settings::setSpectrumColor(QColor newColor) {
+    spectrumColor = newColor;
+}
+
+int Settings::getSpectrumFreqRate() {
+    return spectrumFreqRate;
+}
+void Settings::setSpectrumFreqRate(int newRate) {
+    spectrumFreqRate = newRate;
+}
+
+int Settings::getSpectrumBarsCount() {
+    return spectrumBarsCount;
+}
+void Settings::setSpectrumBarsCount(int newCount) {
+    spectrumBarsCount = newCount;
+}
+
+int Settings::getSpectrumHeight() {
+    return spectrumHeight;
+}
+
+void Settings::setSpectrumHeight(int newHeight) {
+    spectrumHeight = newHeight;
+}
+
 int Settings::getTotalItemHeight() {
     return getItemHeight() + (isShowInfo() ? getItemInfoFontSize() * 2 : 0);
 }
@@ -307,6 +351,18 @@ void Settings::fromJson(QJsonObject settingsObj) {
     tabPosition = settingsObj.value("tab_position").toInt(0);
 
     itemHeight = settingsObj.value("item_height").toInt(18);
+
+    useScrollButtons = settingsObj.value("use_scroll_buttons").toBool(true);
+
+    monocolorSpectrum = settingsObj.value("monocolor_spectrum").toBool(false);
+
+    QVariant specColorVar = settingsObj.value("spectrum_color").toVariant();
+    spectrumColor = specColorVar.isValid() ? specColorVar.value<QColor>() : QColor(0, 0, 0);
+
+    spectrumFreqRate = settingsObj.value("spectrum_rate").toInt(20);
+    spectrumBarsCount = settingsObj.value("spectrum_bars_count").toInt(30);
+
+    spectrumHeight = settingsObj.value("spectrum_height").toInt(100);
 }
 
 QJsonObject Settings::toJson() {
@@ -338,6 +394,14 @@ QJsonObject Settings::toJson() {
 
     ret.insert("tab_position", QJsonValue::fromVariant(tabPosition));
     ret.insert("item_height", QJsonValue::fromVariant(itemHeight));
+
+    ret.insert("use_scroll_buttons", QJsonValue::fromVariant(useScrollButtons));
+
+    ret.insert("monocolor_spectrum", QJsonValue::fromVariant(monocolorSpectrum));
+    ret.insert("spectrum_color", QJsonValue::fromVariant(spectrumColor));
+    ret.insert("spectrum_rate", QJsonValue::fromVariant(spectrumFreqRate));
+    ret.insert("spectrum_bars_count", QJsonValue::fromVariant(spectrumBarsCount));
+    ret.insert("spectrum_height", QJsonValue::fromVariant(spectrumHeight));
 
     return ret;
 }

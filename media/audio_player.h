@@ -62,6 +62,7 @@ public:
     void setMedia(QUrl mediaPath);
     void setSpectrumBandsCount(int bandsCount);
     void setSpectrumHeight(int newHeight);
+    void setSpectrumFreq(int millis);
 
     MediaState state() const;
 
@@ -105,6 +106,8 @@ public slots:
     void setVolume(int val);
 
 private:
+    float calcBpm(int channel_id);
+
     QList<int> getSpectrum();
     int getBitrate() const;
 

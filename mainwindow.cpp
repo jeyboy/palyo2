@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     highlighted = 0;
     vkToolButton = 0;
     soundcloudToolButton = 0;
+    spectrum = 0;
 
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
 
@@ -176,14 +177,14 @@ MainWindow::MainWindow(QWidget *parent) :
 //    qDebug() << Library::instance() -> prepareName("5ugar, Eva Kade  (2012) http://vk.com/clubmusicthebestin - All Around feat Evil T (Andrea Bertolini Remix)");
     showActiveElem();
 
-//    AudioPlayer * player;
-//    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("C:/Users/JB/Desktop/Dj Maze feat. Dina Rae - Falling In Love.mp3")); // ~70
-//    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("F:/katy_perry_-_last_friday_night_(zaycev.net).mp3")); // ~126
-//    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("F:/katy_perry_feat._kanye_west_-_e.t._(zaycev.net).mp3")); // ~76
-//    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("F:/Shakra – Trapped.mp3")); // ~105
-//    qDebug() << "BPM " << player -> getBpmValue(QUrl::fromLocalFile("Yellow Claw feat. Rochelle - Shotgun .mp3")); // ~145
-//    player -> setMedia(QUrl("C:/Users/JB/Desktop/Akon_Ft_French_Montana_-_Hurt_Somebody.mp3"));
-//    player -> play();
+//    AudioPlayer player;
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("C:/Users/JB/Desktop/Dj Maze feat. Dina Rae - Falling In Love.mp3")); // ~70
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/katy_perry_-_last_friday_night_(zaycev.net).mp3")); // ~126
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/katy_perry_feat._kanye_west_-_e.t._(zaycev.net).mp3")); // ~76
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/Shakra – Trapped.mp3")); // ~105
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/Yellow Claw feat. Rochelle - Shotgun .mp3")); // ~145
+//    player.setMedia(QUrl::fromLocalFile("C:/Users/JB/Desktop/Akon_Ft_French_Montana_-_Hurt_Somebody.mp3"));
+//    player.play();
 }
 
 void MainWindow::recreateToolbars(QList<QString> required) {
@@ -206,7 +207,8 @@ QToolBar * MainWindow::linkNameToToolbars(QString barName) {
     } else if (barName == "Controls") {
         return createControlToolBar();
     } else if (barName == "Spectrum") {
-        return new Spectrum(this);
+        spectrum = new Spectrum(this);
+        return spectrum;
     } else {
         return createToolBar(barName);
     }
@@ -583,6 +585,8 @@ MainWindow::~MainWindow() {
     if (soundcloudToolButton)
         delete soundcloudToolButton -> menu();
     delete soundcloudToolButton;
+
+    delete spectrum;
 }
 
 void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {
@@ -710,6 +714,10 @@ void MainWindow::showSettingsDialog() {
             tabber -> updateIconSize();
 
         ui -> tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
+        ui -> tabber -> setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
+        spectrum -> bandCountChanged(Settings::instance() -> getSpectrumBarsCount());
+        spectrum -> heightChanged(Settings::instance() -> getSpectrumHeight());
+        Player::instance() -> setSpectrumFreq(Settings::instance() -> getSpectrumFreqRate());
     }
 }
 

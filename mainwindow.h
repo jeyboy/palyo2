@@ -127,6 +127,7 @@ private:
 
     QWidget * highlighted;
 
+    Spectrum * spectrum;
     QToolBar * underMouseBar, * activeBar;
     ToolbarButton * underMouseButton;
     QToolButton * vkToolButton;

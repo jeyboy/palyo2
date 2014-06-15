@@ -4,15 +4,23 @@
 Spectrum::Spectrum(QWidget *parent) : QToolBar("Spectrum", parent) {
     setObjectName("tool_Spectrum");
     setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
-    setFixedHeight(100);
 
     connect(Player::instance(), SIGNAL(spectrumChanged(QList<int>)), this, SLOT(dataUpdated(QList<int>)));
-    Player::instance() -> setSpectrumBandsCount((bars_count = 40));
-    Player::instance() -> setSpectrumHeight(height() - 10);
+    bandCountChanged(Settings::instance() -> getSpectrumBarsCount());
+    heightChanged(Settings::instance() -> getSpectrumHeight());
 }
 
 Spectrum::~Spectrum() {
 
+}
+
+void Spectrum::bandCountChanged(int newCount) {
+    Player::instance() -> setSpectrumBandsCount((bars_count = newCount));
+}
+
+void Spectrum::heightChanged(int newHeight) {
+    setFixedHeight(newHeight);
+    Player::instance() -> setSpectrumHeight(height() - 10);
 }
 
 void Spectrum::dataUpdated(QList<int> bars) {
@@ -32,12 +40,17 @@ void Spectrum::paintEvent(QPaintEvent *event) {
     float bar_width = ((float)width() - offset - (bars_count + 1) * padd) / bars_count;
     QRectF rect;
 
+    bool monoColor = Settings::instance() -> getMonocolorSpectrum();
     QLinearGradient g(bar_width/2,0,bar_width/2,90);
 
-    g.setColorAt(0, Qt::red);
-    g.setColorAt(0.4, Qt::yellow);
-    g.setColorAt(0.5, Qt::yellow);
-    g.setColorAt(1, Qt::darkGreen);
+    if (monoColor) {
+        g.setColorAt(0, Settings::instance() -> getSpectrumColor());
+    } else {
+        g.setColorAt(0, Qt::red);
+        g.setColorAt(0.4, Qt::yellow);
+        g.setColorAt(0.5, Qt::yellow);
+        g.setColorAt(1, Qt::darkGreen);
+    }
 
     painter.setBrush(g);
 

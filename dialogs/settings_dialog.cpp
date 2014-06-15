@@ -74,6 +74,19 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> selectedItemInfoTextColorButton -> setStyleSheet("background-color: " + selectedItemInfoTextColor.name() + ";");
 
   ui -> itemHeightSize -> setValue(Settings::instance() -> getItemHeight());
+
+  ui -> scrollButtonsCheck -> setChecked(Settings::instance() -> getScrollButtonUsage());
+  ui -> scrollButtonsCheck -> setDisabled(true);
+
+  spectrumColor = Settings::instance() -> getSpectrumColor();
+  ui -> spectrumColor -> setStyleSheet("background-color: " + spectrumColor.name() + ";");
+
+  ui -> spectrumMonocolorUse -> setChecked(Settings::instance() -> getMonocolorSpectrum());
+
+  ui -> spectrumBarsCount -> setValue(Settings::instance() -> getSpectrumBarsCount());
+  ui -> spectrumUpdateFrequecy -> setValue(Settings::instance() -> getSpectrumFreqRate());
+
+  ui -> spectrumHeight -> setValue(Settings::instance() -> getSpectrumHeight());
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -173,6 +186,17 @@ void SettingsDialog::on_acceptButton_clicked() {
 
     Settings::instance() -> setItemHeight(ui -> itemHeightSize -> value());
 
+    Settings::instance() -> setScrollButtonUsage(ui -> scrollButtonsCheck -> isChecked());
+
+
+    Settings::instance() -> setSpectrumColor(spectrumColor);
+    Settings::instance() -> setMonocolorSpectrum(ui -> spectrumMonocolorUse -> isChecked());
+
+    Settings::instance() -> setSpectrumBarsCount(ui -> spectrumBarsCount -> value());
+    Settings::instance() -> setSpectrumFreqRate(ui -> spectrumUpdateFrequecy -> value());
+
+    Settings::instance() -> setSpectrumHeight(ui -> spectrumHeight -> value());
+
     accept();
 }
 
@@ -234,6 +258,11 @@ void SettingsDialog::on_selectedItemInfoTextColorButton_clicked() {
         ui -> selectedItemInfoTextColorButton -> setStyleSheet("background-color: " + selectedItemInfoTextColor.name() + ";");
 }
 
+void SettingsDialog::on_spectrumColor_clicked() {
+    if (execColorDialog(spectrumColor))
+        ui -> spectrumColor -> setStyleSheet("background-color: " + spectrumColor.name() + ";");
+}
+
 bool SettingsDialog::execColorDialog(QColor & color) {
     QColorDialog col(this);
     col.setCurrentColor(color);
@@ -244,3 +273,5 @@ bool SettingsDialog::execColorDialog(QColor & color) {
 
     return false;
 }
+
+

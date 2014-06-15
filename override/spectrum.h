@@ -12,6 +12,10 @@ public:
     Spectrum(QWidget *parent = 0);
     ~Spectrum();
 
+public slots:
+    void bandCountChanged(int newCount);
+    void heightChanged(int newHeight);
+
 protected slots:
     void dataUpdated(QList<int>);
 
