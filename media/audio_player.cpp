@@ -15,12 +15,18 @@ void endTrackSync(HSYNC, DWORD, DWORD, void * user) {
     emit player -> playbackEnded();
 }
 
+void endTrackDownloading(HSYNC, DWORD, DWORD, void * user) {
+    AudioPlayer * player = static_cast<AudioPlayer *>(user);
+    emit player -> downloadEnded();
+}
+
 AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     qRegisterMetaType<AudioPlayer::MediaStatus>("MediaStatus");
     qRegisterMetaType<AudioPlayer::MediaState>("MediaState");
 
     // cheat for cross treadhing
     connect(this, SIGNAL(playbackEnded()), this, SLOT(endOfPlayback()));
+    connect(this, SIGNAL(downloadEnded()), this, SLOT(endOfDownloading()));
 
     duration = -1;
     notifyInterval = 100;
@@ -159,6 +165,7 @@ int AudioPlayer::openChannel(QString path) {
 void AudioPlayer::closeChannel() {
     BASS_ChannelStop(chan);
     BASS_ChannelRemoveSync(chan, syncHandle);
+    BASS_ChannelRemoveSync(chan, syncDownloadHandle);
     BASS_StreamFree(chan);
 //    BASS_MusicFree(chan);
 }
@@ -250,10 +257,7 @@ float AudioPlayer::getRemoteFileDownloadPosition() {
 
     if (prevDownloadPos != 1) {
         float currDownloadPos = ((BASS_StreamGetFilePosition(chan, BASS_FILEPOS_DOWNLOAD)) / size);
-        if (prevDownloadPos == currDownloadPos && currDownloadPos > 0.8)
-            prevDownloadPos = 1;
-        else
-            prevDownloadPos = currDownloadPos;
+        prevDownloadPos = currDownloadPos;
     }
     return prevDownloadPos;
 }
@@ -407,6 +411,8 @@ void AudioPlayer::play() {
                 notifyTimer -> start(notifyInterval);
                 //TODO: remove sync and check end of file by timer
                 syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
+                syncDownloadHandle = BASS_ChannelSetSync(chan, BASS_SYNC_DOWNLOAD, 0, &endTrackDownloading, this);
+
 //                BASS_SYNC_DOWNLOAD
             } else {
                 qDebug() << "Can't play file";
@@ -442,6 +448,12 @@ void AudioPlayer::endOfPlayback() {
     closeChannel();
     emit mediaStatusChanged(EndOfMedia);
 }
+
+void AudioPlayer::endOfDownloading() {
+    prevDownloadPos = 1;
+}
+
+
 
 void AudioPlayer::setPosition(int position) {
     BASS_ChannelSetPosition(chan, BASS_ChannelSeconds2Bytes(chan, position / 1000.0), BASS_POS_BYTE);

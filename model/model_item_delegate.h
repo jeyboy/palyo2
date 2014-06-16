@@ -39,6 +39,8 @@ public:
 
 private:
     static void drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
+
+    static QPainterPath backroundRectPath(const QRect &rect, int offset);
     static QPainterPath roundRectPath(const QRect &rect, int offset);
 };
 

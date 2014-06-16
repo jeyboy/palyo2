@@ -15,6 +15,7 @@
 #include "duration.h"
 
 void __stdcall endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);
+void __stdcall endTrackDownloading(HSYNC, DWORD, DWORD, void * user);
 
 class AudioPlayer : public QObject {
     Q_OBJECT
@@ -75,6 +76,7 @@ signals:
 
     void volumeChanged(int);
     void playbackEnded();
+    void downloadEnded();
     void stateChanged(MediaState);
     void mediaStatusChanged(MediaStatus);
     void spectrumChanged(QList<int>);
@@ -95,6 +97,7 @@ public slots:
     void resume();
     void stop();
     void endOfPlayback();
+    void endOfDownloading();
 
     void slidePosForward();
     void slidePosBackward();
@@ -126,7 +129,7 @@ private:
     MediaState currentState;
 
     unsigned long chan;
-    HSYNC syncHandle;
+    HSYNC syncHandle, syncDownloadHandle;
     NotifyTimer * notifyTimer;
     NotifyTimer * spectrumTimer;
 };

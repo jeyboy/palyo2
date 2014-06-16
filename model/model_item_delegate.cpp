@@ -190,7 +190,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
 //  //////////////////// remove focus rect
       QStyleOptionViewItem option2 = option;
-//      option2.rect.setTop(option2.rect.top() + 2);
+      option2.rect.setTop(option2.rect.top() - 1);
       option2.state = option.state & (~QStyle::State_HasFocus) & (~QStyle::State_Active) & (~QStyle::State_Selected);
       option2.rect.setWidth(option2.rect.width() - 4);
 //    //  /////////////////////////////////////////////
@@ -358,6 +358,25 @@ void ModelItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
     }
 }
 
+QPainterPath ModelItemDelegate::backroundRectPath(const QRect &rect, int offset) {
+    int radius = qMin(rect.width(), rect.height()) / 2;
+    int diam = radius * 1.5, arc = radius;
+
+    int x1, y1, x2, y2;
+    rect.getCoords(&x1, &y1, &x2, &y2);
+    x1 += offset;
+
+    QPainterPath path;
+    path.moveTo(x2, y1 + radius);
+    path.arcTo(QRect(x2 - diam, y1, diam, diam), 0.0, +90.0);
+    path.arcTo(QRect(x1 + arc, y1, diam, diam), 90.0, -90.0);
+    path.arcTo(QRect(x1 + arc, y2 - diam, diam, diam), 0.0, -90.0);
+    path.arcTo(QRect(x2 - diam, y2 - diam, diam, diam), 270.0, +90.0);
+    path.closeSubpath();
+    return path;
+}
+
+
 QPainterPath ModelItemDelegate::roundRectPath(const QRect &rect, int offset) {
     int radius = qMin(rect.width(), rect.height()) / 2;
     int diam = radius * 1.5;
@@ -369,11 +388,11 @@ QPainterPath ModelItemDelegate::roundRectPath(const QRect &rect, int offset) {
     QPainterPath path;
     path.moveTo(x2, y1 + radius);
     path.arcTo(QRect(x2 - diam, y1, diam, diam), 0.0, +90.0);
-    path.lineTo(x1 + radius, y1);
+//    path.lineTo(x1 + radius, y1);
     path.arcTo(QRect(x1, y1, diam, diam), 90.0, +90.0);
-    path.lineTo(x1, y2 - radius);
+//    path.lineTo(x1, y2 - radius);
     path.arcTo(QRect(x1, y2 - diam, diam, diam), 180.0, +90.0);
-    path.lineTo(x1 + radius, y2);
+//    path.lineTo(x1 + radius, y2);
     path.arcTo(QRect(x2 - diam, y2 - diam, diam, diam), 270.0, +90.0);
     path.closeSubpath();
     return path;
