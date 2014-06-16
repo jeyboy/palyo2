@@ -8,9 +8,10 @@ SoundcloudFile::SoundcloudFile(QJsonObject *hash, ModelItem *parent) : ModelItem
     owner_uid = hash -> value("o").toString();
 }
 
-SoundcloudFile::SoundcloudFile(QString filePath, QString fileName, QString fileExtension, QString ownerID, QString fileID, ModelItem *parent, int genre_id, QString itemDuration, int itemSize, QString itemInfo, int initState)
+SoundcloudFile::SoundcloudFile(QString filePath, QString fileName, QString fileExtension, QString ownerID, QString fileID, ModelItem *parent, int genre_id, QString itemDuration, int itemSize, int itemBpm, QString itemInfo, int initState)
     : ModelItem(filePath, fileName, parent, genre_id, itemDuration, itemSize, itemInfo, initState) {
 
+    bpm = itemBpm;
     uid = fileID;
     owner_uid = ownerID;
     extension = fileExtension;

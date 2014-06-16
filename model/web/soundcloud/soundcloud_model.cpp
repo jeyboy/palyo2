@@ -144,7 +144,6 @@ void SoundcloudModel::proceedResponse(QJsonArray & ar, ModelItem * parent, QHash
             if (url.isEmpty()) continue;
 
 //            video_url
-//            bpm
 
             newItem = new SoundcloudFile(
                             url,
@@ -155,11 +154,12 @@ void SoundcloudModel::proceedResponse(QJsonArray & ar, ModelItem * parent, QHash
                             parent,
                             Genre::instance() -> toInt(fileIterObj.value("genre").toString()),
                             Duration::fromMillis(fileIterObj.value("duration").toInt(0)),
-                            original ? fileIterObj.value("original_content_size").toInt() : -1
+                            original ? fileIterObj.value("original_content_size").toInt() : -1,
+                            fileIterObj.value("bpm").toInt(0)
                         );
 
             appendRow(newItem -> toModelItem());
-            qDebug() << "NEW ITEM " << original << " " << newItem -> data(0);
+            qDebug() << "NEW ITEM " << original << " " << newItem -> data(0) << " " << fileIterObj.value("bpm").toInt(0);
         } else {
             foreach(ModelItem * item, items) {
 //                store.remove(item);
