@@ -256,8 +256,7 @@ float AudioPlayer::getRemoteFileDownloadPosition() {
     }
 
     if (prevDownloadPos != 1) {
-        float currDownloadPos = ((BASS_StreamGetFilePosition(chan, BASS_FILEPOS_DOWNLOAD)) / size);
-        prevDownloadPos = currDownloadPos;
+        prevDownloadPos = ((BASS_StreamGetFilePosition(chan, BASS_FILEPOS_DOWNLOAD)) / size);
     }
     return prevDownloadPos;
 }
@@ -402,7 +401,6 @@ void AudioPlayer::play() {
                 size = -1;
             }
 
-
             if (chan) {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
                 duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
@@ -412,8 +410,6 @@ void AudioPlayer::play() {
                 //TODO: remove sync and check end of file by timer
                 syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
                 syncDownloadHandle = BASS_ChannelSetSync(chan, BASS_SYNC_DOWNLOAD, 0, &endTrackDownloading, this);
-
-//                BASS_SYNC_DOWNLOAD
             } else {
                 qDebug() << "Can't play file";
             }
@@ -452,8 +448,6 @@ void AudioPlayer::endOfPlayback() {
 void AudioPlayer::endOfDownloading() {
     prevDownloadPos = 1;
 }
-
-
 
 void AudioPlayer::setPosition(int position) {
     BASS_ChannelSetPosition(chan, BASS_ChannelSeconds2Bytes(chan, position / 1000.0), BASS_POS_BYTE);
