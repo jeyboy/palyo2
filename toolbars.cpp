@@ -55,7 +55,7 @@ QMenu * ToolBars::improvePopupMenu(QMainWindow * window, QMenu * menu) {
     //    activeBar
 
     ////////////////////////// for bar movable fixing ////////////////////////////////
-    if (widgetClassName == "QToolBar" || widgetClassName == "ToolBar") {
+    if (widgetClassName == "QToolBar" || widgetClassName == "ToolBar" || widgetClassName == "Spectrum") {
         activeBar = ((QToolBar*)widget);
     } else {
         activeBar = ((QToolBar*)widget -> parentWidget());

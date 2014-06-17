@@ -20,6 +20,7 @@ void Spectrum::bandCountChanged(int newCount) {
 
 void Spectrum::heightChanged(int newHeight) {
     setFixedHeight(newHeight);
+    setMinimumWidth(200);
     Player::instance() -> setSpectrumHeight(height() - 10);
 }
 
