@@ -86,7 +86,8 @@ SOURCES += main.cpp\
     single_application.cpp \
     web/download.cpp \
     dialogs/relationdialog.cpp \
-    override/spectrum.cpp
+    override/spectrum.cpp \
+    toolbars.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \

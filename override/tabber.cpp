@@ -53,6 +53,8 @@ void Tabber::handleTabCloseRequested(int index) {
 
 Tabber::Tabber(QTabWidget * container) {
     tabber = container;
+    tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
+
     commonPlaylist = 0;
 
     connect(tabber, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
