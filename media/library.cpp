@@ -158,7 +158,7 @@ QString Library::prepareName(QString gipoTitle, bool additional) {
     if (additional)
         return forwardNumberFilter(gipoTitle);
     else {
-        QString temp = sitesFilter(gipoTitle.toLower());
+        QString temp = sitesFilter(gipoTitle.toLower().replace('_', ' '));
         return spacesFilter(forwardNumberPreFilter(temp));
     }
 }

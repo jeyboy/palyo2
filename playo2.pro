@@ -154,7 +154,8 @@ HEADERS  += mainwindow.h \
     misc/func_container.h \
     web/download.h \
     dialogs/relationdialog.h \
-    override/spectrum.h
+    override/spectrum.h \
+    toolbars.h
     model/view_types.h
 
 unix:!mac {

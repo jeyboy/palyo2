@@ -86,7 +86,6 @@ private:
     bool proceedItemNames(QList<QString> * names, int state);
 
     QChar getCatalogChar(QString name);
-//    QChar getCatalogChar(QChar l);
 
     QHash<QString, int> * getCatalog(QChar letter);
     QHash<QString, int> * getCatalog(QString name);

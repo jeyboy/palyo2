@@ -192,20 +192,11 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
       QStyleOptionViewItem option2 = option;
       option2.rect.setTop(option2.rect.top() - 1);
       option2.state = option.state & (~QStyle::State_HasFocus) & (~QStyle::State_Active) & (~QStyle::State_Selected);
-      option2.rect.setWidth(option2.rect.width() - 4);
+      option2.rect.setWidth(option2.rect.width() - 8);
 //    //  /////////////////////////////////////////////
-//    //  QStyledItemDelegate::paint(painter, option2, index);
-
-
-//        int iconSize = 16;
-//        int delta = (option2.state & QStyle::State_MouseOver) ? 32 : 0;
-//        QColor semiTransparentWhite(255, 255, 255, 48 + delta);
-//        QColor semiTransparentBlack(0, 0, 0, 48 - delta);
 
     int x, y, width, height;
     option.rect.getRect(&x, &y, &width, &height);
-
-//        int radius = qMin(width, height) / 1.5;
 
     painter -> save();
     painter -> setRenderHint(QPainter::Antialiasing, true);
@@ -245,7 +236,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     painter -> fillPath(roundRect, fill_color);
 
     painter -> setPen(option.palette.foreground().color());
-    painter -> setClipping(false);
+//    painter -> setClipping(false);
     painter -> drawPath(roundRect);
 
     if(elem_state) {
@@ -269,7 +260,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         if (Settings::instance() -> isCheckboxShow())
             icon_width += 14;
 
-//            QPoint topLeft(option.rect.x() + 28, top);
         QPoint topLeft(option.rect.x() + icon_width + 14, top);
         QPoint bottomRight(beetweeX - 4, option.rect.bottom());
         QRect rectText(topLeft, bottomRight);
@@ -299,15 +289,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     if (is_folder) {
         option2.textElideMode = Qt::ElideLeft;
     }
-
-//    option2.features &= (~QStyleOptionViewItem::HasDisplay);
-
-//            None = 0x00,
-//            WrapText = 0x01,
-//            Alternate = 0x02,
-//            HasCheckIndicator = 0x04,
-//            HasDisplay = 0x08,
-//            HasDecoration = 0x10
 
     QStyledItemDelegate::paint(painter, option2, index);
 }

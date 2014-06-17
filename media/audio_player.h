@@ -17,6 +17,13 @@
 void __stdcall endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);
 void __stdcall endTrackDownloading(HSYNC, DWORD, DWORD, void * user);
 
+// TODO: add proxy realization
+//if (MESS(41,BM_GETCHECK,0,0))
+//    BASS_SetConfigPtr(BASS_CONFIG_NET_PROXY,NULL); // disable proxy
+//else
+//    BASS_SetConfigPtr(BASS_CONFIG_NET_PROXY,proxy); // enable proxy
+
+
 class AudioPlayer : public QObject {
     Q_OBJECT
 
