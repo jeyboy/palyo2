@@ -362,7 +362,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     spectrumFreqRate = settingsObj.value("spectrum_rate").toInt(20);
     spectrumBarsCount = settingsObj.value("spectrum_bars_count").toInt(30);
 
-    spectrumHeight = settingsObj.value("spectrum_height").toInt(100);
+    spectrumHeight = settingsObj.value("spectrum_height").toInt(60);
 }
 
 QJsonObject Settings::toJson() {
