@@ -12,6 +12,8 @@ public:
     Spectrum(QWidget *parent = 0);
     ~Spectrum();
 
+    int workHeight();
+
 public slots:
     void bandCountChanged(int newCount);
     void heightChanged(int newHeight);

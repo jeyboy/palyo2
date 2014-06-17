@@ -14,6 +14,10 @@ Spectrum::~Spectrum() {
 
 }
 
+int Spectrum::workHeight() {
+   return height() - 10;
+}
+
 void Spectrum::bandCountChanged(int newCount) {
     Player::instance() -> setSpectrumBandsCount((bars_count = newCount));
 }
@@ -21,7 +25,7 @@ void Spectrum::bandCountChanged(int newCount) {
 void Spectrum::heightChanged(int newHeight) {
     setFixedHeight(newHeight);
     setMinimumWidth(200);
-    Player::instance() -> setSpectrumHeight(height() - 10);
+    Player::instance() -> setSpectrumHeight(workHeight());
 }
 
 void Spectrum::dataUpdated(QList<int> bars) {
@@ -42,14 +46,14 @@ void Spectrum::paintEvent(QPaintEvent *event) {
     QRectF rect;
 
     bool monoColor = Settings::instance() -> getMonocolorSpectrum();
-    QLinearGradient g(bar_width/2,0,bar_width/2,90);
+    QLinearGradient g(bar_width/2, 0,bar_width/2, workHeight());
 
     if (monoColor) {
         g.setColorAt(0, Settings::instance() -> getSpectrumColor());
     } else {
-        g.setColorAt(0, Qt::red);
-        g.setColorAt(0.4, Qt::yellow);
+        g.setColorAt(0.1, Qt::red);
         g.setColorAt(0.5, Qt::yellow);
+        g.setColorAt(0.6, Qt::yellow);
         g.setColorAt(1, Qt::darkGreen);
     }
 
