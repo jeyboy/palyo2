@@ -56,4 +56,11 @@
         <file alias="_wav">icons/ext/Icon_12.ico</file>
         <file alias="_wma">icons/ext/Icon_13.ico</file>
     </qresource>
+    <qresource prefix="/elems">
+        <file alias="check_blank">icons/elems/check_blank.png</file>
+        <file alias="check_fill">icons/elems/check_fill.png</file>
+        <file alias="check_trist">icons/elems/check_trist.png</file>
+        <file alias="check_blank_disabled">icons/elems/check_blank_disabled.png</file>
+        <file alias="check_fill_disabled">icons/elems/check_fill_disabled.png</file>
+    </qresource>
 </RCC>

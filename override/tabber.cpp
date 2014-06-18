@@ -54,6 +54,20 @@ void Tabber::handleTabCloseRequested(int index) {
 Tabber::Tabber(QTabWidget * container) {
     tabber = container;
     tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
+    tabber -> setStyleSheet(QString(
+                          "QTreeView::indicator:unchecked {"
+                          "  image: url(:/elems/check_blank);"
+                          "}"
+                          "QTreeView::indicator:checked {"
+                          "  image: url(:/elems/check_fill);"
+                          "}"
+                          "QTreeView::indicator:indeterminate:hover {"
+                          "  image: url(:/elems/check_trist);"
+                          "}"
+                          "QTreeView::indicator:indeterminate {"
+                          "  image: url(:/elems/check_fill);"
+                          "}"
+                          ));
 
     commonPlaylist = 0;
 
