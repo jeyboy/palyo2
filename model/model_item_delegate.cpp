@@ -200,6 +200,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
     painter -> save();
     painter -> setRenderHint(QPainter::Antialiasing, true);
+    painter -> setRenderHint(QPainter::TextAntialiasing, true);
+
     int background_state = index.data(Qt::UserRole).toInt();
     QVariant checkable = index.data(Qt::CheckStateRole);
 

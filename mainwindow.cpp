@@ -61,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(Player::instance(), SIGNAL(itemChanged(ModelItem *, ModelItem *)), this, SLOT(outputActiveItem(ModelItem *, ModelItem *)));
 
+//    qDebug() << "LOL " << Library::instance() -> prepareName("dj fafo - medellin (dj fist remix) [exclusive-music-dj.com.ua.pl]");
+
     showActiveElem();
     registrateTray();
 

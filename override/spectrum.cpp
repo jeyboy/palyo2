@@ -39,6 +39,7 @@ void Spectrum::paintEvent(QPaintEvent *event) {
 
     QPainter painter(this);
     painter.save();
+//    painter.setRenderHint(QPainter::Antialiasing, true);
 
     int offset = isMovable() ? 10 : 0, padd = 2;
     float peak, accumulate = padd + offset;
