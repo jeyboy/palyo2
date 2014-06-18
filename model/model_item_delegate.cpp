@@ -237,9 +237,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     QPainterPath roundRect = roundRectPath(option.rect, !checkable.isValid() ? 2 : 18);
     painter -> fillPath(roundRect, fill_color);
 
-    painter -> setPen(option.palette.foreground().color());
-//    painter -> setClipping(false);
+    painter -> setPen(Settings::instance() -> isCheckboxShow() ? QColor(Qt::gray) : QColor(Qt::black));
     painter -> drawPath(roundRect);
+    painter -> setPen(option.palette.foreground().color());
 
     if(elem_state) {
         option2.palette.setColor(QPalette::Text, Settings::instance() -> getSelectedItemTextColor());

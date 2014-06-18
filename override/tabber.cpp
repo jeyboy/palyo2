@@ -55,6 +55,10 @@ Tabber::Tabber(QTabWidget * container) {
     tabber = container;
     tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
     tabber -> setStyleSheet(QString(
+                          "QTreeView::indicator {"
+                          "    width: 18px;"
+                          "    height: 18px;"
+                          "}"
                           "QTreeView::indicator:unchecked {"
                           "  image: url(:/elems/check_blank);"
                           "}"
