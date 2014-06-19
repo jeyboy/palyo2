@@ -199,6 +199,8 @@ void AudioPlayer::calcSpectrum() {
         if (currentState == StoppedState) {
             QVector<int> l;
             res.append(l.fill(-2, spectrumBandsCount));
+            QVector<int> l2;
+            res.append(l2.fill(-2, spectrumBandsCount));
             emit spectrumChanged(res);
         } else {
 //            res.append(getSpectrum());
@@ -449,24 +451,31 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
     float fft[gLimit];
     BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048 | BASS_DATA_FFT_INDIVIDUAL);
     QList<QVector<int> > res;
+    QVector<float> peaks;
+    int b0 = 0, x, y, z, peakNum;
 
-
-
+    for (x = 0; x < channelsCount; x++)
+        res.append(QVector<int>());
 
     for (x = 0; x < spectrumBandsCount; x++) {
-        float peak = 0;
-        int b1 = qPow(2, x * 10.0 * channelsCount / (spectrumBandsCount - 1));
+        peaks.clear();
+        peaks.fill(0, channelsCount);
+
+        int b1 = qPow(2, x * 10.0 / (spectrumBandsCount - 1)) * channelsCount;
         if (b1 > gLimit - 1) b1 = gLimit - 1;
         if (b1 <= b0) b1 = b0 + 1; // make sure it uses at least 1 FFT bin
         for (; b0 < b1; b0++) {
-            if (peak < fft[1 + b0])
-                peak = fft[1 + b0];
+            peakNum = (1 + b0) % channelsCount;
+            if (peaks[peakNum] < fft[1 + b0])
+                peaks[peakNum] = fft[1 + b0];
         }
 
-        y = qSqrt(peak) * spectrumMultiplicity * spectrumHeight - 4; // scale it (sqrt to make low values more visible)
-        if (y > spectrumHeight) y = spectrumHeight; // cap it
+        for (z = 0; z < channelsCount; z++) {
+            y = qSqrt(peaks[z]) * spectrumMultiplicity * (spectrumHeight / 3) - 4; // scale it (sqrt to make low values more visible)
+            if (y > spectrumHeight) y = (spectrumHeight / 3); // cap it
 
-        res.append(y);
+            res[z].append(y);
+        }
     }
 
     return res;

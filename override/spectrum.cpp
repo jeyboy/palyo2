@@ -29,7 +29,7 @@ void Spectrum::heightChanged(int newHeight) {
 }
 
 void Spectrum::dataUpdated(QList<QVector<int> > bars) {
-    qDebug() << bars;
+//    qDebug() << bars;
     peaks = bars;
     repaint();
 }
@@ -37,17 +37,14 @@ void Spectrum::dataUpdated(QList<QVector<int> > bars) {
 void Spectrum::paintEvent(QPaintEvent *event) {
     QToolBar::paintEvent(event);
 
+//    paintCombo();
+    paintDuo();
+}
+
+void Spectrum::paintCombo() {
     QPainter painter(this);
     painter.save();
 
-
-//    paintCombo(painter);
-    paintDuo(painter);
-
-    painter.restore();
-}
-
-void Spectrum::paintCombo(QPainter & painter) {
     int offset = isMovable() ? 10 : 0, padd = 2;
     float peak, accumulate = padd + offset;
     float bar_width = ((float)width() - offset - (bars_count + 1) * padd) / bars_count;
@@ -75,9 +72,14 @@ void Spectrum::paintCombo(QPainter & painter) {
         painter.drawRect(rect);
         accumulate += bar_width + padd;
     }
+
+    painter.restore();
 }
 
-void Spectrum::paintDuo(QPainter & painter) {
+void Spectrum::paintDuo() {
+    QPainter painter(this);
+    painter.save();
+
     int offset = isMovable() ? 10 : 0, padd = 2;
     float peak, peak2, accumulate = padd + offset;
     float bar_width = ((float)width() - offset - (bars_count + 1) * padd) / bars_count;
@@ -114,4 +116,6 @@ void Spectrum::paintDuo(QPainter & painter) {
 
         accumulate += bar_width + padd;
     }
+
+    painter.restore();
 }
