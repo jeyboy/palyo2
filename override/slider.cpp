@@ -173,14 +173,18 @@ void Slider::paintEvent(QPaintEvent * event) {
 }
 
 void Slider::mouseMoveEvent(QMouseEvent * ev) {
-    QPointF p = ev -> localPos();
+    if (hasMouseTracking()) {
+        QPointF p = ev -> localPos();
 
-    int dur;
-    if (orientation() == Qt::Vertical) {
-        dur = maximum() *((height() - p.y()) / height());
-    } else {
-        dur = maximum() *(p.x() / width());
+        int dur;
+        if (orientation() == Qt::Vertical) {
+            dur = maximum() *((height() - p.y()) / height());
+        } else {
+            dur = maximum() *(p.x() / width());
+        }
+
+        QToolTip::showText(ev -> globalPos(), Duration::fromMillis(dur));
     }
 
-    QToolTip::showText(ev -> globalPos(), Duration::fromMillis(dur));
+    QSlider::mouseMoveEvent(ev);
 }
