@@ -71,6 +71,7 @@ public:
     void setSpectrumBandsCount(int bandsCount);
     void setSpectrumHeight(int newHeight);
     void setSpectrumFreq(int millis);
+    void setSpectrumMultiplicity(int mult);
 
     MediaState state() const;
 
@@ -86,7 +87,7 @@ signals:
     void downloadEnded();
     void stateChanged(MediaState);
     void mediaStatusChanged(MediaStatus);
-    void spectrumChanged(QList<int>);
+    void spectrumChanged(QList<QVector<int> >);
 
     void positionChanged(int);
     void durationChanged(int);
@@ -118,7 +119,8 @@ public slots:
 private:
     float calcBpm(int channel_id);
 
-    QList<int> getSpectrum();
+    QVector<int> getSpectrum();
+    QList<QVector<int> > getComplexSpectrum();
     int getBitrate() const;
 
     QUrl mediaUri;
@@ -132,6 +134,7 @@ private:
 
     int spectrumBandsCount;
     int spectrumHeight;
+    int spectrumMultiplicity;
 
     MediaState currentState;
 

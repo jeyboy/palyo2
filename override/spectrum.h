@@ -19,12 +19,15 @@ public slots:
     void heightChanged(int newHeight);
 
 protected slots:
-    void dataUpdated(QList<int>);
+    void dataUpdated(QList<QVector<int> >);
 
 protected:
     void paintEvent(QPaintEvent *event);
+    void paintCombo(QPainter & painter);
+    void paintDuo(QPainter & painter);
+
 private:
-    QList<int> peaks;
+    QList<QVector<int> > peaks;
     int bars_count;
 };
 
