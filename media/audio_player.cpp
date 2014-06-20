@@ -35,6 +35,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     spectrumHeight = 0;
     spectrumBandsCount = 28;
     spectrumMultiplicity = 3;
+    defaultSpectrumLevel = -3;
 
     currentState = StoppedState;
 
@@ -199,9 +200,9 @@ void AudioPlayer::calcSpectrum() {
     if (spectrumHeight > 0) {
         if (currentState == StoppedState) {
             QVector<int> l;
-            res.append(l.fill(-2, spectrumBandsCount));
+            res.append(l.fill(defaultSpectrumLevel, spectrumBandsCount));
             QVector<int> l2;
-            res.append(l2.fill(-2, spectrumBandsCount));
+            res.append(l2.fill(defaultSpectrumLevel, spectrumBandsCount));
             emit spectrumChanged(res);
         } else {
             if (Settings::instance() -> getSpectrumCombo()) {
@@ -385,9 +386,9 @@ QVector<int> AudioPlayer::getSpectrum() {
             if (peak < fft[1 + b0])
                 peak = fft[1 + b0];
 
-        y = qSqrt(peak) * spectrumMultiplicity * spectrumHeight - 3; // 4 // scale it (sqrt to make low values more visible)
+        y = qSqrt(peak) * spectrumMultiplicity * spectrumHeight + defaultSpectrumLevel; // 4 // scale it (sqrt to make low values more visible)
         if (y > spectrumHeight) y = spectrumHeight; // cap it
-        if (y < -4) y = -3; // cap it
+        if (y < -4) y = defaultSpectrumLevel; // cap it
 
         res.append(y);
     }
@@ -421,9 +422,9 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
         }
 
         for (z = 0; z < channelsCount; z++) {
-            y = qSqrt(peaks[z]) * spectrumMultiplicity * spectrumHeight - 3; // 4 // scale it (sqrt to make low values more visible)
+            y = qSqrt(peaks[z]) * spectrumMultiplicity * spectrumHeight + defaultSpectrumLevel; // 4 // scale it (sqrt to make low values more visible)
             if (y > spectrumHeight) y = spectrumHeight; // cap it
-            if (y < -4) y = -3; // cap it
+            if (y < -4) y = defaultSpectrumLevel; // cap it
 
             res[z].append(y);
         }

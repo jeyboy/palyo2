@@ -135,6 +135,7 @@ private:
     int spectrumBandsCount;
     int spectrumHeight;
     int spectrumMultiplicity;
+    int defaultSpectrumLevel;
 
     MediaState currentState;
 
