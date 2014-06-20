@@ -23,6 +23,7 @@ int Spectrum::workHeight() {
 
 void Spectrum::bandCountChanged(int newCount) {
     Player::instance() -> setSpectrumBandsCount((bars_count = newCount));
+    peaks = Player::instance() -> getDefaultSpectrum();
 }
 
 void Spectrum::heightChanged(int newHeight) {
@@ -42,13 +43,14 @@ int Spectrum::paddWidth() {
 }
 
 void Spectrum::paintEvent(QPaintEvent *event) {
+
+    QToolBar::paintEvent(event);
+
     if (Settings::instance() -> getSpectrumCombo()) {
         paintCombo();
     } else {
         paintDuo();
     }
-
-    QToolBar::paintEvent(event);
 }
 
 void Spectrum::paintCombo() {

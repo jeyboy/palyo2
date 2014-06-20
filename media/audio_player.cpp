@@ -33,7 +33,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     notifyInterval = 100;
     volumeVal = 1.0;
     spectrumHeight = 0;
-    spectrumBandsCount = 28;
+    setSpectrumBandsCount(28);
     spectrumMultiplicity = 3;
     defaultSpectrumLevel = -3;
 
@@ -74,8 +74,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
 
     spectrumTimer = new NotifyTimer(this);
     connect(spectrumTimer, SIGNAL(timeout()), this, SLOT(calcSpectrum()));
-//    spectrumTimer -> start(25); //40 Hz
-    spectrumTimer -> start(20);
+//    spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -85,6 +84,10 @@ AudioPlayer::~AudioPlayer() {
 
     spectrumTimer -> stop();
     delete spectrumTimer;
+}
+
+QList<QVector<int> > & AudioPlayer::getDefaultSpectrum() {
+    return defaultSpectrum;
 }
 
 int AudioPlayer::getPosition() const {
@@ -110,6 +113,11 @@ void AudioPlayer::setMedia(QUrl mediaPath) {
 
 void AudioPlayer::setSpectrumBandsCount(int bandsCount) {
     spectrumBandsCount = bandsCount;
+    defaultSpectrum.clear();
+    QVector<int> l;
+    defaultSpectrum.append(l.fill(defaultSpectrumLevel, spectrumBandsCount));
+    QVector<int> l2;
+    defaultSpectrum.append(l2.fill(defaultSpectrumLevel, spectrumBandsCount));
 }
 void AudioPlayer::setSpectrumHeight(int newHeight) {
     spectrumHeight = newHeight;
@@ -195,17 +203,13 @@ void AudioPlayer::signalUpdate() {
     emit positionChanged(curr_pos);
 }
 
-void AudioPlayer::calcSpectrum() {
-    QList<QVector<int> > res;
+void AudioPlayer::calcSpectrum() { 
     if (spectrumHeight > 0) {
         if (currentState == StoppedState) {
-            QVector<int> l;
-            res.append(l.fill(defaultSpectrumLevel, spectrumBandsCount));
-            QVector<int> l2;
-            res.append(l2.fill(defaultSpectrumLevel, spectrumBandsCount));
-            emit spectrumChanged(res);
+            emit spectrumChanged(defaultSpectrum);
         } else {
             if (Settings::instance() -> getSpectrumCombo()) {
+                QList<QVector<int> > res;
                 res.append(getSpectrum());
                 emit spectrumChanged(res);
             } else {
@@ -459,6 +463,8 @@ void AudioPlayer::play() {
                 duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
                 durationChanged(duration);
                 BASS_ChannelPlay(chan, true);
+                if (!spectrumTimer -> isActive())
+                    spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
                 notifyTimer -> start(notifyInterval);
                 //TODO: remove sync and check end of file by timer
                 syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);

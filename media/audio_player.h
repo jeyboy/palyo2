@@ -55,6 +55,7 @@ public:
     explicit AudioPlayer(QObject *parent = 0);
     ~AudioPlayer();
 
+    QList<QVector<int> > & getDefaultSpectrum();
     int getPosition() const;
     int getDuration() const;
     int getVolume() const;
@@ -136,6 +137,7 @@ private:
     int spectrumHeight;
     int spectrumMultiplicity;
     int defaultSpectrumLevel;
+    QList<QVector<int> > defaultSpectrum;
 
     MediaState currentState;
 
