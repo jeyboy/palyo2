@@ -449,7 +449,8 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
 
     int channelsCount = 2, layerLimit = 1024, gLimit = layerLimit * channelsCount;
     float fft[gLimit];
-    BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048 | BASS_DATA_FFT_INDIVIDUAL);
+    BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048 | BASS_DATA_FFT_INDIVIDUAL | BASS_DATA_FFT_REMOVEDC);
+
     QList<QVector<int> > res;
     QVector<float> peaks;
     int b0 = 0, x, y, z, peakNum;
@@ -463,11 +464,11 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
 
         int b1 = qPow(2, x * 10.0 / (spectrumBandsCount - 1)) * channelsCount;
         if (b1 > gLimit - 1) b1 = gLimit - 1;
-        if (b1 <= b0) b1 = b0 + 1; // make sure it uses at least 1 FFT bin
+        if (b1 <= b0) b1 = b0 + channelsCount; // make sure it uses at least 1 FFT bin
         for (; b0 < b1; b0++) {
-            peakNum = (1 + b0) % channelsCount;
-            if (peaks[peakNum] < fft[1 + b0])
-                peaks[peakNum] = fft[1 + b0];
+            peakNum = (b0) % channelsCount;
+            if (peaks[peakNum] < fft[b0])
+                peaks[peakNum] = fft[b0];
         }
 
         for (z = 0; z < channelsCount; z++) {
