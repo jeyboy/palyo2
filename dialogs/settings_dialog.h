@@ -54,6 +54,8 @@ private slots:
 
     void on_spectrumColor_clicked();
 
+    void on_spectrumColor2_clicked();
+
 private:
     bool execColorDialog(QColor & color);
 

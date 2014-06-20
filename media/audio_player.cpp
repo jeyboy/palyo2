@@ -463,8 +463,7 @@ void AudioPlayer::play() {
                 duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
                 durationChanged(duration);
                 BASS_ChannelPlay(chan, true);
-                if (!spectrumTimer -> isActive())
-                    spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
+                spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
                 notifyTimer -> start(notifyInterval);
                 //TODO: remove sync and check end of file by timer
                 syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
@@ -494,6 +493,7 @@ void AudioPlayer::resume() {
 
 void AudioPlayer::stop() {
     closeChannel();
+    spectrumTimer -> stop();
     notifyTimer -> stop();
     emit stateChanged(StoppedState);
 }

@@ -270,6 +270,11 @@ void SettingsDialog::on_spectrumColor_clicked() {
         ui -> spectrumColor -> setStyleSheet("background-color: " + spectrumColor.name() + ";");
 }
 
+void SettingsDialog::on_spectrumColor2_clicked() {
+    if (execColorDialog(spectrumColor2))
+        ui -> spectrumColor2 -> setStyleSheet("background-color: " + spectrumColor2.name() + ";");
+}
+
 bool SettingsDialog::execColorDialog(QColor & color) {
     QColorDialog col(this);
     col.setCurrentColor(color);
@@ -280,5 +285,3 @@ bool SettingsDialog::execColorDialog(QColor & color) {
 
     return false;
 }
-
-
