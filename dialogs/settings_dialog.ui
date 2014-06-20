@@ -40,7 +40,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <property name="usesScrollButtons">
       <bool>false</bool>
@@ -676,7 +676,7 @@ text color</string>
         </rect>
        </property>
        <property name="text">
-        <string>Use one color</string>
+        <string>Use custom colors</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_17">
@@ -689,7 +689,7 @@ text color</string>
         </rect>
        </property>
        <property name="text">
-        <string>Color for monocolor type</string>
+        <string>Custom color 1</string>
        </property>
       </widget>
       <widget class="QPushButton" name="spectrumColor">
@@ -748,6 +748,45 @@ text color</string>
        </property>
        <property name="text">
         <string>Spectrum height</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="spectrumColor2">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>190</y>
+         <width>31</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_20">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>190</y>
+         <width>121</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Custom color 2</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="spectrumComboUse">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>231</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Combine channels to one layer</string>
        </property>
       </widget>
      </widget>

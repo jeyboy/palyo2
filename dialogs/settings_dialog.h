@@ -59,7 +59,7 @@ private:
 
     Ui::SettingsDialog *ui;
     bool iconSizeChanged;
-    QColor defaultColor, listenedColor, likedColor, playedColor, folderColor, spectrumColor;
+    QColor defaultColor, listenedColor, likedColor, playedColor, folderColor, spectrumColor, spectrumColor2;
     QColor itemTextColor, selectedItemTextColor, itemInfoTextColor, selectedItemInfoTextColor;
 };
 

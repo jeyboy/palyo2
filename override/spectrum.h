@@ -23,8 +23,8 @@ protected slots:
 
 protected:
     void paintEvent(QPaintEvent *event);
-    void paintCombo();
-    void paintDuo();
+    void paintCombo(QPainter & painter);
+    void paintDuo(QPainter & painter);
 
 private:
     QList<QVector<int> > peaks;

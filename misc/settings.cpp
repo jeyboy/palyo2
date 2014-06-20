@@ -230,6 +230,13 @@ void Settings::setSpectrumColor(QColor newColor) {
     spectrumColor = newColor;
 }
 
+QColor Settings::getSpectrumColor2() {
+    return spectrumColor2;
+}
+void Settings::setSpectrumColor2(QColor newColor) {
+    spectrumColor2 = newColor;
+}
+
 int Settings::getSpectrumFreqRate() {
     return spectrumFreqRate;
 }
@@ -250,6 +257,13 @@ int Settings::getSpectrumHeight() {
 
 void Settings::setSpectrumHeight(int newHeight) {
     spectrumHeight = newHeight;
+}
+
+int Settings::getSpectrumCombo() {
+    return comboSpectrum;
+}
+void Settings::setSpectrumCombo(bool newState) {
+    comboSpectrum = newState;
 }
 
 int Settings::getTotalItemHeight() {
@@ -359,10 +373,14 @@ void Settings::fromJson(QJsonObject settingsObj) {
     QVariant specColorVar = settingsObj.value("spectrum_color").toVariant();
     spectrumColor = specColorVar.isValid() ? specColorVar.value<QColor>() : QColor(0, 0, 0);
 
+    QVariant specColorVar2 = settingsObj.value("spectrum_color2").toVariant();
+    spectrumColor2 = specColorVar2.isValid() ? specColorVar2.value<QColor>() : QColor(255, 255, 255);
+
     spectrumFreqRate = settingsObj.value("spectrum_rate").toInt(20);
     spectrumBarsCount = settingsObj.value("spectrum_bars_count").toInt(30);
 
     spectrumHeight = settingsObj.value("spectrum_height").toInt(60);
+    comboSpectrum = settingsObj.value("spectrum_combo").toBool(false);
 }
 
 QJsonObject Settings::toJson() {
@@ -399,9 +417,12 @@ QJsonObject Settings::toJson() {
 
     ret.insert("monocolor_spectrum", QJsonValue::fromVariant(monocolorSpectrum));
     ret.insert("spectrum_color", QJsonValue::fromVariant(spectrumColor));
+    ret.insert("spectrum_color2", QJsonValue::fromVariant(spectrumColor2));
+
     ret.insert("spectrum_rate", QJsonValue::fromVariant(spectrumFreqRate));
     ret.insert("spectrum_bars_count", QJsonValue::fromVariant(spectrumBarsCount));
     ret.insert("spectrum_height", QJsonValue::fromVariant(spectrumHeight));
+    ret.insert("spectrum_combo", QJsonValue::fromVariant(comboSpectrum));
 
     return ret;
 }

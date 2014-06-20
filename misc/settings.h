@@ -105,6 +105,9 @@ public:
     QColor getSpectrumColor();
     void setSpectrumColor(QColor newColor);
 
+    QColor getSpectrumColor2();
+    void setSpectrumColor2(QColor newColor);
+
     int getSpectrumFreqRate();
     void setSpectrumFreqRate(int newRate);
 
@@ -113,6 +116,9 @@ public:
 
     int getSpectrumHeight();
     void setSpectrumHeight(int newHeight);
+
+    int getSpectrumCombo();
+    void setSpectrumCombo(bool newState);
 
     int getTotalItemHeight();
 
@@ -174,10 +180,12 @@ private:
     QColor selectedItemInfoColor;
 
     QColor spectrumColor;
+    QColor spectrumColor2;
     int spectrumFreqRate;
     int spectrumBarsCount;
     int spectrumHeight;
     bool monocolorSpectrum;
+    bool comboSpectrum;
 };
 
 #endif // SETTINGS_H

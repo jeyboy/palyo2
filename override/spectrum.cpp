@@ -15,7 +15,10 @@ Spectrum::~Spectrum() {
 }
 
 int Spectrum::workHeight() {
-   return height() - 10;
+    if (Settings::instance() -> getSpectrumCombo())
+        return height() - 10;
+    else
+        return (height() - 18) / 2;
 }
 
 void Spectrum::bandCountChanged(int newCount) {
@@ -37,24 +40,29 @@ void Spectrum::dataUpdated(QList<QVector<int> > bars) {
 void Spectrum::paintEvent(QPaintEvent *event) {
     QToolBar::paintEvent(event);
 
-//    paintCombo();
-    paintDuo();
-}
-
-void Spectrum::paintCombo() {
     QPainter painter(this);
     painter.save();
 
+    if (Settings::instance() -> getSpectrumCombo()) {
+        paintCombo(painter);
+    } else {
+        paintDuo(painter);
+    }
+
+    painter.restore();
+}
+
+void Spectrum::paintCombo(QPainter & painter) {
     int offset = isMovable() ? 10 : 0, padd = 2;
     float peak, accumulate = padd + offset;
     float bar_width = ((float)width() - offset - (bars_count + 1) * padd) / bars_count;
     QRectF rect;
 
-    bool monoColor = Settings::instance() -> getMonocolorSpectrum();
-    QLinearGradient g(bar_width/2, 0,bar_width/2, workHeight());
+    QLinearGradient g(bar_width / 2, 0, bar_width / 2, workHeight());
 
-    if (monoColor) {
-        g.setColorAt(0, Settings::instance() -> getSpectrumColor());
+    if (Settings::instance() -> getMonocolorSpectrum()) {
+        g.setColorAt(0, Settings::instance() -> getSpectrumColor2());
+        g.setColorAt(1, Settings::instance() -> getSpectrumColor());
     } else {
         g.setColorAt(0.1, Qt::red);
         g.setColorAt(0.5, Qt::yellow);
@@ -66,31 +74,25 @@ void Spectrum::paintCombo() {
 
     for(int loop1 = 0; loop1 < peaks[0].length(); loop1++) {
         peak = peaks[0][loop1];
-        if (peak < 0) peak = -1;
-        rect.setCoords(accumulate, height() - peak, (accumulate + bar_width), height() - 4);
+        rect.setCoords(accumulate, height() - 6 - peak, (accumulate + bar_width), height() - 6);
         painter.fillRect(rect, g);
         painter.drawRect(rect);
         accumulate += bar_width + padd;
     }
-
-    painter.restore();
 }
 
-void Spectrum::paintDuo() {
-    QPainter painter(this);
-    painter.save();
-
+void Spectrum::paintDuo(QPainter & painter) {
     int offset = isMovable() ? 10 : 0, padd = 2;
     float peak, peak2, accumulate = padd + offset;
     float bar_width = ((float)width() - offset - (bars_count + 1) * padd) / bars_count;
-    float bar_height = (workHeight() - 2) / 2;
+    float bar_height = workHeight() + 3;
     QRectF rect;
 
-    bool monoColor = Settings::instance() -> getMonocolorSpectrum();
-    QLinearGradient g(bar_width/2, 0,bar_width/2, bar_height);
+    QLinearGradient g(bar_width / 2, 0, bar_width / 2, bar_height);
 
-    if (monoColor) {
-        g.setColorAt(0, Settings::instance() -> getSpectrumColor());
+    if (Settings::instance() -> getMonocolorSpectrum()) {
+        g.setColorAt(0, Settings::instance() -> getSpectrumColor2());
+        g.setColorAt(1, Settings::instance() -> getSpectrumColor());
     } else {
         g.setColorAt(0.1, Qt::red);
         g.setColorAt(0.5, Qt::yellow);
@@ -102,20 +104,16 @@ void Spectrum::paintDuo() {
 
     for(int loop1 = 0; loop1 < peaks[0].length(); loop1++) {
         peak = peaks[0][loop1];
-        if (peak < 0) peak = -1;
         rect.setCoords(accumulate, bar_height - peak, (accumulate + bar_width), bar_height);
         painter.fillRect(rect, g);
         painter.drawRect(rect);
 
         peak2 = peaks[1][loop1];
-        if (peak2 < 0) peak2 = -1;
-        rect.setCoords(accumulate, height() - peak2, (accumulate + bar_width), height() - 4);
+        rect.setCoords(accumulate, bar_height + 6, (accumulate + bar_width), bar_height + 6 + peak2);
         painter.fillRect(rect, g);
         painter.drawRect(rect);
 
 
         accumulate += bar_width + padd;
     }
-
-    painter.restore();
 }
