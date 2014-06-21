@@ -86,7 +86,7 @@ void Spectrum::paintCombo() {
 void Spectrum::paintDuo() {
     QPainter painter(this);
     painter.save();
-    int pairs = (peaks.length() + 1) / 2, padd = paddWidth() / pairs;
+    int pairs = (peaks.length() + 1) / 2, padd = paddWidth(); // / pairs;
     int offset = isMovable() ? 10 : 0;
     int work_bars_count = Player::instance() -> getCalcSpectrumBandsCount();
     double peak, peak2, temp_acc, accumulate = padd + offset + 2, beetween_space = 6;
