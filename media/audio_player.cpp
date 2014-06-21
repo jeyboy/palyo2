@@ -73,6 +73,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
 
     spectrumTimer = new NotifyTimer(this);
     connect(spectrumTimer, SIGNAL(timeout()), this, SLOT(calcSpectrum()));
+    connect(notifyTimer, SIGNAL(stoped()), this, SLOT(calcSpectrum()));
 //    spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
 }
 

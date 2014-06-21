@@ -303,8 +303,6 @@ void Library::initItemInfo(ModelItem * item) {
 
                 if (bitrate == 0) {
                     QHash<QString, QString> info = Player::instance() -> getFileInfo(item -> toUrl(), true);
-                    qDebug() << "HUY " << info;
-
                     bitrate = info.value("bitrate").toInt();
                 }
 
