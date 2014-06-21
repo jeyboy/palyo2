@@ -438,8 +438,8 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
 
         for (; b0 < b1; b0++) {
             peakNum = b0 % channelsCount;
-            if (peaks[peakNum] < fft[b0 + channelsCount])
-                peaks[peakNum] = fft[b0 + channelsCount];
+            if (peaks[peakNum] < fft[b0])
+                peaks[peakNum] = fft[b0];
         }
 
         for (z = 0; z < channelsCount; z++) {
