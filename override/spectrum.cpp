@@ -91,7 +91,7 @@ void Spectrum::paintDuo() {
     int work_bars_count = Player::instance() -> getCalcSpectrumBandsCount();
     double peak, peak2, temp_acc, accumulate = padd + offset + 2, beetween_space = 6;
     double bar_width = ((float)width() - 2 - accumulate - ((work_bars_count * pairs + pairs) * padd) - ((pairs - 1) * beetween_space))/ pairs / work_bars_count;
-    float bar_height = workHeight() + 3, first_bar_place =  bar_height + 3, sec_bar_place = bar_height + 9;
+    float bar_height = workHeight() + 3, first_bar_place =  bar_height + 6, sec_bar_place = bar_height + 8;
     QRectF rect;
 
     QLinearGradient g(bar_width / 2, 0, bar_width / 2, bar_height);
