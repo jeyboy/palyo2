@@ -259,11 +259,18 @@ void Settings::setSpectrumHeight(int newHeight) {
     spectrumHeight = newHeight;
 }
 
-int Settings::getSpectrumCombo() {
+bool Settings::getSpectrumCombo() {
     return comboSpectrum;
 }
 void Settings::setSpectrumCombo(bool newState) {
     comboSpectrum = newState;
+}
+
+int Settings::getSpectrumMultiplier() {
+    return spectrumMultiplier;
+}
+void Settings::setSpectrumMultiplier(int newMultiplier) {
+    spectrumMultiplier = newMultiplier;
 }
 
 int Settings::getTotalItemHeight() {
@@ -381,6 +388,8 @@ void Settings::fromJson(QJsonObject settingsObj) {
 
     spectrumHeight = settingsObj.value("spectrum_height").toInt(60);
     comboSpectrum = settingsObj.value("spectrum_combo").toBool(false);
+
+    spectrumMultiplier = settingsObj.value("spectrum_multiplier").toInt(3);
 }
 
 QJsonObject Settings::toJson() {
@@ -423,6 +432,7 @@ QJsonObject Settings::toJson() {
     ret.insert("spectrum_bars_count", QJsonValue::fromVariant(spectrumBarsCount));
     ret.insert("spectrum_height", QJsonValue::fromVariant(spectrumHeight));
     ret.insert("spectrum_combo", QJsonValue::fromVariant(comboSpectrum));
+    ret.insert("spectrum_multiplier", QJsonValue::fromVariant(spectrumMultiplier));
 
     return ret;
 }

@@ -72,7 +72,6 @@ public:
     void setSpectrumBandsCount(int bandsCount);
     void setSpectrumHeight(int newHeight);
     void setSpectrumFreq(int millis);
-    void setSpectrumMultiplicity(int mult);
 
     MediaState state() const;
 
@@ -135,7 +134,6 @@ private:
 
     int spectrumBandsCount;
     int spectrumHeight;
-    int spectrumMultiplicity;
     int defaultSpectrumLevel;
     QList<QVector<int> > defaultSpectrum;
 

@@ -117,8 +117,11 @@ public:
     int getSpectrumHeight();
     void setSpectrumHeight(int newHeight);
 
-    int getSpectrumCombo();
+    bool getSpectrumCombo();
     void setSpectrumCombo(bool newState);
+
+    int getSpectrumMultiplier();
+    void setSpectrumMultiplier(int newMultiplier);
 
     int getTotalItemHeight();
 
@@ -181,6 +184,7 @@ private:
 
     QColor spectrumColor;
     QColor spectrumColor2;
+    int spectrumMultiplier;
     int spectrumFreqRate;
     int spectrumBarsCount;
     int spectrumHeight;

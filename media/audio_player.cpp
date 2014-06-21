@@ -34,7 +34,6 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     volumeVal = 1.0;
     spectrumHeight = 0;
     setSpectrumBandsCount(28);
-    spectrumMultiplicity = 3;
     defaultSpectrumLevel = -3;
 
     currentState = StoppedState;
@@ -125,10 +124,6 @@ void AudioPlayer::setSpectrumHeight(int newHeight) {
 
 void AudioPlayer::setSpectrumFreq(int millis) {
     spectrumTimer -> setInterval(millis);
-}
-
-void AudioPlayer::setSpectrumMultiplicity(int mult) {
-    spectrumMultiplicity = mult;
 }
 
 AudioPlayer::MediaState AudioPlayer::state() const {
@@ -378,6 +373,7 @@ QVector<int> AudioPlayer::getSpectrum() {
     float fft[1024];
     BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048);
     QVector<int> res;
+    int spectrumMultiplicity = Settings::instance() -> getSpectrumMultiplier();
 
     int b0 = 0, x, y;
 
@@ -402,6 +398,7 @@ QVector<int> AudioPlayer::getSpectrum() {
 
 QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
     int channelsCount = 2, layerLimit = 1024, gLimit = layerLimit * channelsCount;
+    int spectrumMultiplicity = Settings::instance() -> getSpectrumMultiplier();
     float fft[gLimit];
     BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048 | BASS_DATA_FFT_INDIVIDUAL | BASS_DATA_FFT_REMOVEDC);
 
