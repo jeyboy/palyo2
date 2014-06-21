@@ -34,7 +34,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     volumeVal = 1.0;
     spectrumHeight = 0;
     setSpectrumBandsCount(28);
-    defaultSpectrumLevel = -3;
+    defaultSpectrumLevel = -2;
     channelsCount = 2;
 
     currentState = StoppedState;
@@ -120,9 +120,10 @@ void AudioPlayer::setSpectrumBandsCount(int bandsCount) {
     spectrumBandsCount = bandsCount;
     defaultSpectrum.clear();
     QVector<int> l;
-    defaultSpectrum.append(l.fill(defaultSpectrumLevel, spectrumBandsCount));
-    QVector<int> l2;
-    defaultSpectrum.append(l2.fill(defaultSpectrumLevel, spectrumBandsCount));
+    l.fill(defaultSpectrumLevel, spectrumBandsCount);
+
+    defaultSpectrum.append(l);
+    defaultSpectrum.append(l);
 }
 void AudioPlayer::setSpectrumHeight(int newHeight) {
     spectrumHeight = newHeight;
@@ -490,7 +491,7 @@ void AudioPlayer::play() {
                 BASS_ChannelPlay(chan, true);
                 spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
                 notifyTimer -> start(notifyInterval);
-                //TODO: remove sync and check end of file by timer
+
                 syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
                 syncDownloadHandle = BASS_ChannelSetSync(chan, BASS_SYNC_DOWNLOAD, 0, &endTrackDownloading, this);
             } else {
@@ -518,6 +519,7 @@ void AudioPlayer::resume() {
 
 void AudioPlayer::stop() {
     closeChannel();
+    channelsCount = 2;
     spectrumTimer -> stop();
     notifyTimer -> stop();
     emit stateChanged(StoppedState);
