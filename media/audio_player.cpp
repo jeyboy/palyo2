@@ -416,13 +416,13 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
         peaks.clear();
         peaks.fill(0, channelsCount);
 
-        int b1 = qPow(2, x * 10.0 / (spectrumBandsCount - 1)) * channelsCount + channelsCount;
+        int b1 = qPow(2, x * 10.0 / (spectrumBandsCount - 1)) * channelsCount;
         if (b1 <= b0) b1 = b0 + channelsCount * 2; // make sure it uses at least 2 FFT bin
         if (b1 > gLimit - 1) b1 = gLimit - 1; // prevent index overflow
         for (; b0 < b1; b0++) {
             peakNum = (b0) % channelsCount;
-            if (peaks[peakNum] < fft[b0])
-                peaks[peakNum] = fft[b0];
+            if (peaks[peakNum] < fft[b0 + channelsCount])
+                peaks[peakNum] = fft[b0 + channelsCount];
         }
 
         for (z = 0; z < channelsCount; z++) {
