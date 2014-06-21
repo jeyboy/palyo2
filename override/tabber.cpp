@@ -160,8 +160,10 @@ void Tabber::load() {
 
             if (tab.contains("pv")) {
                 new_tab -> getList() -> execItem(new_tab -> getList() -> fromPath(tab.value("pp").toString()), true);
-                Player::instance() -> setStartPosition(tab.value("pt").toInt());
-//                Player::instance() -> play();
+                if (tab.contains("pt")) {
+                    Player::instance() -> setStartPosition(tab.value("pt").toInt());
+//                  Player::instance() -> play();
+                }
             }
         }
     }

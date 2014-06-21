@@ -93,8 +93,9 @@ QJsonObject Tab::toJSON(QString name) {
     if (Player::instance() -> currentPlaylist() == getList()) {
         res["pv"] = true;
         res["pp"] = Player::instance() -> playedItem() -> toPath();
-        res["pt"] = Player::instance() -> getPosition();
-        qDebug() << Player::instance() -> getPosition();
+
+        if (!Player::instance() -> playedItem() -> isRemote())
+            res["pt"] = Player::instance() -> getPosition();
     }
     return res;
 }

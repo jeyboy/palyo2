@@ -86,9 +86,10 @@ void Spectrum::paintCombo() {
 void Spectrum::paintDuo() {
     QPainter painter(this);
     painter.save();
-    int offset = isMovable() ? 10 : 0, padd = paddWidth();
-    double peak, peak2, temp_acc, accumulate = padd + offset;
-    float bar_width = ((float)width() - offset - (bars_count + 1) * padd) / bars_count;
+    int pairs = (peaks.length() + 1) / 2;
+    int offset = isMovable() ? 10 : 0;
+    double peak, peak2, temp_acc, accumulate = offset, beetween_space = 10;
+    float bar_width = ((float)width() - offset - ((pairs - 1) * beetween_space))/ pairs / bars_count;
     float bar_height = workHeight() + 3, first_bar_place =  bar_height + 3, sec_bar_place = bar_height + 9;
     QRectF rect;
 
@@ -113,20 +114,86 @@ void Spectrum::paintDuo() {
         gg.setColorAt(1, Qt::darkGreen);
     }
 
-    for(int loop1 = 0; loop1 < peaks[0].length(); loop1++) {
-        temp_acc = (accumulate + bar_width);
+    for(int pair = 0; pair < peaks.length(); pair += 2) {
+        if (peaks.length() > pair + 1) {
+            for(int loop1 = 0; loop1 < peaks[pair].length(); loop1++) {
+                temp_acc = (accumulate + bar_width);
 
-        peak = peaks[0][loop1];
-        rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
-        painter.fillRect(rect, g);
-        painter.drawRect(rect);
+                peak = peaks[pair][loop1];
+                rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
+                painter.fillRect(rect, g);
+                painter.drawRect(rect);
 
-        peak2 = peaks[1][loop1];
-        rect.setCoords(accumulate, sec_bar_place, temp_acc, sec_bar_place + peak2);
-        painter.fillRect(rect, gg);
-        painter.drawRect(rect);
+                peak2 = peaks[pair + 1][loop1];
+                rect.setCoords(accumulate, sec_bar_place, temp_acc, sec_bar_place + peak2);
+                painter.fillRect(rect, gg);
+                painter.drawRect(rect);
 
-        accumulate = temp_acc + padd;
+                accumulate = temp_acc;
+            }
+        } else {
+            for(int loop1 = 0; loop1 < peaks[pair].length(); loop1++) {
+                temp_acc = (accumulate + bar_width);
+
+                peak = peaks[pair][loop1];
+                rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
+                painter.fillRect(rect, g);
+                painter.drawRect(rect);
+
+                accumulate = temp_acc;
+            }
+        }
+        accumulate += beetween_space;
     }
     painter.restore();
 }
+
+
+
+//void Spectrum::paintDuo() {
+//    QPainter painter(this);
+//    painter.save();
+//    int offset = isMovable() ? 10 : 0, padd = paddWidth();
+//    double peak, peak2, temp_acc, accumulate = padd + offset;
+//    float bar_width = ((float)width() - offset - (bars_count + 1) * padd) / bars_count;
+//    float bar_height = workHeight() + 3, first_bar_place =  bar_height + 3, sec_bar_place = bar_height + 9;
+//    QRectF rect;
+
+//    QLinearGradient g(bar_width / 2, 0, bar_width / 2, bar_height);
+//    QLinearGradient gg(bar_width / 2, sec_bar_place + bar_height, bar_width / 2, sec_bar_place);
+
+//    if (Settings::instance() -> getMonocolorSpectrum()) {
+//        g.setColorAt(0, Settings::instance() -> getSpectrumColor2());
+//        g.setColorAt(1, Settings::instance() -> getSpectrumColor());
+
+//        gg.setColorAt(0, Settings::instance() -> getSpectrumColor2());
+//        gg.setColorAt(1, Settings::instance() -> getSpectrumColor());
+//    } else {
+//        g.setColorAt(0.1, Qt::red);
+//        g.setColorAt(0.5, Qt::yellow);
+//        g.setColorAt(0.6, Qt::yellow);
+//        g.setColorAt(1, Qt::darkGreen);
+
+//        gg.setColorAt(0.1, Qt::red);
+//        gg.setColorAt(0.5, Qt::yellow);
+//        gg.setColorAt(0.6, Qt::yellow);
+//        gg.setColorAt(1, Qt::darkGreen);
+//    }
+
+//    for(int loop1 = 0; loop1 < peaks[0].length(); loop1++) {
+//        temp_acc = (accumulate + bar_width);
+
+//        peak = peaks[0][loop1];
+//        rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
+//        painter.fillRect(rect, g);
+//        painter.drawRect(rect);
+
+//        peak2 = peaks[1][loop1];
+//        rect.setCoords(accumulate, sec_bar_place, temp_acc, sec_bar_place + peak2);
+//        painter.fillRect(rect, gg);
+//        painter.drawRect(rect);
+
+//        accumulate = temp_acc + padd;
+//    }
+//    painter.restore();
+//}
