@@ -113,7 +113,7 @@ void Library::startRemoteInfoProc() {
 
 ModelItem * Library::procRemoteInfo(ModelItem * item) {
     if (currRemote == 0) return 0;
-    QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> toUrl().toString());
+    QHash<QString, QString> info = Player::instance() -> getFileInfo(item -> toUrl());
     if (currRemote == 0) return 0;
     item -> setDuration(info.value("duration"));
     if (currRemote == 0) return 0;
@@ -299,7 +299,16 @@ void Library::initItemInfo(ModelItem * item) {
             }
 
             if (!item -> hasInfo() && m.initiated()) {
-                item -> setInfo(Format::toInfo(Format::toUnits(m.getSize()), m.getBitrate(), m.getSampleRate(), m.getChannels()));
+                int bitrate = m.getBitrate();
+
+                if (bitrate == 0) {
+                    QHash<QString, QString> info = Player::instance() -> getFileInfo(item -> toUrl(), true);
+                    qDebug() << "HUY " << info;
+
+                    bitrate = info.value("bitrate").toInt();
+                }
+
+                item -> setInfo(Format::toInfo(Format::toUnits(m.getSize()), bitrate, m.getSampleRate(), m.getChannels()));
                 item -> setDuration(Duration::fromSeconds(m.getDuration()));
                 item -> setGenre(Genre::instance() -> toInt(m.getGenre()));
             }

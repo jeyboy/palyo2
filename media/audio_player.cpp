@@ -276,24 +276,35 @@ float AudioPlayer::getRemoteFileDownloadPosition() {
     return prevDownloadPos;
 }
 
-QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
+QHash<QString, QString> AudioPlayer::getFileInfo(QUrl uri, bool only_bitrate) {
     QHash<QString, QString> ret;
 
-    int chUID = BASS_StreamCreateURL(uri.toStdWString().c_str(), 0, 0, NULL, 0);
+    int chUID;
 
-    if (!chUID)
+    if (uri.isLocalFile()) {
+        chUID = BASS_StreamCreateFile(false, uri.toLocalFile().toStdWString().c_str(), 0, 0, 0);
+    } else {
+        chUID = BASS_StreamCreateURL(uri.toString().toStdWString().c_str(), 0, 0, NULL, 0);
+    }
+
+    if (!chUID) {
         return ret;
+    }
 
     float time = BASS_ChannelBytes2Seconds(chUID, BASS_ChannelGetLength(chUID, BASS_POS_BYTE)); // playback duration
     DWORD len = BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_END); // file length
     int bitrate = (len / (125 * time) + 0.5); // average bitrate (Kbps)
 
-    ret.insert("duration", Duration::fromSeconds(time));
+    if (only_bitrate) {
+        ret.insert("bitrate", QString::number(bitrate));
+    } else {
+        ret.insert("duration", Duration::fromSeconds(time));
 
-    BASS_CHANNELINFO info;
-    if (BASS_ChannelGetInfo(chUID, &info)) {
-        int size = len + BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_START);
-        ret.insert("info", Format::toInfo(Format::toUnits(size), bitrate, info.freq, info.chans));
+        BASS_CHANNELINFO info;
+        if (BASS_ChannelGetInfo(chUID, &info)) {
+            int size = len + BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_START);
+            ret.insert("info", Format::toInfo(Format::toUnits(size), bitrate, info.freq, info.chans));
+        }
     }
 
     BASS_StreamFree(chUID);
@@ -397,7 +408,7 @@ QVector<int> AudioPlayer::getSpectrum() {
 }
 
 QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
-    int channelsCount = 2, layerLimit = 1024, gLimit = layerLimit * channelsCount;
+    int layerLimit = 1024, gLimit = layerLimit * channelsCount;
     int spectrumMultiplicity = Settings::instance() -> getSpectrumMultiplier();
     float fft[gLimit];
     BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048 | BASS_DATA_FFT_INDIVIDUAL | BASS_DATA_FFT_REMOVEDC);
@@ -459,6 +470,15 @@ void AudioPlayer::play() {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
                 duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
                 durationChanged(duration);
+
+
+
+                BASS_CHANNELINFO info;
+                if (BASS_ChannelGetInfo(chan, &info))
+                    channelsCount = info.chans;
+                else
+                    channelsCount = 2;
+
                 BASS_ChannelPlay(chan, true);
                 spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
                 notifyTimer -> start(notifyInterval);

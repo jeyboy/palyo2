@@ -63,7 +63,7 @@ public:
     float getRemoteFileDownloadPosition();
     float getBpmValue(QUrl uri);
 
-    QHash<QString, QString> getRemoteFileInfo(QString uri);
+    QHash<QString, QString> getFileInfo(QUrl uri, bool only_bitrate = false);
 
     int getNotifyInterval();
     void setNotifyInterval(signed int milis);
@@ -127,6 +127,7 @@ private:
 
     float volumeVal;
 
+    int channelsCount;
     int notifyInterval;
     int duration;
     float size;
