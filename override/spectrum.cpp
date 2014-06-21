@@ -16,9 +16,9 @@ Spectrum::~Spectrum() {
 
 int Spectrum::workHeight() {
     if (Settings::instance() -> getSpectrumCombo())
-        return height() - 10;
+        return height() - verticalPadd() * 2;
     else
-        return (height() - 18) / 2;
+        return (height() - (verticalPadd() * 2 + 8)) / 2;
 }
 
 void Spectrum::bandCountChanged(int newCount) {
@@ -36,6 +36,10 @@ void Spectrum::dataUpdated(QList<QVector<int> > bars) {
 //    qDebug() << bars;
     peaks = bars;
     repaint();
+}
+
+int Spectrum::verticalPadd() {
+    return 5;
 }
 
 int Spectrum::paddWidth() {
@@ -61,7 +65,7 @@ void Spectrum::paintCombo() {
     float bar_width = ((float)width() - offset - (bars_count + 1) * padd) / bars_count;
     QRectF rect;
 
-    QLinearGradient g(bar_width / 2, 0, bar_width / 2, workHeight());
+    QLinearGradient g(bar_width / 2, verticalPadd(), bar_width / 2, workHeight());
 
     if (Settings::instance() -> getMonocolorSpectrum()) {
         g.setColorAt(0, Settings::instance() -> getSpectrumColor2());
@@ -91,10 +95,10 @@ void Spectrum::paintDuo() {
     int work_bars_count = Player::instance() -> getCalcSpectrumBandsCount();
     double peak, peak2, temp_acc, accumulate = padd + offset + 2, beetween_space = 6;
     double bar_width = ((float)width() - 2 - accumulate - ((work_bars_count * pairs + pairs) * padd) - ((pairs - 1) * beetween_space))/ pairs / work_bars_count;
-    float bar_height = workHeight() + 3, first_bar_place =  bar_height + 6, sec_bar_place = bar_height + 8;
+    float bar_height = workHeight() + 3, first_bar_place =  bar_height + verticalPadd() + 1, sec_bar_place = bar_height + verticalPadd() + 3; // 2px gap between vertical bars
     QRectF rect;
 
-    QLinearGradient g(bar_width / 2, 0, bar_width / 2, bar_height);
+    QLinearGradient g(bar_width / 2, first_bar_place - bar_height, bar_width / 2, first_bar_place);
     QLinearGradient gg(bar_width / 2, sec_bar_place + bar_height, bar_width / 2, sec_bar_place);
 
     if (Settings::instance() -> getMonocolorSpectrum()) {

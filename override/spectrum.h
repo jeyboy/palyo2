@@ -22,6 +22,7 @@ protected slots:
     void dataUpdated(QList<QVector<int> >);
 
 protected:
+    int verticalPadd();
     int paddWidth();
     void paintEvent(QPaintEvent *event);
     void paintCombo();
