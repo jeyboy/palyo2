@@ -56,6 +56,7 @@ public:
     ~AudioPlayer();
 
     QList<QVector<int> > & getDefaultSpectrum();
+    int getCalcSpectrumBandsCount() const;
     int getPosition() const;
     int getDuration() const;
     int getVolume() const;

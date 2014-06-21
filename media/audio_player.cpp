@@ -35,6 +35,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     spectrumHeight = 0;
     setSpectrumBandsCount(28);
     defaultSpectrumLevel = -3;
+    channelsCount = 2;
 
     currentState = StoppedState;
 
@@ -88,6 +89,10 @@ AudioPlayer::~AudioPlayer() {
 
 QList<QVector<int> > & AudioPlayer::getDefaultSpectrum() {
     return defaultSpectrum;
+}
+
+int AudioPlayer::getCalcSpectrumBandsCount() const {
+    return spectrumBandsCount / (channelsCount / 2);
 }
 
 int AudioPlayer::getPosition() const {
@@ -411,6 +416,7 @@ QVector<int> AudioPlayer::getSpectrum() {
 QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
     int layerLimit = 1024, gLimit = layerLimit * channelsCount;
     int spectrumMultiplicity = Settings::instance() -> getSpectrumMultiplier();
+    int workSpectrumBandsCount = getCalcSpectrumBandsCount();
     float fft[gLimit];
     BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048 | BASS_DATA_FFT_INDIVIDUAL | BASS_DATA_FFT_REMOVEDC);
 
@@ -421,11 +427,11 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
     for (x = 0; x < channelsCount; x++)
         res.append(QVector<int>());
 
-    for (x = 0; x < spectrumBandsCount; x++) {
+    for (x = 0; x < workSpectrumBandsCount; x++) {
         peaks.clear();
         peaks.fill(0, channelsCount);
 
-        int b1 = qPow(2, x * 10.0 / (spectrumBandsCount - 1)) * channelsCount;
+        int b1 = qPow(2, x * 10.0 / (workSpectrumBandsCount - 1)) * channelsCount;
         if (b1 <= b0) b1 = b0 + channelsCount * 2; // make sure it uses at least 2 FFT bin
         if (b1 > gLimit - 1) b1 = gLimit - 1; // prevent index overflow
         for (; b0 < b1; b0++) {

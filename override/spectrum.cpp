@@ -86,10 +86,11 @@ void Spectrum::paintCombo() {
 void Spectrum::paintDuo() {
     QPainter painter(this);
     painter.save();
-    int pairs = (peaks.length() + 1) / 2;
+    int pairs = (peaks.length() + 1) / 2, padd = paddWidth() / pairs;
     int offset = isMovable() ? 10 : 0;
-    double peak, peak2, temp_acc, accumulate = offset, beetween_space = 10;
-    float bar_width = ((float)width() - offset - ((pairs - 1) * beetween_space))/ pairs / bars_count;
+    int work_bars_count = Player::instance() -> getCalcSpectrumBandsCount();
+    double peak, peak2, temp_acc, accumulate = padd + offset + 2, beetween_space = 6;
+    double bar_width = ((float)width() - 2 - accumulate - ((work_bars_count + pairs) * padd) - ((pairs - 1) * beetween_space))/ pairs / work_bars_count;
     float bar_height = workHeight() + 3, first_bar_place =  bar_height + 3, sec_bar_place = bar_height + 9;
     QRectF rect;
 
@@ -129,7 +130,7 @@ void Spectrum::paintDuo() {
                 painter.fillRect(rect, gg);
                 painter.drawRect(rect);
 
-                accumulate = temp_acc;
+                accumulate = temp_acc + padd;
             }
         } else {
             for(int loop1 = 0; loop1 < peaks[pair].length(); loop1++) {
@@ -140,7 +141,7 @@ void Spectrum::paintDuo() {
                 painter.fillRect(rect, g);
                 painter.drawRect(rect);
 
-                accumulate = temp_acc;
+                accumulate = temp_acc + padd;
             }
         }
         accumulate += beetween_space;
