@@ -87,7 +87,8 @@ SOURCES += main.cpp\
     web/download.cpp \
     dialogs/relationdialog.cpp \
     override/spectrum.cpp \
-    toolbars.cpp
+    toolbars.cpp \
+    web/auth_chemas/teu_auth.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -156,7 +157,8 @@ HEADERS  += mainwindow.h \
     web/download.h \
     dialogs/relationdialog.h \
     override/spectrum.h \
-    toolbars.h
+    toolbars.h \
+    web/auth_chemas/teu_auth.h
     model/view_types.h
 
 unix:!mac {

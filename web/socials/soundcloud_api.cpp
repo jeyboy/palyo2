@@ -17,67 +17,26 @@ SoundcloudApi * SoundcloudApi::instance(QJsonObject obj) {
 }
 
 QString SoundcloudApi::name() const { return "soundcloud"; }
-void SoundcloudApi::setParams(QString accessToken, QString userID, QString expiresIn) {
-    token = accessToken;
-    user_id = userID;
-    expires_in = expiresIn;
-}
 
 QString SoundcloudApi::getClientId() const {
     return "8f84790a84f5a5acd1c92e850b5a91b7";
 }
 
-QString SoundcloudApi::getToken() {
-    return token;
-}
-QString SoundcloudApi::getExpire() {
-    return expires_in;
-}
-QString SoundcloudApi::getUserID() {
-    return user_id;
-}
-
 void SoundcloudApi::fromJson(QJsonObject hash) {
-    user_id = hash.value("_u_").toString();
-    token = hash.value("_t_").toString();
-    expires_in = hash.value("_e_").toString();
-
-    QJsonObject ar = hash.value("friends").toObject();
-
-    foreach(QString key, ar.keys()) {
-        addFriend(key, ar.value(key).toString());
-    }
-
-    ar = hash.value("groups").toObject();
-
-    foreach(QString key, ar.keys()) {
-        addGroup(key, ar.value(key).toString());
-    }
+    TeuAuth::fromJson(hash);
+    WebApi::fromJson(hash);
 }
 QJsonObject SoundcloudApi::toJson() {
     QJsonObject root;
 
-    root["_u_"] = getUserID();
-    root["_t_"] = getToken();
-    root["_e_"] = getExpire();
-
-    QJsonObject friendsJson;
-    foreach(QString key, friends.keys()) {
-        friendsJson.insert(key, QJsonValue(friends.value(key)));
-    }
-    root.insert("friends", friendsJson);
-
-    QJsonObject groupsJson;
-    foreach(QString key, groups.keys()) {
-        groupsJson.insert(key, QJsonValue(groups.value(key)));
-    }
-    root.insert("groups", groupsJson);
+    root = TeuAuth::toJson(root);
+    root = WebApi::toJson(root);
 
     return root;
 }
 
-bool SoundcloudApi::isConnected() const {
-    return !token.isEmpty();
+bool SoundcloudApi::isConnected() {
+    return !getToken().isEmpty();
 }
 
 ///////////////////////////////////////////////////////////
@@ -147,14 +106,15 @@ QString SoundcloudApi::proceedAuthResponse(const QUrl & url) {
         QJsonObject doc = responseToJson(m_http -> readAll());
 
         if (doc.contains("access_token")) {
-            token = doc.value("access_token").toString();
+            QString newToken = doc.value("access_token").toString();
 
-            QNetworkRequest request("https://api.soundcloud.com/me.json?oauth_token=" + token);
+            QNetworkRequest request("https://api.soundcloud.com/me.json?oauth_token=" + newToken);
             m_http = manager() -> get(request);
             syncRequest(m_http);
 
             doc = responseToJson(m_http -> readAll());
-            user_id = QString::number(doc.value("id").toInt());
+
+            setParams(newToken, QString::number(doc.value("id").toInt()), "");
 
             return "accept";
         }

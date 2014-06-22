@@ -4,8 +4,9 @@
 #include "web/web_api.h"
 #include "misc/func_container.h"
 #include "model/model_item.h"
+#include "web/auth_chemas/teu_auth.h"
 
-class SoundcloudApi : public WebApi {
+class SoundcloudApi : public WebApi, TeuAuth {
     Q_OBJECT
 public:
     QString name() const;
@@ -14,12 +15,7 @@ public:
     QByteArray authTokenUrlParams(QString code) const;
     QString proceedAuthResponse(const QUrl & url);
 
-    void setParams(QString accessToken, QString userID, QString expiresIn);
-
     QString getClientId() const;
-    QString getToken();
-    QString getExpire();
-    QString getUserID();
 
     void getGroupInfo(FuncContainer func, QString uid);
     void getUidInfo(FuncContainer responseSlot, QString uid = "0");
@@ -35,7 +31,7 @@ public:
     void fromJson(QJsonObject hash);
     QJsonObject toJson();
 
-    bool isConnected() const;
+    bool isConnected();
 
     QUrlQuery userMethodParams();
     QUrlQuery commonMethodParams();
@@ -51,17 +47,13 @@ protected:
 //protected slots:
 //    void audioListRequest();
 private:   
-    SoundcloudApi(QJsonObject hash) : WebApi() {
+    SoundcloudApi(QJsonObject hash) : WebApi(), TeuAuth() {
         fromJson(hash);
     }
 
-    SoundcloudApi() : WebApi() { }
+    SoundcloudApi() : WebApi(), TeuAuth() { }
 
     static SoundcloudApi *self;
-
-    QString token;
-    QString expires_in;
-    QString user_id;
 
     QHash<QNetworkReply *, FuncContainer> responses;
 };

@@ -17,63 +17,22 @@ VkApi * VkApi::instance(QJsonObject obj) {
 }
 
 QString VkApi::name() const { return "vk"; }
-void VkApi::setParams(QString accessToken, QString userID, QString expiresIn) {
-    token = accessToken;
-    user_id = userID;
-    expires_in = expiresIn;
-}
-
-QString VkApi::getToken() {
-    return token;
-}
-QString VkApi::getExpire() {
-    return expires_in;
-}
-QString VkApi::getUserID() {
-    return user_id;
-}
 
 void VkApi::fromJson(QJsonObject hash) {
-    user_id = hash.value("_u_").toString();
-    token = hash.value("_t_").toString();
-    expires_in = hash.value("_e_").toString();
-
-    QJsonObject ar = hash.value("friends").toObject();
-
-    foreach(QString key, ar.keys()) {
-        addFriend(key, ar.value(key).toString());
-    }
-
-    ar = hash.value("groups").toObject();
-
-    foreach(QString key, ar.keys()) {
-        addGroup(key, ar.value(key).toString());
-    }
+    TeuAuth::fromJson(hash);
+    WebApi::fromJson(hash);
 }
 QJsonObject VkApi::toJson() {
     QJsonObject root;
 
-    root["_u_"] = getUserID();
-    root["_t_"] = getToken();
-    root["_e_"] = getExpire();
-
-    QJsonObject friendsJson;
-    foreach(QString key, friends.keys()) {
-        friendsJson.insert(key, QJsonValue(friends.value(key)));
-    }
-    root.insert("friends", friendsJson);
-
-    QJsonObject groupsJson;
-    foreach(QString key, groups.keys()) {
-        groupsJson.insert(key, QJsonValue(groups.value(key)));
-    }
-    root.insert("groups", groupsJson);
+    root = TeuAuth::toJson(root);
+    root = WebApi::toJson(root);
 
     return root;
 }
 
-bool VkApi::isConnected() const {
-    return !token.isEmpty() && !user_id.isEmpty();
+bool VkApi::isConnected() {
+    return !getToken().isEmpty() && !getUserID().isEmpty();
 }
 
 ///////////////////////////////////////////////////////////
@@ -99,10 +58,12 @@ QString VkApi::proceedAuthResponse(const QUrl & url) {
     if (query.hasQueryItem("error")) {
         error = query.queryItemValue("error_description");
         return "reject";
-    } else if (query.hasQueryItem("access_token")) {\
-        token = query.queryItemValue("access_token");
-        expires_in = query.queryItemValue("expires_in");
-        user_id = query.queryItemValue("user_id");
+    } else if (query.hasQueryItem("access_token")) {
+        setParams(
+                  query.queryItemValue("access_token"),
+                  query.queryItemValue("user_id"),
+                  query.queryItemValue("expires_in")
+                  );
         return "accept";
     }
 

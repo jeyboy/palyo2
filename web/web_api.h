@@ -22,7 +22,7 @@ public:
     virtual QString authUrl() const = 0;
     virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
-    virtual bool isConnected() const { return false; }
+    virtual bool isConnected() { return false; }
 
     CustomNetworkAccessManager * manager() const;
 
@@ -34,6 +34,9 @@ public:
 
     QHash<QString, QString> friendsList() const;
     QHash<QString, QString> groupsList() const;
+
+    void fromJson(QJsonObject & hash);
+    QJsonObject & toJson(QJsonObject & root);
 
 protected:
     QJsonObject responseToJson(QByteArray data);

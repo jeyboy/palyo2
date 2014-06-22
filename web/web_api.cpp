@@ -42,6 +42,35 @@ QHash<QString, QString> WebApi::groupsList() const {
     return groups;
 }
 
+void WebApi::fromJson(QJsonObject & hash) {
+    QJsonObject ar = hash.value("friends").toObject();
+
+    foreach(QString key, ar.keys()) {
+        addFriend(key, ar.value(key).toString());
+    }
+
+    ar = hash.value("groups").toObject();
+
+    foreach(QString key, ar.keys()) {
+        addGroup(key, ar.value(key).toString());
+    }
+}
+QJsonObject & WebApi::toJson(QJsonObject & root) {
+    QJsonObject friendsJson;
+    foreach(QString key, friends.keys()) {
+        friendsJson.insert(key, QJsonValue(friends.value(key)));
+    }
+    root.insert("friends", friendsJson);
+
+    QJsonObject groupsJson;
+    foreach(QString key, groups.keys()) {
+        groupsJson.insert(key, QJsonValue(groups.value(key)));
+    }
+    root.insert("groups", groupsJson);
+
+    return root;
+}
+
 QJsonObject WebApi::responseToJson(QByteArray data) {
     QJsonDocument doc = QJsonDocument::fromJson(data);
     return doc.object();

@@ -4,19 +4,14 @@
 #include "web/web_api.h"
 #include "misc/func_container.h"
 #include "model/model_item.h"
+#include "web/auth_chemas/teu_auth.h"
 
-class VkApi : public WebApi {
+class VkApi : public WebApi, public TeuAuth {
     Q_OBJECT
 public:
     QString name() const;
     QString authUrl() const;
     QString proceedAuthResponse(const QUrl & url);
-
-    void setParams(QString accessToken, QString userID, QString expiresIn);
-
-    QString getToken();
-    QString getExpire();
-    QString getUserID();
 
     void getWallAttachmentsList(FuncContainer responseSlot, QString uid = "0", int iterator = 0, int count = 0);
 
@@ -34,7 +29,7 @@ public:
     void fromJson(QJsonObject hash);
     QJsonObject toJson();
 
-    bool isConnected() const;
+    bool isConnected();
 
 signals:
     void audioListReceived(QJsonObject &);
@@ -81,19 +76,15 @@ protected slots:
 //    void audioAlbumMoveToRequest();
 
 private:   
-    VkApi(QJsonObject hash) : WebApi() {
+    VkApi(QJsonObject hash) : WebApi(), TeuAuth() {
         fromJson(hash);
     }
 
-    VkApi() : WebApi() {
+    VkApi() : WebApi(), TeuAuth() {
 
     }
 
     static VkApi *self;
-
-    QString token;
-    QString expires_in;
-    QString user_id;
 
     QHash<QNetworkReply *, FuncContainer> responses;
     QHash<QNetworkReply *, QHash<ModelItem *, QString> > collations;
