@@ -320,7 +320,6 @@ QUrlQuery SoundcloudApi::userMethodParams() {
     return query;
 }
 
-
 QUrlQuery SoundcloudApi::commonMethodParams() {
     QUrlQuery query = QUrlQuery();
 

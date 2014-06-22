@@ -18,7 +18,7 @@ public:
     QString getExpire();
     QString getUserID();
 
-    void getWallAttachmentsList(FuncContainer responseSlot, QString uid = "0");
+    void getWallAttachmentsList(FuncContainer responseSlot, QString uid = "0", int iterator = 0, int count = 0);
 
     void getAudioList(FuncContainer responseSlot, QString uid = "0");
     void refreshAudioList(FuncContainer slot, QHash<ModelItem *, QString> uids);

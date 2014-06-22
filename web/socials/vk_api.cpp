@@ -77,12 +77,6 @@ bool VkApi::isConnected() const {
 }
 
 ///////////////////////////////////////////////////////////
-/// LINKS
-///////////////////////////////////////////////////////////
-
-
-
-///////////////////////////////////////////////////////////
 /// AUTH
 ///////////////////////////////////////////////////////////
 QString VkApi::authUrl() const {
@@ -119,18 +113,28 @@ QString VkApi::proceedAuthResponse(const QUrl & url) {
 /// WALL
 ///////////////////////////////////////////////////////////
 
-void VkApi::getWallAttachmentsList(FuncContainer responseSlot, QString uid) {
+void VkApi::getWallAttachmentsList(FuncContainer responseSlot, QString uid, int iterator, int count) {
     uid = uid == "0" ? getUserID() : uid;
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams();
 
-    query.addQueryItem("code",
-                           QString("var limit = 100;") +
-                           "var iterator = limit; var response = [];" +
-                           "var posts = API.wall.get({count: limit, owner_id: " + uid + "});" +
-                           "var count = posts.count, post_items = posts.items;" +
+    QString head;
 
-                           "while (iterator < count) { post_items.push(API.wall.get({count: limit, offset: iterator, owner_id: " + uid + "}).items); iterator = iterator %2b limit;}" +
+    if (iterator > 0) {
+        head = QString("var limit = 100;") +
+        "var iterator = " + QString::number(iterator) + "; var response = []; var look_window = limit * 22 + iterator;" +
+        "var posts = API.wall.get({count: limit, owner_id: " + uid + "});" +
+        "var count = " + QString::number(count) + ", post_items = []; var last_date = nil;";
+    } else {
+        head = QString("var limit = 100;") +
+        "var iterator = limit; var response = []; var look_window = limit * 22;" +
+        "var posts = API.wall.get({count: limit, owner_id: " + uid + "});" +
+        "var count = posts.count, post_items = posts.items; var last_date = posts.items[0].date;";
+    }
+
+    query.addQueryItem("code",
+                           head +
+                           "while (iterator < count || iterator < look_window) { post_items.push(API.wall.get({count: limit, offset: iterator, owner_id: " + uid + "}).items); iterator = iterator %2b limit;}" +
 
                            "while(post_items.length > 0) {" +
                            "  var curr = post_items.pop();" +
@@ -140,7 +144,7 @@ void VkApi::getWallAttachmentsList(FuncContainer responseSlot, QString uid) {
                            " }" +
                            "}" +
 
-                           "return {date: posts.items[0].date, posts: response};"
+                           "return {date: last_date, count: count, offset: iterator, posts: response};"
                        );
 
     url.setQuery(query);
@@ -155,6 +159,7 @@ void VkApi::wallResponse() {
 
     QByteArray ar = reply -> readAll();
     QJsonObject doc = responseToJson(ar);
+
     FuncContainer func = responses.take(reply);
 
     if (doc.contains("error")) {

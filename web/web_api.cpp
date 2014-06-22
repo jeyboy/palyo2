@@ -32,7 +32,6 @@ void WebApi::addFriend(QString uid, QString name) {
     friends.insert(uid, name);
 }
 void WebApi::addGroup(QString uid, QString name) {
-    qDebug() << "GROUP " << uid << " " << name;
     groups.insert(uid, name);
 }
 
@@ -65,21 +64,4 @@ QJsonObject WebApi::responseToJson(QByteArray data) {
 ////         list.append(url);
 ////         audioElement = audioElement.nextSibling(); //next element
 ////    }
-//}
-
-//QByteArray WebApi::sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts) {
-//    QNetworkReply * reply;
-//    QNetworkRequest req(request);
-
-//    if (sendMethod == "get") {
-//        reply = netManager -> get(req);
-//    } else if (sendMethod == "post") {
-//        reply = netManager -> post(req, parts);
-//    } else if (sendMethod == "put") {
-//        reply = netManager -> put(req, parts);
-//    } if (sendMethod == "delete") {
-//        reply = netManager -> deleteResource(req);
-//    }
-
-//    return reply -> readAll();
 //}

@@ -62,5 +62,7 @@
         <file alias="check_trist">icons/elems/check_trist.png</file>
         <file alias="check_blank_disabled">icons/elems/check_blank_disabled.png</file>
         <file alias="check_fill_disabled">icons/elems/check_fill_disabled.png</file>
+        <file alias="next">icons/elems/next.png</file>
+        <file alias="prev">icons/elems/prev.png</file>
     </qresource>
 </RCC>

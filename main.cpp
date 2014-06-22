@@ -96,6 +96,22 @@ int main(int argc, char *argv[]) {
                               "QCheckBox::indicator:checked:pressed {"
                               "    image: url(:/elems/check_fill);"
                               "}"
+
+                              "QTabBar QToolButton::right-arrow  { /* the arrow mark in the tool buttons */"
+                              "    image: url(:/elems/next);"
+                              "}"
+
+                              "QTabBar QToolButton::left-arrow  { /* the arrow mark in the tool buttons */"
+                              "    image: url(:/elems/prev);"
+                              "}"
+
+//                              "QTabBar::tear  {"
+//                              "    image: url(tear_indicator.png);"
+//                              "}"
+
+                              "QTabBar::scroller  {"
+                              "    height: 24px;"
+                              "}"
                           ));
 
 

@@ -1,0 +1,191 @@
+
+
+
+#include <windows.h>
+#include <stdio.h>
+
+// EXE-file type.
+#pragma comment(linker, "/SUBSYSTEM:console")
+
+int main(int argc, char* argv[]) {
+if (!argv[1] || !*argv[1]) {
+fprintf(stderr, "%s", usage);
+ExitProcess(1);
+}
+    char* dir = argv[1];
+
+    HANDLE hDir = CreateFile(
+        dir, // pointer to the file name
+        FILE_LIST_DIRECTORY, // access (read/write) mode
+        // Share mode MUST be the following to avoid problems with renames via Explorer!
+        FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, // share mode
+        NULL, // security descriptor
+        OPEN_EXISTING, // how to create
+        FILE_FLAG_BACKUP_SEMANTICS, // file attributes
+        NULL // file with attributes to copy
+    );
+if (hDir == INVALID_HANDLE_VALUE) {
+        int lastError = GetLastError();
+char error[1024];
+FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, lastError, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), error, sizeof(error), 0);
+fprintf(stderr, "ERROR: Cannot open the directory \"%s\":\n%s\n", dir, error);
+ExitProcess(GetLastError());
+}
+
+    TCHAR szBuffer[1024 * 128];
+    DWORD BytesReturned;
+    while (ReadDirectoryChangesW(
+        hDir, // handle to directory
+        &szBuffer, // read results buffer
+        sizeof(szBuffer), // length of buffer
+        TRUE, // monitoring option
+        FILE_NOTIFY_CHANGE_SECURITY |
+        FILE_NOTIFY_CHANGE_CREATION |
+        FILE_NOTIFY_CHANGE_LAST_WRITE |
+        FILE_NOTIFY_CHANGE_SIZE |
+        FILE_NOTIFY_CHANGE_ATTRIBUTES |
+        FILE_NOTIFY_CHANGE_DIR_NAME |
+        FILE_NOTIFY_CHANGE_FILE_NAME, // filter conditions
+        &BytesReturned, // bytes returned
+        NULL, // overlapped buffer
+        NULL // completion routine
+        )
+    ) {
+        DWORD dwOffset = 0;
+        FILE_NOTIFY_INFORMATION* pInfo = NULL;
+        do {
+            // Get a pointer to the first change record...
+            pInfo = (FILE_NOTIFY_INFORMATION*)&szBuffer[dwOffset];
+
+            char *action = "*";
+            switch (pInfo->Action) {
+                case FILE_ACTION_ADDED: action = "A"; break;
+                case FILE_ACTION_REMOVED: action = "D"; break;
+                case FILE_ACTION_MODIFIED: action = "M"; break;
+                case FILE_ACTION_RENAMED_OLD_NAME: action = "O"; break;
+                case FILE_ACTION_RENAMED_NEW_NAME: action = "N"; break;
+            }
+
+            // ReadDirectoryChangesW processes filenames in Unicode. We will convert them to a TCHAR format...
+            TCHAR szFileName[MAX_PATH] = {0};
+            WideCharToMultiByte(CP_ACP, NULL, pInfo->FileName, pInfo->FileNameLength, szFileName, sizeof(szFileName) / sizeof(TCHAR), NULL, NULL);
+            szFileName[pInfo->FileNameLength / 2] = 0;
+
+            printf("%s %s\n", action, szFileName);
+
+            // More than one change may happen at the same time. Load the next change and continue...
+            dwOffset += pInfo->NextEntryOffset;
+        } while (pInfo->NextEntryOffset != 0);
+        printf("-\n");
+        fflush(stdout);
+    }
+
+return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void Filewatcher::OpenWatchDir(QString PathToOpen)
+{
+
+    QString path=QDir::fromNativeSeparators(PathToOpen);
+
+    LPCTSTR  Dirname=(LPCTSTR)path.utf16();//.toStdWString().c_str();
+
+    dirinfo_t* d =(dirinfo_t*) malloc(1*sizeof(dirinfo_t));
+    d->CompletionKey = (ULONG_PTR)&somekey;
+    dirinfo_init(d);
+
+    /* set up */
+    runthread = TRUE;
+    d->hDirFH = CreateFile(Dirname,
+                    FILE_LIST_DIRECTORY,
+                    FILE_SHARE_READ|FILE_SHARE_WRITE,
+                    NULL,
+                    OPEN_EXISTING,
+                    FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+                    NULL);
+
+    d->hDirOPPort = CreateIoCompletionPort(d->hDirFH, NULL,
+                          (ULONG_PTR)d->CompletionKey, 1);
+
+    DWORD errorcode = 0;    // an error code
+    BOOL bResultQ = FALSE;  // obvios=us
+    BOOL bResultR = FALSE;
+    DWORD NumBytes = 0;
+    FILE_NOTIFY_INFORMATION* pInfo = NULL; // the data incoming is a pointer
+                                           // to this struct.
+    int i = 0;
+
+    while ( runthread )
+        {
+            bResultR = ReadDirectoryChangesW(d->hDirFH, (void*)d->buffer,
+                                              16777216, TRUE,
+                   FILE_NOTIFY_CHANGE_FILE_NAME  | FILE_NOTIFY_CHANGE_CREATION  ,
+                                              NULL,
+                                              &d->o->overlapped,
+                                              NULL );
+            bResultQ = GetQueuedCompletionStatus(d->hDirOPPort,
+                                                 &NumBytes, &(d->CompletionKey),
+                                                 (LPOVERLAPPED*)(d->o), 1000);
+            if ( bResultQ && bResultR )
+                    {
+                wprintf(L"\n");
+                pInfo = (FILE_NOTIFY_INFORMATION*) d->buffer;
+                wprintf(L"File %s", pInfo->FileName);
+                wprintf(L" changes %d\n", pInfo->Action);
+
+                qDebug()<<"file  "<<pInfo->FileName<<" was"<<pInfo->Action;
+                memset(d->buffer, 0, 16777216);
+            }
+            else
+                   {
+                       errorcode = GetLastError();
+
+                       if ( errorcode == WAIT_TIMEOUT )
+                       {
+                           qDebug()<<"GetQueuedCompletionStatus(): Timeout\n";
+                       }
+                       else
+                       {
+                           qDebug()<<"GetQueuedCompletionStatus(): Failed\n";
+                           qDebug()<<"Error Code "<<errorcode;
+                       }
+                       Sleep(500);
+                   }
+               }
+
+
+}

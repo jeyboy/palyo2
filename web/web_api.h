@@ -39,7 +39,6 @@ protected:
     QJsonObject responseToJson(QByteArray data);
 //    QDomDocument toXml(QByteArray data);
 
-//    QByteArray sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts = 0);
     CustomNetworkAccessManager * netManager;
 
     QHash<QString, QString> friends;

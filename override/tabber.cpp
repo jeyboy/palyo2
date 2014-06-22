@@ -53,6 +53,7 @@ void Tabber::handleTabCloseRequested(int index) {
 
 Tabber::Tabber(QTabWidget * container) {
     tabber = container;
+//    tabber -> setTabBar(0); // TODO: custom tab bar
     tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
     tabber -> setStyleSheet(QString(
                           "QTreeView::indicator {"
