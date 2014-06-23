@@ -37,6 +37,10 @@ void Tabber::handleCurrentChanged(int index) {
 void Tabber::handleTabCloseRequested(int index) {
     Tab * del_tab = static_cast<Tab *>(tabber -> widget(index));
 
+    if (del_tab -> getList() -> getModel() -> itemsCount() > 0)
+        if (QMessageBox::warning(this, "Tab deletion", "Tab is not empty. Are you sure?", QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Ok)
+            return;
+
     if (del_tab == commonPlaylist)
         commonPlaylist = 0;
 
