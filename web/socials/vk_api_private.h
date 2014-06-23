@@ -15,7 +15,7 @@ public:
     static QString authUrl();
     static QUrl wallUrl(QString & uid, QString token, int & offset, int & count);
     static QUrl audioRefreshUrl(QStringList uids, QString token);
-    static QUrl audioAlbumsUrl(QString & uid, QString token, int offset);
+    static QUrl audioAlbumsUrl(QString & uid, QString token, int offset = 0);
     static QUrl audioInfoUrl(QString & uid, QString currUid, QString token);
 
 protected:

@@ -116,28 +116,7 @@ void VkApi::getAudioList(FuncContainer responseSlot, QString uid) {
 
 //void VkApi::getAudioAlbums(FuncContainer responseSlot, QString uid, int offset) {
 //    uid = uid == "0" ? getUserID() : uid;
-//    QUrl url = VkApiPrivate::audioInfoUrl(uid, getUserID(), getToken());
-
-
-
-
-//    QUrl url(getAPIUrl() + "execute");
-//    QUrlQuery query = methodParams();
-//    int req_count = 20;
-
-//    query.addQueryItem("code",
-//                       QString("var curr;") +
-//                       "var folders_result = API.audio.getAlbums({count: " + QString::number(req_count) + ", offset: " + QString::number(offset) + ", owner_id: " + uid + "});" +
-//                       "var folders_count = folders_result.count;" +
-//                       "var folders_result = folders_result.items;" +
-//                       "var proceed_folders = {};" +
-//                       "while(folders.length > 0) { curr = folders.pop();  proceed_folders.push(" +
-//                       "{folder_id: curr.id, title: curr.title, items: API.audio.get({owner_id: " + uid + ", album_id: curr.id}).items});" +
-//                       "};" +
-//                       "return {albums: proceed_folders, albums_count: folders_count, albums_offset: " + QString::number(req_count + offset) + "};"
-//                       );
-//    url.setQuery(query);
-
+//    QUrl url = VkApiPrivate::audioAlbumsUrl(uid, getToken());
 //    QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
 //    responses.insert(m_http, responseSlot);
 //    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListRequest()));
