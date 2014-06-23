@@ -21,30 +21,48 @@ QUrl VkApiPrivate::wallUrl(QString & uid, QString token, int & offset, int & cou
     QString head;
 
     if (offset > 0) {
-        head = QString("var limit = 100;") +
-        "var offset = " + QString::number(offset) + "; var response = []; var look_window = limit * 22 + offset;" +
-        "var posts = API.wall.get({count: limit, owner_id: " + uid + "});" +
-        "var count = " + QString::number(count) + ", post_items = []; var last_date = nil;";
+        head = QString(
+            "var limit = 100;"
+            "var offset = " + QString::number(offset) + "; var response = []; var look_window = limit * 22 + offset;"
+            "var posts = API.wall.get({count: limit, owner_id: " + uid + "});"
+            "var count = " + QString::number(count) + ", post_items = []; var last_date = nil;"
+        );
     } else {
-        head = QString("var limit = 100;") +
-        "var offset = limit; var response = []; var look_window = limit * 22;" +
-        "var posts = API.wall.get({count: limit, owner_id: " + uid + "});" +
-        "var count = posts.count, post_items = posts.items; var last_date = posts.items[0].date;";
+        head = QString(
+            "var limit = 100;"
+            "var offset = limit; var response = []; var look_window = limit * 22;"
+            "var posts = API.wall.get({count: limit, owner_id: " + uid + "});"
+            "var count = posts.count, post_items = posts.items; var last_date = posts.items[0].date;"
+        );
     }
 
     query.addQueryItem("code",
-                           head +
-                           "while (offset < count || offset < look_window) { post_items.push(API.wall.get({count: limit, offset: offset, owner_id: " + uid + "}).items); offset = offset %2b limit;}" +
+                           QString(
+                               head +
+                               "while (offset < count || offset < look_window) {"
+                               "    post_items.push("
+                               "        API.wall.get({"
+                               "            count: limit,"
+                               "            offset: offset,"
+                               "            owner_id: " + uid + ""
+                               "        }).items);"
+                               "        offset = offset %2b limit;"
+                               "}"
 
-                           "while(post_items.length > 0) {" +
-                           "  var curr = post_items.pop();" +
-                           "  var audios = curr.attachments@.audio %2b curr.copy_history[0].attachments@.audio %2b curr.copy_history[1].attachments@.audio;" +
-                           "  if (audios.length > 0) {" +
-                           "    response.unshift({title: curr.text, date: curr.date, audios: audios});" +
-                           " }" +
-                           "}" +
+                               "while(post_items.length > 0) {"
+                               "    var curr = post_items.pop();"
+                               "    var audios = curr.attachments@.audio %2b curr.copy_history[0].attachments@.audio %2b curr.copy_history[1].attachments@.audio;"
+                               "    if (audios.length > 0) {"
+                               "        response.unshift({"
+                               "            title: curr.text,"
+                               "            date: curr.date,"
+                               "            audios: audios"
+                               "        });"
+                               "    }"
+                               "}"
 
-                           "return {date: last_date, count: count, offset: offset, posts: response};"
+                               "return {date: last_date, count: count, offset: offset, posts: response};"
+                           )
                        );
 
     url.setQuery(query);
@@ -55,7 +73,11 @@ QUrl VkApiPrivate::audioRefreshUrl(QStringList uids, QString token) {
     QUrlQuery query = methodParams(token);
 
     query.addQueryItem("code",
-                       "return API.audio.getById({audios: \"" + uids.join(',') + "\"});"
+                           QString(
+                               "return API.audio.getById({"
+                               "    audios: \"" + uids.join(',') + "\""
+                               "});"
+                           )
                        );
     url.setQuery(query);
     return url;
@@ -67,15 +89,28 @@ QUrl VkApiPrivate::audioAlbumsUrl(QString & uid, QString token, int offset) {
     int req_count = 20;
 
     query.addQueryItem("code",
-                       QString("var curr;") +
-                       "var folders_result = API.audio.getAlbums({count: " + QString::number(req_count) + ", offset: " + QString::number(offset) + ", owner_id: " + uid + "});" +
-                       "var folders_count = folders_result.count;" +
-                       "var folders_result = folders_result.items;" +
-                       "var proceed_folders = {};" +
-                       "while(folders.length > 0) { curr = folders.pop();  proceed_folders.push(" +
-                       "{folder_id: curr.id, title: curr.title, items: API.audio.get({owner_id: " + uid + ", album_id: curr.id}).items});" +
-                       "};" +
-                       "return {albums: proceed_folders, albums_count: folders_count, albums_offset: " + QString::number(req_count + offset) + "};"
+                       QString(
+                           "var curr;"
+                           "var folders_result = API.audio.getAlbums({"
+                           "                count: " + QString::number(req_count) + ", "
+                           "                offset: " + QString::number(offset) + ", "
+                           "                owner_id: " + uid + ""
+                           "});"
+                           "var folders_count = folders_result.count;"
+                           "var folders_result = folders_result.items;"
+                           "var proceed_folders = {};"
+                           "while(folders.length > 0) {"
+                           "    curr = folders.pop();"
+                           "    proceed_folders.push({"
+                           "        folder_id: curr.id,"
+                           "        title: curr.title,"
+                           "        items: API.audio.get({"
+                           "            owner_id: " + uid + ","
+                           "            album_id: curr.id"
+                           "        }).items});"
+                           "};"
+                           "return {albums: proceed_folders, albums_count: folders_count, albums_offset: " + QString::number(req_count + offset) + "};"
+                       )
                        );
     url.setQuery(query);
     return url;
@@ -85,6 +120,7 @@ QUrl VkApiPrivate::audioInfoUrl(QString & uid, QString currUid, QString token) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
 
+    //TODO: correct request struct
     if (uid == currUid) {
         query.addQueryItem("code",
                            QString("var curr;") +
@@ -119,6 +155,95 @@ QUrl VkApiPrivate::audioInfoUrl(QString & uid, QString currUid, QString token) {
     return url;
 }
 
+QUrl VkApiPrivate::audioRecomendationUrl(QString & uid, bool byUser, QString token) {
+    QUrl url(getAPIUrl() + "execute");
+    QUrlQuery query = methodParams(token);
+
+    if (byUser) {
+        query.addQueryItem("code",
+                           QString(
+                               "var recomendations = API.audio.getRecommendations({"
+                               "            user_id: " + uid + ", "
+                               "            count: 1000, "
+                               "            shuffle: 0"
+                               "}).items;"
+                               "return {audio_list: recomendations};"
+                           )
+        );
+    } else {
+        query.addQueryItem("code",
+                           QString(
+                               "var recomendations = API.audio.getRecommendations({"
+                               "            target_audio: " + uid + ", "
+                               "            count: 1000, "
+                               "            shuffle: 0"
+                               "}).items;"
+                               "return {audio_list: recomendations};"
+                           )
+        );
+    }
+    url.setQuery(query);
+    return url;
+}
+
+QUrl VkApiPrivate::audioPopularUrl(bool onlyEng, QString token, int genreId) {
+//    QUrl url(getAPIUrl() + "execute");
+//    QUrlQuery query = methodParams(token);
+
+//    query.addQueryItem("code",
+//                       QString(
+//                           "var recomendations = API.audio.getPopular({"
+//                                "only_eng: " + boolToStr(onlyEng) + ", "
+//                                "count: 1000 "
+//                                (genreId != -1 ? ", genre_id: " + QString::number(genreId) : "") + ""
+//                             "}).items;"
+//                           "return {audio_list: recomendations};"
+//                       )
+//    );
+
+    QUrl url(getAPIUrl() + "audio.getPopular");
+    QUrlQuery query = methodParams(token);
+
+    query.addQueryItem("only_eng", boolToStr(onlyEng));
+    query.addQueryItem("count", QString::number(1000));
+    if (genreId != -1)
+        query.addQueryItem("genre_id", QString::number(genreId));
+
+    url.setQuery(query);
+    return url;
+
+    // response: [{}]
+}
+
+// sort  2 - by popularity, 1 - by duration, 0 - by creation date
+QUrl VkApiPrivate::audioSearchUrl(QString searchStr, bool autoFix, bool artistOnly, bool searchByOwn, int sort, QString token) {
+    QUrl url(getAPIUrl() + "execute");
+    QUrlQuery query = methodParams(token);
+
+    // count max eq 300 , limit is 1000
+    //TODO: add loop for 1000 items reading
+    query.addQueryItem("code",
+                       QString(
+                           "var search = [];"
+                           "search.push(API.audio.search({"
+                                "q: " + searchStr + ", "
+                                "count: 300, "
+                                "auto_complete: " + boolToStr(autoFix) + ", "
+                                "lyrics: 0, "
+                                "performer_only: " + boolToStr(artistOnly) + ", "
+                                "sort: " + QString::number(sort) + ", "
+                                "search_own: " + boolToStr(searchByOwn) + ""
+                           "}).items);"
+                           "return {audio_list: recomendations};"
+                       )
+    );
+
+    url.setQuery(query);
+    return url;
+
+    // response: [{}]
+}
+
 //QUrl VkApi::getAudioListUrl() const { return QUrl(getAPIUrl() + "audio.get"); }
 //QUrl VkApi::getAudioCountUrl() const { return QUrl(getAPIUrl() + "audio.getCount"); }
 //QUrl VkApi::getAudioSearchUrl() const { return QUrl(getAPIUrl() + "audio.search"); }
@@ -137,6 +262,10 @@ QUrl VkApiPrivate::audioInfoUrl(QString & uid, QString currUid, QString token) {
 ///////////////////////////////////////////////////////////
 /// PROTECTED
 ///////////////////////////////////////////////////////////
+
+QString VkApiPrivate::boolToStr(bool val) {
+    return val ? "1" : "0";
+}
 
 QString VkApiPrivate::apiVersion() {
     return "5.21";
