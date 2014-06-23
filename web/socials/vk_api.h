@@ -5,15 +5,17 @@
 #include "misc/func_container.h"
 #include "model/model_item.h"
 #include "web/auth_chemas/teu_auth.h"
+#include "vk_api_private.h"
 
 class VkApi : public WebApi, public TeuAuth {
     Q_OBJECT
 public:
-    QString name() const;
+    inline QString name() const { return "vk"; }
+
     QString authUrl() const;
     QString proceedAuthResponse(const QUrl & url);
 
-    void getWallAttachmentsList(FuncContainer responseSlot, QString uid = "0", int iterator = 0, int count = 0);
+    void getWallAttachmentsList(FuncContainer responseSlot, QString uid = "0", int offset = 0, int count = 0);
 
     void getAudioList(FuncContainer responseSlot, QString uid = "0");
     void refreshAudioList(FuncContainer slot, QHash<ModelItem *, QString> uids);

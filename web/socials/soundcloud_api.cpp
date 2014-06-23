@@ -16,8 +16,6 @@ SoundcloudApi * SoundcloudApi::instance(QJsonObject obj) {
     return self;
 }
 
-QString SoundcloudApi::name() const { return "soundcloud"; }
-
 QString SoundcloudApi::getClientId() const {
     return "8f84790a84f5a5acd1c92e850b5a91b7";
 }

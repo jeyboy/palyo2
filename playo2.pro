@@ -88,7 +88,8 @@ SOURCES += main.cpp\
     dialogs/relationdialog.cpp \
     override/spectrum.cpp \
     toolbars.cpp \
-    web/auth_chemas/teu_auth.cpp
+    web/auth_chemas/teu_auth.cpp \
+    web/socials/vk_api_private.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -158,7 +159,9 @@ HEADERS  += mainwindow.h \
     dialogs/relationdialog.h \
     override/spectrum.h \
     toolbars.h \
-    web/auth_chemas/teu_auth.h
+    web/auth_chemas/teu_auth.h \
+    web/socials/api_func_container.h \
+    web/socials/vk_api_private.h
     model/view_types.h
 
 unix:!mac {

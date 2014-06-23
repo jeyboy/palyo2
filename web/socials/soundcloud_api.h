@@ -9,7 +9,8 @@
 class SoundcloudApi : public WebApi, TeuAuth {
     Q_OBJECT
 public:
-    QString name() const;
+    inline QString name() const { return "soundcloud"; }
+
     QString authUrl() const;
     QUrl authTokenUrl() const;
     QByteArray authTokenUrlParams(QString code) const;
