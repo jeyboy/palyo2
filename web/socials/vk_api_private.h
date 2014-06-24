@@ -26,6 +26,7 @@ protected:
     static QString apiVersion();
     static QUrlQuery methodParams(QString & token);
     static QString getAPIUrl();
+    static QString getObjLimit();
 
 
 //    QUrl getAudioListUrl() const;

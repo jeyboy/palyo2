@@ -23,15 +23,21 @@ QUrl VkApiPrivate::wallUrl(QString & uid, QString token, int & offset, int & cou
     if (offset > 0) {
         head = QString(
             "var limit = 100;"
-            "var offset = " + QString::number(offset) + "; var response = []; var look_window = limit * 22 + offset;"
-            "var posts = API.wall.get({count: limit, owner_id: " + uid + "});"
+            "var offset = " + QString::number(offset) + "; var response = []; var look_window = limit * " + getObjLimit() + " + offset;"
+            "var posts = API.wall.get({ "
+            "        count: limit, "
+            "        owner_id: " + uid + ""
+            "   });"
             "var count = " + QString::number(count) + ", post_items = []; var last_date = nil;"
         );
     } else {
         head = QString(
             "var limit = 100;"
-            "var offset = limit; var response = []; var look_window = limit * 22;"
-            "var posts = API.wall.get({count: limit, owner_id: " + uid + "});"
+            "var offset = limit; var response = []; var look_window = limit * " + getObjLimit() + ";"
+            "var posts = API.wall.get({ "
+            "        count: limit, "
+            "        owner_id: " + uid + ""
+            "   });"
             "var count = posts.count, post_items = posts.items; var last_date = posts.items[0].date;"
         );
     }
@@ -61,7 +67,12 @@ QUrl VkApiPrivate::wallUrl(QString & uid, QString token, int & offset, int & cou
                                "    }"
                                "}"
 
-                               "return {date: last_date, count: count, offset: offset, posts: response};"
+                               "return {"
+                               "    date: last_date, "
+                               "    count: count, "
+                               "    offset: offset, "
+                               "    posts: response"
+                               "};"
                            )
                        );
 
@@ -86,16 +97,15 @@ QUrl VkApiPrivate::audioRefreshUrl(QStringList uids, QString token) {
 QUrl VkApiPrivate::audioAlbumsUrl(QString & uid, QString token, int offset) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
-    int req_count = 20;
 
     query.addQueryItem("code",
                        QString(
                            "var curr;"
                            "var folders_result = API.audio.getAlbums({"
-                           "                count: " + QString::number(req_count) + ", "
+                           "                count: " + getObjLimit() + ", "
                            "                offset: " + QString::number(offset) + ", "
                            "                owner_id: " + uid + ""
-                           "});"
+                           "    });"
                            "var folders_count = folders_result.count;"
                            "var folders_result = folders_result.items;"
                            "var proceed_folders = {};"
@@ -107,9 +117,14 @@ QUrl VkApiPrivate::audioAlbumsUrl(QString & uid, QString token, int offset) {
                            "        items: API.audio.get({"
                            "            owner_id: " + uid + ","
                            "            album_id: curr.id"
-                           "        }).items});"
+                           "        }).items "
+                           "    });"
                            "};"
-                           "return {albums: proceed_folders, albums_count: folders_count, albums_offset: " + QString::number(req_count + offset) + "};"
+                           "return { "
+                           "    albums: proceed_folders, "
+                           "    albums_count: folders_count, "
+                           "    albums_offset: " + QString::number(getObjLimit().toInt() + offset) + ""
+                           "};"
                        )
                        );
     url.setQuery(query);
@@ -123,33 +138,99 @@ QUrl VkApiPrivate::audioInfoUrl(QString & uid, QString currUid, QString token) {
     //TODO: correct request struct
     if (uid == currUid) {
         query.addQueryItem("code",
-                           QString("var curr;") +
-                           "var groups = API.groups.get({owner_id: " + uid + ", count: 1000, extended: 1}).items;" +
-                           "var proceed_groups = [];" +
-                           "while(groups.length > 0) { curr = groups.pop();  proceed_groups.push({id: curr.id, title: curr.name}); };" +
+                           QString(
+                               "var curr;"
+                               "var groups = API.groups.get({"
+                               "            owner_id: " + uid + ", "
+                               "            count: 1000, "
+                               "            extended: 1"
+                               "    }).items;"
+                               "var proceed_groups = [];"
+                               "while(groups.length > 0) {"
+                               "    curr = groups.pop();"
+                               "    proceed_groups.push({"
+                               "        id: curr.id, "
+                               "        title: curr.name"
+                               "    });"
+                               "};"
 
-                           "var friends = API.friends.get({user_id: " + uid + ", order: \"name\", fields: \"nickname\"});" +
-                           "var proceed_friends = [];" +
-                           "if (friends.count > 0) {while(friends.items.length > 0) { curr = friends.items.pop();  proceed_friends.push({id: curr.id, title: curr.first_name %2b \" \" %2b curr.last_name }); }; };" +
+                               "var friends = API.friends.get({"
+                               "            user_id: " + uid + ", "
+                               "            order: \"name\", "
+                               "            fields: \"nickname\""
+                               "    });"
+                               "var proceed_friends = [];"
+                               "if (friends.count > 0) { "
+                               "    while(friends.items.length > 0) { "
+                               "        curr = friends.items.pop();"
+                               "        proceed_friends.push({ "
+                               "            id: curr.id, "
+                               "            title: curr.first_name %2b \" \" %2b curr.last_name"
+                               "        }); "
+                               "    }; "
+                               "};"
 
-                           "var folders_result = API.audio.getAlbums({count: 20, owner_id: " + uid + "});" +
-                           "var folders_count = folders_result.count;" +
-                           "var proceed_folders = {};" +
-                           "if (folders_count > 0) {while(folders_result.items.length > 0) { curr = folders_result.items.pop();  proceed_folders.push(" +
-                           "{folder_id: curr.id, title: curr.title, items: API.audio.get({album_id: curr.id}).items});" +
-                           "}; };" +
-                           "return {audio_list: API.audio.get({count: 6000, owner_id: " + uid + "}), albums: proceed_folders, groups: proceed_groups, friends: proceed_friends, albums_count: folders_count};"
-                           );
+                               "var folders_result = API.audio.getAlbums({"
+                               "            count: " + getObjLimit() + ", "
+                               "            owner_id: " + uid + ""
+                               "    });"
+                               "var folders_count = folders_result.count;"
+                               "var proceed_folders = {};"
+                               "if (folders_count > 0) { "
+                               "    while(folders_result.items.length > 0) { "
+                               "        curr = folders_result.items.pop();"
+                               "        proceed_folders.push({"
+                               "            folder_id: curr.id, "
+                               "            title: curr.title, "
+                               "            items: API.audio.get({ "
+                               "                album_id: curr.id "
+                               "            }).items "
+                               "        });"
+                               "    };"
+                               "};"
+                               "return {"
+                               "    audio_list: API.audio.get({ "
+                               "        count: 6000, owner_id: " + uid + ""
+                               "    }),"
+                               "    albums: proceed_folders, "
+                               "    groups: proceed_groups, "
+                               "    friends: proceed_friends, "
+                               "    albums_count: folders_count"
+                               "};"
+                           )
+       );
     } else {
         query.addQueryItem("code",
-                           "var folders_result = API.audio.getAlbums({count: 20, owner_id: " + uid + "});" +
-                           "var folders_count = folders_result.count;" +
-                           "var sort_by_folders = {};" +
-                           "if (folders_count > 0) {while(folders_result.items.length > 0) { var curr = folders_result.items.pop();  sort_by_folders.push(" +
-                           "{folder_id: curr.id, title: curr.title, items: API.audio.get({owner_id: " + uid + ", album_id: curr.id}).items});" +
-                           "}; };" +
-                           "return {audio_list: API.audio.get({count: 6000, owner_id: " + uid + "}), albums: sort_by_folders, albums_count: folders_count};"
-                           );
+                           QString(
+                               "var folders_result = API.audio.getAlbums({ "
+                               "            count: " + getObjLimit() + ", "
+                               "            owner_id: " + uid + ""
+                               "        });"
+                               "var folders_count = folders_result.count;"
+                               "var sort_by_folders = {};"
+                               "if (folders_count > 0) { "
+                               "    while(folders_result.items.length > 0) { "
+                               "        var curr = folders_result.items.pop(); "
+                               "        sort_by_folders.push({" +
+                               "            folder_id: curr.id, "
+                               "            title: curr.title, "
+                               "            items: API.audio.get({ "
+                               "                owner_id: " + uid + ", "
+                               "                album_id: curr.id"
+                               "            }).items"
+                               "        });"
+                               "    };"
+                               "};"
+                               "return {"
+                               "    audio_list: API.audio.get({ "
+                               "        count: 6000, "
+                               "        owner_id: " + uid + ""
+                               "    }), "
+                               "    albums: sort_by_folders,"
+                               "    albums_count: folders_count"
+                               "};"
+                           )
+        );
     }
     url.setQuery(query);
     return url;
@@ -159,34 +240,26 @@ QUrl VkApiPrivate::audioRecomendationUrl(QString & uid, bool byUser, QString tok
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
 
-    if (byUser) {
-        query.addQueryItem("code",
-                           QString(
-                               "var recomendations = API.audio.getRecommendations({"
-                               "            user_id: " + uid + ", "
-                               "            count: 1000, "
-                               "            shuffle: 0"
-                               "}).items;"
-                               "return {audio_list: recomendations};"
-                           )
-        );
-    } else {
-        query.addQueryItem("code",
-                           QString(
-                               "var recomendations = API.audio.getRecommendations({"
-                               "            target_audio: " + uid + ", "
-                               "            count: 1000, "
-                               "            shuffle: 0"
-                               "}).items;"
-                               "return {audio_list: recomendations};"
-                           )
-        );
-    }
+    query.addQueryItem("code",
+                       QString(
+                           "var recomendations = API.audio.getRecommendations({"
+                                        + QString(byUser ? "user_id: " : "target_audio: ") + uid + ", "
+                           "            count: 1000, "
+                           "            shuffle: 0"
+                           "}).items;"
+                           "return { "
+                           "    audio_list: recomendations "
+                           "};"
+                       )
+    );
     url.setQuery(query);
     return url;
 }
 
 QUrl VkApiPrivate::audioPopularUrl(bool onlyEng, QString token, int genreId) {
+    //INFO: result through execute method limited by 200 items
+
+
 //    QUrl url(getAPIUrl() + "execute");
 //    QUrlQuery query = methodParams(token);
 
@@ -282,4 +355,8 @@ QUrlQuery VkApiPrivate::methodParams(QString & token) {
 
 QString VkApiPrivate::getAPIUrl() {
     return "https://api.vk.com/method/";
+}
+
+QString VkApiPrivate::getObjLimit() {
+    return "20";
 }

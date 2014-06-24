@@ -10,7 +10,7 @@ VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(h
     tabUid = uid;
 
     if (hash == 0) {
-        VkApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
+        VkApi::instance() -> audioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
     }
 
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
@@ -31,14 +31,14 @@ void VkModel::refresh() {
 //    Library::instance() -> clearRemote();
 //    VkApi::instance() -> clearData();
     QApplication::processEvents();
-    VkApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
+    VkApi::instance() -> audioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
     QApplication::processEvents();
 }
 
 void VkModel::refreshWall() {
     emit showSpinner();
     QApplication::processEvents();
-    VkApi::instance() -> getWallAttachmentsList(FuncContainer(this, SLOT(proceedWallList(QJsonObject &))), tabUid);
+    VkApi::instance() -> wallMediaList(FuncContainer(this, SLOT(proceedWallList(QJsonObject &))), tabUid);
     QApplication::processEvents();
 }
 
@@ -155,6 +155,9 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
 
     qDebug() << "STORE LENGTH: " << store.count();
     foreach(ModelItem * item, store.keys()) {
+        if (Player::instance() -> playedItem() == item)
+            Player::instance() -> setPlaylist(0);
+
         QModelIndex ind = index(item);
         removeRow(ind.row(), ind.parent());
     }

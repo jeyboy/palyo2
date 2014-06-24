@@ -62,7 +62,7 @@ QString VkApi::proceedAuthResponse(const QUrl & url) {
 /// WALL
 ///////////////////////////////////////////////////////////
 
-void VkApi::getWallAttachmentsList(FuncContainer responseSlot, QString uid, int offset, int count) {
+void VkApi::wallMediaList(FuncContainer responseSlot, QString uid, int offset, int count) {
     uid = uid == "0" ? getUserID() : uid;
     QUrl url = VkApiPrivate::wallUrl(uid, getToken(), offset, count);
 
@@ -73,24 +73,15 @@ void VkApi::getWallAttachmentsList(FuncContainer responseSlot, QString uid, int 
 
 void VkApi::wallResponse() {
     QNetworkReply * reply = (QNetworkReply*)QObject::sender();
+    FuncContainer func;
+    QJsonObject doc;
 
-    QByteArray ar = reply -> readAll();
-    QJsonObject doc = responseToJson(ar);
-
-    FuncContainer func = responses.take(reply);
-
-    if (doc.contains("error")) {
-        qDebug() << ar;
-        errorSend(doc, func.obj);
-    } else {
+    if (responseRoutine(reply, func, doc)) {
         doc = doc.value("response").toObject();
         connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
         emit audioListReceived(doc);
         disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
     }
-
-    reply -> close();
-    delete reply;
 }
 
 ///////////////////////////////////////////////////////////
@@ -106,7 +97,7 @@ void VkApi::refreshAudioList(FuncContainer responseSlot, QHash<ModelItem *, QStr
     QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListResponse()));
 }
 
-void VkApi::getAudioList(FuncContainer responseSlot, QString uid) {
+void VkApi::audioList(FuncContainer responseSlot, QString uid) {
     uid = uid == "0" ? getUserID() : uid;
     QUrl url = VkApiPrivate::audioInfoUrl(uid, getUserID(), getToken());
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
@@ -124,28 +115,40 @@ void VkApi::getAudioList(FuncContainer responseSlot, QString uid) {
 
 void VkApi::audioListResponse() {
     QNetworkReply * reply = (QNetworkReply*)QObject::sender();
+    FuncContainer func;
+    QJsonObject doc;
 
-    QByteArray ar = reply -> readAll();
-    QJsonObject doc = responseToJson(ar);
-    FuncContainer func = responses.take(reply);
-
-    if (doc.contains("error")) {
-        qDebug() << ar;
-        errorSend(doc, func.obj);
-    } else {
+    if (responseRoutine(reply, func, doc)) {
         doc = doc.value("response").toObject();
         connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
         emit audioListReceived(doc);
         disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
     }
-
-    reply -> close();
-    delete reply;
 }
 
 ///////////////////////////////////////////////////////////
 /// PROTECTED
 ///////////////////////////////////////////////////////////
+
+bool VkApi::responseRoutine(QNetworkReply * reply, FuncContainer & func, QJsonObject & doc) {
+    QByteArray ar = reply -> readAll();
+    doc = responseToJson(ar);
+    func = responses.take(reply);
+
+    if (doc.contains("error")) {
+        errorSend(doc, func.obj);
+        return false;
+    } else {
+        return true;
+//        doc = doc.value("response").toObject();
+//        connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
+//        emit audioListReceived(doc);
+//        disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
+    }
+
+    reply -> close();
+    delete reply;
+}
 
 void VkApi::errorSend(QJsonObject & doc, const QObject * obj) {
     QJsonObject error = doc.value("error").toObject();

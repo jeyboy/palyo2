@@ -15,9 +15,8 @@ public:
     QString authUrl() const;
     QString proceedAuthResponse(const QUrl & url);
 
-    void getWallAttachmentsList(FuncContainer responseSlot, QString uid = "0", int offset = 0, int count = 0);
-
-    void getAudioList(FuncContainer responseSlot, QString uid = "0");
+    void wallMediaList(FuncContainer responseSlot, QString uid = "0", int offset = 0, int count = 0);
+    void audioList(FuncContainer responseSlot, QString uid = "0");
     void refreshAudioList(FuncContainer slot, QHash<ModelItem *, QString> uids);
 
     ~VkApi() { }
@@ -39,9 +38,7 @@ signals:
     void errorReceived(int, QString &);
 
 protected:
-    QString apiVersion() const;
-    QUrlQuery methodParams();
-    QString getAPIUrl();
+    bool responseRoutine(QNetworkReply * reply, FuncContainer & func, QJsonObject & doc);
     void errorSend(QJsonObject & doc, const QObject * obj);
 
 //    QUrl getAudioListUrl() const;
