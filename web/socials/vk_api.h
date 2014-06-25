@@ -6,6 +6,7 @@
 #include "model/model_item.h"
 #include "web/auth_chemas/teu_auth.h"
 #include "vk_api_private.h"
+#include "web/api_process.h"
 
 class VkApi : public WebApi, public TeuAuth {
     Q_OBJECT
@@ -15,7 +16,9 @@ public:
     QString authUrl() const;
     QString proceedAuthResponse(const QUrl & url);
 
+    ApiFuncContainer * wallMediaRoutine(ApiFuncContainer & func, int offset, int count);
     void wallMediaList(FuncContainer responseSlot, QString uid = "0", int offset = 0, int count = 0);
+
     void audioList(FuncContainer responseSlot, QString uid = "0");
     void refreshAudioList(FuncContainer slot, QHash<ModelItem *, QString> uids);
 
@@ -38,7 +41,7 @@ signals:
     void errorReceived(int, QString &);
 
 protected:
-    bool responseRoutine(QNetworkReply * reply, FuncContainer & func, QJsonObject & doc);
+    bool responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObject & doc);
     void errorSend(QJsonObject & doc, const QObject * obj);
 
 //    QUrl getAudioListUrl() const;
@@ -58,7 +61,6 @@ protected:
 
 protected slots:
     void audioListResponse();
-    void wallResponse();
 
 //    void audioCountRequest();
 //    void audioSearchRequest();

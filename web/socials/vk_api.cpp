@@ -1,4 +1,4 @@
-#include "web/socials/vk_api.h"
+#include "vk_api.h"
 
 VkApi *VkApi::self = 0;
 
@@ -62,26 +62,40 @@ QString VkApi::proceedAuthResponse(const QUrl & url) {
 /// WALL
 ///////////////////////////////////////////////////////////
 
-void VkApi::wallMediaList(FuncContainer responseSlot, QString uid, int offset, int count) {
-    uid = uid == "0" ? getUserID() : uid;
-    QUrl url = VkApiPrivate::wallUrl(uid, getToken(), offset, count);
+ApiFuncContainer * VkApi::wallMediaRoutine(ApiFuncContainer & func, int offset, int count) {
+    QJsonObject doc;
+    QVariantList res;
+    QUrl url;
+    QNetworkReply * m_http;
+    CustomNetworkAccessManager * netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
 
-    QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
-    responses.insert(m_http, responseSlot);
-    QObject::connect(m_http, SIGNAL(finished()), this, SLOT(wallResponse()));
+    while(true) {
+        url = VkApiPrivate::wallUrl(func.uid, getToken(), offset, count);
+        m_http = netManager -> get(QNetworkRequest(url));
+        syncRequest(m_http);
+        if (!responseRoutine(m_http, func.func, doc))
+            break;
+
+        doc = doc.value("response").toObject();
+
+        res.append(doc.value("posts").toArray().toVariantList());
+        qDebug() << res;
+
+        offset = doc.value("offset").toInt();
+        count = doc.value("count").toInt();
+        if (offset >= count)
+            break;
+    }
+
+    func.result.insert("posts", QJsonArray::fromVariantList(res));
+    delete netManager;
+
+    return &func;
 }
 
-void VkApi::wallResponse() {
-    QNetworkReply * reply = (QNetworkReply*)QObject::sender();
-    FuncContainer func;
-    QJsonObject doc;
-
-    if (responseRoutine(reply, func, doc)) {
-        doc = doc.value("response").toObject();
-        connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
-        emit audioListReceived(doc);
-        disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
-    }
+void VkApi::wallMediaList(FuncContainer responseSlot, QString uid, int offset, int count) {
+    uid = uid == "0" ? getUserID() : uid;
+    ApiProcess::instance() -> start(QtConcurrent::run(this, &VkApi::wallMediaRoutine, ApiFuncContainer(responseSlot, uid), offset, count));
 }
 
 ///////////////////////////////////////////////////////////
@@ -130,24 +144,19 @@ void VkApi::audioListResponse() {
 /// PROTECTED
 ///////////////////////////////////////////////////////////
 
-bool VkApi::responseRoutine(QNetworkReply * reply, FuncContainer & func, QJsonObject & doc) {
+bool VkApi::responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObject & doc) {
     QByteArray ar = reply -> readAll();
     doc = responseToJson(ar);
-    func = responses.take(reply);
+    bool result = true;
 
     if (doc.contains("error")) {
         errorSend(doc, func.obj);
-        return false;
-    } else {
-        return true;
-//        doc = doc.value("response").toObject();
-//        connect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
-//        emit audioListReceived(doc);
-//        disconnect(this, SIGNAL(audioListReceived(QJsonObject &)), func.obj, func.slot);
+        result = false;
     }
 
     reply -> close();
     delete reply;
+    return result;
 }
 
 void VkApi::errorSend(QJsonObject & doc, const QObject * obj) {

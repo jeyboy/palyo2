@@ -89,7 +89,8 @@ SOURCES += main.cpp\
     override/spectrum.cpp \
     toolbars.cpp \
     web/auth_chemas/teu_auth.cpp \
-    web/socials/vk_api_private.cpp
+    web/socials/vk_api_private.cpp \
+    web/api_process.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -160,8 +161,8 @@ HEADERS  += mainwindow.h \
     override/spectrum.h \
     toolbars.h \
     web/auth_chemas/teu_auth.h \
-    web/socials/api_func_container.h \
-    web/socials/vk_api_private.h
+    web/socials/vk_api_private.h \
+    web/api_process.h
     model/view_types.h
 
 unix:!mac {
