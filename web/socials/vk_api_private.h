@@ -13,9 +13,9 @@
 class VkApiPrivate {
 public:
     static QString authUrl();
-    static QUrl wallUrl(QString & uid, QString token, int & offset, int & count);
+    static QUrl wallUrl(QString & uid, QString token, int offset, int count);
     static QUrl audioRefreshUrl(QStringList uids, QString token);
-    static QUrl audioAlbumsUrl(QString & uid, QString token, int offset = 0);
+    static QUrl audioAlbumsUrl(QString & uid, QString token, int offset, int count);
     static QUrl audioInfoUrl(QString & uid, QString currUid, QString token);
     static QUrl audioRecomendationUrl(QString & uid, bool byUser, QString token);
     static QUrl audioPopularUrl(bool onlyEng, QString token, int genreId = -1);

@@ -10,13 +10,15 @@ ApiProcess *ApiProcess::instance() {
 
 void ApiProcess::finished() {
     QFutureWatcher<ApiFuncContainer *> * initiator = (QFutureWatcher<ApiFuncContainer *> *) sender();
-    processes.removeOne(initiator);
-
     ApiFuncContainer * func = initiator -> result();
-
+    qDebug() << "_________ FINISHED";
     connect(this, SIGNAL(routineFinished(QJsonObject &)), func -> func.obj, func -> func.slot);
+    qDebug() << "_________ FINISHED";
     emit routineFinished(func -> result);
+    qDebug() << "_________ FINISHED";
     disconnect(this, SIGNAL(routineFinished(QJsonObject &)), func -> func.obj, func -> func.slot);
+    qDebug() << "_________ FINISHED";
+    processes.removeOne(initiator);
 }
 
 void ApiProcess::start(QFuture<ApiFuncContainer *> future) {

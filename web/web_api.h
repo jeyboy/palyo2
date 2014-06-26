@@ -26,6 +26,8 @@ public:
 
     CustomNetworkAccessManager * manager() const;
 
+    CustomNetworkAccessManager * createManager();
+
     QNetworkReply * syncRequest(QNetworkReply * m_http);
 
     void clearData();

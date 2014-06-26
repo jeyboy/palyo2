@@ -1,7 +1,7 @@
 #include "web/web_api.h"
 
 WebApi::WebApi() {
-    netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
+    netManager = createManager();
 }
 
 WebApi::~WebApi() {
@@ -14,6 +14,10 @@ QString WebApi::getError() {
 
 CustomNetworkAccessManager * WebApi::manager() const {
     return netManager;
+}
+
+CustomNetworkAccessManager * WebApi::createManager() {
+    return new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
 }
 
 QNetworkReply * WebApi::syncRequest(QNetworkReply * m_http) {

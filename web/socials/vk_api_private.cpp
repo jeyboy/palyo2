@@ -14,7 +14,7 @@ QString VkApiPrivate::authUrl() {
     return url.toString();
 }
 
-QUrl VkApiPrivate::wallUrl(QString & uid, QString token, int & offset, int & count) {
+QUrl VkApiPrivate::wallUrl(QString & uid, QString token, int offset, int count) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
 
@@ -94,7 +94,7 @@ QUrl VkApiPrivate::audioRefreshUrl(QStringList uids, QString token) {
     return url;
 }
 
-QUrl VkApiPrivate::audioAlbumsUrl(QString & uid, QString token, int offset) {
+QUrl VkApiPrivate::audioAlbumsUrl(QString & uid, QString token, int offset, int count) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
 
@@ -122,8 +122,8 @@ QUrl VkApiPrivate::audioAlbumsUrl(QString & uid, QString token, int offset) {
                            "};"
                            "return { "
                            "    albums: proceed_folders, "
-                           "    albums_count: folders_count, "
-                           "    albums_offset: " + QString::number(getObjLimit().toInt() + offset) + ""
+                           "    count: folders_count, "
+                           "    offset: " + QString::number(getObjLimit().toInt() + offset) + ""
                            "};"
                        )
                        );
@@ -195,6 +195,7 @@ QUrl VkApiPrivate::audioInfoUrl(QString & uid, QString currUid, QString token) {
                                "    albums: proceed_folders, "
                                "    groups: proceed_groups, "
                                "    friends: proceed_friends, "
+                               "    albums_offset: " + getObjLimit() + ", "
                                "    albums_count: folders_count"
                                "};"
                            )

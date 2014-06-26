@@ -16,10 +16,16 @@ public:
     QString authUrl() const;
     QString proceedAuthResponse(const QUrl & url);
 
-    ApiFuncContainer * wallMediaRoutine(ApiFuncContainer & func, int offset, int count);
+    ApiFuncContainer * wallMediaRoutine(ApiFuncContainer * func, int offset, int count);
     void wallMediaList(FuncContainer responseSlot, QString uid = "0", int offset = 0, int count = 0);
 
-    void audioList(FuncContainer responseSlot, QString uid = "0");
+    ApiFuncContainer * audioAlbumsRoutine(ApiFuncContainer * func, int offset = 0, int count = 0);
+    void audioAlbums(FuncContainer responseSlot, QString uid);
+
+    ApiFuncContainer * audioListRoutine(ApiFuncContainer * func);
+    void audioList(FuncContainer responseSlot, QString uid);
+
+
     void refreshAudioList(FuncContainer slot, QHash<ModelItem *, QString> uids);
 
     ~VkApi() { }
@@ -60,7 +66,7 @@ protected:
 //    QUrl getAudioSaveUrl() const;
 
 protected slots:
-    void audioListResponse();
+//    void audioListResponse();
 
 //    void audioCountRequest();
 //    void audioSearchRequest();
