@@ -14,7 +14,7 @@ QString VkApiPrivate::authUrl() {
     return url.toString();
 }
 
-QUrl VkApiPrivate::wallUrl(QString & uid, QString token, int offset, int count) {
+QUrl VkApiPrivate::wallUrl(QString uid, QString token, int offset, int count) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
 
@@ -94,7 +94,7 @@ QUrl VkApiPrivate::audioRefreshUrl(QStringList uids, QString token) {
     return url;
 }
 
-QUrl VkApiPrivate::audioAlbumsUrl(QString & uid, QString token, int offset, int count) {
+QUrl VkApiPrivate::audioAlbumsUrl(QString uid, QString token, int offset, int) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
 
@@ -109,8 +109,8 @@ QUrl VkApiPrivate::audioAlbumsUrl(QString & uid, QString token, int offset, int 
                            "var folders_count = folders_result.count;"
                            "var folders_result = folders_result.items;"
                            "var proceed_folders = {};"
-                           "while(folders.length > 0) {"
-                           "    curr = folders.pop();"
+                           "while(folders_result.length > 0) {"
+                           "    curr = folders_result.pop();"
                            "    proceed_folders.push({"
                            "        folder_id: curr.id,"
                            "        title: curr.title,"
@@ -131,7 +131,7 @@ QUrl VkApiPrivate::audioAlbumsUrl(QString & uid, QString token, int offset, int 
     return url;
 }
 
-QUrl VkApiPrivate::audioInfoUrl(QString & uid, QString currUid, QString token) {
+QUrl VkApiPrivate::audioInfoUrl(QString uid, QString currUid, QString token) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
 
@@ -237,7 +237,7 @@ QUrl VkApiPrivate::audioInfoUrl(QString & uid, QString currUid, QString token) {
     return url;
 }
 
-QUrl VkApiPrivate::audioRecomendationUrl(QString & uid, bool byUser, QString token) {
+QUrl VkApiPrivate::audioRecomendationUrl(QString uid, bool byUser, QString token) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
 

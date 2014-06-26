@@ -222,7 +222,7 @@ void VkModel::proceedAudioListUpdate(QJsonObject & obj, QHash<ModelItem *, QStri
     }
 }
 
-void VkModel::errorReceived(int code, QString & msg) {
+void VkModel::errorReceived(int code, QString msg) {
     if (code != 13)
         emit showMessage("This object did not have any items. Use wall parse from context menu");
     else

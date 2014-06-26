@@ -44,7 +44,7 @@ public:
 signals:
     void audioListReceived(QJsonObject &);
     void audioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);
-    void errorReceived(int, QString &);
+    void errorReceived(int, QString);
 
 protected:
     bool responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObject & doc);

@@ -105,6 +105,7 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
     QJsonObject doc;
     QVariantList res;
     res.append(func -> result.value("albums").toArray().toVariantList());
+    qDebug() << "LOLOLOLOLOL " << res.length();
 
     QUrl url;
     QNetworkReply * m_http;
@@ -129,6 +130,7 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
         QThread::sleep(1);
     }
 
+    qDebug() << "LOLOLOLOLOL " << res.length();
     func -> result.insert("albums", QJsonArray::fromVariantList(res));
     delete netManager;
 
@@ -170,7 +172,6 @@ ApiFuncContainer * VkApi::audioListRoutine(ApiFuncContainer * func) {
 
 void VkApi::audioList(FuncContainer responseSlot, QString uid) {
     uid = uid == "0" ? getUserID() : uid;
-    qDebug() << "HHHHHHHHHHHHHHHH" << responseSlot.obj << responseSlot.slot;
     ApiProcess::instance() -> start(QtConcurrent::run(this, &VkApi::audioListRoutine, new ApiFuncContainer(responseSlot, uid)));
 }
 
@@ -207,9 +208,10 @@ void VkApi::errorSend(QJsonObject & doc, const QObject * obj) {
     int err_code = error.value("error_code").toInt();
     QString err_msg = error.value("error_msg").toString();
 
-    connect(this, SIGNAL(errorReceived(int,QString&)), obj, SLOT(errorReceived(int,QString&)));
+    qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ERROR " << err_msg;
+    connect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
     emit errorReceived(err_code, err_msg);
-    disconnect(this, SIGNAL(errorReceived(int,QString&)), obj, SLOT(errorReceived(int,QString&)));
+    disconnect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
 }
 
 ///////////////////////////////////////////////////////////

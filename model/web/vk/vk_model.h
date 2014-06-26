@@ -27,7 +27,7 @@ protected slots:
     void proceedAudioList(QJsonObject &);
     void proceedAudioList(QJsonArray &, ModelItem *, QHash<ModelItem*, QString> &);
     void proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);
-    void errorReceived(int, QString &);
+    void errorReceived(int, QString);
 protected:
     QString tabUid;
 };
