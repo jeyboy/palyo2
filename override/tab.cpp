@@ -44,6 +44,9 @@ void Tab::init(CBHash params, QJsonObject * hash) {
 
     connect(list, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
     connect(list, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
+
+    if (hash == 0 && (params["t"] == VIEW_VK))
+        list -> getModel() -> refresh();
 }
 
 Tab::Tab(CBHash params, QWidget * parent) : QWidget(parent) {

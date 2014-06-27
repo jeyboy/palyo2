@@ -19,7 +19,7 @@ public:
     ApiFuncContainer * wallMediaRoutine(ApiFuncContainer * func, int offset, int count);
     void wallMediaList(FuncContainer responseSlot, QString uid = "0", int offset = 0, int count = 0);
 
-    ApiFuncContainer * audioAlbumsRoutine(ApiFuncContainer * func, int offset = 0, int count = 0);
+    ApiFuncContainer * audioAlbumsRoutine(ApiFuncContainer * func, int offset = 0);
     void audioAlbums(FuncContainer responseSlot, QString uid);
 
     ApiFuncContainer * audioListRoutine(ApiFuncContainer * func);

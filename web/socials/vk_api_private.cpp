@@ -94,15 +94,16 @@ QUrl VkApiPrivate::audioRefreshUrl(QStringList uids, QString token) {
     return url;
 }
 
-QUrl VkApiPrivate::audioAlbumsUrl(QString uid, QString token, int offset, int) {
+QUrl VkApiPrivate::audioAlbumsUrl(QString uid, QString token, int offset) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
+    QString limit = "5";
 
     query.addQueryItem("code",
                        QString(
                            "var curr;"
                            "var folders_result = API.audio.getAlbums({"
-                           "                count: " + getObjLimit() + ", "
+                           "                count: " + limit + ", "
                            "                offset: " + QString::number(offset) + ", "
                            "                owner_id: " + uid + ""
                            "    });"
@@ -122,8 +123,8 @@ QUrl VkApiPrivate::audioAlbumsUrl(QString uid, QString token, int offset, int) {
                            "};"
                            "return { "
                            "    albums: proceed_folders, "
-                           "    count: folders_count, "
-                           "    offset: " + QString::number(getObjLimit().toInt() + offset) + ""
+                           "    finished: (folders_count < " + getObjLimit() + "), "
+                           "    offset: " + QString::number(limit.toInt() + offset) + ""
                            "};"
                        )
                        );
@@ -135,7 +136,6 @@ QUrl VkApiPrivate::audioInfoUrl(QString uid, QString currUid, QString token) {
     QUrl url(getAPIUrl() + "execute");
     QUrlQuery query = methodParams(token);
 
-    //TODO: correct request struct
     if (uid == currUid) {
         query.addQueryItem("code",
                            QString(
@@ -196,7 +196,7 @@ QUrl VkApiPrivate::audioInfoUrl(QString uid, QString currUid, QString token) {
                                "    groups: proceed_groups, "
                                "    friends: proceed_friends, "
                                "    albums_offset: " + getObjLimit() + ", "
-                               "    albums_count: folders_count"
+                               "    albums_finished: (folders_count < " + getObjLimit() + "), "
                                "};"
                            )
        );
@@ -227,8 +227,9 @@ QUrl VkApiPrivate::audioInfoUrl(QString uid, QString currUid, QString token) {
                                "        count: 6000, "
                                "        owner_id: " + uid + ""
                                "    }), "
-                               "    albums: sort_by_folders,"
-                               "    albums_count: folders_count"
+                               "    albums: sort_by_folders, "
+                               "    albums_offset: " + getObjLimit() + ", "
+                               "    albums_finished: (folders_count < " + getObjLimit() + "), "
                                "};"
                            )
         );
@@ -316,6 +317,15 @@ QUrl VkApiPrivate::audioSearchUrl(QString searchStr, bool autoFix, bool artistOn
     return url;
 
     // response: [{}]
+}
+
+QUrl VkApiPrivate::isAppUser(QString token, QString uid) {
+    QUrl url(getAPIUrl() + "users.isAppUser");
+    QUrlQuery query = methodParams(token);
+
+    query.addQueryItem("user_id", uid);
+    url.setQuery(query);
+    return url;
 }
 
 //QUrl VkApi::getAudioListUrl() const { return QUrl(getAPIUrl() + "audio.get"); }

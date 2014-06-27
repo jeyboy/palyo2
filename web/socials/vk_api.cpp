@@ -100,19 +100,22 @@ void VkApi::wallMediaList(FuncContainer responseSlot, QString uid, int offset, i
 ///////////////////////////////////////////////////////////
 /// FOLDERS LIST
 ///////////////////////////////////////////////////////////
+/// -21504759
 
-ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset, int count) {
+ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset) {
     QJsonObject doc;
-    QVariantList res;
+    QVariantList res, temp;
     res.append(func -> result.value("albums").toArray().toVariantList());
-    qDebug() << "LOLOLOLOLOL " << res.length();
+    bool finished = false;
+//    int count = 0;
 
     QUrl url;
     QNetworkReply * m_http;
     CustomNetworkAccessManager * netManager = createManager();
 
-    while(true) {
-        url = VkApiPrivate::audioAlbumsUrl(func -> uid, getToken(), offset, count);
+    while(!finished) {
+        url = VkApiPrivate::audioAlbumsUrl(func -> uid, getToken(), offset);
+        qDebug() << url;
         m_http = netManager -> get(QNetworkRequest(url));
         syncRequest(m_http);
         if (!responseRoutine(m_http, func -> func, doc))
@@ -120,17 +123,24 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
 
         doc = doc.value("response").toObject();
 
-        res.append(doc.value("albums").toArray().toVariantList());
-
+        temp = doc.value("albums").toArray().toVariantList();
+        temp.append(res);
+        res = temp;
+//        res.append(doc.value("albums").toArray().toVariantList());
         offset = doc.value("offset").toInt();
-        count = doc.value("count").toInt();
-        if (offset >= count)
+        finished = doc.value("finished").toBool();
+        if (finished)
             break;
 
         QThread::sleep(1);
+//        count++;
+
+        //captcha defence
+//        if (count % 3 == 0)
+//            QThread::sleep(30);
+//            netManager -> get(QNetworkRequest(VkApiPrivate::isAppUser(getToken(), func -> uid)));
     }
 
-    qDebug() << "LOLOLOLOLOL " << res.length();
     func -> result.insert("albums", QJsonArray::fromVariantList(res));
     delete netManager;
 
@@ -139,7 +149,7 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
 
 void VkApi::audioAlbums(FuncContainer responseSlot, QString uid) {
     uid = uid == "0" ? getUserID() : uid;
-    ApiProcess::instance() -> start(QtConcurrent::run(this, &VkApi::audioAlbumsRoutine, new ApiFuncContainer(responseSlot, uid), 0, 0));
+    ApiProcess::instance() -> start(QtConcurrent::run(this, &VkApi::audioAlbumsRoutine, new ApiFuncContainer(responseSlot, uid), 0));
 }
 
 ///////////////////////////////////////////////////////////
@@ -148,21 +158,20 @@ void VkApi::audioAlbums(FuncContainer responseSlot, QString uid) {
 
 ApiFuncContainer * VkApi::audioListRoutine(ApiFuncContainer * func) {
     QNetworkReply * m_http;
-    QJsonObject doc;
     CustomNetworkAccessManager * netManager = createManager();
 
     QUrl url = VkApiPrivate::audioInfoUrl(func -> uid, getUserID(), getToken());
-
 
     m_http = netManager -> get(QNetworkRequest(url));
     syncRequest(m_http);
     if (responseRoutine(m_http, func -> func, func -> result)) {
         func -> result = func -> result.value("response").toObject();
-        int offset = func -> result.value("albums_offset").toInt();
-        int count = func -> result.value("albums_count").toInt();
-        if (offset < count) {
-            QThread::sleep(1);
-            audioAlbumsRoutine(func, offset, count);
+        bool finished = func -> result.value("albums_finished").toBool();
+
+        if (!finished) {
+            QThread::sleep(2);
+            int offset = func -> result.value("albums_offset").toInt();
+            audioAlbumsRoutine(func, offset);
         }
     }
 
@@ -208,7 +217,7 @@ void VkApi::errorSend(QJsonObject & doc, const QObject * obj) {
     int err_code = error.value("error_code").toInt();
     QString err_msg = error.value("error_msg").toString();
 
-    qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ERROR " << err_msg;
+    qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ERROR " << doc;
     connect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
     emit errorReceived(err_code, err_msg);
     disconnect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
