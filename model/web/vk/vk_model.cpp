@@ -222,7 +222,3 @@ void VkModel::errorReceived(int, QString msg) {
     emit showMessage("!!!!!!!!!!! Some shit happened :( " + msg);
     emit hideSpinner();
 }
-
-void VkModel::captchaNeeded(QString pictUrl) {
-
-}

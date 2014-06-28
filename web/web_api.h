@@ -25,9 +25,9 @@ public:
     virtual bool isConnected() { return false; }
 
     CustomNetworkAccessManager * manager() const;
-
     CustomNetworkAccessManager * createManager();
 
+    QByteArray openRemoteImage(QString url);
     QNetworkReply * syncRequest(QNetworkReply * m_http);
 
     void clearData();

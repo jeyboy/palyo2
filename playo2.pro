@@ -90,7 +90,9 @@ SOURCES += main.cpp\
     toolbars.cpp \
     web/auth_chemas/teu_auth.cpp \
     web/socials/vk_api_private.cpp \
-    web/api_process.cpp
+    web/api_process.cpp \
+    dialogs/captchadialog.cpp \
+    web/captcha.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -162,7 +164,9 @@ HEADERS  += mainwindow.h \
     toolbars.h \
     web/auth_chemas/teu_auth.h \
     web/socials/vk_api_private.h \
-    web/api_process.h
+    web/api_process.h \
+    dialogs/captchadialog.h \
+    web/captcha.h
     model/view_types.h
 
 unix:!mac {
@@ -197,7 +201,8 @@ FORMS    += mainwindow.ui \
     dialogs/toolbarbuttondialog.ui \
     dialogs/web_dialog.ui \
     dialogs/settings_dialog.ui \
-    dialogs/relationdialog.ui
+    dialogs/relationdialog.ui \
+    dialogs/captchadialog.ui
 
 RESOURCES += \
     picts.qrc

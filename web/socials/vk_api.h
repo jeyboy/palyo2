@@ -28,7 +28,8 @@ public:
 
     void refreshAudioList(FuncContainer slot, QHash<ModelItem *, QString> uids);
 
-    ~VkApi() { }
+    ~VkApi() {
+    }
 
     static VkApi * instance();
     static VkApi * instance(QJsonObject obj);
@@ -93,8 +94,8 @@ private:
 
     static VkApi *self;
 
-    QHash<QNetworkReply *, FuncContainer> responses;
-    QHash<QNetworkReply *, QHash<ModelItem *, QString> > collations;
+//    QHash<QNetworkReply *, FuncContainer> responses;
+//    QHash<QNetworkReply *, QHash<ModelItem *, QString> > collations;
 };
 
 #endif // VK_API_H

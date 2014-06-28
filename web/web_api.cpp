@@ -20,6 +20,31 @@ CustomNetworkAccessManager * WebApi::createManager() {
     return new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
 }
 
+QByteArray WebApi::openRemoteImage(QString url) {
+    CustomNetworkAccessManager * currManager = createManager();
+    QNetworkReply * reply;
+    QVariant possibleRedirectUrl;
+    QByteArray ar;
+
+    while(true) {
+        reply = currManager -> get(QNetworkRequest(QUrl(url)));
+        reply = syncRequest(reply);
+        possibleRedirectUrl = reply -> attribute(QNetworkRequest::RedirectionTargetAttribute);
+        if (possibleRedirectUrl.isValid()) {
+            url = possibleRedirectUrl.toUrl().toString();
+            reply -> close();
+            delete reply;
+        } else {
+            ar = reply -> readAll();
+            reply -> close();
+            currManager;
+            break;
+        }
+    }
+
+    return ar;
+}
+
 QNetworkReply * WebApi::syncRequest(QNetworkReply * m_http) {
     QEventLoop loop;
     connect(m_http, SIGNAL(finished()), &loop, SLOT(quit()));

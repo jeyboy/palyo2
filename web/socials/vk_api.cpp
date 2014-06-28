@@ -1,4 +1,5 @@
 #include "vk_api.h"
+#include "web/captcha.h"
 
 VkApi *VkApi::self = 0;
 
@@ -107,7 +108,6 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
     QVariantList res, temp;
     res.append(func -> result.value("albums").toArray().toVariantList());
     bool finished = false;
-//    int count = 0;
 
     QUrl url;
     QNetworkReply * m_http;
@@ -118,8 +118,20 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
         qDebug() << url;
         m_http = netManager -> get(QNetworkRequest(url));
         syncRequest(m_http);
-        if (!responseRoutine(m_http, func -> func, doc))
-            break;
+
+        if (!responseRoutine(m_http, func -> func, doc)) {
+            if (doc.value("error_code").toInt() == 14) {
+                Captcha c;
+                c.moveToThread(QApplication::instance() -> thread());
+                QString res = c.showDialog(this, doc.value("captcha_img").toString());
+
+                qDebug() << res;
+//                if (res.isEmpty())
+                    break;
+
+
+            } else break;
+        }
 
         doc = doc.value("response").toObject();
 
@@ -133,12 +145,6 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
             break;
 
         QThread::sleep(1);
-//        count++;
-
-        //captcha defence
-//        if (count % 3 == 0)
-//            QThread::sleep(30);
-//            netManager -> get(QNetworkRequest(VkApiPrivate::isAppUser(getToken(), func -> uid)));
     }
 
     func -> result.insert("albums", QJsonArray::fromVariantList(res));
@@ -169,7 +175,6 @@ ApiFuncContainer * VkApi::audioListRoutine(ApiFuncContainer * func) {
         bool finished = func -> result.value("albums_finished").toBool();
 
         if (!finished) {
-            QThread::sleep(2);
             int offset = func -> result.value("albums_offset").toInt();
             audioAlbumsRoutine(func, offset);
         }
@@ -188,8 +193,8 @@ void VkApi::audioList(FuncContainer responseSlot, QString uid) {
 void VkApi::refreshAudioList(FuncContainer responseSlot, QHash<ModelItem *, QString> uids) {
     QUrl url = VkApiPrivate::audioRefreshUrl(QStringList(uids.values()), getToken());
     QNetworkReply * m_http = manager() -> get(QNetworkRequest(url));
-    responses.insert(m_http, responseSlot);
-    collations.insert(m_http, uids);
+//    responses.insert(m_http, responseSlot);
+//    collations.insert(m_http, uids);
     QObject::connect(m_http, SIGNAL(finished()), this, SLOT(audioListResponse()));
 }
 
@@ -203,6 +208,7 @@ bool VkApi::responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObje
     bool result = true;
 
     if (doc.contains("error")) {
+        doc = doc.value("error").toObject();
         errorSend(doc, func.obj);
         result = false;
     }
@@ -212,15 +218,17 @@ bool VkApi::responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObje
     return result;
 }
 
-void VkApi::errorSend(QJsonObject & doc, const QObject * obj) {
-    QJsonObject error = doc.value("error").toObject();
+void VkApi::errorSend(QJsonObject & error, const QObject * obj) {
     int err_code = error.value("error_code").toInt();
     QString err_msg = error.value("error_msg").toString();
 
-    qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ERROR " << doc;
-    connect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
-    emit errorReceived(err_code, err_msg);
-    disconnect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
+    qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ERROR " << error;
+
+    if (err_code != 14) {
+        connect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
+        emit errorReceived(err_code, err_msg);
+        disconnect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
+    }
 }
 
 ///////////////////////////////////////////////////////////
