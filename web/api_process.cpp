@@ -18,6 +18,7 @@ void ApiProcess::finished() {
 }
 
 void ApiProcess::showCaptcha() {
+    captchaDialog -> clearText();
     captchaDialog -> exec();
 }
 

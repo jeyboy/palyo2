@@ -122,7 +122,6 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
         doc = doc.value("response").toObject();
 
         temp = doc.value("albums").toArray().toVariantList();
-        qDebug() << "@@@@@@@@@@@@@@@@@ " << offset << " " << temp;
         if (temp.isEmpty())
             break;
 
@@ -194,16 +193,19 @@ void VkApi::refreshAudioList(FuncContainer responseSlot, QHash<ModelItem *, QStr
 
 bool VkApi::responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObject & doc) {
     QByteArray ar = reply -> readAll();
+
+    QUrl url = reply -> url();
+    reply -> close();
+    delete reply;
+
     doc = responseToJson(ar);
     bool result = true;
 
     if (doc.contains("error")) {
         doc = doc.value("error").toObject();
-        result = errorSend(doc, func, reply -> url());
+        result = errorSend(doc, func, url);
     }
 
-    reply -> close();
-    delete reply;
     return result;
 }
 

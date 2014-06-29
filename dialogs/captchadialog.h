@@ -16,6 +16,7 @@ public:
     explicit CaptchaDialog(QWidget *parent = 0);
     ~CaptchaDialog();
     void setImage(WebApi * api, QString url);
+    void clearText();
     QString captchaText() const;
 
 private slots:
