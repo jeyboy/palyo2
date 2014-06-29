@@ -295,6 +295,11 @@ QHash<QString, QString> AudioPlayer::getFileInfo(QUrl uri, bool only_bitrate) {
     }
 
     if (!chUID) {
+        int status = BASS_ErrorGetCode();
+        if (status == BASS_ERROR_FILEOPEN) {
+            emit remoteUnprocessed();
+            ret.insert("rejected", "");
+        }
         return ret;
     }
 

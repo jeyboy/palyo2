@@ -35,6 +35,7 @@ public:
     void clearRemote();
     void removeRemoteItem(ModelItem * item);
     void initItem(ModelItem * item, const QObject * caller, const char * slot);
+    void clearRemoteItemsList(const QObject * caller);
     bool addItem(ModelItem * item, int state);
     void restoreItemState(ModelItem * item);
 
@@ -53,6 +54,8 @@ private:
         catalogs = new QHash<QChar,  QHash<QString, int>* >();
         catalogs_state = QHash<QChar, QList<QString> *>();
         catsSaveResult = QFuture<void>();
+
+        remote_items_max = 10;
 
         timer = new QTimer();
         QObject::connect(timer, SIGNAL(timeout()), this, SLOT(saveCatalogs()));
@@ -103,12 +106,12 @@ private:
     QHash<QChar, QList<QString> *> catalogs_state;
     QHash<ModelItem *, FuncContainer> remote_collations;
     QList<ModelItem *> remote_items;
-    int remote_items_max = 10;
+    int remote_items_max;
 
     ModelItem * currRemote;
     QTimer * timer;
     QTimer remoteTimer;
-    QMutex saveBlock;
+    QMutex saveBlock, remoteItemsBlock;
 
     QFuture<void> catsSaveResult;
 };

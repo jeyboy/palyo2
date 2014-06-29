@@ -22,6 +22,7 @@ QString VkModel::getTabUid() const {
 }
 
 void VkModel::refresh() {
+    Library::instance() -> clearRemoteItemsList(this);
     emit showSpinner();
 //    clearAll();
 //    Library::instance() -> clearRemote();

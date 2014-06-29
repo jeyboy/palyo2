@@ -43,6 +43,21 @@ void Library::initItem(ModelItem * item, const QObject * caller, const char * sl
     }
 }
 
+void Library::clearRemoteItemsList(const QObject * caller) {
+    if (remoteItemsBlock.tryLock(-1)) {
+        FuncContainer fc;
+
+        foreach(ModelItem * item, remote_items) {
+            fc = remote_collations.value(item);
+            if (fc.obj == caller) {
+                remote_items.removeAll(item);
+                remote_collations.remove(item);
+            }
+        }
+        remoteItemsBlock.unlock();
+    }
+}
+
 bool Library::addItem(ModelItem * item, int state) {
     initItemInfo(item);
 
@@ -100,13 +115,15 @@ void Library::restoreItemState(ModelItem * item) {
 //////////////////////////////////////////////////////////////////////
 
 void Library::startRemoteInfoProc() {
-    if (!remote_items.isEmpty()) {
-        currRemote = remote_items.takeLast();
-        FuncContainer func = remote_collations.take(currRemote);
-        if (!currRemote -> hasInfo()) {
-            QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
-            connect(initiator, SIGNAL(finished()), func.obj, func.slot);
-            initiator -> setFuture(QtConcurrent::run(this, &Library::procRemoteInfo, currRemote));
+    if (remoteItemsBlock.tryLock(-1)) {
+        if (!remote_items.isEmpty()) {
+            currRemote = remote_items.takeLast();
+            FuncContainer func = remote_collations.take(currRemote);
+            if (!currRemote -> hasInfo()) {
+                QFutureWatcher<ModelItem *> * initiator = new QFutureWatcher<ModelItem *>();
+                connect(initiator, SIGNAL(finished()), func.obj, func.slot);
+                initiator -> setFuture(QtConcurrent::run(this, &Library::procRemoteInfo, currRemote));
+            }
         }
     }
 }
@@ -114,10 +131,15 @@ void Library::startRemoteInfoProc() {
 ModelItem * Library::procRemoteInfo(ModelItem * item) {
     if (currRemote == 0) return 0;
     QHash<QString, QString> info = Player::instance() -> getFileInfo(item -> toUrl());
-    if (currRemote == 0) return 0;
-    item -> setDuration(info.value("duration"));
-    if (currRemote == 0) return 0;
-    item -> setInfo(info.value("info"));
+    if (info.contains("rejected")) {
+        if (currRemote == 0) return 0;
+        currRemote -> getState() -> unsetProceed();
+    } else {
+        if (currRemote == 0) return 0;
+        item -> setDuration(info.value("duration"));
+        if (currRemote == 0) return 0;
+        item -> setInfo(info.value("info"));
+    }
 
 //    TODO: get genre
 //    item -> setGenre();

@@ -432,6 +432,23 @@ void View::openLocation() {
     item -> openLocation();
 }
 
+void View::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const {
+    ModelItem * item = model -> getItem(index);
+
+    if (!item -> getState() -> isProceed()) {
+        item -> getState() -> setProceed();
+        if (!item -> isFolder()) {
+            Library::instance() -> initItem(item, model, SLOT(libraryResponse()));
+        }
+
+        if (item -> getState() -> isExpanded()) {
+            emit model -> expandNeeded(index);
+        }
+    }
+
+    QTreeView::drawRow(painter, options, index);
+}
+
 void View::resizeEvent(QResizeEvent * event) {
     if (event -> oldSize().height() != size().height()) {
         if (event -> size().height() > 0) {
