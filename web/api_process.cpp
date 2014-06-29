@@ -17,9 +17,17 @@ void ApiProcess::finished() {
     processes.removeOne(initiator);
 }
 
+void ApiProcess::showCaptcha() {
+    captchaDialog -> exec();
+}
+
 void ApiProcess::start(QFuture<ApiFuncContainer *> future) {
     QFutureWatcher<ApiFuncContainer *> * initiator = new QFutureWatcher<ApiFuncContainer *>();
     processes.append(initiator);
     connect(initiator, SIGNAL(finished()), this, SLOT(finished()));
     initiator -> setFuture(future);
+}
+
+CaptchaDialog * ApiProcess::getCaptchaDialog() {
+    return captchaDialog;
 }

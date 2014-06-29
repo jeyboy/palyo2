@@ -1,18 +1,16 @@
 #include "captchadialog.h"
 #include "ui_captchadialog.h"
 
-CaptchaDialog::CaptchaDialog(WebApi * api, QWidget * parent) :
+CaptchaDialog::CaptchaDialog(QWidget * parent) :
     QDialog(parent), ui(new Ui::CaptchaDialog) {
     ui->setupUi(this);
-
-    this -> api = api;
 }
 
 CaptchaDialog::~CaptchaDialog() {
     delete ui;
 }
 
-void CaptchaDialog::setImage(QString url) {
+void CaptchaDialog::setImage(WebApi * api, QString url) {
     QImage image;
     image.loadFromData(api -> openRemoteImage(url));
     ui -> captchaImg -> setPixmap(QPixmap::fromImage(image));
@@ -20,4 +18,8 @@ void CaptchaDialog::setImage(QString url) {
 
 QString CaptchaDialog::captchaText() const {
     return ui -> captchaText -> text();
+}
+
+void CaptchaDialog::on_buttonBox_rejected() {
+    ui -> captchaText -> setText("");
 }

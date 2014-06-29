@@ -1,5 +1,4 @@
 #include "vk_api.h"
-#include "web/captcha.h"
 
 VkApi *VkApi::self = 0;
 
@@ -121,11 +120,13 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
 
         if (!responseRoutine(m_http, func -> func, doc)) {
             if (doc.value("error_code").toInt() == 14) {
-                Captcha c;
-                c.moveToThread(QApplication::instance() -> thread());
-                QString res = c.showDialog(this, doc.value("captcha_img").toString());
+                ApiProcess::instance() -> getCaptchaDialog() -> setImage(this, doc.value("captcha_img").toString());
+                emit showCaptcha();
 
-                qDebug() << res;
+//                QString res = c.showDialog(this, doc.value("captcha_img").toString());
+
+//                qDebug() << res;
+                qDebug() << "LOL";
 //                if (res.isEmpty())
                     break;
 

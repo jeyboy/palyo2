@@ -46,6 +46,7 @@ signals:
     void audioListReceived(QJsonObject &);
     void audioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);
     void errorReceived(int, QString);
+    void showCaptcha();
 
 protected:
     bool responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObject & doc);
@@ -86,6 +87,7 @@ protected slots:
 private:   
     VkApi(QJsonObject hash) : WebApi(), TeuAuth() {
         fromJson(hash);
+        connect(this, SIGNAL(showCaptcha()), ApiProcess::instance(), SLOT(showCaptcha()), Qt::BlockingQueuedConnection);
     }
 
     VkApi() : WebApi(), TeuAuth() {

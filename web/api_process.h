@@ -5,8 +5,10 @@
 #include <QUrl>
 #include <QtConcurrent/QtConcurrent>
 #include <QFutureWatcher>
+#include <QApplication>
 
 #include "misc/func_container.h"
+#include "dialogs/captchadialog.h"
 
 //template <class T>
 struct ApiFuncContainer {
@@ -29,6 +31,8 @@ public:
     ~ApiProcess() {
         qDeleteAll(processes);
         processes.clear();
+
+        delete captchaDialog;
     }
 
     static ApiProcess * instance();
@@ -37,6 +41,7 @@ public:
     }
 
     void start(QFuture<ApiFuncContainer *> future);
+    CaptchaDialog * getCaptchaDialog();
 
 signals:
     void routineFinished(QJsonObject &);
@@ -45,6 +50,7 @@ protected slots:
 //    void downloadConnectionResponsed();
 //    void onTimer();
     void finished();
+    void showCaptcha();
 
 //signals:
 //    void slotChanged(QString message);
@@ -54,10 +60,12 @@ protected slots:
 
 private:
     ApiProcess() {
+        captchaDialog = new CaptchaDialog(QApplication::activeWindow());
     }
 
     QList<QFutureWatcher<ApiFuncContainer *> *> processes;
     static ApiProcess *self;
+    CaptchaDialog * captchaDialog;
 };
 
 #endif // API_PROCESS_H

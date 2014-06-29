@@ -13,14 +13,16 @@ class CaptchaDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit CaptchaDialog(WebApi * api, QWidget *parent = 0);
+    explicit CaptchaDialog(QWidget *parent = 0);
     ~CaptchaDialog();
-    void setImage(QString url);
+    void setImage(WebApi * api, QString url);
     QString captchaText() const;
+
+private slots:
+    void on_buttonBox_rejected();
 
 private:
     Ui::CaptchaDialog *ui;
-    WebApi * api;
 };
 
 #endif // CAPTCHADIALOG_H
