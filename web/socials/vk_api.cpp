@@ -100,7 +100,6 @@ void VkApi::wallMediaList(FuncContainer responseSlot, QString uid, int offset, i
 ///////////////////////////////////////////////////////////
 /// FOLDERS LIST
 ///////////////////////////////////////////////////////////
-/// -21504759
 
 ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset) {
     QJsonObject doc;
@@ -114,29 +113,19 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
 
     while(!finished) {
         url = VkApiPrivate::audioAlbumsUrl(func -> uid, getToken(), offset);
-        qDebug() << url;
         m_http = netManager -> get(QNetworkRequest(url));
         syncRequest(m_http);
 
-        if (!responseRoutine(m_http, func -> func, doc)) {
-            if (doc.value("error_code").toInt() == 14) {
-                ApiProcess::instance() -> getCaptchaDialog() -> setImage(this, doc.value("captcha_img").toString());
-                emit showCaptcha();
-
-//                QString res = c.showDialog(this, doc.value("captcha_img").toString());
-
-//                qDebug() << res;
-                qDebug() << "LOL";
-//                if (res.isEmpty())
-                    break;
-
-
-            } else break;
-        }
+        if (!responseRoutine(m_http, func -> func, doc))
+            break;
 
         doc = doc.value("response").toObject();
 
         temp = doc.value("albums").toArray().toVariantList();
+        qDebug() << "@@@@@@@@@@@@@@@@@ " << offset << " " << temp;
+        if (temp.isEmpty())
+            break;
+
         temp.append(res);
         res = temp;
 //        res.append(doc.value("albums").toArray().toVariantList());
@@ -210,8 +199,7 @@ bool VkApi::responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObje
 
     if (doc.contains("error")) {
         doc = doc.value("error").toObject();
-        errorSend(doc, func.obj);
-        result = false;
+        result = errorSend(doc, func, reply -> url());
     }
 
     reply -> close();
@@ -219,17 +207,45 @@ bool VkApi::responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObje
     return result;
 }
 
-void VkApi::errorSend(QJsonObject & error, const QObject * obj) {
+bool VkApi::errorSend(QJsonObject & error, FuncContainer func, QUrl url) {
     int err_code = error.value("error_code").toInt();
     QString err_msg = error.value("error_msg").toString();
 
     qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ERROR " << error;
 
     if (err_code != 14) {
-        connect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
+        connect(this, SIGNAL(errorReceived(int,QString)), func.obj, SLOT(errorReceived(int,QString)));
         emit errorReceived(err_code, err_msg);
-        disconnect(this, SIGNAL(errorReceived(int,QString)), obj, SLOT(errorReceived(int,QString)));
+        disconnect(this, SIGNAL(errorReceived(int,QString)), func.obj, SLOT(errorReceived(int,QString)));
+        return false;
+    } else {
+        return captchaProcessing(error, func, url);
     }
+}
+
+bool VkApi::captchaProcessing(QJsonObject & error, FuncContainer func, QUrl url) {
+    ApiProcess::instance() -> getCaptchaDialog() -> setImage(this, error.value("captcha_img").toString());
+    emit showCaptcha();
+
+    QString captchaText = ApiProcess::instance() -> getCaptchaDialog() -> captchaText();
+    qDebug() << "!!!!!!!!!!!!!!!!!!!!! " << captchaText;
+    if (captchaText.isEmpty())
+        return false;
+
+    QUrlQuery query(url.query());
+    query.removeQueryItem("captcha_sid");
+    query.removeQueryItem("captcha_key");
+
+    query.addQueryItem("captcha_sid", error.value("captcha_sid").toString());
+    query.addQueryItem("captcha_key", captchaText);
+
+    url.setQuery(query);
+
+    CustomNetworkAccessManager * netManager = createManager();
+    QNetworkReply * m_http = netManager -> get(QNetworkRequest(url));
+    syncRequest(m_http);
+    netManager -> deleteLater();
+    return responseRoutine(m_http, func, error);
 }
 
 ///////////////////////////////////////////////////////////

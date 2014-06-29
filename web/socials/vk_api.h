@@ -50,7 +50,8 @@ signals:
 
 protected:
     bool responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObject & doc);
-    void errorSend(QJsonObject & doc, const QObject * obj);
+    bool errorSend(QJsonObject & doc, FuncContainer func, QUrl url);
+    bool captchaProcessing(QJsonObject & error, FuncContainer func, QUrl url);
 
 //    QUrl getAudioListUrl() const;
 //    QUrl getAudioCountUrl() const;
