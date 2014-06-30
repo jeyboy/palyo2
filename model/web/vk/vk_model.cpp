@@ -76,8 +76,7 @@ void VkModel::proceedWallList(QJsonObject & hash) {
             filesAr = iterObj.value("audios").toArray();
 
             title = iterObj.value("title").toString();
-            if (title.isEmpty())
-                title = QDateTime::fromTime_t(iterObj.value("date").toInt()).toString();
+            title = QDateTime::fromTime_t(iterObj.value("date").toInt()).toString() + (title.isEmpty() ? "" : " : ") + title;
 
             folder = addFolder(title, rootFolder);
             proceedAudioList(filesAr, folder, store);
