@@ -230,7 +230,6 @@ bool VkApi::captchaProcessing(QJsonObject & error, FuncContainer func, QUrl url)
     emit showCaptcha();
 
     QString captchaText = ApiProcess::instance() -> getCaptchaDialog() -> captchaText();
-    qDebug() << "!!!!!!!!!!!!!!!!!!!!! " << captchaText;
     if (captchaText.isEmpty())
         return false;
 
