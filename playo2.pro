@@ -91,7 +91,8 @@ SOURCES += main.cpp\
     web/auth_chemas/teu_auth.cpp \
     web/socials/vk_api_private.cpp \
     web/api_process.cpp \
-    dialogs/captchadialog.cpp
+    dialogs/captchadialog.cpp \
+    model/web/deleted_list.cpp
 
 HEADERS  += mainwindow.h \
     data_store.h \
@@ -164,7 +165,8 @@ HEADERS  += mainwindow.h \
     web/auth_chemas/teu_auth.h \
     web/socials/vk_api_private.h \
     web/api_process.h \
-    dialogs/captchadialog.h
+    dialogs/captchadialog.h \
+    model/web/deleted_list.h
     model/view_types.h
 
 unix:!mac {

@@ -5,9 +5,10 @@
 #include "web/socials/vk_api.h"
 #include "model/model.h"
 #include "model/tree/tree_model.h"
+#include "model/web/deleted_list.h"
 #include "media/duration.h"
 
-class VkModel : public TreeModel {
+class VkModel : public TreeModel, public DeletedList {
     Q_OBJECT
 
 public:

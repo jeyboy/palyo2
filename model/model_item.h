@@ -86,12 +86,12 @@ public:
     QStringList getInfo() const;
 
     void accumulateUids(QHash<ModelItem*, QString> & store);
-    virtual QString toUID() { return ""; }
 
     virtual QUrl toUrl();
     virtual QJsonObject toJSON();
     ModelItem * toModelItem();
     QString toPath() const;
+    virtual QString toUID() { return ""; }
 
     ModelItem * parent();
 

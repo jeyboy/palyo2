@@ -7,10 +7,21 @@ VkView::VkView(QWidget *parent, CBHash settingsSet, QJsonObject *hash)
 
 VkView::~VkView() {}
 
+void VkView::removeItem(ModelItem * item) {
+    QString uid = item -> toUID();
+    if (!uid.isEmpty())
+        ((VkModel *)model) -> addRemovedUID(uid);
+
+    View::removeItem(item);
+}
+
 QJsonObject VkView::toJSON() {
     QJsonObject res = TreeView::toJSON();
 
-    res.insert("uid", ((VkModel *)model) -> getTabUid());
+    VkModel * vk_model = ((VkModel *)model);
+
+    res.insert("uid", vk_model -> getTabUid());
+    res.insert("deleted", vk_model -> deletedToJson());
 
     return res;
 }

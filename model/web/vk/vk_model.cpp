@@ -6,8 +6,11 @@
 
 ///////////////////////////////////////////////////////////
 
-VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) {
+VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(hash, parent), DeletedList() {
     tabUid = uid;
+
+    if (hash)
+        deletedFromJson(hash -> value("deleted").toArray());
 
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
     connect(Player::instance(), SIGNAL(remoteUnprocessed()), this, SLOT(refresh()));
