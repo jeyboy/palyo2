@@ -4,6 +4,8 @@
 #include <QToolBar>
 #include <QMainWindow>
 
+#include "data_store.h"
+
 #include "web/socials/vk_api.h"
 #include "web/socials/soundcloud_api.h"
 
@@ -41,6 +43,7 @@ public:
     QMenu * improvePopupMenu(QMainWindow * window, QMenu * menu);
 
     void load(QMainWindow * window, QJsonArray & bars);
+    void save(QMainWindow * window, DataStore * settings);
     void createToolbars(QMainWindow * window);
     void recreateToolbars(QMainWindow * window, QList<QString> & required);
     QToolBar * linkNameToToolbars(QString barName);
@@ -66,6 +69,7 @@ public:
 public slots:
     void folderDropped(QString name, QString path);
     void changeToolbarMovable();
+    void changeToolbarsMovable();
     void toolbarVisibilityChanged(bool visible);
     void toolbarOrientationChanged(Qt::Orientation);
 

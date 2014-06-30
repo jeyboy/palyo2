@@ -137,58 +137,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     settings -> write("vk", VkApi::instance() -> toJson());
     settings -> write("soundcloud", SoundcloudApi::instance() -> toJson());
 
-    QList<QToolBar *> toolbars = this -> findChildren<QToolBar *>();
-    qDebug() << toolbars.length();
-
-    if (toolbars.length() > 0) {
-        QJsonArray toolbar_array = QJsonArray();
-        QJsonObject curr_tab;
-        QList<QAction*> actions;
-        ToolbarButton* button;
-
-        foreach(QToolBar * bar, toolbars) {
-            curr_tab = QJsonObject();
-
-            curr_tab.insert("area", toolBarArea(bar));
-            curr_tab.insert("title", bar -> windowTitle());
-            curr_tab.insert("movable", bar -> isMovable());
-
-            if (bar -> windowTitle() != "Media"
-                    && bar -> windowTitle() != "Media+"
-                    && bar -> windowTitle() != "Media+Position"
-                    && bar -> windowTitle() != "Media+Time"
-                    && bar -> windowTitle() != "Media+Volume"
-                    && bar -> windowTitle() != "Controls"
-                    && bar -> windowTitle() != "Spectrum"
-               ) {
-                actions = bar -> actions();
-                if (actions.length() > 0) {
-                    QJsonArray action_array = QJsonArray();
-                    QJsonObject curr_act;
-
-                    foreach(QAction * act, actions) {
-                        if (QString(act -> metaObject() -> className()) == "QWidgetAction") {
-                            curr_act = QJsonObject();
-                            button = (ToolbarButton*) bar -> widgetForAction(act);
-
-                            curr_act.insert("path", button -> path);
-                            curr_act.insert("name", button -> text());
-                        }
-                        action_array.append(curr_act);
-                    }
-
-                    if (action_array.count() > 0)
-                        curr_tab.insert("actions", action_array);
-                }
-            }
-
-            toolbar_array.append(curr_tab);
-
-    //        bar -> toolButtonStyle();
-        }
-
-        settings -> write("bars", toolbar_array);
-    }
+    ToolBars::instance(this) -> save(this, settings);
 
     settings -> write("settings", Settings::instance() -> toJson());
 

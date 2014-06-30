@@ -61,13 +61,18 @@ QMenu * ToolBars::improvePopupMenu(QMainWindow * window, QMenu * menu) {
         activeBar = ((QToolBar*)widget -> parentWidget());
     }
 
-    QAction * fixToolbarAct;
+    QAction * fixToolbarAct, * fixToolbarsAct;
 
     if (activeBar -> isMovable()) {
         fixToolbarAct = new QAction(QIcon(":locked"), "Static bar", menu);
+        fixToolbarsAct = new QAction(QIcon(":locked"), "All bars to Static", menu);
     } else {
         fixToolbarAct = new QAction(QIcon(":unlocked"), "Movable bar", menu);
+        fixToolbarsAct = new QAction(QIcon(":unlocked"), "All bars to Movable", menu);
     }
+
+    menu -> insertAction(menu -> actions().first(), fixToolbarsAct);
+    connect(fixToolbarsAct, SIGNAL(triggered(bool)), this, SLOT(changeToolbarsMovable()));
 
     menu -> insertAction(menu -> actions().first(), fixToolbarAct);
     connect(fixToolbarAct, SIGNAL(triggered(bool)), this, SLOT(changeToolbarMovable()));
@@ -110,6 +115,61 @@ void ToolBars::load(QMainWindow * window, QJsonArray & bars) {
         recreateToolbars(window, barsList);
     } else {
         createToolbars(window);
+    }
+}
+
+void ToolBars::save(QMainWindow * window, DataStore * settings) {
+    QList<QToolBar *> toolbars = window -> findChildren<QToolBar *>();
+    qDebug() << toolbars.length();
+
+    if (toolbars.length() > 0) {
+        QJsonArray toolbar_array = QJsonArray();
+        QJsonObject curr_tab;
+        QList<QAction*> actions;
+        ToolbarButton* button;
+
+        foreach(QToolBar * bar, toolbars) {
+            curr_tab = QJsonObject();
+
+            curr_tab.insert("area", window -> toolBarArea(bar));
+            curr_tab.insert("title", bar -> windowTitle());
+            curr_tab.insert("movable", bar -> isMovable());
+
+            if (bar -> windowTitle() != "Media"
+                    && bar -> windowTitle() != "Media+"
+                    && bar -> windowTitle() != "Media+Position"
+                    && bar -> windowTitle() != "Media+Time"
+                    && bar -> windowTitle() != "Media+Volume"
+                    && bar -> windowTitle() != "Controls"
+                    && bar -> windowTitle() != "Spectrum"
+               ) {
+                actions = bar -> actions();
+                if (actions.length() > 0) {
+                    QJsonArray action_array = QJsonArray();
+                    QJsonObject curr_act;
+
+                    foreach(QAction * act, actions) {
+                        if (QString(act -> metaObject() -> className()) == "QWidgetAction") {
+                            curr_act = QJsonObject();
+                            button = (ToolbarButton*) bar -> widgetForAction(act);
+
+                            curr_act.insert("path", button -> path);
+                            curr_act.insert("name", button -> text());
+                        }
+                        action_array.append(curr_act);
+                    }
+
+                    if (action_array.count() > 0)
+                        curr_tab.insert("actions", action_array);
+                }
+            }
+
+            toolbar_array.append(curr_tab);
+
+    //        bar -> toolButtonStyle();
+        }
+
+        settings -> write("bars", toolbar_array);
     }
 }
 
@@ -447,6 +507,19 @@ void ToolBars::toolbarOrientationChanged(Qt::Orientation orientation) {
 void ToolBars::changeToolbarMovable() {
     activeBar -> setMovable(!activeBar -> isMovable());
     activeBar -> repaint();
+}
+
+void ToolBars::changeToolbarsMovable() {
+    bool movable = !activeBar -> isMovable();
+
+    QList<QToolBar *> toolbars = parent() -> findChildren<QToolBar *>();
+    qDebug() << toolbars.length();
+
+
+    foreach(QToolBar * bar, toolbars) {
+        bar -> setMovable(movable);
+        bar -> repaint();
+    }
 }
 
 void ToolBars::folderDropped(QString name, QString path) {
