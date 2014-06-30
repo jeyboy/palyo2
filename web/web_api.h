@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QUrl>
+#include <QPixmap>
 
 #include "override/custom_network_access_manager.h"
 
@@ -27,7 +28,7 @@ public:
     CustomNetworkAccessManager * manager() const;
     CustomNetworkAccessManager * createManager();
 
-    QByteArray openRemoteImage(QString url);
+    QPixmap openRemoteImage(QString url);
     QNetworkReply * syncRequest(QNetworkReply * m_http);
 
     void clearData();

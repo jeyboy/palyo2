@@ -20,7 +20,7 @@ CustomNetworkAccessManager * WebApi::createManager() {
     return new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
 }
 
-QByteArray WebApi::openRemoteImage(QString url) {
+QPixmap WebApi::openRemoteImage(QString url) {
     CustomNetworkAccessManager * currManager = createManager();
     QNetworkReply * reply;
     QVariant possibleRedirectUrl;
@@ -42,7 +42,9 @@ QByteArray WebApi::openRemoteImage(QString url) {
         }
     }
 
-    return ar;
+    QImage image;
+    image.loadFromData(ar);
+    return QPixmap::fromImage(image);
 }
 
 QNetworkReply * WebApi::syncRequest(QNetworkReply * m_http) {
