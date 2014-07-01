@@ -412,6 +412,6 @@ QMimeData * Model::mimeData(const QModelIndexList &indexes) const {
 }
 
 bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
-    //TODO: add move logic
+//    TODO: add move logic
     return true;
 }

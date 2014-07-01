@@ -71,6 +71,13 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Tabber</class>
+   <extends>QTabWidget</extends>
+   <header>override/tabber.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>tabber</tabstop>
  </tabstops>

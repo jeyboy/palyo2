@@ -5,6 +5,8 @@
 #include <QBoxLayout>
 #include <QJsonObject>
 
+#include "model/view_types.h"
+
 #include "model/list/list_view.h"
 #include "model/tree/tree_view.h"
 #include "model/level_tree/level_tree_view.h"
@@ -14,8 +16,6 @@
 
 #include "model/model.h"
 #include "model/model_item.h"
-#include "model/view_types.h"
-
 
 #ifndef CBHASH
 #define CBHASH
@@ -37,7 +37,7 @@ public:
     QString getName() const;
     void setName(QString newName);
 
-    View * getList() const;
+    View * getView() const;
     QJsonObject toJSON(QString name);
 
     bool isEditable() const;
@@ -53,7 +53,7 @@ protected:
     void setNameWithCount(QString name);
 
 private:
-    View * list;
+    View * view;
     QTabWidget * tabber;
 
     QLabel * spinnerContainer;
@@ -63,23 +63,6 @@ private:
 };
 
 #endif // TAB_H
-
-//QStandardItemModel *model = new QStandardItemModel(3, 3);
-
-//QModelIndex index = model->index(1, 0, QModelIndex());
-
-//model->setHeaderData( 0, Qt::Horizontal, "numéro" );
-//model->setHeaderData( 1, Qt::Horizontal, "prénom" );
-//model->setHeaderData( 2, Qt::Horizontal, "nom" );
-
-//model->setData( index, "1", Qt::DisplayRole );
-
-//listView->setModel(model);
-
-
-
-
-
 
 //#include <QListView>
 //#include <QStandardItemModel>

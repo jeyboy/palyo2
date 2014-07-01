@@ -88,14 +88,14 @@ void Tabber::load() {
             tab = store -> read(key).toObject();
             Tab * new_tab = new Tab(tab, this);
 
-            if (new_tab -> getList() -> isCommon())
+            if (new_tab -> getView() -> isCommon())
                 commonPlaylist = new_tab;
 
             QTabWidget::addTab(new_tab, tab["n"].toString());
             new_tab -> updateHeader();
 
             if (tab.contains("pv")) {
-                new_tab -> getList() -> execItem(new_tab -> getList() -> fromPath(tab.value("pp").toString()), true);
+                new_tab -> getView() -> execItem(new_tab -> getView() -> fromPath(tab.value("pp").toString()), true);
                 if (tab.contains("pt")) {
                     Player::instance() -> setStartPosition(tab.value("pt").toInt());
 //                  Player::instance() -> play();
@@ -130,7 +130,7 @@ void Tabber::updateIconSize() {
     QSize size(dimension, dimension);
     for(int i = 0; i < count(); i++) {
         tab = (Tab*)(widget(i));
-        tab -> getList() -> setIconSize(size);
+        tab -> getView() -> setIconSize(size);
     }
 }
 
@@ -154,25 +154,25 @@ void Tabber::handleCurrentChanged(int index) {
     } else {
         Tab * new_tab = static_cast<Tab *>(widget(index));
 
-        Player::instance() -> setActivePlaylist(const_cast<View *>(new_tab -> getList()));
+        Player::instance() -> setActivePlaylist(const_cast<View *>(new_tab -> getView()));
     }
 }
 
 void Tabber::handleTabCloseRequested(int index) {
     Tab * del_tab = static_cast<Tab *>(widget(index));
 
-    if (del_tab -> getList() -> getModel() -> itemsCount() > 0)
+    if (del_tab -> getView() -> getModel() -> itemsCount() > 0)
         if (QMessageBox::warning(this, "Tab deletion", "Tab is not empty. Are you sure?", QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Ok)
             return;
 
     if (del_tab == commonPlaylist)
         commonPlaylist = 0;
 
-    if (Player::instance() -> currentPlaylist() == del_tab -> getList()) {
+    if (Player::instance() -> currentPlaylist() == del_tab -> getView()) {
         Player::instance() -> removePlaylist();
     }
 
-    if (Player::instance() -> currentActivePlaylist() == del_tab -> getList()) {
+    if (Player::instance() -> currentActivePlaylist() == del_tab -> getView()) {
         Player::instance() -> setActivePlaylist(0);
     }
 

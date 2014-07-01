@@ -2,31 +2,20 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QKeyEvent>
-#include <QKeySequence>
-#include <QToolBar>
 #include <QSystemTrayIcon>
-#include <QMenu>
-#include <QDesktopServices>
-#include <QDesktopWidget>
-#include <QWidgetAction>
 #include <QSettings>
 
-#include "data_store.h"
+#include "misc/data_store.h"
 
 #include "dialogs/tabdialog.h"
 #include "dialogs/web_dialog.h"
 #include "dialogs/settings_dialog.h"
 #include "dialogs/relationdialog.h"
 
-#include "misc/hotkey_manager.h"
-
-#include "override/tabber.h"
 #include "override/tab.h"
 
 #include "media/library.h"
 #include "media/player.h"
-#include "media/mediainfo.h"
 
 #include "toolbars.h"
 
@@ -42,6 +31,7 @@ public:
     ~MainWindow();
 
     void initialization();
+    void locationCorrection();
 
     void registrateTray();
 

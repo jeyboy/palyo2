@@ -27,7 +27,7 @@ CONFIG += static
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    data_store.cpp \
+    misc/data_store.cpp \
     misc/icon_provider.cpp \
     misc/hotkey_manager.cpp \
     misc/settings.cpp \
@@ -95,7 +95,7 @@ SOURCES += main.cpp\
     model/web/deleted_list.cpp
 
 HEADERS  += mainwindow.h \
-    data_store.h \
+    misc/data_store.h \
     misc/icon_provider.h \
     misc/hotkey_manager.h \
     misc/hotkey_types.h \

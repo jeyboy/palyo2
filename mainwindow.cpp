@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QDesktopServices>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -12,6 +13,19 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
 
     initialization();
+}
+
+void MainWindow::locationCorrection() {
+    QDesktopWidget *desktop = QApplication::desktop();
+    int left = x(), top = y();
+
+    if (left >= desktop -> width())
+        left = desktop -> width() - 50;
+
+    if (top >= desktop -> height())
+        top = desktop -> height() - 50;
+
+    move(left, top);
 }
 
 void MainWindow::initialization() {
@@ -29,7 +43,6 @@ void MainWindow::initialization() {
     Settings::instance() -> fromJson(settings -> read("settings").toObject());
     SettingsDialog::registerHotkeys(this);
 
-
     QVariant geometryState = stateSettings.value("geometry");
     if (geometryState.isValid())
         restoreGeometry(geometryState.toByteArray());
@@ -37,19 +50,7 @@ void MainWindow::initialization() {
     ///////////////////////////////////////////////////////////
     ///location correction (test needed)
     ///////////////////////////////////////////////////////////
-
-    QDesktopWidget *desktop = QApplication::desktop();
-    int left = x(), top = y();
-
-
-    if (left >= desktop -> width())
-        left = desktop -> width() - 50;
-
-    if (top >= desktop -> height())
-        top = desktop -> height() - 50;
-
-    move(left, top);
-
+    locationCorrection();
     ///////////////////////////////////////////////////////////
     /// toolbars
     ///////////////////////////////////////////////////////////
@@ -154,7 +155,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     ui -> tabber -> save();
 
     m_tray.hide();
-    event ->accept();
+    event -> accept();
 }
 
 MainWindow::~MainWindow() {
@@ -189,15 +190,15 @@ QMenu * MainWindow::createPopupMenu () {
 
 void MainWindow::nextItemTriggered() {
     if (ui -> tabber -> currentTab())
-        ui -> tabber -> currentTab() -> getList() -> proceedNext();
+        ui -> tabber -> currentTab() -> getView() -> proceedNext();
 }
 void MainWindow::nextItemWithDelTriggered() {
     if (ui -> tabber -> currentTab())
-        ui -> tabber -> currentTab() -> getList() -> deleteCurrentProceedNext();
+        ui -> tabber -> currentTab() -> getView() -> deleteCurrentProceedNext();
 }
 void MainWindow::prevItemTriggered() {
     if (ui -> tabber -> currentTab())
-        ui -> tabber -> currentTab() -> getList() -> proceedPrev();
+        ui -> tabber -> currentTab() -> getView() -> proceedPrev();
 }
 
 void MainWindow::openFolderTriggered() {
@@ -208,7 +209,7 @@ void MainWindow::openFolderTriggered() {
 void MainWindow::showActiveElem() {
     Tab * tab = ui -> tabber -> toActiveTab();
     if (tab)
-        tab -> getList() -> scrollToActive();
+        tab -> getView() -> scrollToActive();
 }
 
 void MainWindow::showSettingsDialog() {
@@ -273,15 +274,15 @@ void MainWindow::showSoundcloudTabDialog() {
 
 void MainWindow::outputActiveItem(ModelItem *, ModelItem * to) {
     if (to && !this -> isActiveWindow())
-        m_tray.showMessage("(" + QString::number(ui -> tabber -> currentTab() -> getList() -> itemsCount()) + ") Now played:", to -> data(TITLEID).toString(), QSystemTrayIcon::Information, 20000);
+        m_tray.showMessage("(" + QString::number(ui -> tabber -> currentTab() -> getView() -> itemsCount()) + ") Now played:", to -> data(TITLEID).toString(), QSystemTrayIcon::Information, 20000);
 }
 
 void MainWindow::putToCommonTab(QList<QUrl> urls) {
-    ui -> tabber -> commonTab() -> getList() -> dropProcession(urls);
-    ui -> tabber -> commonTab() -> getList() -> getModel() -> refresh();
+    ui -> tabber -> commonTab() -> getView() -> dropProcession(urls);
+    ui -> tabber -> commonTab() -> getView() -> getModel() -> refresh();
 
     if (!Player::instance() -> isPlayed()) {
-        ui -> tabber -> commonTab() -> getList() -> proceedNext();
+        ui -> tabber -> commonTab() -> getView() -> proceedNext();
     }
 }
 
@@ -299,14 +300,14 @@ void MainWindow::showAttTabDialog(Tab * tab) {
   TabDialog dialog(this);
   if(tab) {
       qDebug() << tab -> getName();
-      dialog.setSettings(tab -> getList() -> getSettings());
+      dialog.setSettings(tab -> getView() -> getSettings());
       dialog.setName(tab -> getName());
 
       while(true) {
           if (dialog.exec() == QDialog::Accepted) {
               if (ToolBars::instance(this) -> isToolbarNameUniq(this, dialog.getName())) {
                   tab -> setName(dialog.getName());
-                  tab -> getList() -> setSettings(dialog.getSettings());
+                  tab -> getView() -> setSettings(dialog.getSettings());
                   return;
               }
           } else return;

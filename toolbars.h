@@ -4,7 +4,7 @@
 #include <QToolBar>
 #include <QMainWindow>
 
-#include "data_store.h"
+#include "misc/data_store.h"
 
 #include "web/socials/vk_api.h"
 #include "web/socials/soundcloud_api.h"

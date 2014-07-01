@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QTabWidget>
 
-#include <data_store.h>
+#include "misc/data_store.h"
 #include "dialogs/tabdialog.h"
 
 //#include <QHash>
