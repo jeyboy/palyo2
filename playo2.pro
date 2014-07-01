@@ -166,7 +166,8 @@ HEADERS  += mainwindow.h \
     web/socials/vk_api_private.h \
     web/api_process.h \
     dialogs/captchadialog.h \
-    model/web/deleted_list.h
+    model/web/deleted_list.h \
+    override/tree_view_style.h
     model/view_types.h
 
 unix:!mac {

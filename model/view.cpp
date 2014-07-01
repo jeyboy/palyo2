@@ -1,6 +1,7 @@
 #include "view.h"
 #include "media/library.h"
 #include "web/download.h"
+#include "override/tree_view_style.h"
 #include <QDebug>
 
 View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(parent) {
@@ -20,6 +21,8 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     setDragEnabled(true);
     setAcceptDrops(true);
     setDropIndicatorShown(true);
+
+    setStyle(new TreeViewStyle);
 
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::CopyAction);
@@ -671,25 +674,36 @@ ModelItem * View::createItem(QString path, ModelItem * parent) {
 }
 
 void View::dragEnterEvent(QDragEnterEvent *event) {
-    if (event -> source() != this && event -> mimeData() -> hasFormat("text/uri-list"))
+    event -> setDropAction(
+                event -> source() == this ? Qt::MoveAction : Qt::CopyAction
+    );
+
+    if (event -> mimeData() -> hasFormat("text/uri-list"))
         event -> accept();
     else event -> ignore();
+    QTreeView::dragEnterEvent(event);
 }
 
 void View::dragMoveEvent(QDragMoveEvent * event) {
-    if (event -> source() != this && event -> mimeData() -> hasFormat("text/uri-list"))
+    if (event -> mimeData() -> hasFormat("text/uri-list")) {
         event -> accept();
-    else event -> ignore();
+    } else
+        event -> ignore();
+    QTreeView::dragMoveEvent(event);
 }
 
 void View::dropEvent(QDropEvent *event) {
-    if (event -> source() != this && event -> mimeData() -> hasUrls()) {
-        QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
-        model -> refresh();
-        scrollTo(modelIndex);
-        expand(modelIndex);
-        event -> accept();
-    } else event -> ignore();
+    if (event -> source() == this) {
+        QTreeView::dropEvent(event);
+    } else
+        if (event -> mimeData() -> hasUrls()) {
+            QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
+            model -> refresh();
+            scrollTo(modelIndex);
+            expand(modelIndex);
+            event -> accept();
+        } else
+            event -> ignore();
 }
 
 void View::keyPressEvent(QKeyEvent *event) {

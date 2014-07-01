@@ -62,7 +62,10 @@ void VkView::filesRoutine(ModelItem * index, QList<QUrl> list){
 }
 
 void VkView::dropEvent(QDropEvent *event) {
-    event -> ignore();
+    if (event -> source() == this) {
+        QTreeView::dropEvent(event);
+    } else
+        event -> ignore();
 
 //    if (event -> source() != this && event -> mimeData() -> hasUrls()) {
 //        QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());

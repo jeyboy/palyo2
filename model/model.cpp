@@ -150,7 +150,7 @@ Qt::ItemFlags Model::flags(const QModelIndex &index) const {
      if (Settings::instance() -> isCheckboxShow())
         return Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
      else
-        return Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
+        return Qt::ItemIsDropEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
 }
 QModelIndex Model::parent(const QModelIndex &index) const {
     if (!index.isValid())
@@ -409,4 +409,9 @@ QMimeData * Model::mimeData(const QModelIndexList &indexes) const {
 
     mimeData -> setUrls(list);
     return mimeData;
+}
+
+bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
+    //TODO: add move logic
+    return true;
 }
