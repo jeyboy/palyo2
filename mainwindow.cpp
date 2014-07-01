@@ -56,8 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if (objState.isValid())
         restoreState(objState.toByteArray());
     ///////////////////////////////////////////////////////////
-
-    tabber = new Tabber(ui -> tabber);
+    ui -> tabber -> load();
 
     connect(Player::instance(), SIGNAL(itemChanged(ModelItem *, ModelItem *)), this, SLOT(outputActiveItem(ModelItem *, ModelItem *)));
 
@@ -148,7 +147,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     stateSettings.setValue("windowState", saveState());
     stateSettings.sync();
 
-    tabber -> save();
+    ui -> tabber -> save();
 
     m_tray.hide();
     event ->accept();
@@ -174,7 +173,6 @@ MainWindow::~MainWindow() {
     ///////////////////////////////////////////////
 
     delete settings;
-    delete tabber;
 }
 
 QMenu * MainWindow::createPopupMenu () {
@@ -186,16 +184,16 @@ QMenu * MainWindow::createPopupMenu () {
 /////////////////////////////////////////////////////////////////////////////////////
 
 void MainWindow::nextItemTriggered() {
-    if (tabber -> currentTab())
-        tabber -> currentTab() -> getList() -> proceedNext();
+    if (ui -> tabber -> currentTab())
+        ui -> tabber -> currentTab() -> getList() -> proceedNext();
 }
 void MainWindow::nextItemWithDelTriggered() {
-    if (tabber -> currentTab())
-        tabber -> currentTab() -> getList() -> deleteCurrentProceedNext();
+    if (ui -> tabber -> currentTab())
+        ui -> tabber -> currentTab() -> getList() -> deleteCurrentProceedNext();
 }
 void MainWindow::prevItemTriggered() {
-    if (tabber -> currentTab())
-        tabber -> currentTab() -> getList() -> proceedPrev();
+    if (ui -> tabber -> currentTab())
+        ui -> tabber -> currentTab() -> getList() -> proceedPrev();
 }
 
 void MainWindow::openFolderTriggered() {
@@ -204,7 +202,7 @@ void MainWindow::openFolderTriggered() {
 }
 
 void MainWindow::showActiveElem() {
-    Tab * tab = tabber -> toActiveTab();
+    Tab * tab = ui -> tabber -> toActiveTab();
     if (tab)
         tab -> getList() -> scrollToActive();
 }
@@ -213,7 +211,7 @@ void MainWindow::showSettingsDialog() {
     SettingsDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
         if (dialog.isIconSizeChanged())
-            tabber -> updateIconSize();
+            ui -> tabber -> updateIconSize();
 
         ui -> tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
         ui -> tabber -> setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
@@ -226,7 +224,7 @@ void MainWindow::showSettingsDialog() {
 void MainWindow::showVKRelTabDialog() {
     RelationDialog dialog(VkApi::instance(), this);
     if (dialog.exec() == QDialog::Accepted) {
-        tabber -> addTab("VK [" + dialog.getName() + "]", TabDialog::VKSettings(dialog.getId()));
+        ui -> tabber -> addTab("VK [" + dialog.getName() + "]", TabDialog::VKSettings(dialog.getId()));
     } else {
 //        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
     }
@@ -235,7 +233,7 @@ void MainWindow::showVKRelTabDialog() {
 void MainWindow::showSoundcloudRelTabDialog() {
     RelationDialog dialog(SoundcloudApi::instance(), this);
     if (dialog.exec() == QDialog::Accepted) {
-        tabber -> addTab("Soundcloud [" + dialog.getName() + "]", TabDialog::soundcloudSettings(dialog.getId()));
+        ui -> tabber -> addTab("Soundcloud [" + dialog.getName() + "]", TabDialog::soundcloudSettings(dialog.getId()));
     } else {
 //        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
     }
@@ -243,11 +241,11 @@ void MainWindow::showSoundcloudRelTabDialog() {
 
 void MainWindow::showVKTabDialog() {
     if (VkApi::instance() -> isConnected()) {
-        tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
+        ui -> tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
     } else {
         WebDialog dialog(this, VkApi::instance(), "VK auth");
         if (dialog.exec() == QDialog::Accepted) {
-            tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
+            ui -> tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
             ToolBars::instance(this) -> initiateVkButton();
         } else {
             QMessageBox::information(this, "VK", VkApi::instance() -> getError());
@@ -257,11 +255,11 @@ void MainWindow::showVKTabDialog() {
 
 void MainWindow::showSoundcloudTabDialog() {
     if (SoundcloudApi::instance() -> isConnected()) {
-        tabber -> addTab("Soundcloud", TabDialog::soundcloudSettings());
+        ui -> tabber -> addTab("Soundcloud", TabDialog::soundcloudSettings());
     } else {
         WebDialog dialog(this, SoundcloudApi::instance(), "Soundcloud auth");
         if (dialog.exec() == QDialog::Accepted) {
-            tabber -> addTab("Soundcloud", TabDialog::soundcloudSettings());
+            ui -> tabber -> addTab("Soundcloud", TabDialog::soundcloudSettings());
             ToolBars::instance(this) -> initiateSoundcloudButton();
         } else {
             QMessageBox::information(this, "Soundcloud", SoundcloudApi::instance() -> getError());
@@ -271,15 +269,15 @@ void MainWindow::showSoundcloudTabDialog() {
 
 void MainWindow::outputActiveItem(ModelItem *, ModelItem * to) {
     if (to && !this -> isActiveWindow())
-        m_tray.showMessage("(" + QString::number(tabber -> currentTab() -> getList() -> itemsCount()) + ") Now played:", to -> data(TITLEID).toString(), QSystemTrayIcon::Information, 20000);
+        m_tray.showMessage("(" + QString::number(ui -> tabber -> currentTab() -> getList() -> itemsCount()) + ") Now played:", to -> data(TITLEID).toString(), QSystemTrayIcon::Information, 20000);
 }
 
 void MainWindow::putToCommonTab(QList<QUrl> urls) {
-    tabber -> commonTab() -> getList() -> dropProcession(urls);
-    tabber -> commonTab() -> getList() -> getModel() -> refresh();
+    ui -> tabber -> commonTab() -> getList() -> dropProcession(urls);
+    ui -> tabber -> commonTab() -> getList() -> getModel() -> refresh();
 
     if (!Player::instance() -> isPlayed()) {
-        tabber -> commonTab() -> getList() -> proceedNext();
+        ui -> tabber -> commonTab() -> getList() -> proceedNext();
     }
 }
 
@@ -313,7 +311,7 @@ void MainWindow::showAttTabDialog(Tab * tab) {
       while(true) {
           if (dialog.exec() == QDialog::Accepted) {
               if (ToolBars::instance(this) -> isToolbarNameUniq(this, dialog.getName())) {
-                  tabber -> addTab(dialog.getName(), dialog.getSettings());
+                  ui -> tabber -> addTab(dialog.getName(), dialog.getSettings());
                   return;
               }
           } else return;
@@ -324,8 +322,8 @@ void MainWindow::showAttTabDialog(Tab * tab) {
 void MainWindow::showAttCurrTabDialog() {
 //    emit showAttTabDialog(tabber -> currentTab());
 
-    if (tabber -> currentTab() -> isEditable())
-        emit showAttTabDialog(tabber -> currentTab());
+    if (ui -> tabber -> currentTab() -> isEditable())
+        emit showAttTabDialog(ui -> tabber -> currentTab());
     else
         QMessageBox::warning(this, "Settings", "This tab type did not have any settings...");
 }

@@ -13,10 +13,10 @@
 
 #include "override/tab.h"
 
-class Tabber : public QWidget {
+class Tabber : public QTabWidget {
     Q_OBJECT
 public:
-    explicit Tabber(QTabWidget * container);
+    explicit Tabber(QWidget *parent = 0);
     ~Tabber();
 
     int addTab(QString name, CBHash settings);
@@ -30,7 +30,6 @@ public:
 
 private:
     Tab * commonPlaylist;
-    QTabWidget * tabber;
     DataStore * store;
 
 private slots:

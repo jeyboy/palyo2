@@ -82,7 +82,6 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    Tabber * tabber;
     QSystemTrayIcon m_tray;
 
     DataStore * settings;

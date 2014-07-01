@@ -14,13 +14,13 @@ void Tabber::updateActiveTab(QWidget * last, QWidget * current) {
     int index;
 
     if (last != 0) {
-        index = tabber -> indexOf(last -> parentWidget());
-        tabber -> setTabIcon(index, QIcon());
+        index = indexOf(last -> parentWidget());
+        setTabIcon(index, QIcon());
     }
 
     if (current != 0) {
-        index = tabber -> indexOf(current -> parentWidget());
-        tabber -> setTabIcon(index, QIcon(":/active_tab"));
+        index = indexOf(current -> parentWidget());
+        setTabIcon(index, QIcon(":/active_tab"));
     }
 }
 
@@ -28,17 +28,17 @@ void Tabber::handleCurrentChanged(int index) {
     if (index == -1) {
         Player::instance() -> setActivePlaylist(0);
     } else {
-        Tab * new_tab = static_cast<Tab *>(tabber -> widget(index));
+        Tab * new_tab = static_cast<Tab *>(widget(index));
 
         Player::instance() -> setActivePlaylist(const_cast<View *>(new_tab -> getList()));
     }
 }
 
 void Tabber::handleTabCloseRequested(int index) {
-    Tab * del_tab = static_cast<Tab *>(tabber -> widget(index));
+    Tab * del_tab = static_cast<Tab *>(widget(index));
 
     if (del_tab -> getList() -> getModel() -> itemsCount() > 0)
-        if (QMessageBox::warning(tabber, "Tab deletion", "Tab is not empty. Are you sure?", QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Ok)
+        if (QMessageBox::warning(this, "Tab deletion", "Tab is not empty. Are you sure?", QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Ok)
             return;
 
     if (del_tab == commonPlaylist)
@@ -52,14 +52,14 @@ void Tabber::handleTabCloseRequested(int index) {
         Player::instance() -> setActivePlaylist(0);
     }
 
-    tabber -> removeTab(index);
+    removeTab(index);
 }
 
-Tabber::Tabber(QTabWidget * container) {
-    tabber = container;
+
+Tabber::Tabber(QWidget *parent) : QTabWidget(parent) {
 //    tabber -> setTabBar(0); // TODO: custom tab bar
-    tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
-    tabber -> setStyleSheet(QString(
+    setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
+    setStyleSheet(QString(
                           "QTreeView::indicator {"
                           "    width: 18px;"
                           "    height: 18px;"
@@ -80,39 +80,37 @@ Tabber::Tabber(QTabWidget * container) {
 
     commonPlaylist = 0;
 
-    connect(tabber, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
-    connect(tabber, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
+    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
+    connect(this, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
     connect(Player::instance(), SIGNAL(playlistChanged(QWidget *, QWidget *)), this, SLOT(updateActiveTab(QWidget *, QWidget *)));
 
-    tabber -> setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
+    setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
 
-    store = new DataStore("tabs.json");
-    load();
+    store = new DataStore("tabs.json");   
 }
 
 Tabber::~Tabber() {
     delete store;
-    delete tabber;
 }
 
 int Tabber::addTab(QString name, CBHash settings) {
-    int index = tabber -> addTab(new Tab(settings, tabber), name);
-    (static_cast<Tab *>(tabber -> widget(index))) -> updateHeader();
-    tabber -> setCurrentIndex(index);
-    tabber -> setStyleSheet("");
+    int index = QTabWidget::addTab(new Tab(settings, this), name);
+    (static_cast<Tab *>(widget(index))) -> updateHeader();
+    setCurrentIndex(index);
+    setStyleSheet("");
     return index;
 }
 
 Tab * Tabber::toActiveTab() {
     if (Player::instance() -> currentPlaylist()) {
         Tab * tab = (Tab *)Player::instance() -> currentPlaylist() -> parentWidget();
-        tabber -> setCurrentIndex(tabber -> indexOf(tab));
+        setCurrentIndex(indexOf(tab));
         return tab;
     } else return 0;
 }
 
 Tab * Tabber::currentTab() {
-    return static_cast<Tab *>(tabber -> currentWidget());
+    return static_cast<Tab *>(currentWidget());
 }
 
 Tab * Tabber::commonTab() {
@@ -126,7 +124,7 @@ Tab * Tabber::commonTab() {
         addTab("Common", settings);
         commonPlaylist = currentTab();
     } else {
-        tabber -> setCurrentIndex(tabber -> indexOf(commonPlaylist));
+        setCurrentIndex(indexOf(commonPlaylist));
     }
 
     return commonPlaylist;
@@ -136,8 +134,8 @@ void Tabber::save() {
     Player::instance() -> pause();
     store -> clear();
     Tab * tab;
-    for(int i = 0; i < tabber -> count(); i++) {
-        tab = (Tab*)(tabber -> widget(i));
+    for(int i = 0; i < count(); i++) {
+        tab = (Tab*)(widget(i));
         if (tab == commonPlaylist) {
             // logic for common playlist // at this time common list did not save
         } else {
@@ -155,12 +153,12 @@ void Tabber::load() {
 
         foreach(QString key, store -> keys()) {
             tab = store -> read(key).toObject();
-            Tab * new_tab = new Tab(tab, tabber);
+            Tab * new_tab = new Tab(tab, this);
 
             if (new_tab -> getList() -> isCommon())
                 commonPlaylist = new_tab;
 
-            tabber -> addTab(new_tab, tab["n"].toString());
+            QTabWidget::addTab(new_tab, tab["n"].toString());
             new_tab -> updateHeader();
 
             if (tab.contains("pv")) {
@@ -178,8 +176,8 @@ void Tabber::updateIconSize() {
     Tab * tab;
     int dimension = Settings::instance() -> getIconHeight();
     QSize size(dimension, dimension);
-    for(int i = 0; i < tabber -> count(); i++) {
-        tab = (Tab*)(tabber -> widget(i));
+    for(int i = 0; i < count(); i++) {
+        tab = (Tab*)(widget(i));
         tab -> getList() -> setIconSize(size);
     }
 }

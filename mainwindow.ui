@@ -40,7 +40,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QTabWidget" name="tabber">
+     <widget class="Tabber" name="tabber">
       <property name="minimumSize">
        <size>
         <width>100</width>
