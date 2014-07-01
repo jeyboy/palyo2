@@ -41,6 +41,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void initialization();
+
     void registrateTray();
 
     QDockWidget * createDockWidget();  

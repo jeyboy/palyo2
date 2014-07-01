@@ -11,6 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("Playo");
     setAcceptDrops(true);
 
+    initialization();
+}
+
+void MainWindow::initialization() {
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
     settings = new DataStore("settings.json");
 

@@ -4,11 +4,135 @@
 #include <QApplication>
 #include <QMessageBox>
 
-//TODO:// add tab position for each tab
-//    tabber->setTabPosition(TabPosition);
+Tabber::Tabber(QWidget *parent) : QTabWidget(parent) {
+    commonPlaylist = 0;
+
+//    tabber -> setTabBar(0); // TODO: custom tab bar
+    setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
+    setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
+
+    setStyleSheet(QString(
+                          "QTreeView::indicator {"
+                          "    width: 18px;"
+                          "    height: 18px;"
+                          "}"
+                          "QTreeView::indicator:unchecked {"
+                          "  image: url(:/elems/check_blank);"
+                          "}"
+                          "QTreeView::indicator:checked {"
+                          "  image: url(:/elems/check_fill);"
+                          "}"
+                          "QTreeView::indicator:indeterminate:hover {"
+                          "  image: url(:/elems/check_trist);"
+                          "}"
+                          "QTreeView::indicator:indeterminate {"
+                          "  image: url(:/elems/check_fill);"
+                          "}"
+                          ));
 
 
-//tabber -> tabBar() -> setTabIcon();
+
+    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
+    connect(this, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
+    connect(Player::instance(), SIGNAL(playlistChanged(QWidget *, QWidget *)), this, SLOT(updateActiveTab(QWidget *, QWidget *)));
+
+    store = new DataStore("tabs.json");
+}
+
+Tabber::~Tabber() {
+    delete store;
+}
+
+int Tabber::addTab(QString name, CBHash settings) {
+    int index = QTabWidget::addTab(new Tab(settings, this), name);
+    (static_cast<Tab *>(widget(index))) -> updateHeader();
+    setCurrentIndex(index);
+    setStyleSheet("");
+    return index;
+}
+
+Tab * Tabber::toActiveTab() {
+    if (Player::instance() -> currentPlaylist()) {
+        Tab * tab = (Tab *)Player::instance() -> currentPlaylist() -> parentWidget();
+        setCurrentIndex(indexOf(tab));
+        return tab;
+    } else return 0;
+}
+
+Tab * Tabber::currentTab() {
+    return static_cast<Tab *>(currentWidget());
+}
+
+Tab * Tabber::commonTab() {
+    if (commonPlaylist == 0) {
+        TabDialog dialog;
+        CBHash settings = dialog.getSettings(); // get default settings
+        settings.insert("p", 1); // is playlist
+        settings.insert("t", 2); // is one level tree
+        settings.insert("c", 1); // is common
+
+        addTab("Common", settings);
+        commonPlaylist = currentTab();
+    } else {
+        setCurrentIndex(indexOf(commonPlaylist));
+    }
+
+    return commonPlaylist;
+}
+
+void Tabber::load() {
+    if (store -> state) {
+        QJsonObject tab;
+
+        foreach(QString key, store -> keys()) {
+            tab = store -> read(key).toObject();
+            Tab * new_tab = new Tab(tab, this);
+
+            if (new_tab -> getList() -> isCommon())
+                commonPlaylist = new_tab;
+
+            QTabWidget::addTab(new_tab, tab["n"].toString());
+            new_tab -> updateHeader();
+
+            if (tab.contains("pv")) {
+                new_tab -> getList() -> execItem(new_tab -> getList() -> fromPath(tab.value("pp").toString()), true);
+                if (tab.contains("pt")) {
+                    Player::instance() -> setStartPosition(tab.value("pt").toInt());
+//                  Player::instance() -> play();
+                }
+            }
+        }
+    }
+}
+
+void Tabber::save() {
+    Player::instance() -> pause();
+    store -> clear();
+    Tab * tab;
+    for(int i = 0; i < count(); i++) {
+        tab = (Tab*)(widget(i));
+        if (tab == commonPlaylist) {
+            // logic for common playlist // at this time common list did not save
+        } else {
+            store -> write(QString::number(i) + "h", tab -> toJSON(tab -> getName()));
+        }
+    }
+
+    store -> save();
+    Player::instance() -> stop();
+}
+
+
+
+void Tabber::updateIconSize() {
+    Tab * tab;
+    int dimension = Settings::instance() -> getIconHeight();
+    QSize size(dimension, dimension);
+    for(int i = 0; i < count(); i++) {
+        tab = (Tab*)(widget(i));
+        tab -> getList() -> setIconSize(size);
+    }
+}
 
 void Tabber::updateActiveTab(QWidget * last, QWidget * current) {
     int index;
@@ -53,131 +177,4 @@ void Tabber::handleTabCloseRequested(int index) {
     }
 
     removeTab(index);
-}
-
-
-Tabber::Tabber(QWidget *parent) : QTabWidget(parent) {
-//    tabber -> setTabBar(0); // TODO: custom tab bar
-    setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
-    setStyleSheet(QString(
-                          "QTreeView::indicator {"
-                          "    width: 18px;"
-                          "    height: 18px;"
-                          "}"
-                          "QTreeView::indicator:unchecked {"
-                          "  image: url(:/elems/check_blank);"
-                          "}"
-                          "QTreeView::indicator:checked {"
-                          "  image: url(:/elems/check_fill);"
-                          "}"
-                          "QTreeView::indicator:indeterminate:hover {"
-                          "  image: url(:/elems/check_trist);"
-                          "}"
-                          "QTreeView::indicator:indeterminate {"
-                          "  image: url(:/elems/check_fill);"
-                          "}"
-                          ));
-
-    commonPlaylist = 0;
-
-    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
-    connect(this, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
-    connect(Player::instance(), SIGNAL(playlistChanged(QWidget *, QWidget *)), this, SLOT(updateActiveTab(QWidget *, QWidget *)));
-
-    setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
-
-    store = new DataStore("tabs.json");   
-}
-
-Tabber::~Tabber() {
-    delete store;
-}
-
-int Tabber::addTab(QString name, CBHash settings) {
-    int index = QTabWidget::addTab(new Tab(settings, this), name);
-    (static_cast<Tab *>(widget(index))) -> updateHeader();
-    setCurrentIndex(index);
-    setStyleSheet("");
-    return index;
-}
-
-Tab * Tabber::toActiveTab() {
-    if (Player::instance() -> currentPlaylist()) {
-        Tab * tab = (Tab *)Player::instance() -> currentPlaylist() -> parentWidget();
-        setCurrentIndex(indexOf(tab));
-        return tab;
-    } else return 0;
-}
-
-Tab * Tabber::currentTab() {
-    return static_cast<Tab *>(currentWidget());
-}
-
-Tab * Tabber::commonTab() {
-    if (commonPlaylist == 0) {
-        TabDialog dialog;
-        CBHash settings = dialog.getSettings(); // get default settings
-        settings.insert("p", 1); // is playlist
-        settings.insert("t", 2); // is one level tree
-        settings.insert("c", 1); // is common
-
-        addTab("Common", settings);
-        commonPlaylist = currentTab();
-    } else {
-        setCurrentIndex(indexOf(commonPlaylist));
-    }
-
-    return commonPlaylist;
-}
-
-void Tabber::save() {
-    Player::instance() -> pause();
-    store -> clear();
-    Tab * tab;
-    for(int i = 0; i < count(); i++) {
-        tab = (Tab*)(widget(i));
-        if (tab == commonPlaylist) {
-            // logic for common playlist // at this time common list did not save
-        } else {
-            store -> write(QString::number(i) + "h", tab -> toJSON(tab -> getName()));
-        }
-    }
-
-    store -> save();
-    Player::instance() -> stop();
-}
-
-void Tabber::load() {
-    if (store -> state) {
-        QJsonObject tab;
-
-        foreach(QString key, store -> keys()) {
-            tab = store -> read(key).toObject();
-            Tab * new_tab = new Tab(tab, this);
-
-            if (new_tab -> getList() -> isCommon())
-                commonPlaylist = new_tab;
-
-            QTabWidget::addTab(new_tab, tab["n"].toString());
-            new_tab -> updateHeader();
-
-            if (tab.contains("pv")) {
-                new_tab -> getList() -> execItem(new_tab -> getList() -> fromPath(tab.value("pp").toString()), true);
-                if (tab.contains("pt")) {
-                    Player::instance() -> setStartPosition(tab.value("pt").toInt());
-//                  Player::instance() -> play();
-                }
-            }
-        }
-    }
-}
-
-void Tabber::updateIconSize() {
-    Tab * tab;
-    int dimension = Settings::instance() -> getIconHeight();
-    QSize size(dimension, dimension);
-    for(int i = 0; i < count(); i++) {
-        tab = (Tab*)(widget(i));
-        tab -> getList() -> setIconSize(size);
-    }
 }
