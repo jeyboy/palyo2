@@ -7,6 +7,7 @@ class TreeViewStyle : public QProxyStyle {
 public:
     void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const {
         if (element == QStyle::PE_IndicatorItemViewItemDrop) {
+            painter -> save();
             painter -> setRenderHint(QPainter::Antialiasing, true);
 
             QPalette palette;
@@ -25,6 +26,7 @@ public:
             } else {
                 painter -> drawRoundedRect(option -> rect, 5, 5);
             }
+            painter -> restore();
         } else {
             QProxyStyle::drawPrimitive(element, option, painter, widget);
         }
