@@ -40,7 +40,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QTabWidget" name="tabber">
+     <widget class="Tabber" name="tabber">
       <property name="minimumSize">
        <size>
         <width>100</width>
@@ -71,6 +71,13 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Tabber</class>
+   <extends>QTabWidget</extends>
+   <header>override/tabber.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>tabber</tabstop>
  </tabstops>

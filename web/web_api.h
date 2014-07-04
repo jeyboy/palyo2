@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QUrl>
+#include <QPixmap>
 
 #include "override/custom_network_access_manager.h"
 
@@ -22,16 +23,32 @@ public:
     virtual QString authUrl() const = 0;
     virtual QString proceedAuthResponse(const QUrl & url) = 0;
 
-    virtual bool isConnected() const { return false; }
+    virtual bool isConnected() { return false; }
 
     CustomNetworkAccessManager * manager() const;
+    CustomNetworkAccessManager * createManager();
+
+    QPixmap openRemoteImage(QString url);
+    QNetworkReply * syncRequest(QNetworkReply * m_http);
+
+    void clearData();
+    void addFriend(QString uid, QString name);
+    void addGroup(QString uid, QString name);
+
+    QHash<QString, QString> friendsList() const;
+    QHash<QString, QString> groupsList() const;
+
+    void fromJson(QJsonObject & hash);
+    QJsonObject & toJson(QJsonObject & root);
 
 protected:
     QJsonObject responseToJson(QByteArray data);
 //    QDomDocument toXml(QByteArray data);
 
-//    QByteArray sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts = 0);
     CustomNetworkAccessManager * netManager;
+
+    QHash<QString, QString> friends;
+    QHash<QString, QString> groups;
 
     QString error;
 };

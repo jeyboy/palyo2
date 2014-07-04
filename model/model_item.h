@@ -11,6 +11,7 @@
 /// i - item type
 /// l - tab items count
 /// n - tab name
+/// m - beat per minute
 /// p - path
 /// s - state
 /// set - tab settings
@@ -48,6 +49,8 @@
 #define CUE_ITEM 300
 #define VK_FOLDER 400
 #define VK_FILE 500
+#define SOUNDCLOUD_PLAYLIST 600
+#define SOUNDCLOUD_FILE 700
 
 //TODO: add list of extensions for extension serialization to extension index in list
 
@@ -74,6 +77,7 @@ public:
     bool hasInfo() const;
     void setInfo(QString newInfo);
 
+    void setBpm(int newBeat);
     void setDuration(QString newDuration);
     void setGenre(int newGenreID);
     void setPath(QString newPath);
@@ -84,12 +88,12 @@ public:
     QStringList getInfo() const;
 
     void accumulateUids(QHash<ModelItem*, QString> & store);
-    virtual QString toUID() { return ""; }
 
     virtual QUrl toUrl();
     virtual QJsonObject toJSON();
     ModelItem * toModelItem();
     QString toPath() const;
+    virtual QString toUID() { return ""; }
 
     ModelItem * parent();
 
@@ -139,6 +143,7 @@ protected:
     QString extension;
     QString info;
 
+    qint16 bpm;
     int size;
     QString duration;
     qint16 genreID;

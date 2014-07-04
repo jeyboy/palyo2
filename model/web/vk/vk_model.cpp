@@ -6,13 +6,7 @@
 
 ///////////////////////////////////////////////////////////
 
-VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) {
-    tabUid = uid;
-
-    if (hash == 0) {
-        VkApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
-    }
-
+VkModel::VkModel(QString uid, QJsonObject * hash, QObject *parent) : WebModel(uid, hash, parent) {
     connect(IpChecker::instance(), SIGNAL(ipChanged()), this, SLOT(refresh()));
     connect(Player::instance(), SIGNAL(remoteUnprocessed()), this, SLOT(refresh()));
 }
@@ -21,24 +15,20 @@ VkModel::~VkModel() {
 
 }
 
-QString VkModel::getTabUid() const {
-    return tabUid;
-}
-
 void VkModel::refresh() {
     emit showSpinner();
 //    clearAll();
 //    Library::instance() -> clearRemote();
 //    VkApi::instance() -> clearData();
     QApplication::processEvents();
-    VkApi::instance() -> getAudioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
+    VkApi::instance() -> audioList(FuncContainer(this, SLOT(proceedAudioList(QJsonObject &))), tabUid);
     QApplication::processEvents();
 }
 
 void VkModel::refreshWall() {
     emit showSpinner();
     QApplication::processEvents();
-    VkApi::instance() -> getWallAttachmentsList(FuncContainer(this, SLOT(proceedWallList(QJsonObject &))), tabUid);
+    VkApi::instance() -> wallMediaList(FuncContainer(this, SLOT(proceedWallList(QJsonObject &))), tabUid);
     QApplication::processEvents();
 }
 
@@ -80,8 +70,7 @@ void VkModel::proceedWallList(QJsonObject & hash) {
             filesAr = iterObj.value("audios").toArray();
 
             title = iterObj.value("title").toString();
-            if (title.isEmpty())
-                title = QDateTime::fromTime_t(iterObj.value("date").toInt()).toString();
+            title = QDateTime::fromTime_t(iterObj.value("date").toInt()).toString() + (title.isEmpty() ? "" : " : ") + title;
 
             folder = addFolder(title, rootFolder);
             proceedAudioList(filesAr, folder, store);
@@ -102,7 +91,7 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
     QJsonArray filesAr, ar = hash.value("albums").toArray();
     QJsonObject iterObj;
 
-    qDebug() << ar;
+//    qDebug() << ar;
 
     if (ar.count() > 0) {
         ModelItem * folder;
@@ -123,7 +112,7 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
 /////////////////////////////////////////////////////////////////////
     ar = hash.value("audio_list").toObject().value("items").toArray();
 
-    qDebug() << ar;
+//    qDebug() << ar;
 
     if (ar.count() > 0) {        
         proceedAudioList(ar, root(), store);
@@ -153,11 +142,7 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
         }
     }
 
-    qDebug() << "STORE LENGTH: " << store.count();
-    foreach(ModelItem * item, store.keys()) {
-        QModelIndex ind = index(item);
-        removeRow(ind.row(), ind.parent());
-    }
+    deleteRemoved(store);
 
     TreeModel::refresh();
     emit hideSpinner();
@@ -169,7 +154,7 @@ void VkModel::proceedAudioList(QJsonObject & hash) {
 void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent, QHash<ModelItem*, QString> & store) {
     QJsonObject fileIterObj;
     VkFile * newItem;
-    QString id, owner;
+    QString id, owner, key;
     QList<ModelItem *> items;
 
     foreach(QJsonValue obj, ar) {
@@ -179,8 +164,9 @@ void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent, QHash<ModelI
 
         owner = QString::number(fileIterObj.value("owner_id").toInt());
         id = QString::number(fileIterObj.value("id").toInt());
-        items = store.keys(ModelItem::buildUid(owner, id));
-        if (items.isEmpty()) {
+        key = ModelItem::buildUid(owner, id);
+        items = store.keys(key);
+        if (items.isEmpty() && !containsUID(key)) {
             newItem = new VkFile(
                         fileIterObj.value("url").toString(),
                         fileIterObj.value("artist").toString() + " - " + fileIterObj.value("title").toString(),
@@ -192,7 +178,7 @@ void VkModel::proceedAudioList(QJsonArray & ar, ModelItem * parent, QHash<ModelI
                         );
 
             appendRow(newItem -> toModelItem());
-            qDebug() << "NEW ITEM " << newItem -> data(0);
+//            qDebug() << "NEW ITEM " << newItem -> data(0);
         } else {
             foreach(ModelItem * item, items) {
 //                store.remove(item);
@@ -217,12 +203,4 @@ void VkModel::proceedAudioListUpdate(QJsonObject & obj, QHash<ModelItem *, QStri
         item = collation.key(uid);
         item -> setPath(iterObj.value("url").toString());
     }
-}
-
-void VkModel::errorReceived(int code, QString & msg) {
-    if (code != 13)
-        emit showMessage("This object did not have any items. Use wall parse from context menu");
-    else
-        emit showMessage("!!!!!!!!!!! Some shit happened :( " + msg);
-    emit hideSpinner();
 }

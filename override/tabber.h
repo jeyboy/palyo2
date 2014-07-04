@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QTabWidget>
 
-#include <data_store.h>
+#include "misc/data_store.h"
 #include "dialogs/tabdialog.h"
 
 //#include <QHash>
@@ -13,10 +13,10 @@
 
 #include "override/tab.h"
 
-class Tabber : public QWidget {
+class Tabber : public QTabWidget {
     Q_OBJECT
 public:
-    explicit Tabber(QTabWidget * container);
+    explicit Tabber(QWidget *parent = 0);
     ~Tabber();
 
     int addTab(QString name, CBHash settings);
@@ -26,13 +26,10 @@ public:
     void load();
     void save();
 
-    void updateIconSize(bool isBigIcon);
+    void updateIconSize();
 
 private:
-    void setNoTabsStyle();
-
     Tab * commonPlaylist;
-    QTabWidget * tabber;
     DataStore * store;
 
 private slots:

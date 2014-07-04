@@ -18,6 +18,8 @@
 #include "folder_item.h"
 #include "model/web/vk/vk_folder.h"
 #include "model/web/vk/vk_file.h"
+#include "model/web/soundcloud/soundcloud_playlist.h"
+#include "model/web/soundcloud/soundcloud_file.h"
 
 class ModelItem;
 
@@ -61,6 +63,7 @@ public:
     Qt::DropActions supportedDropActions() const;
     QStringList mimeTypes() const;
     QMimeData * mimeData(const QModelIndexList &indexes) const;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
 
     void refreshItem(ModelItem * item);
     void removeFolderPrebuild(ModelItem * temp);

@@ -6,5 +6,6 @@
 #define VIEW_TREE 3
 #define VIEW_VK 4
 #define VIEW_LEVEL_TREE_BREADCRUMB 5
+#define VIEW_SOUNDCLOUD 6
 
 #endif // VIEW_TYPES_H

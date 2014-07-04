@@ -22,6 +22,7 @@ class TabDialog : public QDialog {
 
 public:
   static CBHash VKSettings(int uid = 0);
+  static CBHash soundcloudSettings(int uid = 0);
 
   explicit TabDialog(QWidget *parent = 0);
   ~TabDialog();

@@ -72,6 +72,27 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
   selectedItemInfoTextColor = Settings::instance() -> getSelectedItemInfoTextColor();
   ui -> selectedItemInfoTextColorButton -> setStyleSheet("background-color: " + selectedItemInfoTextColor.name() + ";");
+
+  ui -> itemHeightSize -> setValue(Settings::instance() -> getItemHeight());
+
+  ui -> scrollButtonsCheck -> setChecked(Settings::instance() -> getScrollButtonUsage());
+  ui -> scrollButtonsCheck -> setDisabled(true);
+
+  spectrumColor = Settings::instance() -> getSpectrumColor();
+  ui -> spectrumColor -> setStyleSheet("background-color: " + spectrumColor.name() + ";");
+
+  spectrumColor2 = Settings::instance() -> getSpectrumColor2();
+  ui -> spectrumColor2 -> setStyleSheet("background-color: " + spectrumColor2.name() + ";");
+
+  ui -> spectrumMonocolorUse -> setChecked(Settings::instance() -> getMonocolorSpectrum());
+
+  ui -> spectrumBarsCount -> setValue(Settings::instance() -> getSpectrumBarsCount());
+  ui -> spectrumUpdateFrequecy -> setValue(Settings::instance() -> getSpectrumFreqRate());
+
+  ui -> spectrumHeight -> setValue(Settings::instance() -> getSpectrumHeight());
+
+  ui -> spectrumComboUse -> setChecked(Settings::instance() -> getSpectrumCombo());
+  ui -> spectrumMultiplier -> setValue(Settings::instance() -> getSpectrumMultiplier());
 }
 
 SettingsDialog::~SettingsDialog() {
@@ -143,7 +164,8 @@ void SettingsDialog::on_acceptButton_clicked() {
 
     Settings::instance() -> setSpoilOnActivation(ui -> spoilOnActivate -> isChecked());
 
-    iconSizeChanged = Settings::instance() -> isShowInfo() != ui -> showInfo -> isChecked();
+    iconSizeChanged = Settings::instance() -> isShowInfo() != ui -> showInfo -> isChecked()
+            || Settings::instance() -> getItemHeight() != ui -> itemHeightSize -> value();
     Settings::instance() -> setShowInfo(ui -> showInfo -> isChecked());
 
     Settings::instance() -> setUseGradient(ui -> useGradientCheck -> isChecked());
@@ -168,6 +190,22 @@ void SettingsDialog::on_acceptButton_clicked() {
 
     Settings::instance() -> setTabPosition(ui -> tabPositionSelect -> currentIndex());
 
+    Settings::instance() -> setItemHeight(ui -> itemHeightSize -> value());
+
+    Settings::instance() -> setScrollButtonUsage(ui -> scrollButtonsCheck -> isChecked());
+
+
+    Settings::instance() -> setSpectrumColor(spectrumColor);
+    Settings::instance() -> setSpectrumColor2(spectrumColor2);
+    Settings::instance() -> setMonocolorSpectrum(ui -> spectrumMonocolorUse -> isChecked());
+
+    Settings::instance() -> setSpectrumBarsCount(ui -> spectrumBarsCount -> value());
+    Settings::instance() -> setSpectrumFreqRate(ui -> spectrumUpdateFrequecy -> value());
+
+    Settings::instance() -> setSpectrumHeight(ui -> spectrumHeight -> value());
+    Settings::instance() -> setSpectrumCombo(ui -> spectrumComboUse -> isChecked());
+    Settings::instance() -> setSpectrumMultiplier(ui -> spectrumMultiplier -> value());
+
     accept();
 }
 
@@ -183,10 +221,6 @@ void SettingsDialog::on_browseButton_clicked() {
 bool SettingsDialog::isIconSizeChanged() const {
     return iconSizeChanged;
 }
-bool SettingsDialog::isBigIcon() const {
-    return ui -> showInfo -> isChecked();
-}
-
 
 void SettingsDialog::on_defaultColorButton_clicked() {
     if (execColorDialog(defaultColor))
@@ -231,6 +265,16 @@ void SettingsDialog::on_defaultItemInfoTextColorButton_clicked() {
 void SettingsDialog::on_selectedItemInfoTextColorButton_clicked() {
     if (execColorDialog(selectedItemInfoTextColor))
         ui -> selectedItemInfoTextColorButton -> setStyleSheet("background-color: " + selectedItemInfoTextColor.name() + ";");
+}
+
+void SettingsDialog::on_spectrumColor_clicked() {
+    if (execColorDialog(spectrumColor))
+        ui -> spectrumColor -> setStyleSheet("background-color: " + spectrumColor.name() + ";");
+}
+
+void SettingsDialog::on_spectrumColor2_clicked() {
+    if (execColorDialog(spectrumColor2))
+        ui -> spectrumColor2 -> setStyleSheet("background-color: " + spectrumColor2.name() + ";");
 }
 
 bool SettingsDialog::execColorDialog(QColor & color) {

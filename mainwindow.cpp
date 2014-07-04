@@ -1,109 +1,23 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QDesktopServices>
 #include <QDebug>
-
-QMenu * MainWindow::createPopupMenu () {   
-    //TODO: add label with name on panel
-    QMenu *menu = QMainWindow::createPopupMenu();
-    connect(menu, SIGNAL(hovered(QAction *)), this, SLOT(panelHighlight(QAction *)));
-    connect(menu, SIGNAL(aboutToHide()), this, SLOT(removePanelHighlight()));
-
-//    menu -> insertSeparator(menu->actions().first());
-    menu -> insertSection(menu -> actions().first(), "Panels list");
-
-    lastClickPoint = QCursor::pos();
-    QWidget * widget = this -> childAt(this -> mapFromGlobal(lastClickPoint));
-    QString widgetClassName = QString(widget -> metaObject() -> className());
-
-
-    if (widgetClassName == "ToolbarButton") {
-        underMouseButton = ((ToolbarButton*)widget);
-        underMouseBar = ((ToolBar*)underMouseButton -> parentWidget());
-    } else {
-        underMouseBar = ((ToolBar*)widget);
-    }
-
-    QAction * removeButtonAct = new QAction(QIcon(":drop_remove"), "Remove drop point", menu);
-    removeButtonAct -> setEnabled(widgetClassName == "ToolbarButton");
-    menu -> insertAction(menu->actions().first(), removeButtonAct);
-    connect(removeButtonAct, SIGNAL(triggered(bool)), this, SLOT(removePanelButtonTriggered()));
-
-
-    QAction * addButtonAct = new QAction(QIcon(":drop_add"), "Add drop point", menu);
-    addButtonAct -> setEnabled(widgetClassName == "ToolBar");
-    menu -> insertAction(menu->actions().first(), addButtonAct);
-    connect(addButtonAct, SIGNAL(triggered(bool)), this, SLOT(addPanelButtonTriggered()));
-
-    menu -> insertSection(menu->actions().first(), QIcon(":drops"),  "Drop points");
-
-    QAction * removePanelAct = new QAction(QIcon(":panel_remove"), "Remove panel", menu);
-    removePanelAct -> setEnabled(widgetClassName == "ToolBar");
-    connect(removePanelAct, SIGNAL(triggered(bool)), this, SLOT(removePanelTriggered()));
-    menu -> insertAction(menu->actions().first(), removePanelAct);
-
-    QAction * addPanelAct = new QAction(QIcon(":panel_add"), "Add panel", menu);
-    connect(addPanelAct, SIGNAL(triggered(bool)), this, SLOT(addPanelTriggered()));
-    menu -> insertAction(menu->actions().first(), addPanelAct);
-
-    menu -> insertSection(menu->actions().first(), QIcon(":panels"), "Panel");
-
-    //    activeBar
-
-    ////////////////////////// for bar movable fixing ////////////////////////////////
-    if (widgetClassName == "QToolBar" || widgetClassName == "ToolBar") {
-        activeBar = ((QToolBar*)widget);
-    } else {
-        activeBar = ((QToolBar*)widget -> parentWidget());
-    }
-
-    QAction * fixToolbarAct;
-
-    if (activeBar -> isMovable()) {
-        fixToolbarAct = new QAction(QIcon(":locked"), "Static bar", menu);
-    } else {
-        fixToolbarAct = new QAction(QIcon(":unlocked"), "Movable bar", menu);
-    }
-
-    menu -> insertAction(menu -> actions().first(), fixToolbarAct);
-    connect(fixToolbarAct, SIGNAL(triggered(bool)), this, SLOT(changeToolbarMovable()));
-
-    //////////////////////////////////////////////////////////////////////////////////
-
-    return menu;
-}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow) {
     ui -> setupUi(this);
 
+    QApplication::setWindowIcon(QIcon(":icon"));
     setWindowTitle("Playo");
     setAcceptDrops(true);
-    pal.setColor(QPalette::Button, QColor("#E1E0E0"));
-    highlighted = 0;
-    vkToolButton = 0;
 
-    QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
+    initialization();
+}
 
-    QVariant geometryState = stateSettings.value("geometry");
-    QVariant objState = stateSettings.value("windowState");
-
-    settings = new DataStore("settings.json");
-
-    IpChecker::instance(settings -> read("ip").toString());
-
-    VkApi::instance(settings -> read("vk").toObject());
-
-    if (geometryState.isValid())
-        restoreGeometry(geometryState.toByteArray());
-
-    ///////////////////////////////////////////////////////////
-    ///location correction (test needed)
-    ///////////////////////////////////////////////////////////
-
+void MainWindow::locationCorrection() {
     QDesktopWidget *desktop = QApplication::desktop();
     int left = x(), top = y();
-
 
     if (left >= desktop -> width())
         left = desktop -> width() - 50;
@@ -112,74 +26,58 @@ MainWindow::MainWindow(QWidget *parent) :
         top = desktop -> height() - 50;
 
     move(left, top);
+}
+
+void MainWindow::initialization() {
+    QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
+    settings = new DataStore("settings.json");
 
     ///////////////////////////////////////////////////////////
-    /// toolbars
+    ///services loading
     ///////////////////////////////////////////////////////////
+    IpChecker::instance(settings -> read("ip").toString());
 
-    activeBar = 0;
-    underMouseBar = 0;
-    underMouseButton = 0;
+    VkApi::instance(settings -> read("vk").toObject());
+    SoundcloudApi::instance(settings -> read("soundcloud").toObject());
 
     Settings::instance() -> fromJson(settings -> read("settings").toObject());
     SettingsDialog::registerHotkeys(this);
 
-    QJsonArray bars = settings -> read("bars").toArray();
+    QVariant geometryState = stateSettings.value("geometry");
+    if (geometryState.isValid())
+        restoreGeometry(geometryState.toByteArray());
 
-    if (bars.count() > 0) {
-        QJsonObject obj, actionObj;
-        QString barName;
-        QToolBar * curr_bar;
-
-        foreach(QJsonValue bar, bars) {
-            obj = bar.toObject();
-            barName = obj.value("title").toString();
-
-            if (barName == "Media") {
-                curr_bar = createMediaBar();
-            } else if (barName == "Media+") {
-                curr_bar = createAdditionalMediaBar();
-            } else if (barName == "Media+Position") {
-                curr_bar = createPositionMediaBar();
-            } else if (barName == "Media+Time") {
-                curr_bar = createTimeMediaBar();
-            } else if (barName == "Media+Volume") {
-                curr_bar = createVolumeMediaBar();
-            } else if (barName == "Controls") {
-                curr_bar = createControlToolBar();
-            } else {
-                curr_bar = createToolBar(barName);
-            }
-
-            addToolBar((Qt::ToolBarArea)obj.value("area").toInt(), curr_bar);
-
-            if (obj.contains("actions")) {
-                QJsonArray actions = obj.value("actions").toArray();
-
-                foreach(QJsonValue act, actions) {
-                    actionObj = act.toObject();
-                    addPanelButton(actionObj.value("name").toString(), actionObj.value("path").toString(), curr_bar);
-                }
-            }
-        }
-
-        if (objState.isValid())
-            restoreState(objState.toByteArray());
-    } else {
-        createToolbars();
-    }
     ///////////////////////////////////////////////////////////
+    ///location correction (test needed)
+    ///////////////////////////////////////////////////////////
+    locationCorrection();
+    ///////////////////////////////////////////////////////////
+    /// toolbars
+    ///////////////////////////////////////////////////////////
+    QJsonArray bars = settings -> read("bars").toArray();
+    ToolBars::instance(this) -> load(this, bars);
 
-    tabber = new Tabber(ui -> tabber);
-    ui -> tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
-    registrateTray();
-
-    QApplication::setWindowIcon(QIcon(":icon"));
+    QVariant objState = stateSettings.value("windowState");
+    if (objState.isValid())
+        restoreState(objState.toByteArray());
+    ///////////////////////////////////////////////////////////
+    ui -> tabber -> load();
 
     connect(Player::instance(), SIGNAL(itemChanged(ModelItem *, ModelItem *)), this, SLOT(outputActiveItem(ModelItem *, ModelItem *)));
 
-//    qDebug() << Library::instance() -> prepareName("5ugar, Eva Kade  (2012) http://vk.com/clubmusicthebestin - All Around feat Evil T (Andrea Bertolini Remix)");
+//    qDebug() << "LOL " << Library::instance() -> prepareName("dj fafo - medellin (dj fist remix) [exclusive-music-dj.com.ua.pl]");
+
     showActiveElem();
+    registrateTray();
+
+//    AudioPlayer player;
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("C:/Users/JB/Desktop/Dj Maze feat. Dina Rae - Falling In Love.mp3")); // ~70
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/katy_perry_-_last_friday_night_(zaycev.net).mp3")); // ~126
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/katy_perry_feat._kanye_west_-_e.t._(zaycev.net).mp3")); // ~76
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/Shakra – Trapped.mp3")); // ~105
+////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/Yellow Claw feat. Rochelle - Shotgun .mp3")); // ~145
+//    player.setMedia(QUrl::fromLocalFile("C:/Users/JB/Desktop/Akon_Ft_French_Montana_-_Hurt_Somebody.mp3"));
+//    player.play();
 }
 
 //TODO: menu finish needed
@@ -200,19 +98,6 @@ void MainWindow::registrateTray() {
     }
 }
 
-void MainWindow::createToolbars() {
-//    addDockWidget(Qt::LeftDockWidgetArea, createDockWidget());
-
-  addToolBar(Qt::TopToolBarArea, createMediaBar());
-  addToolBar(Qt::TopToolBarArea, createTimeMediaBar());
-  addToolBar(Qt::TopToolBarArea, createPositionMediaBar());
-  addToolBarBreak();
-  addToolBar(Qt::TopToolBarArea, createAdditionalMediaBar());
-  addToolBar(Qt::TopToolBarArea, createVolumeMediaBar());
-  addToolBar(Qt::TopToolBarArea, createControlToolBar());
-  addToolBar(Qt::BottomToolBarArea, createToolBar("Folder linker 1"));
-}
-
 QDockWidget * MainWindow::createDockWidget() {
 //    QDockWidget *dock = new QDockWidget(tr("Customers"), this);
 //    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -227,177 +112,6 @@ QDockWidget * MainWindow::createDockWidget() {
 //    dock->setWidget(customerList);
 //    addDockWidget(Qt::RightDockWidgetArea, dock);
 //    viewMenu->addAction(dock->toggleViewAction());
-}
-
-QToolBar* MainWindow::createMediaBar() {
-    QToolBar* ptb = new QToolBar("Media");
-    ptb -> setObjectName("_Media");
-
-    ptb -> setAutoFillBackground(true);
-    ptb -> setPalette(pal);
-
-    connect(ptb, SIGNAL(visibilityChanged(bool)), this, SLOT(mediaVisibilityChanged(bool)));
-//    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
-    ptb -> setMinimumHeight(30);
-
-
-    Player::instance() -> setPlayButton(ptb -> addAction(QIcon(":/play"), "Play"));
-    Player::instance() -> setPauseButton(ptb -> addAction(QIcon(":/pause"), "Pause"));
-    Player::instance() -> setStopButton(ptb -> addAction(QIcon(":/stop"), "Stop"));
-
-    ptb -> adjustSize();
-
-    return ptb;
-}
-
-QToolBar* MainWindow::createVolumeMediaBar() {
-    QToolBar* ptb = new QToolBar("Media+Volume");
-    ptb -> setObjectName("_Media+Volume");
-
-    ptb -> setAutoFillBackground(true);
-    ptb -> setPalette(pal);
-    ptb -> setMinimumHeight(30);
-
-    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
-
-    QAction * act = ptb -> addAction(QIcon(":/mute"), "Mute");
-
-    Player::instance() -> setMuteButton(act);
-
-    Slider * slider = new Slider();
-    slider -> setStyle(new SliderStyle());
-    slider -> setTickInterval(2000);
-    slider -> setOrientation(Qt::Horizontal);
-    slider -> setMinimumSize(30, 30);
-
-    Player::instance() -> setVolumeTrackBar(slider);
-    ptb -> addWidget(slider);
-    ptb -> adjustSize();
-
-    return ptb;
-}
-
-QToolBar* MainWindow::createTimeMediaBar() {
-    QToolBar* ptb = new QToolBar("Media+Time");
-    ptb -> setObjectName("_Media+Time");
-
-    ptb -> setAutoFillBackground(true);
-    ptb -> setPalette(pal);
-    ptb -> setMinimumHeight(30);
-
-    ClickableLabel * timeLabel = new ClickableLabel("00:00");
-//    connect(timeLabel, SIGNAL(mousePressEvent(QMouseEvent *ev)), Player::instance(), SLOT(invertTimeCountdown()));
-    timeLabel -> setStyleSheet("QLabel { font-weight: bold; font-size: 12px; }");
-    ptb -> addWidget(timeLabel);
-    Player::instance() -> setTimePanel(timeLabel);
-    ptb -> adjustSize();
-
-    return ptb;
-}
-
-QToolBar* MainWindow::createPositionMediaBar() {
-    QToolBar* ptb = new QToolBar("Media+Position");
-    ptb -> setObjectName("_Media+Position");
-    ptb -> setAutoFillBackground(true);
-    ptb -> setPalette(pal);
-    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
-    ptb -> setMinimumHeight(30);
-
-    Slider * slider = new Slider(ptb, true);
-    slider -> setStyle(new SliderStyle());
-    slider -> setTickInterval(60000);
-    slider -> setOrientation(Qt::Horizontal);
-    slider -> setMinimumSize(30, 30);
-
-    Player::instance() -> setTrackBar(slider);
-
-    ptb -> addWidget(slider);
-    ptb -> adjustSize();
-
-    return ptb;
-}
-
-QToolBar* MainWindow::createAdditionalMediaBar() {
-    QToolBar* ptb = new QToolBar("Media+");
-    ptb -> setObjectName("_Media+");
-    ptb -> setAutoFillBackground(true);
-    ptb -> setPalette(pal);
-//    connect(ptb, SIGNAL(visibilityChanged(bool)), this, SLOT(mediaVisibilityChanged(bool)));
-//    connect(ptb, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(mediaOrientationChanged(Qt::Orientation)));
-    ptb -> setMinimumHeight(30);
-
-    ptb -> addAction(QIcon(":/prev"), "Prev track", this, SLOT(prevItemTriggered()));
-    Player::instance() -> setLikeButton(ptb -> addAction(QIcon(":/like"), "Liked"));
-    ptb -> addAction(QIcon(":/next"), "Next track", this, SLOT(nextItemTriggered()));
-    ptb -> adjustSize();
-
-    return ptb;
-}
-
-QToolBar* MainWindow::createControlToolBar() {
-    QToolBar* ptb = new QToolBar("Controls");
-    ptb -> setObjectName("_Controls");
-    ptb -> setAutoFillBackground(true);
-    ptb -> setPalette(pal);
-//    ptb -> setMinimumWidth(75);
-
-    ptb -> addAction(QIcon(QString(":/add")), "Add new local tab", this, SLOT(showAttTabDialog()));
-    vkToolButton = createVkButton(vkToolButton);
-    ptb -> addWidget(vkToolButton);
-//    ptb -> addAction(QIcon(VkApi::instance() -> isConnected() ? ":/add_vk_on" : ":/add_vk"), "Add VK(vk.com) tab", this, SLOT(showVKTabDialog()));
-    ptb -> addSeparator();
-    ptb -> addAction(QIcon(QString(":/settings")), "Common setting", this, SLOT(showSettingsDialog()));
-    ptb -> adjustSize();
-
-    return ptb;
-}
-
-QToolBar* MainWindow::createToolBar(QString name) {
-    ToolBar* ptb = new ToolBar(name, this);
-    ptb -> setToolButtonStyle(Qt::ToolButtonTextOnly);
-    connect(ptb, SIGNAL(folderDropped(QString, QString)), this, SLOT(folderDropped(QString, QString)));
-
-//    ptb->addAction(QPixmap(QString(":/like")), "1", this, SLOT(slotNoImpl()));
-//    ptb->addAction(QPixmap(QString(":/next")), "2", this, SLOT(slotNoImpl()));
-//    ptb->addSeparator();
-//    ptb->addAction(QPixmap(QString(":/like")), "3", this, SLOT(slotNoImpl()));
-//    ptb->addAction(QPixmap(QString(":/next")), "4", this, SLOT(slotNoImpl()));
-
-//    toolbar->setMovable(false);
-
-//    QToolButton * button = new QToolButton(this);
-//    toolbar->addWidget(button);
-
-//    //way 1: It display a picture
-//    toolbar->setStyleSheet("background-image: url(:/images/toolbarBg)");
-
-//    ptb -> adjustSize();
-//    connect(ptb, SIGNAL(eventTriggered(QEvent *)), this, SLOT(ToolbarEvent(QEvent *)));
-    return ptb;
-}
-
-QToolButton * MainWindow::createVkButton(QToolButton * vkButton) {
-    if (vkButton == 0) {
-        vkButton = new QToolButton(this);
-    }
-    else
-        disconnect(vkButton, SIGNAL(clicked()), this, SLOT(showVKTabDialog()));
-
-    if (VkApi::instance() -> isConnected()) {
-        vkButton -> setIcon(QIcon(":/add_vk_on"));
-        vkButton -> setPopupMode(QToolButton::InstantPopup);
-
-        QMenu * vkMenu = new QMenu(vkButton);
-        vkMenu -> addAction("Open your tab", this, SLOT(showVKTabDialog()));
-//        vkMenu.addAction("Parse/refresh current tab", tabber -> currentTab() -> getList() -> getModel(), SLOT(refresh()));
-        vkMenu -> addAction("Open friend/group tab", this, SLOT(showVKRelTabDialog()));
-        vkButton -> setMenu(vkMenu);
-    } else {
-        vkButton -> setIcon(QIcon(":/add_vk"));
-        connect(vkButton, SIGNAL(clicked()), this, SLOT(showVKTabDialog()));
-    }
-
-    return vkButton;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent * event) {
@@ -425,57 +139,9 @@ void MainWindow::closeEvent(QCloseEvent *event) {
         settings -> write("ip", IpChecker::instance() -> currentIp());
 
     settings -> write("vk", VkApi::instance() -> toJson());
+    settings -> write("soundcloud", SoundcloudApi::instance() -> toJson());
 
-    QList<QToolBar *> toolbars = this -> findChildren<QToolBar *>();
-    qDebug() << toolbars.length();
-
-    if (toolbars.length() > 0) {
-        QJsonArray toolbar_array = QJsonArray();
-        QJsonObject curr_tab;
-        QList<QAction*> actions;
-        ToolbarButton* button;
-
-        foreach(QToolBar * bar, toolbars) {
-            curr_tab = QJsonObject();
-
-            curr_tab.insert("area", toolBarArea(bar));
-            curr_tab.insert("title", bar -> windowTitle());
-
-            if (bar -> windowTitle() != "Media"
-                    && bar -> windowTitle() != "Media+"
-                    && bar -> windowTitle() != "Media+Position"
-                    && bar -> windowTitle() != "Media+Time"
-                    && bar -> windowTitle() != "Media+Volume"
-                    && bar -> windowTitle() != "Controls"
-               ) {
-                actions = bar -> actions();
-                if (actions.length() > 0) {
-                    QJsonArray action_array = QJsonArray();
-                    QJsonObject curr_act;
-
-                    foreach(QAction * act, actions) {
-                        if (QString(act -> metaObject() -> className()) == "QWidgetAction") {
-                            curr_act = QJsonObject();
-                            button = (ToolbarButton*) bar -> widgetForAction(act);
-
-                            curr_act.insert("path", button -> path);
-                            curr_act.insert("name", button -> text());
-                        }
-                        action_array.append(curr_act);
-                    }
-
-                    if (action_array.count() > 0)
-                        curr_tab.insert("actions", action_array);
-                }
-            }
-
-            toolbar_array.append(curr_tab);
-
-    //        bar -> toolButtonStyle();
-        }
-
-        settings -> write("bars", toolbar_array);
-    }
+    ToolBars::instance(this) -> save(this, settings);
 
     settings -> write("settings", Settings::instance() -> toJson());
 
@@ -486,10 +152,10 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     stateSettings.setValue("windowState", saveState());
     stateSettings.sync();
 
-    tabber -> save();
+    ui -> tabber -> save();
 
     m_tray.hide();
-    event ->accept();
+    event -> accept();
 }
 
 MainWindow::~MainWindow() {
@@ -504,33 +170,18 @@ MainWindow::~MainWindow() {
 
         Settings::close();
         HotkeyManager::close();
+        Genre::close();
 
         VkApi::close();
+        SoundcloudApi::close();
+        ToolBars::close();
     ///////////////////////////////////////////////
 
     delete settings;
-    delete tabber;
-    delete underMouseBar;
-    if (vkToolButton)
-        delete vkToolButton -> menu();
-    delete vkToolButton;
 }
 
-void MainWindow::addPanelButton(QString name, QString path, QToolBar * bar) {
-    ToolbarButton * button = new ToolbarButton(name, path);
-    bar -> addWidget(button);
-    connect(button, SIGNAL(clicked()), this, SLOT(openFolderTriggered()));
-}
-
-bool MainWindow::isToolbarNameUniq(QString name) {
-    QList<QToolBar *> toolbars = this -> findChildren<QToolBar *>();
-
-    foreach(QToolBar * bar, toolbars) {
-        if (bar -> windowTitle() == name)
-            return false;
-    }
-
-    return true;
+QMenu * MainWindow::createPopupMenu () {
+    return ToolBars::instance(this) -> improvePopupMenu(this, QMainWindow::createPopupMenu());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -538,73 +189,16 @@ bool MainWindow::isToolbarNameUniq(QString name) {
 /////////////////////////////////////////////////////////////////////////////////////
 
 void MainWindow::nextItemTriggered() {
-    if (tabber -> currentTab())
-        tabber -> currentTab() -> getList() -> proceedNext();
+    if (ui -> tabber -> currentTab())
+        ui -> tabber -> currentTab() -> getView() -> proceedNext();
 }
 void MainWindow::nextItemWithDelTriggered() {
-    if (tabber -> currentTab())
-        tabber -> currentTab() -> getList() -> deleteCurrentProceedNext();
+    if (ui -> tabber -> currentTab())
+        ui -> tabber -> currentTab() -> getView() -> deleteCurrentProceedNext();
 }
 void MainWindow::prevItemTriggered() {
-    if (tabber -> currentTab())
-        tabber -> currentTab() -> getList() -> proceedPrev();
-}
-
-void MainWindow::folderDropped(QString name, QString path) {
-    addPanelButton(name, path, (QToolBar*)QObject::sender());
-}
-
-void MainWindow::panelHighlight(QAction *action) {
-    QString widgetClassName = QString(action -> parentWidget() -> metaObject() -> className());
-
-    if (highlighted != 0)
-        emit removePanelHighlight();
-
-    if (widgetClassName == "ToolBar" || widgetClassName == "QToolBar") {
-        highlighted = action -> parentWidget();
-        highlighted -> setStyleSheet(
-                    "QToolBar {"
-                      "border: 2px dashed red;"
-                    "}"
-                   );
-    }
-}
-
-void MainWindow::removePanelHighlight() {
-    if (highlighted != 0) {
-        highlighted -> setStyleSheet("");
-        highlighted = 0;
-    }
-}
-
-void MainWindow::addPanelTriggered() {
-    ToolbarDialog dialog(this);
-
-    while (dialog.exec() == QDialog::Accepted) {
-        if (isToolbarNameUniq(dialog.getName())) {
-            addToolBar(Qt::BottomToolBarArea, createToolBar(dialog.getName()));
-            return;
-        }
-    }
-}
-
-void MainWindow::removePanelTriggered() {
-    removeToolBar(underMouseBar);
-    delete underMouseBar;
-    underMouseBar = 0;
-}
-
-void MainWindow::addPanelButtonTriggered() {
-    ToolbarButtonDialog dialog(this);
-
-    if (dialog.exec() == QDialog::Accepted) {
-        addPanelButton(dialog.getName(), dialog.getPath(), underMouseBar);
-    }
-}
-
-void MainWindow::removePanelButtonTriggered() {
-    QToolBar * bar = (QToolBar *)underMouseButton -> parentWidget();
-    bar -> removeAction(bar -> actionAt(bar -> mapFromGlobal(lastClickPoint)));
+    if (ui -> tabber -> currentTab())
+        ui -> tabber -> currentTab() -> getView() -> proceedPrev();
 }
 
 void MainWindow::openFolderTriggered() {
@@ -612,42 +206,39 @@ void MainWindow::openFolderTriggered() {
     QDesktopServices::openUrl(QUrl::fromLocalFile(button -> path));
 }
 
-void MainWindow::mediaVisibilityChanged(bool visible) {
-  if (visible == false)
-    ((QToolBar*)QObject::sender()) -> setVisible(true);
-}
-
-void MainWindow::mediaOrientationChanged(Qt::Orientation orientation) {
-    QToolBar * bar = (QToolBar*)QObject::sender();
-
-    QList<QSlider *> orientables = bar -> findChildren<QSlider *>();
-
-    foreach(QSlider * orientable, orientables) {
-        orientable -> setOrientation(orientation);
-//        orientable -> setInvertedAppearance(orientation == Qt::Vertical);
-    }
-}
-
 void MainWindow::showActiveElem() {
-    Tab * tab = tabber -> toActiveTab();
+    Tab * tab = ui -> tabber -> toActiveTab();
     if (tab)
-        tab -> getList() -> scrollToActive();
+        tab -> getView() -> scrollToActive();
 }
 
 void MainWindow::showSettingsDialog() {
     SettingsDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
         if (dialog.isIconSizeChanged())
-            tabber -> updateIconSize(dialog.isBigIcon());
+            ui -> tabber -> updateIconSize();
 
         ui -> tabber -> setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
+        ui -> tabber -> setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
+        ToolBars::instance(this) -> getSpectrum() -> bandCountChanged(Settings::instance() -> getSpectrumBarsCount());
+        ToolBars::instance(this) -> getSpectrum()  -> heightChanged(Settings::instance() -> getSpectrumHeight());
+        Player::instance() -> setSpectrumFreq(Settings::instance() -> getSpectrumFreqRate());
     }
 }
 
 void MainWindow::showVKRelTabDialog() {
-    VkRelationDialog dialog(this);
+    RelationDialog dialog(VkApi::instance(), this);
     if (dialog.exec() == QDialog::Accepted) {
-        tabber -> addTab("VK [" + dialog.getName() + "]", TabDialog::VKSettings(dialog.getId()));
+        ui -> tabber -> addTab("VK [" + dialog.getName() + "]", TabDialog::VKSettings(dialog.getId()));
+    } else {
+//        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+    }
+}
+
+void MainWindow::showSoundcloudRelTabDialog() {
+    RelationDialog dialog(SoundcloudApi::instance(), this);
+    if (dialog.exec() == QDialog::Accepted) {
+        ui -> tabber -> addTab("SC [" + dialog.getName() + "]", TabDialog::soundcloudSettings(dialog.getId()));
     } else {
 //        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
     }
@@ -655,30 +246,43 @@ void MainWindow::showVKRelTabDialog() {
 
 void MainWindow::showVKTabDialog() {
     if (VkApi::instance() -> isConnected()) {
-        tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
+        ui -> tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
     } else {
         WebDialog dialog(this, VkApi::instance(), "VK auth");
         if (dialog.exec() == QDialog::Accepted) {
-            tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
-            vkToolButton = createVkButton(vkToolButton);
-//            ((QAction *)sender()) -> setIcon(QIcon(":/add_vk_on"));
+            ui -> tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
+            ToolBars::instance(this) -> initiateVkButton();
         } else {
             QMessageBox::information(this, "VK", VkApi::instance() -> getError());
         }
     }
 }
 
+void MainWindow::showSoundcloudTabDialog() {
+    if (SoundcloudApi::instance() -> isConnected()) {
+        ui -> tabber -> addTab("SC [YOU]", TabDialog::soundcloudSettings());
+    } else {
+        WebDialog dialog(this, SoundcloudApi::instance(), "Soundcloud auth");
+        if (dialog.exec() == QDialog::Accepted) {
+            ui -> tabber -> addTab("SC [YOU]", TabDialog::soundcloudSettings());
+            ToolBars::instance(this) -> initiateSoundcloudButton();
+        } else {
+            QMessageBox::information(this, "Soundcloud", SoundcloudApi::instance() -> getError());
+        }
+    }
+}
+
 void MainWindow::outputActiveItem(ModelItem *, ModelItem * to) {
     if (to && !this -> isActiveWindow())
-        m_tray.showMessage("(" + QString::number(tabber -> currentTab() -> getList() -> itemsCount()) + ") Now played:", to -> data(TITLEID).toString(), QSystemTrayIcon::Information, 20000);
+        m_tray.showMessage("(" + QString::number(ui -> tabber -> currentTab() -> getView() -> itemsCount()) + ") Now played:", to -> data(TITLEID).toString(), QSystemTrayIcon::Information, 20000);
 }
 
 void MainWindow::putToCommonTab(QList<QUrl> urls) {
-    tabber -> commonTab() -> getList() -> dropProcession(urls);
-    tabber -> commonTab() -> getList() -> getModel() -> refresh();
+    ui -> tabber -> commonTab() -> getView() -> dropProcession(urls);
+    ui -> tabber -> commonTab() -> getView() -> getModel() -> refresh();
 
     if (!Player::instance() -> isPlayed()) {
-        tabber -> commonTab() -> getList() -> proceedNext();
+        ui -> tabber -> commonTab() -> getView() -> proceedNext();
     }
 }
 
@@ -696,14 +300,14 @@ void MainWindow::showAttTabDialog(Tab * tab) {
   TabDialog dialog(this);
   if(tab) {
       qDebug() << tab -> getName();
-      dialog.setSettings(tab -> getList() -> getSettings());
+      dialog.setSettings(tab -> getView() -> getSettings());
       dialog.setName(tab -> getName());
 
       while(true) {
           if (dialog.exec() == QDialog::Accepted) {
-              if (isToolbarNameUniq(dialog.getName())) {
+              if (ToolBars::instance(this) -> isToolbarNameUniq(this, dialog.getName())) {
                   tab -> setName(dialog.getName());
-                  tab -> getList() -> setSettings(dialog.getSettings());
+                  tab -> getView() -> setSettings(dialog.getSettings());
                   return;
               }
           } else return;
@@ -711,8 +315,8 @@ void MainWindow::showAttTabDialog(Tab * tab) {
   } else {
       while(true) {
           if (dialog.exec() == QDialog::Accepted) {
-              if (isToolbarNameUniq(dialog.getName())) {
-                  tabber -> addTab(dialog.getName(), dialog.getSettings());
+              if (ToolBars::instance(this) -> isToolbarNameUniq(this, dialog.getName())) {
+                  ui -> tabber -> addTab(dialog.getName(), dialog.getSettings());
                   return;
               }
           } else return;
@@ -721,15 +325,10 @@ void MainWindow::showAttTabDialog(Tab * tab) {
 }
 
 void MainWindow::showAttCurrTabDialog() {
-    emit showAttTabDialog(tabber -> currentTab());
+//    emit showAttTabDialog(tabber -> currentTab());
 
-//    if (tabber -> currentTab() -> isEditable())
-//        emit showAttTabDialog(tabber -> currentTab());
-//    else
-//        QMessageBox::warning(this, "Settings", "This tab type did not have any settings...");
-}
-
-void MainWindow::changeToolbarMovable() {
-    activeBar -> setMovable(!activeBar -> isMovable());
-    activeBar -> repaint();
+    if (ui -> tabber -> currentTab() -> isEditable())
+        emit showAttTabDialog(ui -> tabber -> currentTab());
+    else
+        QMessageBox::warning(this, "Settings", "This tab type did not have any settings...");
 }

@@ -93,6 +93,40 @@ public:
     int getTabPosition();
     void setTabPosition(int newPositionsType);
 
+    int getItemHeight();
+    void setItemHeight(int newHeight);
+
+    bool getScrollButtonUsage();
+    void setScrollButtonUsage(bool use);
+
+    bool getMonocolorSpectrum();
+    void setMonocolorSpectrum(bool use);
+
+    QColor getSpectrumColor();
+    void setSpectrumColor(QColor newColor);
+
+    QColor getSpectrumColor2();
+    void setSpectrumColor2(QColor newColor);
+
+    int getSpectrumFreqRate();
+    void setSpectrumFreqRate(int newRate);
+
+    int getSpectrumBarsCount();
+    void setSpectrumBarsCount(int newCount);
+
+    int getSpectrumHeight();
+    void setSpectrumHeight(int newHeight);
+
+    bool getSpectrumCombo();
+    void setSpectrumCombo(bool newState);
+
+    int getSpectrumMultiplier();
+    void setSpectrumMultiplier(int newMultiplier);
+
+    int getTotalItemHeight();
+
+    int getIconHeight();
+
     QList<HotkeyModelItem *> * getHotKeys() const;
     void setHotKeys(QList<HotkeyModelItem *>);
 
@@ -128,12 +162,15 @@ private:
     bool showMetric;
     bool spoilOnActivation;
     bool useGradient;
+    bool useScrollButtons;
     QJsonObject hotkeys;
     QHash<int, QString> humanizeHotkeyText;
 
     QColor defaultColor1, listenedColor1, likedColor1, playedColor1, folderColor1;
 
     int tabPosition;
+
+    int itemHeight;
 
     QString itemFontName;
     int itemFontSize;
@@ -144,6 +181,15 @@ private:
     int itemInfoFontSize;
     QColor itemInfoColor;
     QColor selectedItemInfoColor;
+
+    QColor spectrumColor;
+    QColor spectrumColor2;
+    int spectrumMultiplier;
+    int spectrumFreqRate;
+    int spectrumBarsCount;
+    int spectrumHeight;
+    bool monocolorSpectrum;
+    bool comboSpectrum;
 };
 
 #endif // SETTINGS_H

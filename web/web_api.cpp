@@ -1,7 +1,7 @@
 #include "web/web_api.h"
 
 WebApi::WebApi() {
-    netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
+    netManager = createManager();
 }
 
 WebApi::~WebApi() {
@@ -14,6 +14,92 @@ QString WebApi::getError() {
 
 CustomNetworkAccessManager * WebApi::manager() const {
     return netManager;
+}
+
+CustomNetworkAccessManager * WebApi::createManager() {
+    return new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
+}
+
+QPixmap WebApi::openRemoteImage(QString url) {
+    CustomNetworkAccessManager * currManager = createManager();
+    QNetworkReply * reply;
+    QVariant possibleRedirectUrl;
+    QByteArray ar;
+
+    while(true) {
+        reply = currManager -> get(QNetworkRequest(QUrl(url)));
+        reply = syncRequest(reply);
+        possibleRedirectUrl = reply -> attribute(QNetworkRequest::RedirectionTargetAttribute);
+        if (possibleRedirectUrl.isValid()) {
+            url = possibleRedirectUrl.toUrl().toString();
+            reply -> close();
+            delete reply;
+        } else {
+            ar = reply -> readAll();
+            reply -> close();
+            currManager;
+            break;
+        }
+    }
+
+    QImage image;
+    image.loadFromData(ar);
+    return QPixmap::fromImage(image);
+}
+
+QNetworkReply * WebApi::syncRequest(QNetworkReply * m_http) {
+    QEventLoop loop;
+    connect(m_http, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+    return m_http;
+}
+
+void WebApi::clearData() {
+    friends.clear();
+    groups.clear();
+}
+
+void WebApi::addFriend(QString uid, QString name) {
+    friends.insert(uid, name);
+}
+void WebApi::addGroup(QString uid, QString name) {
+    groups.insert(uid, name);
+}
+
+QHash<QString, QString> WebApi::friendsList() const {
+    return friends;
+}
+QHash<QString, QString> WebApi::groupsList() const {
+    return groups;
+}
+
+void WebApi::fromJson(QJsonObject & hash) {
+    QJsonObject ar = hash.value("friends").toObject();
+
+    foreach(QString key, ar.keys()) {
+        addFriend(key, ar.value(key).toString());
+    }
+
+    ar = hash.value("groups").toObject();
+
+    foreach(QString key, ar.keys()) {
+        addGroup(key, ar.value(key).toString());
+    }
+}
+QJsonObject & WebApi::toJson(QJsonObject & root) {
+    QJsonObject friendsJson;
+    foreach(QString key, friends.keys()) {
+        friendsJson.insert(key, QJsonValue(friends.value(key)));
+    }
+    root.insert("friends", friendsJson);
+
+    QJsonObject groupsJson;
+    foreach(QString key, groups.keys()) {
+        groupsJson.insert(key, QJsonValue(groups.value(key)));
+    }
+    root.insert("groups", groupsJson);
+
+    return root;
 }
 
 QJsonObject WebApi::responseToJson(QByteArray data) {
@@ -38,21 +124,4 @@ QJsonObject WebApi::responseToJson(QByteArray data) {
 ////         list.append(url);
 ////         audioElement = audioElement.nextSibling(); //next element
 ////    }
-//}
-
-//QByteArray WebApi::sendRequest(QString sendMethod, QString request, QHttpMultiPart * parts) {
-//    QNetworkReply * reply;
-//    QNetworkRequest req(request);
-
-//    if (sendMethod == "get") {
-//        reply = netManager -> get(req);
-//    } else if (sendMethod == "post") {
-//        reply = netManager -> post(req, parts);
-//    } else if (sendMethod == "put") {
-//        reply = netManager -> put(req, parts);
-//    } if (sendMethod == "delete") {
-//        reply = netManager -> deleteResource(req);
-//    }
-
-//    return reply -> readAll();
 //}

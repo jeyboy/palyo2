@@ -3,20 +3,17 @@
 
 #include "web/ip_checker.h"
 #include "web/socials/vk_api.h"
-#include "model/model.h"
-#include "model/tree/tree_model.h"
+#include "model/web/web_model.h"
 #include "media/duration.h"
 
-class VkModel : public TreeModel {
+class VkModel : public WebModel {
     Q_OBJECT
 
 public:
     VkModel(QString uid, QJsonObject * hash = 0, QObject *parent = 0);
     ~VkModel();
 
-//    ModelItem * buildPath(QString path);
-    WebApi * getApi() { return VkApi::instance(); }
-    QString getTabUid() const;
+    inline WebApi * getApi() { return VkApi::instance(); }
 public slots:
     void refresh();
     void refreshWall();
@@ -27,9 +24,6 @@ protected slots:
     void proceedAudioList(QJsonObject &);
     void proceedAudioList(QJsonArray &, ModelItem *, QHash<ModelItem*, QString> &);
     void proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);
-    void errorReceived(int, QString &);
-protected:
-    QString tabUid;
 };
 
 

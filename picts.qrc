@@ -39,6 +39,8 @@
         <file alias="locked">icons/locked.png</file>
         <file alias="unlocked">icons/unlocked.png</file>
         <file alias="add_vk_on">icons/add_vk_on.png</file>
+        <file alias="add_soundcloud">icons/add_soundcloud.png</file>
+        <file alias="add_soundcloud_on">icons/add_soundcloud_on.png</file>
     </qresource>
     <qresource prefix="/ext">
         <file alias="_aac">icons/ext/Icon_1.ico</file>
@@ -53,5 +55,14 @@
         <file alias="_playlist">icons/ext/Icon_10.ico</file>
         <file alias="_wav">icons/ext/Icon_12.ico</file>
         <file alias="_wma">icons/ext/Icon_13.ico</file>
+    </qresource>
+    <qresource prefix="/elems">
+        <file alias="check_blank">icons/elems/check_blank.png</file>
+        <file alias="check_fill">icons/elems/check_fill.png</file>
+        <file alias="check_trist">icons/elems/check_trist.png</file>
+        <file alias="check_blank_disabled">icons/elems/check_blank_disabled.png</file>
+        <file alias="check_fill_disabled">icons/elems/check_fill_disabled.png</file>
+        <file alias="next">icons/elems/next.png</file>
+        <file alias="prev">icons/elems/prev.png</file>
     </qresource>
 </RCC>

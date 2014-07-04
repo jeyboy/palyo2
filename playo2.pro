@@ -27,7 +27,7 @@ CONFIG += static
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    data_store.cpp \
+    misc/data_store.cpp \
     misc/icon_provider.cpp \
     misc/hotkey_manager.cpp \
     misc/settings.cpp \
@@ -35,6 +35,7 @@ SOURCES += main.cpp\
     web/ip_checker.cpp \
     web/web_api.cpp \
     web/socials/vk_api.cpp \
+    web/socials/soundcloud_api.cpp \
     globalshortcut/qxtglobalshortcut.cpp \
     dialogs/tabdialog.cpp \
     dialogs/toolbardialog.cpp \
@@ -60,6 +61,10 @@ SOURCES += main.cpp\
     model/web/vk/vk_view.cpp \
     model/web/vk/vk_folder.cpp \
     model/web/vk/vk_file.cpp \
+    model/web/soundcloud/soundcloud_model.cpp \
+    model/web/soundcloud/soundcloud_view.cpp \
+    model/web/soundcloud/soundcloud_playlist.cpp \
+    model/web/soundcloud/soundcloud_file.cpp \
     model/model_item_delegate.cpp \
     model/model_item_state.cpp \
     model/hotkey_model/hotkey_delegate.cpp \
@@ -79,11 +84,19 @@ SOURCES += main.cpp\
     override/custom_network_access_manager.cpp \
     override/slider.cpp \
     single_application.cpp \
-    dialogs/vkrelationdialog.cpp \
-    web/download.cpp
+    web/download.cpp \
+    dialogs/relationdialog.cpp \
+    override/spectrum.cpp \
+    toolbars.cpp \
+    web/auth_chemas/teu_auth.cpp \
+    web/socials/vk_api_private.cpp \
+    web/api_process.cpp \
+    dialogs/captchadialog.cpp \
+    model/web/deleted_list.cpp \
+    model/web/web_model.cpp
 
 HEADERS  += mainwindow.h \
-    data_store.h \
+    misc/data_store.h \
     misc/icon_provider.h \
     misc/hotkey_manager.h \
     misc/hotkey_types.h \
@@ -92,6 +105,7 @@ HEADERS  += mainwindow.h \
     web/ip_checker.h\
     web/web_api.h\
     web/socials/vk_api.h\
+    web/socials/soundcloud_api.h \
 #    file_registration/file_registration.h \
     globalshortcut/qxtglobal.h \
     globalshortcut/qxtglobalshortcut.h \
@@ -120,6 +134,10 @@ HEADERS  += mainwindow.h \
     model/web/vk/vk_view.h \
     model/web/vk/vk_folder.h \
     model/web/vk/vk_file.h \
+    model/web/soundcloud/soundcloud_model.h \
+    model/web/soundcloud/soundcloud_view.h \
+    model/web/soundcloud/soundcloud_playlist.h \
+    model/web/soundcloud/soundcloud_file.h \
     model/model_item_delegate.h \
     model/model_item_state.h \
     model/hotkey_model/hotkey_delegate.h \
@@ -140,9 +158,18 @@ HEADERS  += mainwindow.h \
     override/custom_network_access_manager.h \
     override/slider.h \
     single_application.h \
-    dialogs/vkrelationdialog.h \
     misc/func_container.h \
-    web/download.h
+    web/download.h \
+    dialogs/relationdialog.h \
+    override/spectrum.h \
+    toolbars.h \
+    web/auth_chemas/teu_auth.h \
+    web/socials/vk_api_private.h \
+    web/api_process.h \
+    dialogs/captchadialog.h \
+    model/web/deleted_list.h \
+    override/tree_view_style.h \
+    model/web/web_model.h
     model/view_types.h
 
 unix:!mac {
@@ -177,7 +204,8 @@ FORMS    += mainwindow.ui \
     dialogs/toolbarbuttondialog.ui \
     dialogs/web_dialog.ui \
     dialogs/settings_dialog.ui \
-    dialogs/vkrelationdialog.ui
+    dialogs/relationdialog.ui \
+    dialogs/captchadialog.ui
 
 RESOURCES += \
     picts.qrc

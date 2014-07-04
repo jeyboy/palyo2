@@ -88,6 +88,8 @@ Slider::Slider(QWidget * parent, bool isPositionSlider) : QSlider(parent) {
     ));
 }
 
+
+//TODO: problem with download line start if bar is not movable
 void Slider::paintEvent(QPaintEvent * event) {
     QSlider::paintEvent(event);
 
@@ -126,8 +128,8 @@ void Slider::paintEvent(QPaintEvent * event) {
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(rect.x() - 10, rect.y(), rect.width() - 1, 3);
-                p.fillRect(rect.x() - 10, rect.y(), (rect.width() - 1) * pos, 3, fillColor);
+                p.drawRect(0, rect.y(), rect.width() - 1, 3);
+                p.fillRect(0, rect.y(), (rect.width() - 1) * pos, 3, fillColor);
             }
         }
 
@@ -148,8 +150,8 @@ void Slider::paintEvent(QPaintEvent * event) {
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(rect.x(), rect.y() - 10, 3, rect.height() - 1);
-                p.fillRect(rect.x(), rect.y() - 10 + rect.height(), 3, -((rect.height() - 1) * pos), fillColor);
+                p.drawRect(rect.x(), 0, 3, rect.height() - 1);
+                p.fillRect(rect.x(), rect.height(), 3, -((rect.height() - 1) * pos), fillColor);
             }
         }
     }
@@ -171,6 +173,18 @@ void Slider::paintEvent(QPaintEvent * event) {
 }
 
 void Slider::mouseMoveEvent(QMouseEvent * ev) {
-    QPointF p = ev -> localPos();
-    QToolTip::showText(ev -> globalPos(), Duration::fromMillis(maximum() *(p.x() / width())));
+    if (hasMouseTracking()) {
+        QPointF p = ev -> localPos();
+
+        int dur;
+        if (orientation() == Qt::Vertical) {
+            dur = maximum() *((height() - p.y()) / height());
+        } else {
+            dur = maximum() *(p.x() / width());
+        }
+
+        QToolTip::showText(ev -> globalPos(), Duration::fromMillis(dur));
+    }
+
+    QSlider::mouseMoveEvent(ev);
 }

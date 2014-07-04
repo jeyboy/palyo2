@@ -68,12 +68,16 @@ QVariant Model::data(const QModelIndex &index, int role) const {
             return item -> data(TITLEID).toString();
         case Qt::SizeHintRole:
             item = getItem(index);
-            if (item -> isFolder() || !Settings::instance() -> isShowInfo())
-                return QSize(0, 18);
+            if (item -> isFolder())
+                return QSize(0, Settings::instance() -> getItemHeight());
             else
-                return QSize(0, 34);
+                return QSize(0, Settings::instance() -> getTotalItemHeight());
         case Qt::TextAlignmentRole:
-            return Qt::AlignLeft;
+            item = getItem(index);
+            if (item -> isFolder() || !Settings::instance() -> isShowInfo())
+                return Qt::AlignVCenter;
+            else
+                return Qt::AlignLeft;
         case Qt::FontRole:
             return Settings::instance() -> getItemFont();
         case ADDFONTID:
@@ -154,7 +158,7 @@ Qt::ItemFlags Model::flags(const QModelIndex &index) const {
      if (Settings::instance() -> isCheckboxShow())
         return Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
      else
-        return Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
+        return Qt::ItemIsDropEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable | QAbstractItemModel::flags(index);
 }
 QModelIndex Model::parent(const QModelIndex &index) const {
     if (!index.isValid())
@@ -211,8 +215,9 @@ int Model::rowCount(const QModelIndex &parent) const {
 void Model::appendRow(ModelItem * item) {
 //    int position = parentItem -> childCount();
 //    beginInsertRows(index(parentItem), position, position);
-    if (!item -> isFolder())
+    if (!item -> isFolder()) {
         emit itemsCountChanged(++count);
+    }
 //    endInsertRows();
 
 //    emit dataChanged(parent, parent);
@@ -288,6 +293,7 @@ void Model::libraryResponse() {
 void Model::refresh() {   
     beginResetModel();
     endResetModel();
+//    emit itemsCountChanged(count);
 }
 
 void Model::refreshItem(ModelItem * item) {
@@ -495,4 +501,9 @@ QMimeData * Model::mimeData(const QModelIndexList &indexes) const {
 
     mimeData -> setUrls(list);
     return mimeData;
+}
+
+bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
+//    TODO: add move logic
+    return true;
 }

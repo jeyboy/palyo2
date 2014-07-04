@@ -4,27 +4,32 @@
 void Tab::init(CBHash params, QJsonObject * hash) {
     switch(params["t"]) {
         case VIEW_LIST: {
-            list = (View *)new ListView(this, params, hash);
+            view = (View *)new ListView(this, params, hash);
         break;}
         case VIEW_LEVEL_TREE: {
-            list = (View *)new LevelTreeView(this, params, hash);
+            view = (View *)new LevelTreeView(this, params, hash);
         break;}
         case VIEW_LEVEL_TREE_BREADCRUMB: {
-            list = (View *)new LevelTreeBreadcrumbView(this, params, hash);
+            view = (View *)new LevelTreeBreadcrumbView(this, params, hash);
         break;}
         case VIEW_VK: {
             if (hash != 0 && hash -> contains("uid"))
                 params.insert("uid", hash -> value("uid").toString().toInt());
-            list = (View *)new VkView(this, params, hash);
+            view = (View *)new VkView(this, params, hash);
+        break;}
+        case VIEW_SOUNDCLOUD: {
+            if (hash != 0 && hash -> contains("uid"))
+                params.insert("uid", hash -> value("uid").toString().toInt());
+            view = (View *)new SoundcloudView(this, params, hash);
         break;}
         default: {
-            list = (View *)new TreeView(this, params, hash);
+            view = (View *)new TreeView(this, params, hash);
         break;}
     }
-//    list -> setResizeMode();
+//    view -> setResizeMode();
 
     this -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
-    this -> layout() -> addWidget(list);
+    this -> layout() -> addWidget(view);
 
 
     spinnerContainer = new QLabel;
@@ -37,8 +42,11 @@ void Tab::init(CBHash params, QJsonObject * hash) {
     this -> layout() -> setContentsMargins(0, 0, 0, 0);
     tabber = (QTabWidget *)parent();
 
-    connect(list, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
-    connect(list, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
+    connect(view, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
+    connect(view, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
+
+    if (hash == 0 && (params["t"] == VIEW_VK))
+        view -> getModel() -> refresh();
 }
 
 Tab::Tab(CBHash params, QWidget * parent) : QWidget(parent) {
@@ -57,8 +65,7 @@ Tab::Tab(QJsonObject hash, QWidget * parent) : QWidget(parent) {
 }
 
 Tab::~Tab() {
-    delete list;
-//    delete tabber;
+    delete view;
 }
 
 QString Tab::getName() const {
@@ -69,8 +76,8 @@ void Tab::setName(QString newName) {
     setNameWithCount(newName);
 }
 
-View * Tab::getList() const {
-    return list;
+View * Tab::getView() const {
+    return view;
 }
 
 void Tab::updateHeader(int /*new_count*/) {
@@ -79,30 +86,31 @@ void Tab::updateHeader(int /*new_count*/) {
 
 void Tab::setNameWithCount(QString name) {
     int i = tabber -> indexOf((QWidget*)this);
-    tabber -> setTabText(i, name + "(" + QString::number(list -> getModel() -> itemsCount()) + ")");
+    tabber -> setTabText(i, name + "(" + QString::number(view -> getModel() -> itemsCount()) + ")");
 }
 
 QJsonObject Tab::toJSON(QString name) {
-    QJsonObject res = list -> toJSON();
+    QJsonObject res = view -> toJSON();
     res["n"] = name;
-    if (Player::instance() -> currentPlaylist() == getList()) {
+    if (Player::instance() -> currentPlaylist() == view) {
         res["pv"] = true;
         res["pp"] = Player::instance() -> playedItem() -> toPath();
-        res["pt"] = Player::instance() -> getPosition();
-        qDebug() << Player::instance() -> getPosition();
+
+        if (!Player::instance() -> playedItem() -> isRemote())
+            res["pt"] = Player::instance() -> getPosition();
     }
     return res;
 }
 
 bool Tab::isEditable() const {
-    return list -> isEditable();
+    return view -> isEditable();
 }
 
 void Tab::startRoutine() {
-    list -> setHidden(true);
+    view -> setHidden(true);
     spinnerContainer -> setHidden(false);
 }
 void Tab::stopRoutine() {
     spinnerContainer -> setHidden(true);
-    list -> setHidden(false);
+    view -> setHidden(false);
 }

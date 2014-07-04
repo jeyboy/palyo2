@@ -1,6 +1,7 @@
 #include "view.h"
 #include "media/library.h"
 #include "web/download.h"
+#include "override/tree_view_style.h"
 #include <QDebug>
 
 View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(parent) {
@@ -20,6 +21,8 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     setDragEnabled(true);
     setAcceptDrops(true);
     setDropIndicatorShown(true);
+
+    setStyle(new TreeViewStyle);
 
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::CopyAction);
@@ -45,7 +48,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     setItemDelegate(new ModelItemDelegate(this));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
-    int iconDimension = Settings::instance() -> isShowInfo() ? 32 : 16;
+    int iconDimension = Settings::instance() -> getIconHeight();
     setIconSize(QSize(iconDimension, iconDimension));
 
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onDoubleClick(const QModelIndex&)));
@@ -405,10 +408,14 @@ void View::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const
 }
 
 void View::resizeEvent(QResizeEvent * event) {
-    if (event -> size().height() > 0) {
-        int count = (event -> size().height() / 38) + 2;
-        Library::instance() -> setRemoteItemMax(count);
+    if (event -> oldSize().height() != size().height()) {
+        if (event -> size().height() > 0) {
+            int count = (event -> size().height() / Settings::instance() -> getTotalItemHeight()) + 2;
+            Library::instance() -> setRemoteItemMax(count);
+        }
     }
+
+    QTreeView::resizeEvent(event);
 }
 
 bool View::prepareDownloading(QString path) {
@@ -492,6 +499,7 @@ void View::downloadSelected(QString savePath, bool markAsLiked) {
     }
 }
 
+//TODO: add copy func
 void View::copyItemsFrom(View * otherView) {
     QModelIndexList indexes = otherView -> selectedItems();
 
@@ -613,26 +621,36 @@ ModelItem * View::createItem(QString path, ModelItem * parent) {
 }
 
 void View::dragEnterEvent(QDragEnterEvent *event) {
-    if (event -> source() != this && event -> mimeData() -> hasFormat("text/uri-list"))
+    event -> setDropAction(
+                event -> source() == this ? Qt::MoveAction : Qt::CopyAction
+    );
+
+    if (event -> mimeData() -> hasFormat("text/uri-list"))
         event -> accept();
     else event -> ignore();
+    QTreeView::dragEnterEvent(event);
 }
 
 void View::dragMoveEvent(QDragMoveEvent * event) {
-    if (event -> source() != this && event -> mimeData() -> hasFormat("text/uri-list"))
+    if (event -> mimeData() -> hasFormat("text/uri-list")) {
         event -> accept();
-    else event -> ignore();
+    } else
+        event -> ignore();
+    QTreeView::dragMoveEvent(event);
 }
 
 void View::dropEvent(QDropEvent *event) {
-    if (event -> source() != this && event -> mimeData() -> hasUrls()) {
-        QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
-        qDebug() << "HUY " << modelIndex.isValid();
-        model -> refresh();
-        scrollTo(modelIndex);
-        expand(modelIndex);
-        event -> accept();
-    } else event -> ignore();
+    if (event -> source() == this) {
+        QTreeView::dropEvent(event);
+    } else
+        if (event -> mimeData() -> hasUrls()) {
+            QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
+            model -> refresh();
+            scrollTo(modelIndex);
+            expand(modelIndex);
+            event -> accept();
+        } else
+            event -> ignore();
 }
 
 void View::keyPressEvent(QKeyEvent *event) {

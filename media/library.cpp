@@ -113,7 +113,7 @@ void Library::startRemoteInfoProc() {
 
 ModelItem * Library::procRemoteInfo(ModelItem * item) {
     if (currRemote == 0) return 0;
-    QHash<QString, QString> info = Player::instance() -> getRemoteFileInfo(item -> toUrl().toString());
+    QHash<QString, QString> info = Player::instance() -> getFileInfo(item -> toUrl());
     if (currRemote == 0) return 0;
     item -> setDuration(info.value("duration"));
     if (currRemote == 0) return 0;
@@ -145,7 +145,7 @@ ModelItem * Library::itemsInit(ModelItem * item) {
     return item;
 }
 
-QString Library::sitesFilter(QString title)				{ return title.remove(QRegExp("((http:\\/\\/)?(www\\.)?[\\w-]+\\.(\\w+)(\\.(\\w+))?)")); }
+QString Library::sitesFilter(QString title)				{ return title.remove(QRegExp("((http:\\/\\/)?(www\\.)?[\\w-]+\\.(\\w+)(\\.(\\w+))*)")); }
 QString Library::forwardNumberPreFilter(QString title)	{ return title.remove(QRegExp("\\A\\d{1,}.|\\(\\w*\\d{1,}\\w*\\)")); }
 QString Library::spacesFilter(QString title) 			{ return title.remove(QRegExp("(\\W|[_])")); }
 QString Library::forwardNumberFilter(QString title)		{ return title.remove(QRegExp("\\A\\d{1,}")); }
@@ -158,7 +158,7 @@ QString Library::prepareName(QString gipoTitle, bool additional) {
     if (additional)
         return forwardNumberFilter(gipoTitle);
     else {
-        QString temp = sitesFilter(gipoTitle.toLower());
+        QString temp = sitesFilter(gipoTitle.toLower().replace('_', ' '));
         return spacesFilter(forwardNumberPreFilter(temp));
     }
 }
@@ -299,7 +299,14 @@ void Library::initItemInfo(ModelItem * item) {
             }
 
             if (!item -> hasInfo() && m.initiated()) {
-                item -> setInfo(Format::toInfo(Format::toUnits(m.getSize()), m.getBitrate(), m.getSampleRate(), m.getChannels()));
+                int bitrate = m.getBitrate();
+
+                if (bitrate == 0) {
+                    QHash<QString, QString> info = Player::instance() -> getFileInfo(item -> toUrl(), true);
+                    bitrate = info.value("bitrate").toInt();
+                }
+
+                item -> setInfo(Format::toInfo(Format::toUnits(m.getSize()), bitrate, m.getSampleRate(), m.getChannels()));
                 item -> setDuration(Duration::fromSeconds(m.getDuration()));
                 item -> setGenre(Genre::instance() -> toInt(m.getGenre()));
             }

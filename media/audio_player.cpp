@@ -1,4 +1,6 @@
 #include "audio_player.h"
+#include "misc/settings.h"
+#include <QtMath>
 #include <QDebug>
 
 //Get the percentage downloaded of an internet file stream, or the buffer level when streaming in blocks.
@@ -14,16 +16,26 @@ void endTrackSync(HSYNC, DWORD, DWORD, void * user) {
     emit player -> playbackEnded();
 }
 
+void endTrackDownloading(HSYNC, DWORD, DWORD, void * user) {
+    AudioPlayer * player = static_cast<AudioPlayer *>(user);
+    emit player -> downloadEnded();
+}
+
 AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     qRegisterMetaType<AudioPlayer::MediaStatus>("MediaStatus");
     qRegisterMetaType<AudioPlayer::MediaState>("MediaState");
 
     // cheat for cross treadhing
     connect(this, SIGNAL(playbackEnded()), this, SLOT(endOfPlayback()));
+    connect(this, SIGNAL(downloadEnded()), this, SLOT(endOfDownloading()));
 
     duration = -1;
     notifyInterval = 100;
     volumeVal = 1.0;
+    spectrumHeight = 0;
+    setSpectrumBandsCount(28);
+    defaultSpectrumLevel = -2;
+    channelsCount = 2;
 
     currentState = StoppedState;
 
@@ -59,12 +71,28 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
     connect(notifyTimer, SIGNAL(timeout()), this, SLOT(signalUpdate()));
     connect(notifyTimer, SIGNAL(started()), this, SLOT(started()));
     connect(notifyTimer, SIGNAL(stoped()), this, SLOT(stoped()));
+
+    spectrumTimer = new NotifyTimer(this);
+    connect(spectrumTimer, SIGNAL(timeout()), this, SLOT(calcSpectrum()));
+    connect(notifyTimer, SIGNAL(stoped()), this, SLOT(calcSpectrum()));
+//    spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
 }
 
 AudioPlayer::~AudioPlayer() {
     BASS_PluginFree(0);
     notifyTimer -> stop();
     delete notifyTimer;
+
+    spectrumTimer -> stop();
+    delete spectrumTimer;
+}
+
+QList<QVector<int> > & AudioPlayer::getDefaultSpectrum() {
+    return defaultSpectrum;
+}
+
+int AudioPlayer::getCalcSpectrumBandsCount() const {
+    return spectrumBandsCount / (channelsCount / 2);
 }
 
 int AudioPlayer::getPosition() const {
@@ -88,6 +116,22 @@ void AudioPlayer::setMedia(QUrl mediaPath) {
     mediaUri = mediaPath;
 }
 
+void AudioPlayer::setSpectrumBandsCount(int bandsCount) {
+    spectrumBandsCount = bandsCount;
+    defaultSpectrum.clear();
+    QVector<int> l;
+    l.fill(defaultSpectrumLevel, spectrumBandsCount);
+
+    defaultSpectrum.append(l);
+    defaultSpectrum.append(l);
+}
+void AudioPlayer::setSpectrumHeight(int newHeight) {
+    spectrumHeight = newHeight;
+}
+
+void AudioPlayer::setSpectrumFreq(int millis) {
+    spectrumTimer -> setInterval(millis);
+}
 
 AudioPlayer::MediaState AudioPlayer::state() const {
     return currentState;
@@ -109,7 +153,7 @@ bool AudioPlayer::isStoped() const {
 
 int AudioPlayer::openRemoteChannel(QString path) {
     BASS_ChannelStop(chan);
-    chan = BASS_StreamCreateURL(path.toStdWString().c_str(), 0, 0, NULL, 0);
+    chan = BASS_StreamCreateURL(path.toStdWString().c_str(), 0, BASS_SAMPLE_FLOAT, NULL, 0);
 
 //    BASS_Encode_Start(channel, "output.wav", BASS_ENCODE_PCM, NULL, 0);
 
@@ -135,10 +179,11 @@ int AudioPlayer::openChannel(QString path) {
 }
 
 void AudioPlayer::closeChannel() {
+//    BASS_ChannelSlideAttribute(chan, BASS_ATTRIB_VOL, 0, 1000);
     BASS_ChannelStop(chan);
     BASS_ChannelRemoveSync(chan, syncHandle);
+    BASS_ChannelRemoveSync(chan, syncDownloadHandle);
     BASS_StreamFree(chan);
-//    BASS_MusicFree(chan);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -158,6 +203,22 @@ void AudioPlayer::signalUpdate() {
     int curr_pos = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetPosition(chan, BASS_POS_BYTE)) * 1000;
 
     emit positionChanged(curr_pos);
+}
+
+void AudioPlayer::calcSpectrum() { 
+    if (spectrumHeight > 0) {
+        if (currentState == StoppedState) {
+            emit spectrumChanged(defaultSpectrum);
+        } else {
+            if (Settings::instance() -> getSpectrumCombo()) {
+                QList<QVector<int> > res;
+                res.append(getSpectrum());
+                emit spectrumChanged(res);
+            } else {
+                emit spectrumChanged(getComplexSpectrum());
+            }
+        }
+    }
 }
 
 void AudioPlayer::slidePosForward() {
@@ -217,39 +278,180 @@ float AudioPlayer::getRemoteFileDownloadPosition() {
     }
 
     if (prevDownloadPos != 1) {
-        float currDownloadPos = ((BASS_StreamGetFilePosition(chan, BASS_FILEPOS_DOWNLOAD)) / size);
-        qDebug() << "PREV " << prevDownloadPos << " CURR " << currDownloadPos;
-        if (prevDownloadPos == currDownloadPos && currDownloadPos > 0.8)
-            prevDownloadPos = 1;
-        else
-            prevDownloadPos = currDownloadPos;
+        prevDownloadPos = ((BASS_StreamGetFilePosition(chan, BASS_FILEPOS_DOWNLOAD)) / size);
     }
     return prevDownloadPos;
 }
 
-QHash<QString, QString> AudioPlayer::getRemoteFileInfo(QString uri) {
+QHash<QString, QString> AudioPlayer::getFileInfo(QUrl uri, bool only_bitrate) {
     QHash<QString, QString> ret;
 
-    int chUID = BASS_StreamCreateURL(uri.toStdWString().c_str(), 0, 0, NULL, 0);
+    int chUID;
 
-    if (!chUID)
+    if (uri.isLocalFile()) {
+        chUID = BASS_StreamCreateFile(false, uri.toLocalFile().toStdWString().c_str(), 0, 0, 0);
+    } else {
+        chUID = BASS_StreamCreateURL(uri.toString().toStdWString().c_str(), 0, 0, NULL, 0);
+    }
+
+    if (!chUID) {
         return ret;
+    }
 
     float time = BASS_ChannelBytes2Seconds(chUID, BASS_ChannelGetLength(chUID, BASS_POS_BYTE)); // playback duration
     DWORD len = BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_END); // file length
     int bitrate = (len / (125 * time) + 0.5); // average bitrate (Kbps)
 
-    ret.insert("duration", Duration::fromSeconds(time));
+    if (only_bitrate) {
+        ret.insert("bitrate", QString::number(bitrate));
+    } else {
+        ret.insert("duration", Duration::fromSeconds(time));
 
-    BASS_CHANNELINFO info;
-    if (BASS_ChannelGetInfo(chUID, &info)) {
-        int size = len + BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_START);
-        ret.insert("info", Format::toInfo(Format::toUnits(size), bitrate, info.freq, info.chans));
+        BASS_CHANNELINFO info;
+        if (BASS_ChannelGetInfo(chUID, &info)) {
+            int size = len + BASS_StreamGetFilePosition(chUID, BASS_FILEPOS_START);
+            ret.insert("info", Format::toInfo(Format::toUnits(size), bitrate, info.freq, info.chans));
+        }
     }
 
     BASS_StreamFree(chUID);
 
     return ret;
+}
+
+float AudioPlayer::getBpmValue(QUrl uri) {
+    int cochan;
+
+    if (uri.isLocalFile())
+        cochan = BASS_StreamCreateFile(false, uri.toLocalFile().toStdWString().c_str(), 0, 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN | BASS_SAMPLE_MONO);
+    else
+        cochan = BASS_StreamCreateURL(uri.toString().toStdWString().c_str(), 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | BASS_SAMPLE_MONO, NULL, 0);
+
+    if (cochan) {
+//        return calcBpm(cochan);
+
+        int playBackDuration = BASS_ChannelBytes2Seconds(cochan, BASS_ChannelGetLength(cochan, BASS_POS_BYTE));
+
+        return BASS_FX_BPM_DecodeGet(cochan,
+                              0,
+                              playBackDuration,
+                              MAKEWORD(20, 180),
+                              BASS_FX_FREESOURCE, //BASS_FX_BPM_BKGRND // BASS_FX_BPM_MULT2
+                              NULL, NULL);
+    } else return 0;
+}
+
+// did not work :(
+float AudioPlayer::calcBpm(int channel) {
+    int ret, C = 1.1;
+    int history_lim = 43, bands_count = 32, fft_length = 1024, cadr_len = fft_length / bands_count;
+    float history_aprox = 1.0 / history_lim, beats = 0;
+    float energy_aprox = (float)bands_count / fft_length;
+
+    QVector<QVector<float> > history;
+    history.fill(QVector<float>(), bands_count);
+
+    while(true) {
+        float fft[fft_length];
+        ret = BASS_ChannelGetData(channel, fft, BASS_DATA_FFT2048); // fft_length * 2
+        if (ret == -1) break;
+        int fft_pos = 0;
+
+        for (int band = 0; band < bands_count; band++) {
+            float energy = 0;
+
+            for(int limit = 0; limit < cadr_len; limit++, fft_pos++)
+                energy += fft[fft_pos];
+
+            float history_total = 0;
+
+            for(int history_pos = 0; history_pos < history[band].length(); history_pos++)
+                history_total += history[band][history_pos];
+
+            if ((energy_aprox * energy) > (history_aprox * history_total * C))
+                beats += 1;
+
+            history[band].append(energy);
+            if (history[band].length() > history_lim)
+                history[band].removeFirst();
+        }
+
+//        delete [] fft;
+    }
+
+    int playBackDuration = BASS_ChannelBytes2Seconds(channel, BASS_ChannelGetLength(channel, BASS_POS_BYTE));
+    qDebug() << "!!!!!!!!!!!!!!!!BEAT COUNT " << beats;
+
+    if (beats != 0)
+        return beats / (playBackDuration / 60.0);
+    else return 0;
+}
+
+QVector<int> AudioPlayer::getSpectrum() {
+    float fft[1024];
+    BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048);
+    QVector<int> res;
+    int spectrumMultiplicity = Settings::instance() -> getSpectrumMultiplier();
+
+    int b0 = 0, x, y;
+
+    for (x = 0; x < spectrumBandsCount; x++) {
+        float peak = 0;
+        int b1 = qPow(2, x * 10.0 / (spectrumBandsCount - 1));
+        if (b1 > 1023) b1 = 1023;
+        if (b1 <= b0) b1 = b0 + 1; // make sure it uses at least 1 FFT bin
+        for (; b0 < b1; b0++)
+            if (peak < fft[1 + b0])
+                peak = fft[1 + b0];
+
+        y = qSqrt(peak) * spectrumMultiplicity * spectrumHeight + defaultSpectrumLevel; // 4 // scale it (sqrt to make low values more visible)
+        if (y > spectrumHeight) y = spectrumHeight; // cap it
+        if (y < defaultSpectrumLevel) y = defaultSpectrumLevel; // cap it
+
+        res.append(y);
+    }
+
+    return res;
+}
+
+QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
+    int layerLimit = 1024, gLimit = layerLimit * channelsCount;
+    int spectrumMultiplicity = Settings::instance() -> getSpectrumMultiplier();
+    int workSpectrumBandsCount = getCalcSpectrumBandsCount();
+    float fft[gLimit];
+    BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048 | BASS_DATA_FFT_INDIVIDUAL | BASS_DATA_FFT_REMOVEDC);
+
+    QList<QVector<int> > res;
+    QVector<float> peaks;
+    int b0 = 0, x, y, z, peakNum;
+
+    for (x = 0; x < channelsCount; x++)
+        res.append(QVector<int>());
+
+    for (x = 0; x < workSpectrumBandsCount; x++) {
+        peaks.clear();
+        peaks.fill(0, channelsCount);
+
+        int b1 = qPow(2, x * 10.0 / (workSpectrumBandsCount - 1)) * channelsCount;
+        if (b1 - channelsCount <= b0) b1 = b0 + channelsCount * 2; // make sure it uses at least 2 FFT bin
+        if (b1 > gLimit - 1) b1 = gLimit - 1; // prevent index overflow
+
+        for (; b0 < b1; b0++) {
+            peakNum = b0 % channelsCount;
+            if (peaks[peakNum] < fft[b0])
+                peaks[peakNum] = fft[b0];
+        }
+
+        for (z = 0; z < channelsCount; z++) {
+            y = qSqrt(peaks[z]) * spectrumMultiplicity * spectrumHeight + defaultSpectrumLevel; // 4 // scale it (sqrt to make low values more visible)
+            if (y > spectrumHeight) y = spectrumHeight; // cap it
+            if (y < defaultSpectrumLevel) y = defaultSpectrumLevel; // cap it
+
+            res[z].append(y);
+        }
+    }
+
+    return res;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -273,15 +475,25 @@ void AudioPlayer::play() {
                 size = -1;
             }
 
-
             if (chan) {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
                 duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
                 durationChanged(duration);
+
+
+
+                BASS_CHANNELINFO info;
+                if (BASS_ChannelGetInfo(chan, &info))
+                    channelsCount = info.chans;
+                else
+                    channelsCount = 2;
+
                 BASS_ChannelPlay(chan, true);
+                spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
                 notifyTimer -> start(notifyInterval);
-                //TODO: remove sync and check end of file by timer
+
                 syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
+                syncDownloadHandle = BASS_ChannelSetSync(chan, BASS_SYNC_DOWNLOAD, 0, &endTrackDownloading, this);
             } else {
                 qDebug() << "Can't play file";
             }
@@ -307,6 +519,8 @@ void AudioPlayer::resume() {
 
 void AudioPlayer::stop() {
     closeChannel();
+    channelsCount = 2;
+    spectrumTimer -> stop();
     notifyTimer -> stop();
     emit stateChanged(StoppedState);
 }
@@ -315,6 +529,10 @@ void AudioPlayer::endOfPlayback() {
     stop();
     closeChannel();
     emit mediaStatusChanged(EndOfMedia);
+}
+
+void AudioPlayer::endOfDownloading() {
+    prevDownloadPos = 1;
 }
 
 void AudioPlayer::setPosition(int position) {

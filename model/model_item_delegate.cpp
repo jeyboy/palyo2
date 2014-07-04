@@ -190,116 +190,109 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
 //  //////////////////// remove focus rect
       QStyleOptionViewItem option2 = option;
-//      option2.rect.setTop(option2.rect.top() + 2);
+      option2.rect.setTop(option2.rect.top() - 1);
       option2.state = option.state & (~QStyle::State_HasFocus) & (~QStyle::State_Active) & (~QStyle::State_Selected);
+      option2.rect.setWidth(option2.rect.width() - 8);
 //    //  /////////////////////////////////////////////
-//    //  QStyledItemDelegate::paint(painter, option2, index);
 
+    int x, y, width, height;
+    option.rect.getRect(&x, &y, &width, &height);
 
-//        int iconSize = 16;
-//        int delta = (option2.state & QStyle::State_MouseOver) ? 32 : 0;
-//        QColor semiTransparentWhite(255, 255, 255, 48 + delta);
-//        QColor semiTransparentBlack(0, 0, 0, 48 - delta);
+    painter -> save();
+    painter -> setRenderHint(QPainter::Antialiasing, true);
+    painter -> setRenderHint(QPainter::TextAntialiasing, true);
 
-        int x, y, width, height;
-        option.rect.getRect(&x, &y, &width, &height);
+    int background_state = index.data(Qt::UserRole).toInt();
+    QVariant checkable = index.data(Qt::CheckStateRole);
 
-//        int radius = qMin(width, height) / 1.5;
+    bool elem_state = option.state & (QStyle::State_Selected);
+    bool is_folder = false;
 
-        painter -> save();
-        painter -> setRenderHint(QPainter::Antialiasing, true);
-        int background_state = index.data(Qt::UserRole).toInt();
-        QVariant checkable = index.data(Qt::CheckStateRole);
+    QBrush fill_color;
 
-        bool elem_state = option.state & (QStyle::State_Selected);
-        bool is_folder = false;
-
-        QBrush fill_color;
-
-        switch (background_state) {
-            case STATE_DEFAULT:
-                fill_color = Settings::instance() -> defaultState(option.rect, elem_state);
-                break;
-            case STATE_LISTENED:
-                fill_color = Settings::instance() -> listenedState(option.rect, elem_state);
-                break;
-            case STATE_LIKED:
-                fill_color = Settings::instance() -> likedState(option.rect, elem_state);
-                break;
-            case STATE_PLAYED:
-                fill_color = Settings::instance() -> playedState(option.rect, elem_state);
-                break;
-            default:
-                is_folder = true;
-                fill_color = Settings::instance() -> unprocessedState(option.rect, elem_state);
+    switch (background_state) {
+        case STATE_DEFAULT:
+            fill_color = Settings::instance() -> defaultState(option.rect, elem_state);
+            break;
+        case STATE_LISTENED:
+            fill_color = Settings::instance() -> listenedState(option.rect, elem_state);
+            break;
+        case STATE_LIKED:
+            fill_color = Settings::instance() -> likedState(option.rect, elem_state);
+            break;
+        case STATE_PLAYED:
+            fill_color = Settings::instance() -> playedState(option.rect, elem_state);
+            break;
+        default:
+            is_folder = true;
+            fill_color = Settings::instance() -> unprocessedState(option.rect, elem_state);
 //                painter -> setPen(Qt::SolidLine);
 //                painter -> setPen(QColor(Qt::lightGray));
 
 //                painter -> drawLine(QLine(option.rect.bottomLeft(), option.rect.bottomRight()));
 //                painter -> drawLine(QLine(option.rect.topRight(), option.rect.bottomRight()));
-                break;
-        }
+            break;
+    }
 
-        QPainterPath roundRect = roundRectPath(option2.rect, !checkable.isValid() ? 2 : 18);
-        painter -> fillPath(roundRect, fill_color);
+    QPainterPath roundRect = roundRectPath(option.rect, !checkable.isValid() ? 2 : 18);
+    painter -> fillPath(roundRect, fill_color);
 
-        painter -> setPen(option.palette.foreground().color());
-        painter -> setClipping(false);
-        painter -> drawPath(roundRect);
+    painter -> setPen(Settings::instance() -> isCheckboxShow() ? QColor(Qt::gray) : QColor(Qt::black));
+    painter -> drawPath(roundRect);
+    painter -> setPen(option.palette.foreground().color());
+
+    if(elem_state) {
+        option2.palette.setColor(QPalette::Text, Settings::instance() -> getSelectedItemTextColor());
+    } else {
+        option2.palette.setColor(QPalette::Text, Settings::instance() -> getItemTextColor());
+    }
+
+    if (Settings::instance() -> isShowInfo() && !is_folder) {
+        QFont vfont = index.data(ADDFONTID).value<QFont>();
+        QStringList infos = index.model() -> data(index, INFOID).toStringList();
+
+        painter -> setFont(vfont);
+        QFontMetrics fmf(vfont);
+        int timeWidth = fmf.width(infos.last());
+
+        int beetweeX = option.rect.right() - timeWidth - 10;
+        int top = option.rect.bottom() - fmf.height() - 2;
+
+        int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
+        if (Settings::instance() -> isCheckboxShow())
+            icon_width += 14;
+
+        QPoint topLeft(option.rect.x() + icon_width + 14, top);
+        QPoint bottomRight(beetweeX - 4, option.rect.bottom());
+        QRect rectText(topLeft, bottomRight);
+        QString s = fmf.elidedText(infos.first(), option.textElideMode, rectText.width());
+
+        QPoint topTLeft(beetweeX, top);
+        QPoint bottomTRight(option.rect.right() - 8, option.rect.bottom());
+        QRect rectTimeText(topTLeft, bottomTRight);
+
+        painter -> setPen(option2.palette.color(QPalette::Text));
 
         if(elem_state) {
-            option2.palette.setColor(QPalette::Text, Settings::instance() -> getSelectedItemTextColor());
+            painter -> setPen(Settings::instance() -> getSelectedItemInfoTextColor());
         } else {
-            option2.palette.setColor(QPalette::Text, Settings::instance() -> getItemTextColor());
+            painter -> setPen(Settings::instance() -> getItemInfoTextColor());
         }
 
-        if (Settings::instance() -> isShowInfo() && !is_folder) {
-            QFont vfont = index.data(ADDFONTID).value<QFont>();
-            QStringList infos = index.model() -> data(index, INFOID).toStringList();
+        painter -> drawText(rectText, Qt::AlignLeft, s);
+        painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
+    }
 
-            painter -> setFont(vfont);
-            QFontMetrics fmf(vfont);
-            int timeWidth = fmf.width(infos.last());
+    painter -> restore();
 
-            int beetweeX = option.rect.right() - timeWidth - 10;
-            int top = option.rect.bottom() - 14;
+    if (!checkable.isValid())
+        option2.rect.moveLeft(option2.rect.left() + 4);
 
-            int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
-            if (Settings::instance() -> isCheckboxShow())
-                icon_width += 14;
+    if (is_folder) {
+        option2.textElideMode = Qt::ElideLeft;
+    }
 
-//            QPoint topLeft(option.rect.x() + 28, top);
-            QPoint topLeft(option.rect.x() + icon_width + 14, top);
-            QPoint bottomRight(beetweeX - 4, option.rect.bottom());
-            QRect rectText(topLeft, bottomRight);
-            QString s = fmf.elidedText(infos.first(), option.textElideMode, rectText.width());
-
-            QPoint topTLeft(beetweeX, top);
-            QPoint bottomTRight(option.rect.right() - 8, option.rect.bottom());
-            QRect rectTimeText(topTLeft, bottomTRight);
-
-            painter -> setPen(option2.palette.color(QPalette::Text));
-
-            if(elem_state) {
-                painter -> setPen(Settings::instance() -> getSelectedItemInfoTextColor());
-            } else {
-                painter -> setPen(Settings::instance() -> getItemInfoTextColor());
-            }
-
-            painter -> drawText(rectText, Qt::AlignLeft, s);
-            painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
-        }
-
-        painter -> restore();
-
-        if (!checkable.isValid())
-            option2.rect.moveLeft(option2.rect.left() + 4);
-
-        if (is_folder) {
-            option2.textElideMode = Qt::ElideLeft;
-        }
-
-        QStyledItemDelegate::paint(painter, option2, index);
+    QStyledItemDelegate::paint(painter, option2, index);
 }
 
 void ModelItemDelegate::drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) {
@@ -348,6 +341,25 @@ void ModelItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
     }
 }
 
+QPainterPath ModelItemDelegate::backroundRectPath(const QRect &rect, int offset) {
+    int radius = qMin(rect.width(), rect.height()) / 2;
+    int diam = radius * 1.5, arc = radius;
+
+    int x1, y1, x2, y2;
+    rect.getCoords(&x1, &y1, &x2, &y2);
+    x1 += offset;
+
+    QPainterPath path;
+    path.moveTo(x2, y1 + radius);
+    path.arcTo(QRect(x2 - diam, y1, diam, diam), 0.0, +90.0);
+    path.arcTo(QRect(x1 + arc, y1, diam, diam), 90.0, -90.0);
+    path.arcTo(QRect(x1 + arc, y2 - diam, diam, diam), 0.0, -90.0);
+    path.arcTo(QRect(x2 - diam, y2 - diam, diam, diam), 270.0, +90.0);
+    path.closeSubpath();
+    return path;
+}
+
+
 QPainterPath ModelItemDelegate::roundRectPath(const QRect &rect, int offset) {
     int radius = qMin(rect.width(), rect.height()) / 2;
     int diam = radius * 1.5;
@@ -359,11 +371,11 @@ QPainterPath ModelItemDelegate::roundRectPath(const QRect &rect, int offset) {
     QPainterPath path;
     path.moveTo(x2, y1 + radius);
     path.arcTo(QRect(x2 - diam, y1, diam, diam), 0.0, +90.0);
-    path.lineTo(x1 + radius, y1);
+//    path.lineTo(x1 + radius, y1);
     path.arcTo(QRect(x1, y1, diam, diam), 90.0, +90.0);
-    path.lineTo(x1, y2 - radius);
+//    path.lineTo(x1, y2 - radius);
     path.arcTo(QRect(x1, y2 - diam, diam, diam), 180.0, +90.0);
-    path.lineTo(x1 + radius, y2);
+//    path.lineTo(x1 + radius, y2);
     path.arcTo(QRect(x2 - diam, y2 - diam, diam, diam), 270.0, +90.0);
     path.closeSubpath();
     return path;

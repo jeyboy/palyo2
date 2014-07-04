@@ -2,40 +2,22 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QKeyEvent>
-#include <QKeySequence>
-#include <QToolBar>
 #include <QSystemTrayIcon>
-#include <QMenu>
-#include <QDesktopServices>
-#include <QDesktopWidget>
-#include <QWidgetAction>
 #include <QSettings>
 
-#include "data_store.h"
+#include "misc/data_store.h"
 
 #include "dialogs/tabdialog.h"
-#include "dialogs/toolbardialog.h"
-#include "dialogs/toolbarbuttondialog.h"
 #include "dialogs/web_dialog.h"
 #include "dialogs/settings_dialog.h"
-#include "dialogs/vkrelationdialog.h"
+#include "dialogs/relationdialog.h"
 
-#include "misc/hotkey_manager.h"
-
-#include "override/tabber.h"
 #include "override/tab.h"
-#include "override/toolbar.h"
-#include "override/toolbarbutton.h"
-#include "override/slider_style.h"
-#include "override/clickable_label.h"
-#include "override/slider.h"
 
 #include "media/library.h"
 #include "media/player.h"
-#include "media/mediainfo.h"
 
-#include "web/socials/vk_api.h"
+#include "toolbars.h"
 
 namespace Ui {
   class MainWindow;
@@ -48,30 +30,17 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void initialization();
+    void locationCorrection();
+
     void registrateTray();
 
-    QToolButton * createVkButton(QToolButton * vkButton = 0);
-
-    QDockWidget * createDockWidget();
-    QToolBar* createToolBar(QString name);
-    QToolBar* createMediaBar();
-    QToolBar* createAdditionalMediaBar();
-    QToolBar* createPositionMediaBar();
-    QToolBar* createTimeMediaBar();
-    QToolBar* createVolumeMediaBar();
-    QToolBar* createControlToolBar();
-    void createToolbars();
-    void addPanelButton(QString name, QString path, QToolBar * bar);
-
-protected:
-    bool isToolbarNameUniq(QString name);
-    void registerFileType(const QString& documentId, const QString& fileTypeName, const QString& fileExtension, qint32 appIconIndex);
+    QDockWidget * createDockWidget();  
 
 public slots:
     void outputActiveItem(ModelItem *, ModelItem *);
     void receiveMessage(QString);
     void showAttCurrTabDialog();
-    void changeToolbarMovable();
 
 private slots:
     void showActiveElem();
@@ -79,27 +48,18 @@ private slots:
     void showSettingsDialog();
 
     void showVKRelTabDialog();
+    void showSoundcloudRelTabDialog();
 
     void showVKTabDialog();
+    void showSoundcloudTabDialog();
 
     void showAttTabDialog(Tab * tab = 0);
 
-    void mediaVisibilityChanged(bool visible);
-    void mediaOrientationChanged(Qt::Orientation);
-
-    void removePanelHighlight();
-    void panelHighlight(QAction *action = 0);
-    void addPanelTriggered();
-    void removePanelTriggered();
-    void addPanelButtonTriggered();
-    void removePanelButtonTriggered();
     void openFolderTriggered();
-    void folderDropped(QString name, QString path);
 
     void nextItemTriggered();
     void nextItemWithDelTriggered();
     void prevItemTriggered();
-
 
 //    void dropEvent(QDropEvent * event);
 
@@ -114,25 +74,9 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    Tabber * tabber;
     QSystemTrayIcon m_tray;
 
-    QWidget * highlighted;
-
-    QToolBar * underMouseBar, * activeBar;
-    ToolbarButton * underMouseButton;
-    QToolButton * vkToolButton;
-    QPoint lastClickPoint;
-
-    QxtGlobalShortcut * next;
-    QxtGlobalShortcut * next_and_delete;
-    QxtGlobalShortcut * prev;
-    QxtGlobalShortcut * play;
-    QxtGlobalShortcut * stop;
-
     DataStore * settings;
-
-    QPalette pal;
 };
 
 #endif // MAINWINDOW_H

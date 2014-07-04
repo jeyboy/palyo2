@@ -42,6 +42,9 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="usesScrollButtons">
+      <bool>false</bool>
+     </property>
      <widget class="QWidget" name="common_tab">
       <attribute name="title">
        <string>Common</string>
@@ -164,6 +167,262 @@
        </widget>
       </widget>
      </widget>
+     <widget class="QWidget" name="tabber_tab">
+      <attribute name="title">
+       <string>Playlist</string>
+      </attribute>
+      <widget class="QComboBox" name="tabPositionSelect">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>40</y>
+         <width>241</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_7">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>61</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Tab position</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_8">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>71</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Item font</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="itemFontSelect">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>70</y>
+         <width>201</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="itemFontSize">
+       <property name="geometry">
+        <rect>
+         <x>290</x>
+         <y>70</y>
+         <width>34</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="itemInfoFontSize">
+       <property name="geometry">
+        <rect>
+         <x>290</x>
+         <y>140</y>
+         <width>34</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_9">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>71</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Item info font</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="itemInfoFontSelect">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>140</y>
+         <width>201</width>
+         <height>22</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_10">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>81</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Default item 
+text color</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="defaultItemTextColorButton">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>100</y>
+         <width>31</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_11">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>100</y>
+         <width>91</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Selected item 
+text color</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="selectedItemTextColorButton">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>100</y>
+         <width>31</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_12">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>170</y>
+         <width>81</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Default item info 
+ text color</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="selectedItemInfoTextColorButton">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>170</y>
+         <width>31</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_13">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>170</y>
+         <width>91</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Selected item info 
+ text color</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="defaultItemInfoTextColorButton">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>170</y>
+         <width>31</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="itemHeightSize">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>10</y>
+         <width>91</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>18</number>
+       </property>
+       <property name="value">
+        <number>18</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_14">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>61</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Item height</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="scrollButtonsCheck">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>10</y>
+         <width>151</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Use scroll buttons on tabs</string>
+       </property>
+      </widget>
+     </widget>
      <widget class="QWidget" name="hot_keys_tab">
       <attribute name="title">
        <string>Hot keys</string>
@@ -193,7 +452,7 @@
      </widget>
      <widget class="QWidget" name="colors_tab">
       <attribute name="title">
-       <string>Colors</string>
+       <string>Item Colors</string>
       </attribute>
       <widget class="QPushButton" name="defaultColorButton">
        <property name="geometry">
@@ -339,217 +598,227 @@
        </property>
       </widget>
      </widget>
-     <widget class="QWidget" name="tabber_tab">
+     <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Playlist</string>
+       <string>Spectrum</string>
       </attribute>
-      <widget class="QComboBox" name="tabPositionSelect">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>10</y>
-         <width>241</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="label_15">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>81</width>
+         <width>141</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string>Tab position</string>
+        <string>Spectrum update frequency</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_8">
+      <widget class="QSpinBox" name="spectrumUpdateFrequecy">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>40</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Item font</string>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="itemFontSelect">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>40</y>
-         <width>201</width>
-         <height>22</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="itemFontSize">
-       <property name="geometry">
-        <rect>
-         <x>290</x>
-         <y>40</y>
-         <width>34</width>
+         <x>150</x>
+         <y>10</y>
+         <width>91</width>
          <height>21</height>
         </rect>
        </property>
        <property name="minimum">
-        <number>2</number>
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
        </property>
        <property name="value">
-        <number>10</number>
+        <number>18</number>
        </property>
       </widget>
-      <widget class="QSpinBox" name="itemInfoFontSize">
+      <widget class="QLabel" name="label_16">
        <property name="geometry">
         <rect>
-         <x>290</x>
-         <y>110</y>
-         <width>34</width>
+         <x>10</x>
+         <y>40</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Spectrum bars count</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="spectrumBarsCount">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>40</y>
+         <width>91</width>
          <height>21</height>
         </rect>
        </property>
        <property name="minimum">
-        <number>2</number>
+        <number>5</number>
+       </property>
+       <property name="maximum">
+        <number>80</number>
        </property>
        <property name="value">
-        <number>10</number>
+        <number>18</number>
        </property>
       </widget>
-      <widget class="QLabel" name="label_9">
+      <widget class="QCheckBox" name="spectrumMonocolorUse">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>110</y>
-         <width>71</width>
+         <y>150</y>
+         <width>231</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Use custom colors</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_17">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>180</y>
+         <width>81</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string>Item info font</string>
+        <string>Custom color 1</string>
        </property>
       </widget>
-      <widget class="QComboBox" name="itemInfoFontSelect">
+      <widget class="QPushButton" name="spectrumColor">
        <property name="geometry">
         <rect>
-         <x>80</x>
-         <y>110</y>
-         <width>201</width>
-         <height>22</height>
+         <x>90</x>
+         <y>180</y>
+         <width>31</width>
+         <height>23</height>
         </rect>
        </property>
+       <property name="text">
+        <string/>
+       </property>
       </widget>
-      <widget class="QLabel" name="label_10">
+      <widget class="QLabel" name="label_18">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>10</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>millis</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="spectrumHeight">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>70</y>
+         <width>91</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>40</number>
+       </property>
+       <property name="maximum">
+        <number>150</number>
+       </property>
+       <property name="value">
+        <number>40</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_19">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>70</y>
+         <width>141</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Spectrum height</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="spectrumColor2">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>180</y>
+         <width>31</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_20">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>180</y>
          <width>81</width>
-         <height>31</height>
+         <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string>Default item 
-text color</string>
+        <string>Custom color 2</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="defaultItemTextColorButton">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>70</y>
-         <width>31</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_11">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>70</y>
-         <width>91</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Selected item 
-text color</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="selectedItemTextColorButton">
-       <property name="geometry">
-        <rect>
-         <x>260</x>
-         <y>70</y>
-         <width>31</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_12">
+      <widget class="QCheckBox" name="spectrumComboUse">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>140</y>
-         <width>81</width>
-         <height>31</height>
+         <y>100</y>
+         <width>181</width>
+         <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>Default item info 
- text color</string>
+        <string>Combine channels to one layer</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="selectedItemInfoTextColorButton">
+      <widget class="QSpinBox" name="spectrumMultiplier">
        <property name="geometry">
         <rect>
-         <x>260</x>
-         <y>140</y>
-         <width>31</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_13">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>140</y>
+         <x>150</x>
+         <y>120</y>
          <width>91</width>
-         <height>31</height>
+         <height>21</height>
         </rect>
        </property>
-       <property name="text">
-        <string>Selected item info 
- text color</string>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>9</number>
+       </property>
+       <property name="value">
+        <number>9</number>
        </property>
       </widget>
-      <widget class="QPushButton" name="defaultItemInfoTextColorButton">
+      <widget class="QLabel" name="label_21">
        <property name="geometry">
         <rect>
-         <x>100</x>
-         <y>140</y>
-         <width>31</width>
-         <height>23</height>
+         <x>10</x>
+         <y>120</y>
+         <width>141</width>
+         <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string/>
+        <string>Signal multiplier</string>
        </property>
       </widget>
      </widget>

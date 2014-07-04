@@ -26,7 +26,6 @@ public:
     static void registerHotkeys(QWidget * receiver);
 
     bool isIconSizeChanged() const;
-    bool isBigIcon() const;
 
 private slots:
     void on_cancelButton_clicked();
@@ -53,12 +52,16 @@ private slots:
 
     void on_selectedItemInfoTextColorButton_clicked();
 
+    void on_spectrumColor_clicked();
+
+    void on_spectrumColor2_clicked();
+
 private:
     bool execColorDialog(QColor & color);
 
     Ui::SettingsDialog *ui;
     bool iconSizeChanged;
-    QColor defaultColor, listenedColor, likedColor, playedColor, folderColor;
+    QColor defaultColor, listenedColor, likedColor, playedColor, folderColor, spectrumColor, spectrumColor2;
     QColor itemTextColor, selectedItemTextColor, itemInfoTextColor, selectedItemInfoTextColor;
 };
 
