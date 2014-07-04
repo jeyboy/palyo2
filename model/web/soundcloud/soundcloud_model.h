@@ -2,30 +2,23 @@
 #define SOUNDCLOUD_MODEL_H
 
 #include "web/socials/soundcloud_api.h"
-#include "model/model.h"
-#include "model/tree/tree_model.h"
+#include "model/web/web_model.h"
 #include "media/duration.h"
 
-class SoundcloudModel : public TreeModel {
+class SoundcloudModel : public WebModel {
     Q_OBJECT
 
 public:
     SoundcloudModel(QString uid, QJsonObject * hash = 0, QObject *parent = 0);
     ~SoundcloudModel();
 
-//    ModelItem * buildPath(QString path);
     WebApi * getApi() { return SoundcloudApi::instance(); }
-    QString getTabUid() const;
 public slots:
     void refresh();
 
 protected slots:
     void proceedResponse(QJsonObject &);
     void proceedResponse(QJsonArray &, ModelItem *, QHash<ModelItem*, QString> &);
-    void errorReceived(int, QString &);
-protected:
-    QString tabUid;
 };
-
 
 #endif // SOUNDCLOUD_MODEL_H

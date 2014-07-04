@@ -238,7 +238,7 @@ void MainWindow::showVKRelTabDialog() {
 void MainWindow::showSoundcloudRelTabDialog() {
     RelationDialog dialog(SoundcloudApi::instance(), this);
     if (dialog.exec() == QDialog::Accepted) {
-        ui -> tabber -> addTab("Soundcloud [" + dialog.getName() + "]", TabDialog::soundcloudSettings(dialog.getId()));
+        ui -> tabber -> addTab("SC [" + dialog.getName() + "]", TabDialog::soundcloudSettings(dialog.getId()));
     } else {
 //        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
     }
@@ -260,11 +260,11 @@ void MainWindow::showVKTabDialog() {
 
 void MainWindow::showSoundcloudTabDialog() {
     if (SoundcloudApi::instance() -> isConnected()) {
-        ui -> tabber -> addTab("Soundcloud", TabDialog::soundcloudSettings());
+        ui -> tabber -> addTab("SC [YOU]", TabDialog::soundcloudSettings());
     } else {
         WebDialog dialog(this, SoundcloudApi::instance(), "Soundcloud auth");
         if (dialog.exec() == QDialog::Accepted) {
-            ui -> tabber -> addTab("Soundcloud", TabDialog::soundcloudSettings());
+            ui -> tabber -> addTab("SC [YOU]", TabDialog::soundcloudSettings());
             ToolBars::instance(this) -> initiateSoundcloudButton();
         } else {
             QMessageBox::information(this, "Soundcloud", SoundcloudApi::instance() -> getError());

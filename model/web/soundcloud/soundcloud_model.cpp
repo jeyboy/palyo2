@@ -6,9 +6,7 @@
 
 ///////////////////////////////////////////////////////////
 
-SoundcloudModel::SoundcloudModel(QString uid, QJsonObject * hash, QObject *parent) : TreeModel(hash, parent) {
-    tabUid = uid;
-
+SoundcloudModel::SoundcloudModel(QString uid, QJsonObject * hash, QObject *parent) : WebModel(uid, hash, parent) {
     if (hash == 0) {
         SoundcloudApi::instance() -> getUidInfo(FuncContainer(this, SLOT(proceedResponse(QJsonObject &))), tabUid);
     }
@@ -17,8 +15,6 @@ SoundcloudModel::SoundcloudModel(QString uid, QJsonObject * hash, QObject *paren
 }
 
 SoundcloudModel::~SoundcloudModel() { }
-
-QString SoundcloudModel::getTabUid() const { return tabUid; }
 
 void SoundcloudModel::refresh() {
     TreeModel::refresh();
@@ -107,11 +103,7 @@ void SoundcloudModel::proceedResponse(QJsonObject & hash) {
         }
     }
 
-    qDebug() << "STORE LENGTH: " << store.count();
-    foreach(ModelItem * item, store.keys()) {
-        QModelIndex ind = index(item);
-        removeRow(ind.row(), ind.parent());
-    }
+    deleteRemoved(store);
 
     TreeModel::refresh();
     emit hideSpinner();
@@ -123,7 +115,7 @@ void SoundcloudModel::proceedResponse(QJsonObject & hash) {
 void SoundcloudModel::proceedResponse(QJsonArray & ar, ModelItem * parent, QHash<ModelItem*, QString> & store) {
     QJsonObject fileIterObj;
     SoundcloudFile * newItem;
-    QString id, owner, url;
+    QString id, owner, url, key;
     QList<ModelItem *> items;
     bool original;
 
@@ -134,8 +126,9 @@ void SoundcloudModel::proceedResponse(QJsonArray & ar, ModelItem * parent, QHash
 
         owner = QString::number(fileIterObj.value("user_id").toInt());
         id = QString::number(fileIterObj.value("id").toInt());
-        items = store.keys(ModelItem::buildUid(owner, id));
-        if (items.isEmpty()) {
+        key = ModelItem::buildUid(owner, id);
+        items = store.keys(key);
+        if (items.isEmpty() && !containsUID(key)) {
             url = fileIterObj.value("download_url").toString();
             if (url.isEmpty()) {
                 url = fileIterObj.value("stream_url").toString();
@@ -169,9 +162,4 @@ void SoundcloudModel::proceedResponse(QJsonArray & ar, ModelItem * parent, QHash
             store.remove(items.first());
         }
     }
-}
-
-void SoundcloudModel::errorReceived(int code, QString & msg) {
-    emit showMessage("!!!!!!!!!!! Some shit happened :( " + msg);
-    emit hideSpinner();
 }

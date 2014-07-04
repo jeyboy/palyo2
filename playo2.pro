@@ -92,7 +92,8 @@ SOURCES += main.cpp\
     web/socials/vk_api_private.cpp \
     web/api_process.cpp \
     dialogs/captchadialog.cpp \
-    model/web/deleted_list.cpp
+    model/web/deleted_list.cpp \
+    model/web/web_model.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -167,7 +168,8 @@ HEADERS  += mainwindow.h \
     web/api_process.h \
     dialogs/captchadialog.h \
     model/web/deleted_list.h \
-    override/tree_view_style.h
+    override/tree_view_style.h \
+    model/web/web_model.h
     model/view_types.h
 
 unix:!mac {
