@@ -65,11 +65,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
 
     connect(Download::instance(), SIGNAL(slotChanged(QString)), this, SLOT(setHeaderText(QString)));
 
-//    connect(model, SIGNAL(selectionChangeNeeded(const QModelIndex &index)), this, SLOT(changeSelection(const QModelIndex &index)));
-//    connect(model, SIGNAL(selectionUpdateNeeded()), this, SLOT(updateSelection()));
-
     header() -> setSectionResizeMode(0, QHeaderView::Interactive);
-//    header()->setStretchLastSection(false);
 
     filtersList << "*.wav"
                 << "*.aiff"
@@ -100,7 +96,7 @@ QJsonObject View::toJSON() {
         set[c] = settings.value(c);
     }
 
-    res["p"] = QString();
+//    res["p"] = QString();
     res["set"] = set;
     res["l"] = model -> itemsCount();
     return res;
