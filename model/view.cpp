@@ -620,19 +620,19 @@ void View::dragEnterEvent(QDragEnterEvent *event) {
     event -> setDropAction(
                 event -> source() == this ? Qt::MoveAction : Qt::CopyAction
     );
+    QTreeView::dragEnterEvent(event);
 
     if (event -> mimeData() -> hasFormat("text/uri-list"))
         event -> accept();
     else event -> ignore();
-    QTreeView::dragEnterEvent(event);
 }
 
 void View::dragMoveEvent(QDragMoveEvent * event) {
+    QTreeView::dragMoveEvent(event);
     if (event -> mimeData() -> hasFormat("text/uri-list")) {
         event -> accept();
     } else
         event -> ignore();
-    QTreeView::dragMoveEvent(event);
 }
 
 void View::dropEvent(QDropEvent *event) {

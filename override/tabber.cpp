@@ -29,7 +29,7 @@ int Tabber::addTab(QString name, CBHash settings) {
     int index = QTabWidget::addTab(new Tab(settings, this), name);
     (static_cast<Tab *>(widget(index))) -> updateHeader();
     setCurrentIndex(index);
-    setStyleSheet("");
+    setStyleSheet(Stylesheets::treeViewStyles());
     return index;
 }
 
