@@ -8,7 +8,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     settings = settingsSet;
     setModel((model = newModel));
 
-    setIndentation(8);
+    setIndentation(12);
 
 //    setStyleSheet(QString(
 //                      "QTreeView {"

@@ -60,6 +60,7 @@ void Spectrum::paintEvent(QPaintEvent *event) {
 void Spectrum::paintCombo() {
     QPainter painter(this);
     painter.save();
+
     int offset = isMovable() ? 10 : 0, padd = paddWidth();
     double peak, accumulate = padd + offset;
     float bar_width = ((float)width() - offset - (bars_count + 1) * padd) / bars_count;
@@ -90,6 +91,7 @@ void Spectrum::paintCombo() {
 void Spectrum::paintDuo() {
     QPainter painter(this);
     painter.save();
+
     int pairs = (peaks.length() + 1) / 2, padd = paddWidth(); // / pairs;
     int offset = isMovable() ? 10 : 0;
     int work_bars_count = Player::instance() -> getCalcSpectrumBandsCount();
@@ -126,12 +128,17 @@ void Spectrum::paintDuo() {
 
                 peak = peaks[pair][loop1];
                 rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
+                painter.setRenderHint(QPainter::Antialiasing, true);
                 painter.fillRect(rect, g);
+                painter.setRenderHint(QPainter::Antialiasing, false);
                 painter.drawRect(rect);
+
 
                 peak2 = peaks[pair + 1][loop1];
                 rect.setCoords(accumulate, sec_bar_place, temp_acc, sec_bar_place + peak2);
+                painter.setRenderHint(QPainter::Antialiasing, true);
                 painter.fillRect(rect, gg);
+                painter.setRenderHint(QPainter::Antialiasing, false);
                 painter.drawRect(rect);
 
                 accumulate = temp_acc + padd;
@@ -142,7 +149,9 @@ void Spectrum::paintDuo() {
 
                 peak = peaks[pair][loop1];
                 rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
+                painter.setRenderHint(QPainter::Antialiasing, true);
                 painter.fillRect(rect, g);
+                painter.setRenderHint(QPainter::Antialiasing, false);
                 painter.drawRect(rect);
 
                 accumulate = temp_acc + padd;

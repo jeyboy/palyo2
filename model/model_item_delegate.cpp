@@ -6,12 +6,11 @@ ModelItemDelegate::ModelItemDelegate(QObject* parent)
 }
 
 QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-//    QSize size = QStyledItemDelegate::sizeHint(option, index);
-//    if (size.height() > 18)
-//        size.setHeight(size.height() + 4);
-//    return size;
+    QSize size = QStyledItemDelegate::sizeHint(option, index);
+    size.setHeight(size.height() + 4);
+    return size;
 
-    return QStyledItemDelegate::sizeHint(option, index);
+//    return QStyledItemDelegate::sizeHint(option, index);
 }
 
 //QWidget * ModelItemDelegate::createEditor(QWidget *parent,
@@ -190,10 +189,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
 //  //////////////////// remove focus rect
       QStyleOptionViewItem option2 = option;
-      option2.rect.setTop(option2.rect.top() - 1);
+//      option2.rect.setTop(option2.rect.top() - 1);
       option2.state = option.state & (~QStyle::State_HasFocus) & (~QStyle::State_Active) & (~QStyle::State_Selected);
-      option2.rect.setWidth(option2.rect.width() - 8);
-//    //  /////////////////////////////////////////////
+//  /////////////////////////////////////////////
 
     int x, y, width, height;
     option.rect.getRect(&x, &y, &width, &height);
@@ -234,11 +232,24 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             break;
     }
 
-    QPainterPath roundRect = roundRectPath(option.rect, !checkable.isValid() ? 2 : 18);
-    painter -> fillPath(roundRect, fill_color);
+    painter -> setPen(QColor(Qt::gray));
+    painter -> setBrush(fill_color);
+    int angle = option.rect.height() / 2.2;
+    QRect bodyRect = option.rect;
 
-    painter -> setPen(Settings::instance() -> isCheckboxShow() ? QColor(Qt::gray) : QColor(Qt::black));
-    painter -> drawPath(roundRect);
+    if (is_folder) {
+//        bodyRect.moveLeft(bodyRect.left() + 2);
+    } else {
+        bodyRect.moveLeft(bodyRect.left() + (checkable.isValid() ? 18 : 2));
+    }
+
+    painter -> drawRoundedRect(bodyRect, angle, angle);
+
+//    QPainterPath roundRect = roundRectPath(option.rect, !checkable.isValid() ? 2 : 18);
+//    painter -> fillPath(roundRect, fill_color);
+
+//    painter -> setPen(QColor(Qt::gray));
+//    painter -> drawPath(roundRect);
     painter -> setPen(option.palette.foreground().color());
 
     if(elem_state) {
