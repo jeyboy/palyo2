@@ -19,7 +19,8 @@ QWidget * HotkeyDelegate::createEditor(QWidget *parent,
 }
 
 void HotkeyDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
-    QStyledItemDelegate::setEditorData(editor, index);
+    ((HotkeyEditor *)editor) -> setKeySequence(QKeySequence(index.data().toString()));
+//    QStyledItemDelegate::setEditorData(editor, index);
 }
 
 void HotkeyDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {

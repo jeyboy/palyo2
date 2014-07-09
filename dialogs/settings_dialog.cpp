@@ -15,7 +15,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> treeView -> setItemDelegate(new HotkeyDelegate(ui -> treeView));
   ui -> treeView -> setModel(new HotkeyModel(Settings::instance() -> getHotKeys(), this));
   ui -> treeView -> hideColumn(2);
-  ui -> treeView -> setColumnWidth(0, 250);
+  ui -> treeView -> setColumnWidth(0, 230);
 
   ui -> downloadPath -> setText(Settings::instance() -> getDownloadPath());
 

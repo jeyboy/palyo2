@@ -169,7 +169,8 @@ HEADERS  += mainwindow.h \
     dialogs/captchadialog.h \
     model/web/deleted_list.h \
     override/tree_view_style.h \
-    model/web/web_model.h
+    model/web/web_model.h \
+    misc/stylesheets.h
     model/view_types.h
 
 unix:!mac {

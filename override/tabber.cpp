@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "tabber.h"
+#include "misc/stylesheets.h"
 #include <QApplication>
 #include <QMessageBox>
 
@@ -11,26 +12,7 @@ Tabber::Tabber(QWidget *parent) : QTabWidget(parent) {
     setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
     setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
 
-    setStyleSheet(QString(
-                          "QTreeView::indicator {"
-                          "    width: 18px;"
-                          "    height: 18px;"
-                          "}"
-                          "QTreeView::indicator:unchecked {"
-                          "  image: url(:/elems/check_blank);"
-                          "}"
-                          "QTreeView::indicator:checked {"
-                          "  image: url(:/elems/check_fill);"
-                          "}"
-                          "QTreeView::indicator:indeterminate:hover {"
-                          "  image: url(:/elems/check_trist);"
-                          "}"
-                          "QTreeView::indicator:indeterminate {"
-                          "  image: url(:/elems/check_fill);"
-                          "}"
-                          ));
-
-
+    setStyleSheet(Stylesheets::treeViewStyles());
 
     connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
@@ -47,7 +29,6 @@ int Tabber::addTab(QString name, CBHash settings) {
     int index = QTabWidget::addTab(new Tab(settings, this), name);
     (static_cast<Tab *>(widget(index))) -> updateHeader();
     setCurrentIndex(index);
-    setStyleSheet("");
     return index;
 }
 

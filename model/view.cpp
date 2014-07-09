@@ -674,6 +674,7 @@ ModelItem * View::createItem(QString path, ModelItem * parent) {
 }
 
 void View::dragEnterEvent(QDragEnterEvent *event) {
+    QTreeView::dragEnterEvent(event);
     event -> setDropAction(
                 event -> source() == this ? Qt::MoveAction : Qt::CopyAction
     );
@@ -681,15 +682,15 @@ void View::dragEnterEvent(QDragEnterEvent *event) {
     if (event -> mimeData() -> hasFormat("text/uri-list"))
         event -> accept();
     else event -> ignore();
-    QTreeView::dragEnterEvent(event);
 }
 
 void View::dragMoveEvent(QDragMoveEvent * event) {
+    QTreeView::dragMoveEvent(event);
+
     if (event -> mimeData() -> hasFormat("text/uri-list")) {
         event -> accept();
     } else
         event -> ignore();
-    QTreeView::dragMoveEvent(event);
 }
 
 void View::dropEvent(QDropEvent *event) {

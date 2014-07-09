@@ -2,6 +2,7 @@
 #include "qdebug.h"
 #include "media/player.h"
 #include "media/duration.h"
+#include "misc/stylesheets.h"
 
 Slider::Slider(QWidget * parent, bool isPositionSlider) : QSlider(parent) {
     setMouseTracking(isPositionSlider);
@@ -9,83 +10,7 @@ Slider::Slider(QWidget * parent, bool isPositionSlider) : QSlider(parent) {
     fillColor = QColor::fromRgb(0,0,0);
 //    setToolTipDuration(1000);
 
-    setStyleSheet(QString(
-                                              "QSlider::groove {"
-                                                "border: 1px solid #bbb;"
-                                                "border-radius: 2px;"
-                                              "}"
-
-                                              "QSlider::groove:horizontal {"
-                                                "height: 18px;"
-                                              "}"
-
-                                              "QSlider::groove:vertical {"
-                                                "width: 18px;"
-                                              "}"
-
-                                              "QSlider::sub-page:horizontal {"
-                                                "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #000, stop: 1 #777);"
-                                                "background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 1, stop: 0 #777, stop: 1 #fff);"
-                                                "border: 1px solid #777;"
-                                                "border-radius: 2px;"
-                                              "}"
-
-                                              "QSlider::add-page:horizontal {"
-                                                "background: #fff;"
-                                                "border: 1px solid #777;"
-                                                "border-radius: 2px;"
-                                              "}"
-
-                                              "QSlider::sub-page:vertical {"
-                                                  "background: #fff;"
-                                                  "border: 1px solid #777;"
-                                                  "border-radius: 2px;"
-                                              "}"
-
-                                              "QSlider::add-page:vertical {"
-                                                  "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #000, stop: 1 #777);"
-                                                  "background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 1, stop: 0 #777, stop: 1 #fff);"
-                                                  "border: 1px solid #777;"
-                                                  "border-radius: 2px;"
-                                              "}"
-
-                                              "QSlider::handle {"
-                                                "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);"
-                                                "border: 1px solid #777;"
-                                                "margin: 0 -1px;"
-                                                "border-radius: 2px;"
-                                              "}"
-
-                                              "QSlider::handle:horizontal {"
-                                                "width: 12px;"
-                                              "}"
-
-                                              "QSlider::handle:vertical {"
-                                                "height: 12px;"
-                                              "}"
-
-                                              "QSlider::handle:hover {"
-                                                "background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #fff, stop:1 #ddd);"
-                                                "border: 1px solid #444;"
-                                                "border-radius: 2px;"
-                                              "}"
-
-                                              "QSlider::sub-page:disabled {"
-                                                "background: #bbb;"
-                                                "border-color: #999;"
-                                              "}"
-
-                                              "QSlider::add-page:disabled {"
-                                                "background: #eee;"
-                                                "border-color: #999;"
-                                              "}"
-
-                                              "QSlider::handle:disabled {"
-                                                "background: #eee;"
-                                                "border: 1px solid #aaa;"
-                                                "border-radius: 2px;"
-                                              "}"
-    ));
+    setStyleSheet(Stylesheets::sliderStyles());
 }
 
 
