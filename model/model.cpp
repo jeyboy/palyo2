@@ -21,28 +21,20 @@ QVariant Model::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
         return QVariant();
 
-    ModelItem * item;
+    switch(role) {
+        case Qt::FontRole:
+            return Settings::instance() -> getItemFont();
+        case ADDFONTID:
+            return Settings::instance() -> getItemInfoFont();
+    }
+
+    ModelItem * item = getItem(index);
 
     switch(role) {
         case Qt::DisplayRole: {
-           item = getItem(index);
-
-//           if (!item -> getState() -> isProceed()) {
-//               item -> getState() -> setProceed();
-//               if (!item -> isFolder()) {
-//                   Library::instance() -> initItem(item, this, SLOT(libraryResponse()));
-//               }
-
-//               if (item -> getState() -> isExpanded()) {
-//                   emit expandNeeded(index);
-//               }
-//           }
-
            return item -> data(index.column());
         }
         case Qt::DecorationRole: {
-           item = getItem(index);
-
            //QPixmap pixmap(26, 26);
            //pixmap.fill(color);
            //QIcon icon(pixmap);
@@ -58,51 +50,37 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         }
         case Qt::CheckStateRole: {
             if (Settings::instance() -> isCheckboxShow()) {
-                item = getItem(index);
                 return item -> getState() -> isChecked();
             } else return QVariant();
         }
 
         case Qt::ToolTipRole:
-            item = getItem(index);
             return item -> data(TITLEID).toString();
         case Qt::SizeHintRole:
-            item = getItem(index);
             if (item -> isFolder())
                 return QSize(0, Settings::instance() -> getItemHeight());
             else
                 return QSize(0, Settings::instance() -> getTotalItemHeight());
         case Qt::TextAlignmentRole:
-            item = getItem(index);
             if (item -> isFolder() || !Settings::instance() -> isShowInfo())
                 return Qt::AlignVCenter;
             else
                 return Qt::AlignLeft;
-        case Qt::FontRole:
-            return Settings::instance() -> getItemFont();
-        case ADDFONTID:
-            return Settings::instance() -> getItemInfoFont();
         case Qt::UserRole:
-            item = getItem(index);
             return item -> getState() -> currStateValue();
         case PROGRESSID:
-            item = getItem(index);
             return QVariant(item -> getDownloadProgress());
         case INFOID:
-            item = getItem(index);
             return QVariant(item -> getInfo());
         case FOLDERID:
-            item = getItem(index);
             return item -> isFolder();
         case PLAYABLEID:
-            item = getItem(index);
             return item -> isPlayable();
         case LASTCHILDID:
-            item = getItem(index);
             return item -> childCount() - 1;
-
-        default: return QVariant();
     }
+
+    return QVariant();
 }
 
 bool Model::setData(const QModelIndex &index, const QVariant &value, int role) {
