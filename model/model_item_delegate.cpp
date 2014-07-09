@@ -238,9 +238,9 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     QRect bodyRect = option.rect;
 
     if (is_folder) {
-//        bodyRect.moveLeft(bodyRect.left() + 2);
-    } else {
-        bodyRect.moveLeft(bodyRect.left() + (checkable.isValid() ? 18 : 2));
+        int rectOffset = (checkable.isValid() ? 18 : 2);
+        bodyRect.moveLeft(bodyRect.left() + rectOffset);
+        bodyRect.setWidth(bodyRect.width() - rectOffset);
     }
 
     painter -> drawRoundedRect(bodyRect, angle, angle);
@@ -352,42 +352,42 @@ void ModelItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
     }
 }
 
-QPainterPath ModelItemDelegate::backroundRectPath(const QRect &rect, int offset) {
-    int radius = qMin(rect.width(), rect.height()) / 2;
-    int diam = radius * 1.5, arc = radius;
+//QPainterPath ModelItemDelegate::backroundRectPath(const QRect &rect, int offset) {
+//    int radius = qMin(rect.width(), rect.height()) / 2;
+//    int diam = radius * 1.5, arc = radius;
 
-    int x1, y1, x2, y2;
-    rect.getCoords(&x1, &y1, &x2, &y2);
-    x1 += offset;
+//    int x1, y1, x2, y2;
+//    rect.getCoords(&x1, &y1, &x2, &y2);
+//    x1 += offset;
 
-    QPainterPath path;
-    path.moveTo(x2, y1 + radius);
-    path.arcTo(QRect(x2 - diam, y1, diam, diam), 0.0, +90.0);
-    path.arcTo(QRect(x1 + arc, y1, diam, diam), 90.0, -90.0);
-    path.arcTo(QRect(x1 + arc, y2 - diam, diam, diam), 0.0, -90.0);
-    path.arcTo(QRect(x2 - diam, y2 - diam, diam, diam), 270.0, +90.0);
-    path.closeSubpath();
-    return path;
-}
+//    QPainterPath path;
+//    path.moveTo(x2, y1 + radius);
+//    path.arcTo(QRect(x2 - diam, y1, diam, diam), 0.0, +90.0);
+//    path.arcTo(QRect(x1 + arc, y1, diam, diam), 90.0, -90.0);
+//    path.arcTo(QRect(x1 + arc, y2 - diam, diam, diam), 0.0, -90.0);
+//    path.arcTo(QRect(x2 - diam, y2 - diam, diam, diam), 270.0, +90.0);
+//    path.closeSubpath();
+//    return path;
+//}
 
 
-QPainterPath ModelItemDelegate::roundRectPath(const QRect &rect, int offset) {
-    int radius = qMin(rect.width(), rect.height()) / 2;
-    int diam = radius * 1.5;
+//QPainterPath ModelItemDelegate::roundRectPath(const QRect &rect, int offset) {
+//    int radius = qMin(rect.width(), rect.height()) / 2;
+//    int diam = radius * 1.5;
 
-    int x1, y1, x2, y2;
-    rect.getCoords(&x1, &y1, &x2, &y2);
-    x1 += offset;
+//    int x1, y1, x2, y2;
+//    rect.getCoords(&x1, &y1, &x2, &y2);
+//    x1 += offset;
 
-    QPainterPath path;
-    path.moveTo(x2, y1 + radius);
-    path.arcTo(QRect(x2 - diam, y1, diam, diam), 0.0, +90.0);
-//    path.lineTo(x1 + radius, y1);
-    path.arcTo(QRect(x1, y1, diam, diam), 90.0, +90.0);
-//    path.lineTo(x1, y2 - radius);
-    path.arcTo(QRect(x1, y2 - diam, diam, diam), 180.0, +90.0);
-//    path.lineTo(x1 + radius, y2);
-    path.arcTo(QRect(x2 - diam, y2 - diam, diam, diam), 270.0, +90.0);
-    path.closeSubpath();
-    return path;
-}
+//    QPainterPath path;
+//    path.moveTo(x2, y1 + radius);
+//    path.arcTo(QRect(x2 - diam, y1, diam, diam), 0.0, +90.0);
+////    path.lineTo(x1 + radius, y1);
+//    path.arcTo(QRect(x1, y1, diam, diam), 90.0, +90.0);
+////    path.lineTo(x1, y2 - radius);
+//    path.arcTo(QRect(x1, y2 - diam, diam, diam), 180.0, +90.0);
+////    path.lineTo(x1 + radius, y2);
+//    path.arcTo(QRect(x2 - diam, y2 - diam, diam, diam), 270.0, +90.0);
+//    path.closeSubpath();
+//    return path;
+//}
