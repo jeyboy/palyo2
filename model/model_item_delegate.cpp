@@ -343,11 +343,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         default:
             is_folder = true;
             fill_color = Settings::instance() -> unprocessedState(option2.rect, elem_state);
-//                painter -> setPen(Qt::SolidLine);
-//                painter -> setPen(QColor(Qt::lightGray));
-
-//                painter -> drawLine(QLine(option.rect.bottomLeft(), option.rect.bottomRight()));
-//                painter -> drawLine(QLine(option.rect.topRight(), option.rect.bottomRight()));
             break;
     }
 
@@ -371,7 +366,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         option2.palette.setColor(QPalette::Text, Settings::instance() -> getItemTextColor());
     }
 
-    const_cast<ModelItemDelegate *>(this) -> drawCheckbox(painter, option2, index);
+    if (checkable.isValid())
+        const_cast<ModelItemDelegate *>(this) -> drawCheckbox(painter, option2, index);
 
     if (Settings::instance() -> isShowInfo() && !is_folder) {
         QFont vfont = index.data(ADDFONTID).value<QFont>();
@@ -424,11 +420,10 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 void ModelItemDelegate::drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) {
     QStyleOptionButton checkboxstyle;
     bool checked = index.data(Qt::CheckStateRole).toBool();
-//    QApplication::style() -> subElementRect(QStyle::SE_CheckBoxClickRect, &checkboxstyle);
     QRect rect = option.rect;
     rect.setLeft(rect.left() + 4);
     checkboxstyle.rect = rect;
-    checkboxstyle.state = option.state;//QStyle::State_Enabled;
+    checkboxstyle.state = option.state;
     checkboxstyle.state |= checked ? QStyle::State_On : QStyle::State_Off;
 
     QApplication::style() -> drawControl(QStyle::CE_CheckBox, &checkboxstyle, painter, &templateCheckbox);
