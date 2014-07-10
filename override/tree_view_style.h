@@ -7,8 +7,6 @@ class TreeViewStyle : public QProxyStyle {
 public:
     void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const {
         if (element == QStyle::PE_IndicatorItemViewItemDrop) {
-            qDebug() << "DROP INDI";
-
             painter -> save();
             painter -> setRenderHint(QPainter::Antialiasing, true);
 

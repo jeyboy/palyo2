@@ -739,7 +739,7 @@ void View::mouseMoveEvent(QMouseEvent * event) {
         if (selectedIndexes().length() > 0) {
             QDrag * drag = new QDrag(this);
             QMimeData * mimeData = model -> mimeData(selectedIndexes());
-    //        drag -> setPixmap(toolIcon);
+            drag -> setPixmap(QPixmap(":drag"));
             drag -> setMimeData(mimeData);
             drag -> exec(Qt::CopyAction, Qt::CopyAction);
         }

@@ -237,7 +237,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     int angle = option.rect.height() / 2.2;
     QRect bodyRect = option.rect;
 
-    if (is_folder) {
+    if (!is_folder) {
         int rectOffset = (checkable.isValid() ? 18 : 2);
         bodyRect.moveLeft(bodyRect.left() + rectOffset);
         bodyRect.setWidth(bodyRect.width() - rectOffset);
