@@ -312,11 +312,13 @@ QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
 //}
 
 void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+    QFont vfont;
+    QColor textColor;
     QStyleOptionViewItem option2 = option;
     option2.rect.setTop(option.rect.top() + 2);
     option2.rect.setHeight(option.rect.height() - 2);
 
-    int x, y, width, height, right_offset = 12;
+    int x, y, width, height, right_offset = option2.rect.right() - 12, top = option.rect.bottom(), left_offset = option2.rect.x() + 10;
     option2.rect.getRect(&x, &y, &width, &height);
 
     painter -> save();
@@ -350,6 +352,11 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             break;
     }
 
+    if (!is_folder)
+        left_offset += ((QTreeView *)option2.widget) -> iconSize().width();
+    if (Settings::instance() -> isCheckboxShow())
+        left_offset += 14;
+
     painter -> setPen(QColor(Qt::gray));
     painter -> setBrush(fill_color);
     int angle = option2.rect.height() / 2.2;
@@ -365,46 +372,48 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     painter -> setPen(option.palette.foreground().color());
 
     if(elem_state) {
-        option2.palette.setColor(QPalette::Text, Settings::instance() -> getSelectedItemTextColor());
+        textColor = Settings::instance() -> getSelectedItemTextColor();
     } else {
-        option2.palette.setColor(QPalette::Text, Settings::instance() -> getItemTextColor());
+        textColor = Settings::instance() -> getItemTextColor();
     }
+    painter -> setPen(textColor);
+
+
 
     if (Settings::instance() -> isShowInfo() && !is_folder) {
-        QFont vfont = index.data(ADDFONTID).value<QFont>();
+        vfont = index.data(ADDFONTID).value<QFont>();
         QStringList infos = index.model() -> data(index, INFOID).toStringList();
 
         painter -> setFont(vfont);
         QFontMetrics fmf(vfont);
         int timeWidth = fmf.width(infos.last());
 
-        int beetweeX = option2.rect.right() - timeWidth - right_offset - 2;
-        int top = option2.rect.bottom() - fmf.height() - 2;
+        int beetweeX = right_offset - timeWidth - 2;
+        top = option2.rect.bottom() - fmf.height() - 2;
 
-        int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
-        if (Settings::instance() -> isCheckboxShow())
-            icon_width += 14;
-
-        QPoint topLeft(option2.rect.x() + icon_width + 14, top);
+        QPoint topLeft(left_offset, top);
         QPoint bottomRight(beetweeX - 4, option2.rect.bottom());
         QRect rectText(topLeft, bottomRight);
         QString s = fmf.elidedText(infos.first(), option2.textElideMode, rectText.width());
 
         QPoint topTLeft(beetweeX, top);
-        QPoint bottomTRight(option2.rect.right() - right_offset, option2.rect.bottom());
+        QPoint bottomTRight(right_offset, option2.rect.bottom());
         QRect rectTimeText(topTLeft, bottomTRight);
-
-        painter -> setPen(option2.palette.color(QPalette::Text));
-
-        if(elem_state) {
-            painter -> setPen(Settings::instance() -> getSelectedItemInfoTextColor());
-        } else {
-            painter -> setPen(Settings::instance() -> getItemInfoTextColor());
-        }
 
         painter -> drawText(rectText, Qt::AlignLeft, s);
         painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
     }
+
+
+    painter -> setFont(option.font);
+    QFontMetrics fmf2(option.font);
+    QPoint topMLeft(left_offset, option2.rect.top());
+    QPoint bottomMRight(right_offset, top - 2);
+
+    QRect rectText2(topMLeft, bottomMRight);
+    QString s = fmf2.elidedText(index.data().toString(), option2.textElideMode, rectText2.width());
+    painter -> drawText(rectText2, Qt::AlignLeft | Qt::AlignVCenter, s);
+
 
     if (option2.state & (QStyle::State_MouseOver)) {
         painter -> setPen(hoverColor);
