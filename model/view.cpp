@@ -22,7 +22,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     setAcceptDrops(true);
     setDropIndicatorShown(true);
 
-//    setStyle(new TreeViewStyle);
+    setStyle(new TreeViewStyle);
 
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::CopyAction);

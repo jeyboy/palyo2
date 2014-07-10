@@ -41,6 +41,7 @@ public:
 private:
     void drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
     QCheckBox templateCheckbox;
+    QColor hoverColor;
 
 //    static QPainterPath backroundRectPath(const QRect &rect, int offset);
 //    static QPainterPath roundRectPath(const QRect &rect, int offset);

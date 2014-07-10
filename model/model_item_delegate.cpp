@@ -3,6 +3,10 @@
 
 ModelItemDelegate::ModelItemDelegate(QObject* parent)
     : QStyledItemDelegate(parent) {
+
+    QPalette palette;
+    hoverColor = palette.highlight().color();
+    hoverColor.setAlpha(50);
 }
 
 QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
@@ -366,9 +370,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         option2.palette.setColor(QPalette::Text, Settings::instance() -> getItemTextColor());
     }
 
-    if (checkable.isValid())
-        const_cast<ModelItemDelegate *>(this) -> drawCheckbox(painter, option2, index);
-
     if (Settings::instance() -> isShowInfo() && !is_folder) {
         QFont vfont = index.data(ADDFONTID).value<QFont>();
         QStringList infos = index.model() -> data(index, INFOID).toStringList();
@@ -405,16 +406,18 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
     }
 
+    if (option2.state & (QStyle::State_MouseOver)) {
+        painter -> setPen(hoverColor);
+        painter -> setBrush(hoverColor);
+        bodyRect.moveTopLeft(bodyRect.topLeft() - QPoint(1, 1));
+        bodyRect.moveBottomRight(bodyRect.bottomRight() + QPoint(1, 1));
+        painter -> drawRoundedRect(bodyRect, angle, angle);
+    }
+
+    if (checkable.isValid())
+        const_cast<ModelItemDelegate *>(this) -> drawCheckbox(painter, option2, index);
+
     painter -> restore();
-
-//    if (!checkable.isValid())
-//        option2.rect.moveLeft(option2.rect.left() + 4);
-
-//    if (is_folder) {
-//        option2.textElideMode = Qt::ElideLeft;
-//    }
-
-//    QStyledItemDelegate::paint(painter, option2, index);
 }
 
 void ModelItemDelegate::drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) {
