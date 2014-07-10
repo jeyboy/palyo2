@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QStyleOption>
 #include <QTreeView>
+#include <QCheckBox>
 
 #include "model_item.h"
 
@@ -38,7 +39,8 @@ public:
                const QModelIndex &index) const;
 
 private:
-    static void drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
+    void drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index);
+    QCheckBox templateCheckbox;
 
 //    static QPainterPath backroundRectPath(const QRect &rect, int offset);
 //    static QPainterPath roundRectPath(const QRect &rect, int offset);

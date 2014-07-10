@@ -7,7 +7,7 @@ ModelItemDelegate::ModelItemDelegate(QObject* parent)
 
 QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QSize size = QStyledItemDelegate::sizeHint(option, index);
-    size.setHeight(size.height() + 4);
+    size.setHeight(size.height() + 6);
     return size;
 
 //    return QStyledItemDelegate::sizeHint(option, index);
@@ -184,17 +184,136 @@ QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
 //        painter -> restore();
 //}
 
+// last version
+//void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+
+////  //////////////////// remove focus rect
+//      QStyleOptionViewItem option2 = option;
+//      option2.rect.setTop(option2.rect.top() + 2);
+//      option2.rect.setHeight(option2.rect.height() - 2);
+//      option2.state = option.state & (~QStyle::State_HasFocus) & (~QStyle::State_Active) & (~QStyle::State_Selected);
+////  /////////////////////////////////////////////
+
+//    int x, y, width, height, right_offset = 12;
+//    option.rect.getRect(&x, &y, &width, &height);
+
+//    painter -> save();
+//    painter -> setRenderHint(QPainter::Antialiasing, true);
+//    painter -> setRenderHint(QPainter::TextAntialiasing, true);
+
+//    int background_state = index.data(Qt::UserRole).toInt();
+//    QVariant checkable = index.data(Qt::CheckStateRole);
+
+//    bool elem_state = option.state & (QStyle::State_Selected);
+//    bool is_folder = false;
+
+//    QBrush fill_color;
+
+//    switch (background_state) {
+//        case STATE_DEFAULT:
+//            fill_color = Settings::instance() -> defaultState(option.rect, elem_state);
+//            break;
+//        case STATE_LISTENED:
+//            fill_color = Settings::instance() -> listenedState(option.rect, elem_state);
+//            break;
+//        case STATE_LIKED:
+//            fill_color = Settings::instance() -> likedState(option.rect, elem_state);
+//            break;
+//        case STATE_PLAYED:
+//            fill_color = Settings::instance() -> playedState(option.rect, elem_state);
+//            break;
+//        default:
+//            is_folder = true;
+//            fill_color = Settings::instance() -> unprocessedState(option.rect, elem_state);
+////                painter -> setPen(Qt::SolidLine);
+////                painter -> setPen(QColor(Qt::lightGray));
+
+////                painter -> drawLine(QLine(option.rect.bottomLeft(), option.rect.bottomRight()));
+////                painter -> drawLine(QLine(option.rect.topRight(), option.rect.bottomRight()));
+//            break;
+//    }
+
+//    painter -> setPen(QColor(Qt::gray));
+//    painter -> setBrush(fill_color);
+//    int angle = option.rect.height() / 2.2;
+//    QRect bodyRect = option2.rect;
+
+//    if (!is_folder) {
+//        int rectOffset = (checkable.isValid() ? 18 : 2);
+//        bodyRect.moveLeft(bodyRect.left() + rectOffset);
+//        bodyRect.setWidth(bodyRect.width() - rectOffset);
+//    }
+
+//    painter -> drawRoundedRect(bodyRect, angle, angle);
+
+////    QPainterPath roundRect = roundRectPath(option.rect, !checkable.isValid() ? 2 : 18);
+////    painter -> fillPath(roundRect, fill_color);
+
+////    painter -> setPen(QColor(Qt::gray));
+////    painter -> drawPath(roundRect);
+//    painter -> setPen(option.palette.foreground().color());
+
+//    if(elem_state) {
+//        option2.palette.setColor(QPalette::Text, Settings::instance() -> getSelectedItemTextColor());
+//    } else {
+//        option2.palette.setColor(QPalette::Text, Settings::instance() -> getItemTextColor());
+//    }
+
+//    if (Settings::instance() -> isShowInfo() && !is_folder) {
+//        QFont vfont = index.data(ADDFONTID).value<QFont>();
+//        QStringList infos = index.model() -> data(index, INFOID).toStringList();
+
+//        painter -> setFont(vfont);
+//        QFontMetrics fmf(vfont);
+//        int timeWidth = fmf.width(infos.last());
+
+//        int beetweeX = option.rect.right() - timeWidth - right_offset - 2;
+//        int top = option.rect.bottom() - fmf.height() - 2;
+
+//        int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
+//        if (Settings::instance() -> isCheckboxShow())
+//            icon_width += 14;
+
+//        QPoint topLeft(option.rect.x() + icon_width + 14, top);
+//        QPoint bottomRight(beetweeX - 4, option.rect.bottom());
+//        QRect rectText(topLeft, bottomRight);
+//        QString s = fmf.elidedText(infos.first(), option.textElideMode, rectText.width());
+
+//        QPoint topTLeft(beetweeX, top);
+//        QPoint bottomTRight(option.rect.right() - right_offset, option.rect.bottom());
+//        QRect rectTimeText(topTLeft, bottomTRight);
+
+//        painter -> setPen(option2.palette.color(QPalette::Text));
+
+//        if(elem_state) {
+//            painter -> setPen(Settings::instance() -> getSelectedItemInfoTextColor());
+//        } else {
+//            painter -> setPen(Settings::instance() -> getItemInfoTextColor());
+//        }
+
+//        painter -> drawText(rectText, Qt::AlignLeft, s);
+//        painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
+//    }
+
+//    painter -> restore();
+
+//    if (!checkable.isValid())
+//        option2.rect.moveLeft(option2.rect.left() + 4);
+
+//    if (is_folder) {
+//        option2.textElideMode = Qt::ElideLeft;
+//    }
+
+//    QStyledItemDelegate::paint(painter, option2, index);
+//}
 
 void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+    QStyleOptionViewItem option2 = option;
+    option2.rect.setTop(option.rect.top() + 2);
+    option2.rect.setHeight(option.rect.height() - 2);
 
-//  //////////////////// remove focus rect
-      QStyleOptionViewItem option2 = option;
-//      option2.rect.setTop(option2.rect.top() - 1);
-      option2.state = option.state & (~QStyle::State_HasFocus) & (~QStyle::State_Active) & (~QStyle::State_Selected);
-//  /////////////////////////////////////////////
-
-    int x, y, width, height;
-    option.rect.getRect(&x, &y, &width, &height);
+    int x, y, width, height, right_offset = 12;
+    option2.rect.getRect(&x, &y, &width, &height);
 
     painter -> save();
     painter -> setRenderHint(QPainter::Antialiasing, true);
@@ -203,27 +322,27 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     int background_state = index.data(Qt::UserRole).toInt();
     QVariant checkable = index.data(Qt::CheckStateRole);
 
-    bool elem_state = option.state & (QStyle::State_Selected);
+    bool elem_state = option2.state & (QStyle::State_Selected);
     bool is_folder = false;
 
     QBrush fill_color;
 
     switch (background_state) {
         case STATE_DEFAULT:
-            fill_color = Settings::instance() -> defaultState(option.rect, elem_state);
+            fill_color = Settings::instance() -> defaultState(option2.rect, elem_state);
             break;
         case STATE_LISTENED:
-            fill_color = Settings::instance() -> listenedState(option.rect, elem_state);
+            fill_color = Settings::instance() -> listenedState(option2.rect, elem_state);
             break;
         case STATE_LIKED:
-            fill_color = Settings::instance() -> likedState(option.rect, elem_state);
+            fill_color = Settings::instance() -> likedState(option2.rect, elem_state);
             break;
         case STATE_PLAYED:
-            fill_color = Settings::instance() -> playedState(option.rect, elem_state);
+            fill_color = Settings::instance() -> playedState(option2.rect, elem_state);
             break;
         default:
             is_folder = true;
-            fill_color = Settings::instance() -> unprocessedState(option.rect, elem_state);
+            fill_color = Settings::instance() -> unprocessedState(option2.rect, elem_state);
 //                painter -> setPen(Qt::SolidLine);
 //                painter -> setPen(QColor(Qt::lightGray));
 
@@ -234,8 +353,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
     painter -> setPen(QColor(Qt::gray));
     painter -> setBrush(fill_color);
-    int angle = option.rect.height() / 2.2;
-    QRect bodyRect = option.rect;
+    int angle = option2.rect.height() / 2.2;
+    QRect bodyRect = option2.rect;
 
     if (!is_folder) {
         int rectOffset = (checkable.isValid() ? 18 : 2);
@@ -244,12 +363,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     }
 
     painter -> drawRoundedRect(bodyRect, angle, angle);
-
-//    QPainterPath roundRect = roundRectPath(option.rect, !checkable.isValid() ? 2 : 18);
-//    painter -> fillPath(roundRect, fill_color);
-
-//    painter -> setPen(QColor(Qt::gray));
-//    painter -> drawPath(roundRect);
     painter -> setPen(option.palette.foreground().color());
 
     if(elem_state) {
@@ -257,6 +370,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     } else {
         option2.palette.setColor(QPalette::Text, Settings::instance() -> getItemTextColor());
     }
+
+    const_cast<ModelItemDelegate *>(this) -> drawCheckbox(painter, option2, index);
 
     if (Settings::instance() -> isShowInfo() && !is_folder) {
         QFont vfont = index.data(ADDFONTID).value<QFont>();
@@ -266,20 +381,20 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         QFontMetrics fmf(vfont);
         int timeWidth = fmf.width(infos.last());
 
-        int beetweeX = option.rect.right() - timeWidth - 10;
-        int top = option.rect.bottom() - fmf.height() - 2;
+        int beetweeX = option2.rect.right() - timeWidth - right_offset - 2;
+        int top = option2.rect.bottom() - fmf.height() - 2;
 
         int icon_width = ((QTreeView *)option2.widget) -> iconSize().width();
         if (Settings::instance() -> isCheckboxShow())
             icon_width += 14;
 
-        QPoint topLeft(option.rect.x() + icon_width + 14, top);
-        QPoint bottomRight(beetweeX - 4, option.rect.bottom());
+        QPoint topLeft(option2.rect.x() + icon_width + 14, top);
+        QPoint bottomRight(beetweeX - 4, option2.rect.bottom());
         QRect rectText(topLeft, bottomRight);
-        QString s = fmf.elidedText(infos.first(), option.textElideMode, rectText.width());
+        QString s = fmf.elidedText(infos.first(), option2.textElideMode, rectText.width());
 
         QPoint topTLeft(beetweeX, top);
-        QPoint bottomTRight(option.rect.right() - 8, option.rect.bottom());
+        QPoint bottomTRight(option2.rect.right() - right_offset, option2.rect.bottom());
         QRect rectTimeText(topTLeft, bottomTRight);
 
         painter -> setPen(option2.palette.color(QPalette::Text));
@@ -296,27 +411,27 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
     painter -> restore();
 
-    if (!checkable.isValid())
-        option2.rect.moveLeft(option2.rect.left() + 4);
+//    if (!checkable.isValid())
+//        option2.rect.moveLeft(option2.rect.left() + 4);
 
-    if (is_folder) {
-        option2.textElideMode = Qt::ElideLeft;
-    }
+//    if (is_folder) {
+//        option2.textElideMode = Qt::ElideLeft;
+//    }
 
-    QStyledItemDelegate::paint(painter, option2, index);
+//    QStyledItemDelegate::paint(painter, option2, index);
 }
 
 void ModelItemDelegate::drawCheckbox(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) {
     QStyleOptionButton checkboxstyle;
     bool checked = index.data(Qt::CheckStateRole).toBool();
-    QApplication::style() -> subElementRect(QStyle::SE_CheckBoxClickRect, &checkboxstyle);
+//    QApplication::style() -> subElementRect(QStyle::SE_CheckBoxClickRect, &checkboxstyle);
     QRect rect = option.rect;
-    rect.setLeft(rect.left() + 15);
+    rect.setLeft(rect.left() + 4);
     checkboxstyle.rect = rect;
-    checkboxstyle.state = QStyle::State_Enabled;
+    checkboxstyle.state = option.state;//QStyle::State_Enabled;
     checkboxstyle.state |= checked ? QStyle::State_On : QStyle::State_Off;
 
-    QApplication::style() -> drawControl(QStyle::CE_CheckBox, &checkboxstyle, painter);
+    QApplication::style() -> drawControl(QStyle::CE_CheckBox, &checkboxstyle, painter, &templateCheckbox);
 }
 
 void ModelItemDelegate::progress(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index, int progressPercentage) const {

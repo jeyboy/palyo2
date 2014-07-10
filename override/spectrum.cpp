@@ -35,7 +35,8 @@ void Spectrum::heightChanged(int newHeight) {
 void Spectrum::dataUpdated(QList<QVector<int> > bars) {
 //    qDebug() << bars;
     peaks = bars;
-    repaint();
+    if (isVisible())
+        repaint();
 }
 
 int Spectrum::verticalPadd() {
