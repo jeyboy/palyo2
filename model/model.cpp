@@ -108,7 +108,7 @@ bool Model::setData(const QModelIndex &index, const QVariant &value, int role) {
 
         item -> changeCheckedState(!item -> getState() -> isChecked());
 
-        if (item -> isFolder()) {
+        if (item -> isFolder() && item -> childCount() > 0) {
             emit dataChanged(index, this -> index(item -> child(item -> childCount() - 1)));
         } else {
             emit dataChanged(index, index);

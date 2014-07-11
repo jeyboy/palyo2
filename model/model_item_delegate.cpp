@@ -351,9 +351,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             break;
     }
 
-    if (checkable.isValid())
-        left_offset += 14;
-
     painter -> setPen(QColor(Qt::gray));
     painter -> setBrush(fill_color);
     int angle = option2.rect.height() / 2.2;
@@ -373,6 +370,11 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     }
 
     painter -> drawRoundedRect(bodyRect, angle, angle);
+
+    if (checkable.isValid()) {
+        left_offset += 14;
+        const_cast<ModelItemDelegate *>(this) -> drawCheckbox(painter, option2, index);
+    }
 
     if(elem_state) {
         textColor = Settings::instance() -> getSelectedItemTextColor();
@@ -450,9 +452,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         painter -> setBrush(hoverColor);
         painter -> drawRoundedRect(bodyRect, angle, angle);
     }
-
-    if (checkable.isValid())
-        const_cast<ModelItemDelegate *>(this) -> drawCheckbox(painter, option2, index);
 
     painter -> restore();
 }
