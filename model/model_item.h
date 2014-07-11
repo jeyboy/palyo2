@@ -32,15 +32,15 @@
 
 #include "misc/settings.h"
 
-#define TITLEID 0
-#define EXTENSIONID 1
-#define PATHID 2
-#define FOLDERID 3
-#define STATEID 4
-#define TITLESCACHEID 5
-#define PROGRESSID 101
-#define INFOID 102
-#define ADDFONTID 103
+#define TITLEID Qt::UserRole + 1
+#define EXTENSIONID Qt::UserRole + 2
+#define PATHID Qt::UserRole + 3
+#define FOLDERID Qt::UserRole + 4
+#define STATEID Qt::UserRole + 5
+#define TITLESCACHEID Qt::UserRole + 6
+#define PROGRESSID Qt::UserRole + 7
+#define INFOID Qt::UserRole + 8
+#define ADDFONTID Qt::UserRole + 9
 
 #define FILE_ITEM 100
 #define FOLDER_ITEM 200

@@ -4,9 +4,8 @@
 ModelItemDelegate::ModelItemDelegate(QObject* parent)
     : QStyledItemDelegate(parent) {
 
-    QPalette palette;
-    hoverColor = palette.highlight().color();
-    hoverColor.setAlpha(50);
+    hoverColor = QColor(Qt::white);
+    hoverColor.setAlpha(80);
 }
 
 QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
@@ -318,7 +317,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     option2.rect.setTop(option.rect.top() + 2);
     option2.rect.setHeight(option.rect.height() - 2);
 
-    int x, y, width, height, right_offset = option2.rect.right() - 12, top = option.rect.bottom(), left_offset = option2.rect.left() + 10;
+    int x, y, width, height, icon_size, right_offset = option2.rect.right() - 12, top = option.rect.bottom(), left_offset = option2.rect.left() + 10;
     option2.rect.getRect(&x, &y, &width, &height);
 
     painter -> save();
@@ -352,8 +351,10 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             break;
     }
 
-    if (!is_folder)
-        left_offset += ((QTreeView *)option2.widget) -> iconSize().width();
+    if (!is_folder) {
+        icon_size = ((QTreeView *)option2.widget) -> iconSize().width();
+        left_offset += icon_size;
+    }
     if (Settings::instance() -> isCheckboxShow())
         left_offset += 14;
 
@@ -369,7 +370,6 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     }
 
     painter -> drawRoundedRect(bodyRect, angle, angle);
-    painter -> setPen(option.palette.foreground().color());
 
     if(elem_state) {
         textColor = Settings::instance() -> getSelectedItemTextColor();
@@ -378,39 +378,70 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     }
     painter -> setPen(textColor);
 
+    if (!is_folder) {
+        QString ext = index.data(EXTENSIONID).toString();
+        QRect icoRect;
 
+        QFont font = option.font;
+        font.setBold(true);
 
-//    if (Settings::instance() -> isShowInfo() && !is_folder) {
-//        vfont = index.data(ADDFONTID).value<QFont>();
-//        QStringList infos = index.model() -> data(index, INFOID).toStringList();
+        if (icon_size > 20) {
+            icoRect = QRect(left_offset - icon_size - 3,
+                          option.rect.y() + ((option.rect.height() - icon_size) / 1.2),
+                          icon_size,
+                          icon_size);
+            painter -> drawEllipse(icoRect);
+            font.setPixelSize(icon_size / ext.length());
+            painter -> setFont(font);
+        } else {
+            icon_size += 8;
+            left_offset += 8;
+            icoRect = QRect(left_offset - icon_size - 3,
+                          option.rect.y() + ((option.rect.height() - icon_size) / 1.2),
+                          icon_size,
+                          icon_size);
+            painter -> drawLine(icoRect.topRight().operator +=(QPoint(0, 4)), icoRect.bottomRight());
+        }
 
-//        painter -> setFont(vfont);
-//        QFontMetrics fmf(vfont);
-//        int timeWidth = fmf.width(infos.last());
+        painter -> drawText(
+                    icoRect,
+                    Qt::AlignHCenter | Qt::AlignVCenter,
+                    ext
+                    );
+    }
 
-//        int beetweeX = right_offset - timeWidth - 2;
-//        top = option2.rect.bottom() - fmf.height() - 2;
+    if (Settings::instance() -> isShowInfo() && !is_folder) {
+        vfont = index.data(ADDFONTID).value<QFont>();
+        QStringList infos = index.model() -> data(index, INFOID).toStringList();
 
-//        QPoint topLeft(left_offset, top);
-//        QPoint bottomRight(beetweeX - 4, option2.rect.bottom());
-//        QRect rectText(topLeft, bottomRight);
-//        QString s = fmf.elidedText(infos.first(), option2.textElideMode, rectText.width());
+        painter -> setFont(vfont);
+        QFontMetrics fmf(vfont);
+        int timeWidth = fmf.width(infos.last());
 
-//        QPoint topTLeft(beetweeX, top);
-//        QPoint bottomTRight(right_offset, option2.rect.bottom());
-//        QRect rectTimeText(topTLeft, bottomTRight);
+        int beetweeX = right_offset - timeWidth - 2;
+        top = option2.rect.bottom() - fmf.height() - 2;
 
-//        painter -> drawText(rectText, Qt::AlignLeft, s);
-//        painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
-//    }
+        QPoint topLeft(left_offset, top);
+        QPoint bottomRight(beetweeX - 4, option2.rect.bottom());
+        QRect rectText(topLeft, bottomRight);
+        QString s = fmf.elidedText(infos.first(), option2.textElideMode, rectText.width());
+
+        QPoint topTLeft(beetweeX, top);
+        QPoint bottomTRight(right_offset, option2.rect.bottom());
+        QRect rectTimeText(topTLeft, bottomTRight);
+
+        painter -> drawText(rectText, Qt::AlignLeft, s);
+        painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
+    }
 
 
     painter -> setFont(option.font);
     QFontMetrics fmf2(option.font);
     QPoint topMLeft(left_offset, option2.rect.top());
-    QPoint bottomMRight(right_offset + 14, top - 2); // +14 monkey patch // why ?
+    QPoint bottomMRight(right_offset + 14, top - 2);
 
     QRect rectText2(topMLeft, bottomMRight);
+//    qDebug() << option.rect.width() << " " << rectText2.width();
     QString s = fmf2.elidedText(index.data().toString(), option2.textElideMode, rectText2.width());
     painter -> drawText(rectText2, Qt::AlignLeft | Qt::AlignVCenter, s);
 
@@ -418,8 +449,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     if (option2.state & (QStyle::State_MouseOver)) {
         painter -> setPen(hoverColor);
         painter -> setBrush(hoverColor);
-        bodyRect.moveTopLeft(bodyRect.topLeft() - QPoint(1, 1));
-        bodyRect.moveBottomRight(bodyRect.bottomRight() + QPoint(1, 1));
+//        bodyRect.moveTopLeft(bodyRect.topLeft() - QPoint(1, 1));
+//        bodyRect.moveBottomRight(bodyRect.bottomRight() + QPoint(1, 1));
         painter -> drawRoundedRect(bodyRect, angle, angle);
     }
 

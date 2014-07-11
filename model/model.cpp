@@ -38,7 +38,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
                }
            }
 
-           return item -> data(index.column());
+           return item -> data(TITLEID);//index.column());
         }
         case Qt::DecorationRole: {
            item = getItem(index);
@@ -81,6 +81,9 @@ QVariant Model::data(const QModelIndex &index, int role) const {
                 return Qt::AlignLeft;
         case Qt::FontRole:
             return Settings::instance() -> getItemFont();
+        case EXTENSIONID:
+            item = getItem(index);
+            return item -> data(EXTENSIONID);
         case ADDFONTID:
             return Settings::instance() -> getItemInfoFont();
         case Qt::UserRole:
