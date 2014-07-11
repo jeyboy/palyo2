@@ -317,7 +317,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     option2.rect.setHeight(option.rect.height() - 2);
 
     QString ext = index.data(EXTENSIONID).toString();
-    int x, y, width, height, icon_size, ico_offset = 0, right_offset = option2.rect.right() - 12, top = option.rect.bottom(), left_offset = option2.rect.left() + 10;
+    int x, y, width, height, icon_size, ico_mini = 30, ico_offset = 0, right_offset = option2.rect.right() - 12, top = option.rect.bottom(), left_offset = option2.rect.left() + 10;
     option2.rect.getRect(&x, &y, &width, &height);
 
     painter -> save();
@@ -361,7 +361,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
 
     if (!is_folder) {
         icon_size = ((QTreeView *)option2.widget) -> iconSize().width();
-        if (icon_size < 20) {
+        if (icon_size < ico_mini) {
             ico_offset = 8 * (ext.length() - 2);
         }
 
@@ -392,11 +392,15 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         QFont font = option.font;
         font.setBold(true);
 
-        if (icon_size < 20) {
+        if (icon_size < ico_mini) {
             painter -> drawLine(icoRect.topRight(), icoRect.bottomRight());
         } else {
             painter -> drawEllipse(icoRect);
-            font.setPixelSize(icon_size / ext.length());
+            if (ext.length() > 3) {
+                ext.insert(3, '\n');
+              if (ext.length() > 6)
+                font.setPixelSize(icon_size / (ext.length() / 2));
+            }
             painter -> setFont(font);
         }
 
@@ -404,7 +408,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
                     icoRect,
                     Qt::AlignHCenter | Qt::AlignVCenter,
                     ext
-                    );
+                );
     }
 
     if (Settings::instance() -> isShowInfo() && !is_folder) {
