@@ -311,13 +311,13 @@ QSize ModelItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
 //}
 
 void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
-    QFont vfont;
     QColor textColor;
     QStyleOptionViewItem option2 = option;
     option2.rect.setTop(option.rect.top() + 2);
     option2.rect.setHeight(option.rect.height() - 2);
 
-    int x, y, width, height, icon_size, right_offset = option2.rect.right() - 12, top = option.rect.bottom(), left_offset = option2.rect.left() + 10;
+    QString ext = index.data(EXTENSIONID).toString();
+    int x, y, width, height, icon_size, ico_offset = 0, right_offset = option2.rect.right() - 12, top = option.rect.bottom(), left_offset = option2.rect.left() + 10;
     option2.rect.getRect(&x, &y, &width, &height);
 
     painter -> save();
@@ -351,11 +351,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             break;
     }
 
-    if (!is_folder) {
-        icon_size = ((QTreeView *)option2.widget) -> iconSize().width();
-        left_offset += icon_size;
-    }
-    if (Settings::instance() -> isCheckboxShow())
+    if (checkable.isValid())
         left_offset += 14;
 
     painter -> setPen(QColor(Qt::gray));
@@ -364,6 +360,13 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     QRect bodyRect = option2.rect;
 
     if (!is_folder) {
+        icon_size = ((QTreeView *)option2.widget) -> iconSize().width();
+        if (icon_size < 20) {
+            ico_offset = 8 * (ext.length() - 2);
+        }
+
+        left_offset += icon_size + ico_offset;
+
         int rectOffset = (checkable.isValid() ? 18 : 2);
         bodyRect.moveLeft(bodyRect.left() + rectOffset);
         bodyRect.setWidth(bodyRect.width() - rectOffset);
@@ -379,28 +382,22 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     painter -> setPen(textColor);
 
     if (!is_folder) {
-        QString ext = index.data(EXTENSIONID).toString();
-        QRect icoRect;
+        QRect icoRect = QRect(
+                    left_offset - icon_size - ico_offset - 3,
+                    option.rect.y() + ((option.rect.height() - icon_size) / 1.2),
+                    icon_size + ico_offset,
+                    icon_size
+                );
 
         QFont font = option.font;
         font.setBold(true);
 
-        if (icon_size > 20) {
-            icoRect = QRect(left_offset - icon_size - 3,
-                          option.rect.y() + ((option.rect.height() - icon_size) / 1.2),
-                          icon_size,
-                          icon_size);
+        if (icon_size < 20) {
+            painter -> drawLine(icoRect.topRight(), icoRect.bottomRight());
+        } else {
             painter -> drawEllipse(icoRect);
             font.setPixelSize(icon_size / ext.length());
             painter -> setFont(font);
-        } else {
-            icon_size += 8;
-            left_offset += 8;
-            icoRect = QRect(left_offset - icon_size - 3,
-                          option.rect.y() + ((option.rect.height() - icon_size) / 1.2),
-                          icon_size,
-                          icon_size);
-            painter -> drawLine(icoRect.topRight().operator +=(QPoint(0, 4)), icoRect.bottomRight());
         }
 
         painter -> drawText(
@@ -411,7 +408,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     }
 
     if (Settings::instance() -> isShowInfo() && !is_folder) {
-        vfont = index.data(ADDFONTID).value<QFont>();
+        QFont vfont = index.data(ADDFONTID).value<QFont>();
         QStringList infos = index.model() -> data(index, INFOID).toStringList();
 
         painter -> setFont(vfont);
@@ -424,7 +421,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         QPoint topLeft(left_offset, top);
         QPoint bottomRight(beetweeX - 4, option2.rect.bottom());
         QRect rectText(topLeft, bottomRight);
-        QString s = fmf.elidedText(infos.first(), option2.textElideMode, rectText.width());
+        QString s = fmf.elidedText(infos.first(), Qt::ElideRight, rectText.width());
 
         QPoint topTLeft(beetweeX, top);
         QPoint bottomTRight(right_offset, option2.rect.bottom());
@@ -435,22 +432,18 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     }
 
 
-    painter -> setFont(option.font);
-    QFontMetrics fmf2(option.font);
+    painter -> setFont(Settings::instance() -> getItemFont());
+    QFontMetrics fmf2(painter -> font());
     QPoint topMLeft(left_offset, option2.rect.top());
-    QPoint bottomMRight(right_offset + 14, top - 2);
+    QPoint bottomMRight(right_offset, top - 2);
 
     QRect rectText2(topMLeft, bottomMRight);
-//    qDebug() << option.rect.width() << " " << rectText2.width();
-    QString s = fmf2.elidedText(index.data().toString(), option2.textElideMode, rectText2.width());
+    QString s = fmf2.elidedText(index.data().toString(), Qt::ElideRight, rectText2.width());
     painter -> drawText(rectText2, Qt::AlignLeft | Qt::AlignVCenter, s);
-
 
     if (option2.state & (QStyle::State_MouseOver)) {
         painter -> setPen(hoverColor);
         painter -> setBrush(hoverColor);
-//        bodyRect.moveTopLeft(bodyRect.topLeft() - QPoint(1, 1));
-//        bodyRect.moveBottomRight(bodyRect.bottomRight() + QPoint(1, 1));
         painter -> drawRoundedRect(bodyRect, angle, angle);
     }
 
