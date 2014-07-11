@@ -314,10 +314,10 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     QColor textColor;
     QStyleOptionViewItem option2 = option;
     option2.rect.setTop(option.rect.top() + 2);
-    option2.rect.setHeight(option.rect.height() - 2);
+    option2.rect.setHeight(option.rect.height() - 4);
 
     QString ext = index.data(EXTENSIONID).toString();
-    int x, y, width, height, icon_size, ico_mini = 30, ico_offset = 0, right_offset = option2.rect.right() - 12, top = option.rect.bottom(), left_offset = option2.rect.left() + 10;
+    int x, y, width, height, icon_size = 1, ico_mini = 30, ico_offset = 0, right_offset = option2.rect.right() - 12, top = option.rect.bottom(), left_offset = option2.rect.left() + 10;
     option2.rect.getRect(&x, &y, &width, &height);
 
     painter -> save();
@@ -357,7 +357,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     QRect bodyRect = option2.rect;
 
     if (!is_folder) {
-        icon_size = ((QTreeView *)option2.widget) -> iconSize().width();
+        icon_size = ((QTreeView *)option2.widget) -> iconSize().width() - 2;
         if (icon_size < ico_mini) {
             ico_offset = 8 * (ext.length() - 2);
         }
@@ -369,6 +369,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         bodyRect.setWidth(bodyRect.width() - rectOffset);
     }
 
+//    painter -> setClipRect(bodyRect);
     painter -> drawRoundedRect(bodyRect, angle, angle);
 
     if (checkable.isValid()) {
@@ -386,7 +387,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     if (!is_folder) {
         QRect icoRect = QRect(
                     left_offset - icon_size - ico_offset - 3,
-                    option.rect.y() + ((option.rect.height() - icon_size) / 1.2),
+                    option.rect.y() + ((option.rect.height() - icon_size) / 1.2) - 2,
                     icon_size + ico_offset,
                     icon_size
                 );
@@ -397,7 +398,12 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         if (icon_size < ico_mini) {
             painter -> drawLine(icoRect.topRight(), icoRect.bottomRight());
         } else {
+            QPen pen(textColor);
+            pen.setWidth(2);
+            painter -> setPen(pen);
             painter -> drawEllipse(icoRect);
+            painter -> setPen(textColor);
+
             if (ext.length() > 3) {
                 ext.insert(3, '\n');
               if (ext.length() > 6)
