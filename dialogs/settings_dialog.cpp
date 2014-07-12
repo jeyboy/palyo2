@@ -24,6 +24,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> spoilOnActivate -> setChecked(Settings::instance() -> isSpoilOnActivation());
   ui -> showInfo -> setChecked(Settings::instance() -> isShowInfo());
 
+  ui -> useSystemIconsCheck -> setChecked(Settings::instance() -> isShowSystemIcons());
+
   ui -> useGradientCheck -> setChecked(Settings::instance() -> isUseGradient());
 
   ui -> itemFontSize -> setValue(Settings::instance() -> getItemFontSize());
@@ -167,6 +169,8 @@ void SettingsDialog::on_acceptButton_clicked() {
     iconSizeChanged = Settings::instance() -> isShowInfo() != ui -> showInfo -> isChecked()
             || Settings::instance() -> getItemHeight() != ui -> itemHeightSize -> value();
     Settings::instance() -> setShowInfo(ui -> showInfo -> isChecked());
+
+    Settings::instance() -> setShowSystemIcons(ui -> useSystemIconsCheck -> isChecked());
 
     Settings::instance() -> setUseGradient(ui -> useGradientCheck -> isChecked());
 

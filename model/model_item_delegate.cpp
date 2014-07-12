@@ -351,14 +351,14 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             break;
     }
 
-    painter -> setPen(option2.palette.color(QPalette::Mid));
+    painter -> setPen(option2.palette.color(QPalette::Dark));
     painter -> setBrush(fill_color);
     int angle = option2.rect.height() / 2.2;
     QRect bodyRect = option2.rect;
 
     if (!is_folder) {
         icon_size = ((QTreeView *)option2.widget) -> iconSize().width() - 2;
-        if (icon_size < ico_mini) {
+        if (icon_size < ico_mini && !Settings::instance() -> isShowSystemIcons()) {
             ico_offset = 8 * (ext.length() - 1);
         }
 
@@ -385,38 +385,54 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     painter -> setPen(textColor);
 
     if (!is_folder) {
-        QRect icoRect = QRect(
-                    left_offset - icon_size - ico_offset - 3,
-                    option.rect.y() + ((option.rect.height() - icon_size) / 1.2) - 2,
-                    icon_size + ico_offset,
-                    icon_size
-                );
+        if (Settings::instance() -> isShowSystemIcons()) {
+            QRect icoRect = QRect(
+                        bodyRect.left() + 4 + (icon_size / 20),
+                        option.rect.top() + (option.rect.height() - icon_size) / 2,
+                        icon_size,
+                        icon_size
+                    );
+            QVariant iconVal = index.data(Qt::DecorationRole);
 
-        QFont font;
-        font.setFamily("Arial Black");
-
-        if (icon_size < ico_mini) {
-            painter -> drawLine(icoRect.topRight(), icoRect.bottomRight());
-        } else {
-            QPen pen(textColor);
-            pen.setWidth(2);
-            painter -> setPen(pen);
-            painter -> drawEllipse(icoRect);
-            painter -> setPen(textColor);
-
-            if (ext.length() > 3) {
-                ext.insert(3, '\n');
-              if (ext.length() > 6)
-                font.setPixelSize(icon_size / (ext.length() / 2));
+            if (iconVal.isValid()) {
+                QIcon icon = qvariant_cast<QIcon>(iconVal);
+                painter -> drawPixmap(icoRect, icon.pixmap(QSize(icon_size, icon_size)));
             }
-            painter -> setFont(font);
-        }
+        } else {
+            QRect pseudoIcoRect = QRect(
+                        bodyRect.left(),
+                        option.rect.top() + 2,
+                        icon_size + (ico_offset + 4),
+                        bodyRect.height()
+                    );
 
-        painter -> drawText(
-                    icoRect,
-                    Qt::AlignHCenter | Qt::AlignVCenter,
-                    ext
-                );
+                    QFont font;
+                    font.setFamily("Arial Black");
+
+                    if (icon_size < ico_mini) {
+                        painter -> drawLine(pseudoIcoRect.topRight(), pseudoIcoRect.bottomRight());
+                    } else {
+            //            QPen pen(textColor);
+            //            pen.setWidth(2);
+            //            painter -> setPen(pen);
+                        painter -> setPen(option2.palette.color(QPalette::Dark));
+                        painter -> drawEllipse(pseudoIcoRect);
+                        painter -> setPen(textColor);
+
+                        if (ext.length() > 3) {
+                            ext.insert(3, '\n');
+                          if (ext.length() > 6)
+                            font.setPixelSize(icon_size / (ext.length() / 2));
+                        }
+                        painter -> setFont(font);
+                    }
+
+                    painter -> drawText(
+                                pseudoIcoRect,
+                                Qt::AlignHCenter | Qt::AlignVCenter,
+                                ext
+                            );
+        }
     }
 
     if (Settings::instance() -> isShowInfo() && !is_folder) {
