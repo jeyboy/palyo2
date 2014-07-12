@@ -88,7 +88,7 @@ public slots:
     void itemDownloadProgress(ModelItem * itemObj, int percentage);
     void itemDownloadFinished(ModelItem * itemObj, bool success);
 
-protected:
+protected:   
     int count;
     ModelItem * rootItem;
 };

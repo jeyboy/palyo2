@@ -435,6 +435,13 @@ void View::openLocation() {
     item -> openLocation();
 }
 
+QString View::folderName(QFileInfo & info) {
+    QString name = info.dir().dirName();
+    if (name.isEmpty())
+        name = info.dir().path().split('/').first();
+    return name;
+}
+
 void View::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const {
     ModelItem * item = model -> getItem(index);
 
