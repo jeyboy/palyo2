@@ -8,7 +8,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
   setWindowTitle("Settings ept");
   setFixedWidth(356);
-  setFixedHeight(291);
+  setFixedHeight(305);
   setSizeGripEnabled(false);
 
   ui -> treeView -> setEditTriggers(QTreeView::AllEditTriggers);
