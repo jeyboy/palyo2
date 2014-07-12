@@ -48,7 +48,6 @@ int Spectrum::paddWidth() {
 }
 
 void Spectrum::paintEvent(QPaintEvent *event) {
-
     QToolBar::paintEvent(event);
 
     if (Settings::instance() -> getSpectrumCombo()) {

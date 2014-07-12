@@ -64,8 +64,12 @@ public:
 
     static QString sliderStyles() {
         return QString(
-                    "QSlider {"
+                    "QSlider:horizontal {"
                       "margin: 0 4px;"
+                    "}"
+
+                    "QSlider:vertical {"
+                      "margin: 4px 0;"
                     "}"
 
                     "QSlider::groove {"
