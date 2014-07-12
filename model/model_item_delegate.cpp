@@ -351,7 +351,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             break;
     }
 
-    painter -> setPen(QColor(Qt::gray));
+    painter -> setPen(option2.palette.color(QPalette::Mid));
     painter -> setBrush(fill_color);
     int angle = option2.rect.height() / 2.2;
     QRect bodyRect = option2.rect;
