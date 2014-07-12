@@ -34,15 +34,17 @@ QBrush Settings::playedState(QRect rect, bool dark) {
 }
 
 QBrush Settings::unprocessedState(QRect rect, bool dark) {
-    QLinearGradient grad(rect.left(), rect.top(), rect.left(), rect.bottom());
+//    QLinearGradient grad(rect.left(), rect.top(), rect.left(), rect.bottom());
 
-    if (dark) {
-        grad.setColorAt(0, folderColor1);
-        grad.setColorAt(0.8, Qt::black);
-    } else
-        grad.setColorAt(0, Qt::white);
+//    if (dark) {
+//        grad.setColorAt(0, folderColor1);
+//        grad.setColorAt(0.8, Qt::black);
+//    } else
+//        grad.setColorAt(0, Qt::white);
 
-    return grad;
+//    return grad;
+
+    return buildGradient(rect, folderColor1, dark);
 }
 
 
@@ -357,7 +359,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     playedColor1 = playedColor1Var.isValid() ? playedColor1Var.value<QColor>() : QColor(144, 238, 144);
 
     QVariant folderColor1Var = settingsObj.value("folder_color1").toVariant();
-    folderColor1 = folderColor1Var.isValid() ? folderColor1Var.value<QColor>() : QColor(128, 128, 128, 92);
+    folderColor1 = folderColor1Var.isValid() ? folderColor1Var.value<QColor>() : QColor(192, 192, 192);
 
     itemFontName = settingsObj.value("item_font_name").toString("Arial");
     itemFontSize = settingsObj.value("item_font_size").toInt(9);
