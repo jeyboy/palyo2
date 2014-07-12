@@ -27,16 +27,16 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         case Qt::DisplayRole: {
            item = getItem(index);
 
-           if (!item -> getState() -> isProceed()) {
-               item -> getState() -> setProceed();
-               if (!item -> isFolder()) {
-                   Library::instance() -> initItem(item, this, SLOT(libraryResponse()));
-               }
+//           if (!item -> getState() -> isProceed()) {
+//               item -> getState() -> setProceed();
+//               if (!item -> isFolder()) {
+//                   Library::instance() -> initItem(item, this, SLOT(libraryResponse()));
+//               }
 
-               if (item -> getState() -> isExpanded()) {
-                   emit expandNeeded(index);
-               }
-           }
+//               if (item -> getState() -> isExpanded()) {
+//                   emit expandNeeded(index);
+//               }
+//           }
 
            return item -> data(TITLEID);//index.column());
         }

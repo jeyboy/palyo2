@@ -98,6 +98,7 @@ protected slots:
     void modelUpdate();
 
 protected:
+    void drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const;
     void resizeEvent(QResizeEvent *);
     bool prepareDownloading(QString path);
 
