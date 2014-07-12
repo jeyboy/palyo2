@@ -359,7 +359,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
     if (!is_folder) {
         icon_size = ((QTreeView *)option2.widget) -> iconSize().width() - 2;
         if (icon_size < ico_mini) {
-            ico_offset = 8 * (ext.length() - 2);
+            ico_offset = 8 * (ext.length() - 1);
         }
 
         left_offset += icon_size + ico_offset;
@@ -392,8 +392,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
                     icon_size
                 );
 
-        QFont font = option.font;
-        font.setBold(true);
+        QFont font;
+        font.setFamily("Arial Black");
 
         if (icon_size < ico_mini) {
             painter -> drawLine(icoRect.topRight(), icoRect.bottomRight());
@@ -427,7 +427,7 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         QFontMetrics fmf(vfont);
         int timeWidth = fmf.width(infos.last());
 
-        int beetweeX = right_offset - timeWidth - 2;
+        int beetweeX = right_offset - timeWidth - 2 - (angle / 3);
         top = option2.rect.bottom() - fmf.height() - 2;
 
         QPoint topLeft(left_offset, top);
@@ -436,13 +436,14 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
         QString s = fmf.elidedText(infos.first(), Qt::ElideRight, rectText.width());
 
         QPoint topTLeft(beetweeX, top);
-        QPoint bottomTRight(right_offset, option2.rect.bottom());
+        QPoint bottomTRight(right_offset - (angle / 3), option2.rect.bottom());
         QRect rectTimeText(topTLeft, bottomTRight);
 
         painter -> drawText(rectText, Qt::AlignLeft, s);
         painter -> drawText(rectTimeText, Qt::AlignRight, infos.last());
-    }
 
+        painter -> drawLine(rectText.topLeft(), rectTimeText.topRight());
+    }
 
     painter -> setFont(Settings::instance() -> getItemFont());
     QFontMetrics fmf2(painter -> font());
