@@ -359,7 +359,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     playedColor1 = playedColor1Var.isValid() ? playedColor1Var.value<QColor>() : QColor(144, 238, 144);
 
     QVariant folderColor1Var = settingsObj.value("folder_color1").toVariant();
-    folderColor1 = folderColor1Var.isValid() ? folderColor1Var.value<QColor>() : QColor(192, 192, 192);
+    folderColor1 = folderColor1Var.isValid() ? folderColor1Var.value<QColor>() : QColor(220, 220, 220);
 
     itemFontName = settingsObj.value("item_font_name").toString("Arial");
     itemFontSize = settingsObj.value("item_font_size").toInt(9);
