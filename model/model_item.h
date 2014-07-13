@@ -41,6 +41,8 @@
 #define PROGRESSID Qt::UserRole + 7
 #define INFOID Qt::UserRole + 8
 #define ADDFONTID Qt::UserRole + 9
+#define PLAYABLEID Qt::UserRole + 10
+#define LASTCHILDID Qt::UserRole + 11
 
 #define FILE_ITEM 100
 #define FOLDER_ITEM 200

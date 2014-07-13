@@ -35,9 +35,6 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
 //  setDragDropOverwriteMode(true);
-//  setMovement(QTreeView::Snap);
-
-//  setFlow(QListView::TopToBottom);
 
 //    setTreePosition(2);
 //    setRootIndex();
@@ -255,6 +252,7 @@ void View::stopRoutine() {
 
 void View::setHeaderText(QString newText) {
     model -> root() -> setData(0, newText);
+    qDebug() << "LALKA " << rootIndex().data();
     setRootIndex(rootIndex());
 }
 

@@ -17,10 +17,6 @@ bool DataStore::load() {
     }
 
     QByteArray saveData = qUncompress(loadFile.readAll());
-<<<<<<< HEAD
-//    QByteArray saveData = loadFile.readAll();
-=======
->>>>>>> ce35fa42eb2bef9ee877b6a11148236a9e77ba63
     QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
     json = loadDoc.object();
 
