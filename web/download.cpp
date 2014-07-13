@@ -24,14 +24,13 @@ void Download::onTimer() {
             downloads -> insert(m_http, pos);
             QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
             emit slotChanged("(Downloads remain: " + QString::number(queue -> count()) + ") " + item -> data(TITLEID).toString());
-        } else {
-            emit slotChanged("(O_o)");
         }
     }
 }
 
 void Download::finishDownload() {
 //    QFutureWatcher<QNetworkReply *> * curr = (QFutureWatcher<QNetworkReply *>)sender();
+    emit slotChanged("(O_o)");
     delete downloader -> result();
     isReady = true;
     delete downloader;

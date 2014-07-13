@@ -252,7 +252,6 @@ void View::stopRoutine() {
 
 void View::setHeaderText(QString newText) {
     model -> root() -> setData(0, newText);
-    qDebug() << "LALKA " << rootIndex().data();
     setRootIndex(rootIndex());
 }
 
@@ -540,11 +539,10 @@ QModelIndex View::activeItem(bool next) {
                 }
             }
         } else {
-            item = model -> index(model -> root());//this -> rootIndex();
+            item = model -> index(model -> root());
         }
     }
 
-    qDebug() << item;
     return item;
 }
 
@@ -556,7 +554,8 @@ QModelIndex View::nextItem(QModelIndex & curr) {
         if (first_elem) {
             first_elem = false;
         } else {
-            item = indexBelow(item);
+            item = item.parent().child(item.row() + 1, 0);
+//            item = indexBelow(item);
         }
 
         if (item.isValid()) {
@@ -587,7 +586,8 @@ QModelIndex View::prevItem(QModelIndex & curr) {
         if (last_elem) {
             last_elem = false;
         } else {
-              item = indexAbove(item);
+//            item = item.parent().child(item.row() - 1, 0);
+            item = indexAbove(item);
         }
 
         if (item.isValid()) {
@@ -595,6 +595,10 @@ QModelIndex View::prevItem(QModelIndex & curr) {
                 return item;
             } else {
                 curr = item;
+
+
+
+//                item = item.parent().child(item.row() - 1, 0);
                 item = indexAbove(item);
                 last_elem = true;
             }
