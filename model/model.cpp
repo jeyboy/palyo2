@@ -31,7 +31,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
 
     switch(role) {
         case Qt::DisplayRole: {
-           return item -> data(index.column());
+           return item -> data(TITLEID);
         }
         case Qt::DecorationRole: {
            //QPixmap pixmap(26, 26);
