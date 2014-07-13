@@ -35,7 +35,7 @@ void Slider::paintEvent(QPaintEvent * event) {
     if (orientation() == Qt::Horizontal) {
         while(temp < 16) {
             multiplyer++;
-            temp = ((float)(rect.width())) / (step / multiplyer);
+            temp = ((float)(rect.width() - 2 * margin)) / (step / multiplyer);
         }
 
         step = temp;
@@ -48,7 +48,6 @@ void Slider::paintEvent(QPaintEvent * event) {
 
         if (multiplyer > 1) {
             flag = Qt::AlignHCenter | Qt::AlignVCenter;
-//            p.drawText(4, rect.top() + 18, "x " + QString::number(multiplyer));
         }
 
         if (position_slider) {
@@ -62,7 +61,7 @@ void Slider::paintEvent(QPaintEvent * event) {
     } else {
         while(temp < 20) {
             multiplyer++;
-            temp = ((float)(rect.height())) / (step / multiplyer);
+            temp = ((float)(rect.height() - 2 * margin)) / (step / multiplyer);
         }
 
         step = temp;
