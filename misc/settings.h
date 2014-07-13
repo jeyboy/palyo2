@@ -49,6 +49,8 @@ public:
     QColor getFolderColor() const;
     void setFolderColor(QColor newColor);
 
+    bool isShowSystemIcons() const;
+    void setShowSystemIcons(bool show);
 
     bool isShowInfo() const;
     void setShowInfo(bool show);
@@ -157,6 +159,7 @@ private:
     static Settings *self;
 
     QString downloadPath;
+    bool showSystemIcons;
     bool showInfo;
     bool showCheckbox;
     bool showMetric;

@@ -357,8 +357,11 @@ QToolBar* ToolBars::createControlToolBar() {
 }
 
 Spectrum * ToolBars::getSpectrum() {
-    if (spectrum == 0)
+    if (spectrum == 0) {
         spectrum = new Spectrum((QWidget *)parent());
+        spectrum -> setAutoFillBackground(true);
+        spectrum -> setPalette(pal);
+    }
 
     return spectrum;
 }

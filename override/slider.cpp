@@ -11,6 +11,7 @@ Slider::Slider(QWidget * parent, bool isPositionSlider) : QSlider(parent) {
 //    setToolTipDuration(1000);
 
     setStyleSheet(Stylesheets::sliderStyles());
+    margin = 4;
 }
 
 
@@ -53,8 +54,8 @@ void Slider::paintEvent(QPaintEvent * event) {
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(0, rect.y(), rect.width() - 1, 3);
-                p.fillRect(0, rect.y(), (rect.width() - 1) * pos, 3, fillColor);
+                p.drawRect(margin, rect.y(), rect.width() - 1 - margin * 2, 3);
+                p.fillRect(margin, rect.y(), (rect.width() - 1 - margin * 2) * pos, 3, fillColor);
             }
         }
 
@@ -75,8 +76,8 @@ void Slider::paintEvent(QPaintEvent * event) {
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(rect.x(), 0, 3, rect.height() - 1);
-                p.fillRect(rect.x(), rect.height(), 3, -((rect.height() - 1) * pos), fillColor);
+                p.drawRect(rect.x(), margin, 3, rect.height() - 1 - margin * 2);
+                p.fillRect(rect.x(), rect.height() - margin, 3, -((rect.height() - 1 - margin * 2) * pos), fillColor);
             }
         }
     }
@@ -100,15 +101,20 @@ void Slider::paintEvent(QPaintEvent * event) {
 void Slider::mouseMoveEvent(QMouseEvent * ev) {
     if (hasMouseTracking()) {
         QPointF p = ev -> localPos();
+        bool show = false;
 
         int dur;
         if (orientation() == Qt::Vertical) {
-            dur = maximum() *((height() - p.y()) / height());
+            if ((show = (p.y() > margin && p.y() < height() - margin)))
+                dur = maximum() *((height() - margin - p.y()) / (height() - 2 * margin));
         } else {
-            dur = maximum() *(p.x() / width());
+            if ((show = (p.x() > margin && p.x() < width() - margin)))
+                dur = maximum() * ((p.x() - margin) / (width() - 2 * margin));
         }
 
-        QToolTip::showText(ev -> globalPos(), Duration::fromMillis(dur));
+        if (show)
+            QToolTip::showText(ev -> globalPos(), Duration::fromMillis(dur));
+
     }
 
     QSlider::mouseMoveEvent(ev);

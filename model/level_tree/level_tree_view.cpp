@@ -11,14 +11,15 @@ LevelTreeView::~LevelTreeView() {
 
 QModelIndex LevelTreeView::dropProcession(const QList<QUrl> & list) {
     QFileInfo file = QFileInfo(list.first().toLocalFile());
-    QString folderName;
+    QString fName;
 
-    if (file.isDir())
-        folderName = file.fileName();
-    else
-        folderName = file.dir().dirName();
+    if (file.isDir()) {
+        fName = file.fileName();
+    } else {
+        fName = folderName(file);
+    }
 
-    ModelItem * index = model -> addFolder("", folderName, model -> root());
+    ModelItem * index = model -> addFolder("", fName, model -> root());
 
     filesRoutine(index, list);
     if (index -> childCount() == 0) {

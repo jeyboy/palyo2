@@ -6,9 +6,9 @@ HotkeyEditor::HotkeyEditor(int hotkeyType, QWidget *parent) : QKeySequenceEdit(p
 }
 
 void HotkeyEditor::keyReleaseEvent(QKeyEvent *) {
+    emit editingFinished();
+
     if (!HotkeyManager::instance() -> registerSequence(keyType, keySequence().toString())) {
         qDebug() << "LOL";
     }
-
-    emit editingFinished();
 }

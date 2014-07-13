@@ -25,8 +25,6 @@
         <file alias="prev">icons/prev.png</file>
         <file alias="remove">icons/remove.png</file>
         <file alias="shuffle">icons/shuffle.png</file>
-        <file alias="progress">icons/progress.png</file>
-        <file alias="tab_back">icons/tree_back.png</file>
         <file alias="add_vk">icons/add_vk.png</file>
         <file alias="active_tab">icons/active_tab.png</file>
         <file alias="remote">icons/remote.png</file>
@@ -34,27 +32,13 @@
         <file alias="refresh">icons/refresh.png</file>
         <file alias="collapse">icons/collapse.png</file>
         <file alias="expand">icons/expand.png</file>
-        <file alias="spinner">icons/loader.gif</file>
         <file alias="sync">icons/sync.png</file>
         <file alias="locked">icons/locked.png</file>
         <file alias="unlocked">icons/unlocked.png</file>
         <file alias="add_vk_on">icons/add_vk_on.png</file>
         <file alias="add_soundcloud">icons/add_soundcloud.png</file>
         <file alias="add_soundcloud_on">icons/add_soundcloud_on.png</file>
-    </qresource>
-    <qresource prefix="/ext">
-        <file alias="_aac">icons/ext/Icon_1.ico</file>
-        <file alias="_ape">icons/ext/Icon_2.ico</file>
-        <file alias="_audio">icons/ext/Icon_3.ico</file>
-        <file alias="_flac">icons/ext/Icon_4.ico</file>
-        <file alias="_m4a">icons/ext/Icon_5.ico</file>
-        <file alias="_mod">icons/ext/Icon_6.ico</file>
-        <file alias="_mp3">icons/ext/Icon_7.ico</file>
-        <file alias="_mpc">icons/ext/Icon_8.ico</file>
-        <file alias="_ogg">icons/ext/Icon_9.ico</file>
-        <file alias="_playlist">icons/ext/Icon_10.ico</file>
-        <file alias="_wav">icons/ext/Icon_12.ico</file>
-        <file alias="_wma">icons/ext/Icon_13.ico</file>
+        <file alias="drag">icons/drag.png</file>
     </qresource>
     <qresource prefix="/elems">
         <file alias="check_blank">icons/elems/check_blank.png</file>

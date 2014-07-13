@@ -8,7 +8,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
   setWindowTitle("Settings ept");
   setFixedWidth(356);
-  setFixedHeight(291);
+  setFixedHeight(305);
   setSizeGripEnabled(false);
 
   ui -> treeView -> setEditTriggers(QTreeView::AllEditTriggers);
@@ -23,6 +23,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   ui -> drawMetrics -> setChecked(Settings::instance() -> isMetricShow());
   ui -> spoilOnActivate -> setChecked(Settings::instance() -> isSpoilOnActivation());
   ui -> showInfo -> setChecked(Settings::instance() -> isShowInfo());
+
+  ui -> useSystemIconsCheck -> setChecked(Settings::instance() -> isShowSystemIcons());
 
   ui -> useGradientCheck -> setChecked(Settings::instance() -> isUseGradient());
 
@@ -167,6 +169,8 @@ void SettingsDialog::on_acceptButton_clicked() {
     iconSizeChanged = Settings::instance() -> isShowInfo() != ui -> showInfo -> isChecked()
             || Settings::instance() -> getItemHeight() != ui -> itemHeightSize -> value();
     Settings::instance() -> setShowInfo(ui -> showInfo -> isChecked());
+
+    Settings::instance() -> setShowSystemIcons(ui -> useSystemIconsCheck -> isChecked());
 
     Settings::instance() -> setUseGradient(ui -> useGradientCheck -> isChecked());
 

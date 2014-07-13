@@ -21,7 +21,6 @@ QVariant Model::data(const QModelIndex &index, int role) const {
         return QVariant();
 
     switch(role) {
-<<<<<<< HEAD
         case Qt::FontRole:
             return Settings::instance() -> getItemFont();
         case ADDFONTID:
@@ -33,11 +32,6 @@ QVariant Model::data(const QModelIndex &index, int role) const {
     switch(role) {
         case Qt::DisplayRole: {
            return item -> data(index.column());
-=======
-        case Qt::DisplayRole: {
-           item = getItem(index);
-           return item -> data(TITLEID);//index.column());
->>>>>>> ce35fa42eb2bef9ee877b6a11148236a9e77ba63
         }
         case Qt::DecorationRole: {
            //QPixmap pixmap(26, 26);
@@ -71,16 +65,8 @@ QVariant Model::data(const QModelIndex &index, int role) const {
                 return Qt::AlignVCenter;
             else
                 return Qt::AlignLeft;
-<<<<<<< HEAD
-=======
-        case Qt::FontRole:
-            return Settings::instance() -> getItemFont();
         case EXTENSIONID:
-            item = getItem(index);
             return item -> data(EXTENSIONID);
-        case ADDFONTID:
-            return Settings::instance() -> getItemInfoFont();
->>>>>>> ce35fa42eb2bef9ee877b6a11148236a9e77ba63
         case Qt::UserRole:
             return item -> getState() -> currStateValue();
         case PROGRESSID:

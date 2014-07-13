@@ -34,15 +34,17 @@ QBrush Settings::playedState(QRect rect, bool dark) {
 }
 
 QBrush Settings::unprocessedState(QRect rect, bool dark) {
-    QLinearGradient grad(rect.left(), rect.top(), rect.left(), rect.bottom());
+//    QLinearGradient grad(rect.left(), rect.top(), rect.left(), rect.bottom());
 
-    if (dark) {
-        grad.setColorAt(0, folderColor1);
-        grad.setColorAt(0.8, Qt::black);
-    } else
-        grad.setColorAt(0, Qt::white);
+//    if (dark) {
+//        grad.setColorAt(0, folderColor1);
+//        grad.setColorAt(0.8, Qt::black);
+//    } else
+//        grad.setColorAt(0, Qt::white);
 
-    return grad;
+//    return grad;
+
+    return buildGradient(rect, folderColor1, dark);
 }
 
 
@@ -86,6 +88,13 @@ QColor Settings::getFolderColor() const {
 }
 void Settings::setFolderColor(QColor newColor) {
     folderColor1 = newColor;
+}
+
+bool Settings::isShowSystemIcons() const {
+    return showSystemIcons;
+}
+void Settings::setShowSystemIcons(bool show) {
+    showSystemIcons = show;
 }
 
 
@@ -318,10 +327,10 @@ void Settings::setHotKeys(QJsonObject hotkeysHash) {
         hotkeys.insert(QString::number(HOTKEY_STOP), QJsonValue::fromVariant("Media Stop"));
         hotkeys.insert(QString::number(HOTKEY_SETTINGS), QJsonValue::fromVariant("Ctrl+Q"));
 
-        hotkeys.insert(QString::number(HOTKEY_POS_SLIDE_FORWARD), QJsonValue::fromVariant("Ctrl+]"));
-        hotkeys.insert(QString::number(HOTKEY_POS_SLIDE_BACKWARD), QJsonValue::fromVariant("Ctrl+["));
-        hotkeys.insert(QString::number(HOTKEY_VOL_SLIDE_FORWARD), QJsonValue::fromVariant("Ctrl+}"));
-        hotkeys.insert(QString::number(HOTKEY_VOL_SLIDE_BACKWARD), QJsonValue::fromVariant("Ctrl+{"));
+        hotkeys.insert(QString::number(HOTKEY_POS_SLIDE_FORWARD), QJsonValue::fromVariant("Ctrl+Alt+Right"));
+        hotkeys.insert(QString::number(HOTKEY_POS_SLIDE_BACKWARD), QJsonValue::fromVariant("Ctrl+Alt+Left"));
+        hotkeys.insert(QString::number(HOTKEY_VOL_SLIDE_FORWARD), QJsonValue::fromVariant("Ctrl+Shift+Right"));
+        hotkeys.insert(QString::number(HOTKEY_VOL_SLIDE_BACKWARD), QJsonValue::fromVariant("Ctrl+Shift+Left"));
     } else {
         hotkeys = hotkeysHash;
     }
@@ -334,6 +343,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     showMetric = settingsObj.value("show_metric").toBool(true);
     spoilOnActivation = settingsObj.value("spoil_on_activation").toBool(true);
     showInfo = settingsObj.value("show_info").toBool(true);
+    showSystemIcons = settingsObj.value("show_system_icons").toBool(false);
     useGradient = settingsObj.value("use_gradient").toBool(true);
 
     QVariant defaultColor1Var = settingsObj.value("default_color1").toVariant();
@@ -349,7 +359,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     playedColor1 = playedColor1Var.isValid() ? playedColor1Var.value<QColor>() : QColor(144, 238, 144);
 
     QVariant folderColor1Var = settingsObj.value("folder_color1").toVariant();
-    folderColor1 = folderColor1Var.isValid() ? folderColor1Var.value<QColor>() : QColor(128, 128, 128, 92);
+    folderColor1 = folderColor1Var.isValid() ? folderColor1Var.value<QColor>() : QColor(220, 220, 220);
 
     itemFontName = settingsObj.value("item_font_name").toString("Arial");
     itemFontSize = settingsObj.value("item_font_size").toInt(9);
@@ -401,6 +411,7 @@ QJsonObject Settings::toJson() {
     ret.insert("show_metric", QJsonValue::fromVariant(showMetric));
     ret.insert("spoil_on_activation", QJsonValue::fromVariant(spoilOnActivation));
     ret.insert("show_info", QJsonValue::fromVariant(showInfo));
+    ret.insert("show_system_icons", QJsonValue::fromVariant(showSystemIcons));
 
     ret.insert("default_color1", QJsonValue::fromVariant(defaultColor1));
     ret.insert("listened_color1", QJsonValue::fromVariant(listenedColor1));

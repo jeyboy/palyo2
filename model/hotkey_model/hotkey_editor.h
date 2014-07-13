@@ -1,14 +1,13 @@
 #ifndef HOTKEY_EDITOR_H
 #define HOTKEY_EDITOR_H
 
+#include <QKeySequenceEdit>
 #include <QKeyEvent>
-#include <QtWidgets/QKeySequenceEdit>
 
 #include "misc/hotkey_manager.h"
 
 class HotkeyEditor : public QKeySequenceEdit {
     Q_OBJECT
-
 public:
     HotkeyEditor(int hotkeyType, QWidget *parent = 0);
 

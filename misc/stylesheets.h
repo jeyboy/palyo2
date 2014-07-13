@@ -8,62 +8,70 @@ public:
     static QString appStyles() {
         return QString(
                     "QCheckBox::indicator {"
-                    "    width: 16px;"
-                    "    height: 16px;"
+                    " width: 16px;"
+                    " height: 16px;"
                     "}"
 
                     "QCheckBox::indicator:unchecked {"
-                    "    image: url(:/elems/check_blank);"
+                    " image: url(:/elems/check_blank);"
                     "}"
 
                     "QCheckBox::indicator:unchecked:hover {"
-                    "    image: url(:/elems/check_blank);"
+                    " image: url(:/elems/check_blank);"
                     "}"
 
                     "QCheckBox::indicator:unchecked:disabled {"
-                    "    image: url(:/elems/check_blank_disabled);"
+                    " image: url(:/elems/check_blank_disabled);"
                     "}"
 
                     "QCheckBox::indicator:unchecked:pressed {"
-                    "    image: url(:/elems/check_blank);"
+                    " image: url(:/elems/check_blank);"
                     "}"
 
                     "QCheckBox::indicator:checked {"
-                    "    image: url(:/elems/check_fill);"
+                    " image: url(:/elems/check_fill);"
                     "}"
 
                     "QCheckBox::indicator:checked:hover {"
-                    "    image: url(:/elems/check_trist);"
+                    " image: url(:/elems/check_trist);"
                     "}"
 
                     "QCheckBox::indicator:checked:disabled {"
-                    "    image: url(:/elems/check_fill_disabled);"
+                    " image: url(:/elems/check_fill_disabled);"
                     "}"
 
                     "QCheckBox::indicator:checked:pressed {"
-                    "    image: url(:/elems/check_fill);"
+                    " image: url(:/elems/check_fill);"
                     "}"
 
-                    "QTabBar QToolButton::right-arrow  { /* the arrow mark in the tool buttons */"
-                    "    image: url(:/elems/next);"
+                    "QTabBar QToolButton::right-arrow { /* the arrow mark in the tool buttons */"
+                    " image: url(:/elems/next);"
                     "}"
 
-                    "QTabBar QToolButton::left-arrow  { /* the arrow mark in the tool buttons */"
-                    "    image: url(:/elems/prev);"
+                    "QTabBar QToolButton::left-arrow { /* the arrow mark in the tool buttons */"
+                    " image: url(:/elems/prev);"
                     "}"
 
-//                              "QTabBar::tear  {"
-//                              "    image: url(tear_indicator.png);"
-//                              "}"
+// "QTabBar::tear {"
+// " image: url(tear_indicator.png);"
+// "}"
 
-                    "QTabBar::scroller  {"
-                    "    height: 24px;"
+                    "QTabBar::scroller {"
+                    " height: 24px;"
                     "}"
                 );
     }
 
     static QString sliderStyles() {
         return QString(
+                    "QSlider:horizontal {"
+                      "margin: 0 4px;"
+                    "}"
+
+                    "QSlider:vertical {"
+                      "margin: 4px 0;"
+                    "}"
+
                     "QSlider::groove {"
                       "border: 1px solid #bbb;"
                       "border-radius: 2px;"
@@ -145,29 +153,23 @@ public:
     static QString treeViewStyles() {
         return QString(
                     "QTreeView::indicator {"
-                    "    width: 18px;"
-                    "    height: 18px;"
+                    "   width: 18px;"
+                    "   height: 18px;"
                     "}"
                     "QTreeView::indicator:unchecked {"
-                    "  image: url(:/elems/check_blank);"
+                    "   image: url(:/elems/check_blank);"
                     "}"
                     "QTreeView::indicator:checked {"
-                    "  image: url(:/elems/check_fill);"
-                    "}"                
-                    "QTreeView::indicator:checked:pressed {"
-                    "  image: url(:/elems/check_fill);"
+                    "   image: url(:/elems/check_fill);"
                     "}"
                     "QTreeView::indicator:checked:hover {"
-                    "  image: url(:/elems/check_trist);"
+                    "   image: url(:/elems/check_trist);"
                     "}"
                     "QTreeView::indicator:indeterminate:hover {"
-                    "  image: url(:/elems/check_trist);"
-                    "}"
-                    "QTreeView::indicator:indeterminate:pressed {"
-                    "  image: url(:/elems/check_fill);"
+                    "   image: url(:/elems/check_trist);"
                     "}"
                     "QTreeView::indicator:indeterminate {"
-                    "  image: url(:/elems/check_fill);"
+                    "   image: url(:/elems/check_fill);"
                     "}"
                   );
     }
@@ -177,7 +179,7 @@ public:
                     "QToolButton {"
                         "border: 1px solid #444;"
                         "background: qradialgradient(cx:0, cy:0, radius: 1, fx:0.6, fy:0.6, stop:0 #FFF, stop:0.8 #E7DA1E, stop:1 #F7E488);"
-    //                  "background: qradialgradient(cx:0.5, cy:0.5, radius: 1, fx:0.2, fy:0.2, stop:0 #FFFFFF, stop:0.5 #B3AF76, stop:1 #F7E488);"
+    // "background: qradialgradient(cx:0.5, cy:0.5, radius: 1, fx:0.2, fy:0.2, stop:0 #FFFFFF, stop:0.5 #B3AF76, stop:1 #F7E488);"
                         "border-radius: 8px;"
                         "font-weight: bold;"
                         "height: 24px;"

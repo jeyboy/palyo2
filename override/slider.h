@@ -21,6 +21,7 @@ protected:
 private:
     bool position_slider;
     QColor fillColor;
+    int margin;
 };
 
 #endif // SLIDER_H

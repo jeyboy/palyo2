@@ -8,7 +8,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     settings = settingsSet;
     setModel((model = newModel));
 
-    setIndentation(8);
+    setIndentation(12);
 
 //    setStyleSheet(QString(
 //                      "QTreeView {"
@@ -22,7 +22,7 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     setAcceptDrops(true);
     setDropIndicatorShown(true);
 
-    setStyle(new TreeViewStyle);
+//    setStyle(new TreeViewStyle);
 
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::CopyAction);
@@ -386,6 +386,13 @@ void View::openLocation() {
     item -> openLocation();
 }
 
+QString View::folderName(QFileInfo & info) {
+    QString name = info.dir().dirName();
+    if (name.isEmpty())
+        name = info.dir().path().split('/').first();
+    return name;
+}
+
 void View::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const {
     ModelItem * item = model -> getItem(index);
 
@@ -617,6 +624,7 @@ ModelItem * View::createItem(QString path, ModelItem * parent) {
 }
 
 void View::dragEnterEvent(QDragEnterEvent *event) {
+    QTreeView::dragEnterEvent(event);
     event -> setDropAction(
                 event -> source() == this ? Qt::MoveAction : Qt::CopyAction
     );
@@ -629,6 +637,7 @@ void View::dragEnterEvent(QDragEnterEvent *event) {
 
 void View::dragMoveEvent(QDragMoveEvent * event) {
     QTreeView::dragMoveEvent(event);
+
     if (event -> mimeData() -> hasFormat("text/uri-list")) {
         event -> accept();
     } else
@@ -681,7 +690,7 @@ void View::mouseMoveEvent(QMouseEvent * event) {
         if (selectedIndexes().length() > 0) {
             QDrag * drag = new QDrag(this);
             QMimeData * mimeData = model -> mimeData(selectedIndexes());
-    //        drag -> setPixmap(toolIcon);
+            drag -> setPixmap(QPixmap(":drag"));
             drag -> setMimeData(mimeData);
             drag -> exec(Qt::CopyAction, Qt::CopyAction);
         }
