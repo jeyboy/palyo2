@@ -27,15 +27,18 @@ void Slider::paintEvent(QPaintEvent * event) {
     p.save();
 
     p.setPen(QColor::fromRgb(0, 0, 0));
-    QRect rect = geometry();
+    QRect rect = this -> geometry();
 
     double limit, temp = 0, step = ((double)maximum()) / tickInterval();
     int multiplyer = 0, flag = Qt::AlignVertical_Mask | Qt::AlignHCenter;
 
     if (orientation() == Qt::Horizontal) {
+        rect.moveLeft(rect.left() + margin);
+        rect.setWidth(rect.width() - margin);
+
         while(temp < 16) {
             multiplyer++;
-            temp = ((float)(rect.width() - 2 * margin)) / (step / multiplyer);
+            temp = ((float)(rect.width())) / (step / multiplyer);
         }
 
         step = temp;
@@ -53,37 +56,39 @@ void Slider::paintEvent(QPaintEvent * event) {
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(margin, rect.y(), rect.width() - 1 - margin * 2, 3);
-                p.fillRect(margin, rect.y(), (rect.width() - 1 - margin * 2) * pos, 3, fillColor);
+                p.drawRect(rect.x(), rect.y(), rect.width() - 1, 3);
+                p.fillRect(rect.x(), rect.y(), (rect.width() - 1) * pos, 3, fillColor);
             }
         }
 
     } else {
+        rect.moveTop(rect.top() + margin);
+        rect.setHeight(rect.height() - margin);
+
         while(temp < 20) {
             multiplyer++;
-            temp = ((float)(rect.height() - 2 * margin)) / (step / multiplyer);
+            temp = ((float)(rect.height())) / (step / multiplyer);
         }
 
         step = temp;
         limit = (rect.height() / step) == 0 ? rect.height() - step : rect.height();
-        int right = rect.right() - 7, w = (rect.width() / 3) - 3;
+        int temp, right = rect.right() - 7, w = (rect.width() / 3) - 3;
 
-        for(double pos = step; pos < limit; pos += step) {
-            p.drawLine(right - w, pos, right, pos);
+        for(double pos = step - margin; pos < limit; pos += step) {
+            temp = rect.height() - pos;
+            p.drawLine(right - w, temp, right, temp);
         }
 
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(rect.x(), margin, 3, rect.height() - 1 - margin * 2);
-                p.fillRect(rect.x(), rect.height() - margin, 3, -((rect.height() - 1 - margin * 2) * pos), fillColor);
+                p.drawRect(rect.x(), rect.y(), 3, rect.height() - 1);
+                p.fillRect(rect.x(), rect.height(), 3, -((rect.height() - 1) * pos), fillColor);
             }
         }
     }
 
     if (multiplyer > 1) {
-//            p.drawText(rect.left() + 4 + (multiplyer < 10 ? 3 : 0), (int)(limit - step / 2) + 2, "x" + QString::number(multiplyer));
-
         QStyleOptionSlider opt;
         initStyleOption(&opt);
 
