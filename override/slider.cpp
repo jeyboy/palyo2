@@ -48,7 +48,8 @@ void Slider::paintEvent(QPaintEvent * event) {
         for(double pos = step; pos < limit; pos += step, val += multiplyer) {
             strNum = QString::number(val);
             p.drawLine(pos, bottom - h, pos, bottom);
-            p.drawText(pos - 7 * strNum.length() , bottom, strNum);
+            if (position_slider)
+                p.drawText(pos - 7 * strNum.length() , bottom, strNum);
         }
 
         if (position_slider) {
@@ -76,7 +77,8 @@ void Slider::paintEvent(QPaintEvent * event) {
             strNum = QString::number(val);
             temp = rect.height() - pos;
             p.drawLine(left, temp, left + w, temp);
-            p.drawText(left, temp + 10, strNum);
+            if (position_slider)
+                p.drawText(left, temp + 10, strNum);
         }
 
         if (position_slider) {
