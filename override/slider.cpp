@@ -14,8 +14,7 @@ Slider::Slider(QWidget * parent, bool isPositionSlider) : QSlider(parent) {
     margin = 4;
 }
 
-
-//TODO: problem with download line start if bar is not movable
+//TODO: draw text by QStaticText
 void Slider::paintEvent(QPaintEvent * event) {
     QSlider::paintEvent(event);
 
@@ -23,14 +22,14 @@ void Slider::paintEvent(QPaintEvent * event) {
         return;
 
     QPainter p(this);
-
     p.save();
 
     p.setPen(QColor::fromRgb(0, 0, 0));
     QRect rect = this -> geometry();
+    QString strNum;
 
     double limit, temp = 0, step = ((double)maximum()) / tickInterval();
-    int multiplyer = 0, flag = Qt::AlignVertical_Mask | Qt::AlignHCenter;
+    int multiplyer = 0;
 
     if (orientation() == Qt::Horizontal) {
         rect.moveLeft(rect.left() + margin);
@@ -44,13 +43,12 @@ void Slider::paintEvent(QPaintEvent * event) {
         step = temp;
         limit = (rect.width() / step) == 0 ? rect.width() - step : rect.width();
         int bottom = rect.bottom() - 7, h = (rect.height() / 3) - 3;
+        double val = multiplyer;
 
-        for(double pos = step; pos < limit; pos += step) {
+        for(double pos = step; pos < limit; pos += step, val += multiplyer) {
+            strNum = QString::number(val);
             p.drawLine(pos, bottom - h, pos, bottom);
-        }
-
-        if (multiplyer > 1) {
-            flag = Qt::AlignHCenter | Qt::AlignVCenter;
+            p.drawText(pos - 7 * strNum.length() , bottom, strNum);
         }
 
         if (position_slider) {
@@ -60,23 +58,25 @@ void Slider::paintEvent(QPaintEvent * event) {
                 p.fillRect(rect.x(), rect.y(), (rect.width() - 1) * pos, 3, fillColor);
             }
         }
-
     } else {
         rect.moveTop(rect.top() + margin);
         rect.setHeight(rect.height() - margin);
 
-        while(temp < 20) {
+        while(temp < 16) {
             multiplyer++;
             temp = ((float)(rect.height())) / (step / multiplyer);
         }
 
         step = temp;
         limit = (rect.height() / step) == 0 ? rect.height() - step : rect.height();
-        int temp, right = rect.right() - 7, w = (rect.width() / 3) - 3;
+        int temp, left = rect.left() + 4, w = (rect.width() / 3) - 3;
+        double val = multiplyer;
 
-        for(double pos = step - margin; pos < limit; pos += step) {
+        for(double pos = step - margin; pos < limit; pos += step, val += multiplyer) {
+            strNum = QString::number(val);
             temp = rect.height() - pos;
-            p.drawLine(right - w, temp, right, temp);
+            p.drawLine(left, temp, left + w, temp);
+            p.drawText(left, temp + 10, strNum);
         }
 
         if (position_slider) {
@@ -88,18 +88,7 @@ void Slider::paintEvent(QPaintEvent * event) {
         }
     }
 
-    if (multiplyer > 1) {
-        QStyleOptionSlider opt;
-        initStyleOption(&opt);
-
-        QStyle *styl = style();
-        QRect rectHandle = styl -> subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, NULL);
-        p.drawText(rectHandle, flag, QString::number(multiplyer));
-    }
-
     p.restore();
-
-//    int avl=styl->pixelMetric(QStyle::PM_SliderSpaceAvailable, &opt, this);
 }
 
 void Slider::mouseMoveEvent(QMouseEvent * ev) {
