@@ -18,6 +18,7 @@
 #include "media/player.h"
 
 #include "toolbars.h"
+#include "widgets.h"
 
 namespace Ui {
   class MainWindow;
@@ -34,8 +35,6 @@ public:
     void locationCorrection();
 
     void registrateTray();
-
-    QDockWidget * createDockWidget();  
 
 public slots:
     void outputActiveItem(ModelItem *, ModelItem *);

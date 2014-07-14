@@ -93,7 +93,8 @@ SOURCES += main.cpp\
     web/api_process.cpp \
     dialogs/captchadialog.cpp \
     model/web/deleted_list.cpp \
-    model/web/web_model.cpp
+    model/web/web_model.cpp \
+    widgets.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -170,7 +171,8 @@ HEADERS  += mainwindow.h \
     model/web/deleted_list.h \
     override/tree_view_style.h \
     model/web/web_model.h \
-    misc/stylesheets.h
+    misc/stylesheets.h \
+    widgets.h
     model/view_types.h
 
 unix:!mac {

@@ -28,7 +28,7 @@ void Tab::init(CBHash params, QJsonObject * hash) {
     }
 //    view -> setResizeMode();
 
-    this -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
+    this -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom, this));
     this -> layout() -> addWidget(view);
 
 

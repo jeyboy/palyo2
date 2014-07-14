@@ -78,6 +78,19 @@ void MainWindow::initialization() {
 ////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/Yellow Claw feat. Rochelle - Shotgun .mp3")); // ~145
 //    player.setMedia(QUrl::fromLocalFile("C:/Users/JB/Desktop/Akon_Ft_French_Montana_-_Hurt_Somebody.mp3"));
 //    player.play();
+
+    QListWidget * customerList = new QListWidget(this);
+    customerList->addItems(QStringList()
+            << "John Doe, Harmony Enterprises, 12 Lakeside, Ambleton"
+            << "Jane Doe, Memorabilia, 23 Watersedge, Beaton"
+            << "Tammy Shea, Tiblanka, 38 Sea Views, Carlton"
+            << "Tim Sheen, Caraba Gifts, 48 Ocean Way, Deal"
+            << "Sol Harvey, Chicos Coffee, 53 New Springs, Eccleston"
+            << "Sally Hobart, Tiroli Tea, 67 Long River, Fedula");
+    QDockWidget * dockWidget1 = Widgets::instance(this) -> createDocBar("LOL", customerList);
+    QDockWidget * dockWidget2 = Widgets::instance(this) -> createDocBar("LOL2", customerList);
+
+    tabifyDockWidget(dockWidget1, dockWidget2);
 }
 
 //TODO: menu finish needed
@@ -96,22 +109,6 @@ void MainWindow::registrateTray() {
         m_tray.setContextMenu(pTrayMenu);
         m_tray.show();
     }
-}
-
-QDockWidget * MainWindow::createDockWidget() {
-//    QDockWidget *dock = new QDockWidget(tr("Customers"), this);
-//    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-//    customerList = new QListWidget(dock);
-//    customerList->addItems(QStringList()
-//            << "John Doe, Harmony Enterprises, 12 Lakeside, Ambleton"
-//            << "Jane Doe, Memorabilia, 23 Watersedge, Beaton"
-//            << "Tammy Shea, Tiblanka, 38 Sea Views, Carlton"
-//            << "Tim Sheen, Caraba Gifts, 48 Ocean Way, Deal"
-//            << "Sol Harvey, Chicos Coffee, 53 New Springs, Eccleston"
-//            << "Sally Hobart, Tiroli Tea, 67 Long River, Fedula");
-//    dock->setWidget(customerList);
-//    addDockWidget(Qt::RightDockWidgetArea, dock);
-//    viewMenu->addAction(dock->toggleViewAction());
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent * event) {
