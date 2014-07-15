@@ -101,7 +101,6 @@ void Widgets::save(QMainWindow * window, DataStore * settings) {
 
 QDockWidget * Widgets::createDocBar(QString name, QWidget * content, Qt::DockWidgetArea place) {
     QDockWidget * dock = new QDockWidget(name, (QWidget *)parent());
-    qDebug() << dock -> titleBarWidget();
     dock -> setWindowFlags(Qt::WindowMinMaxButtonsHint);
     dock -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom, ((QWidget *)parent())));
 //    dock -> showFullScreen();
@@ -112,3 +111,30 @@ QDockWidget * Widgets::createDocBar(QString name, QWidget * content, Qt::DockWid
     return dock;
 //    ((QWidget *)parent())->tabifyDockWidget(dockWidget1,dockWidget2);
 }
+
+//A tabified dockwidget can be set as the selected tab like this:
+//dockwidget.raise()
+
+// icons
+//QStyle::SP_TitleBarNormalButton
+//QStyle::SP_TitleBarMinButton
+//QStyle::SP_TitleBarMaxButton
+//QStyle::SP_DockWidgetCloseButton
+
+
+//// connect dockWidget's topLevelChanged signal, which is emitted when its floating property changes, to a user-defined slot
+//connect(ui.dockWidget, SIGNAL(topLevelChanged(bool)), this, SLOT(dockWidget_topLevelChanged(bool)));
+
+//// when the floating property of dockWidget is changed from docked to floating
+//// we make it a top level window (with minmize, maximize, and close button in the title bar)
+//// by calling setWindowFlags(Qt::Window)
+//// The dockWidget will automatically regain it's Qt::widget flag when it becomes docked again (by dragging it to the right place or double clicking the title bar)
+//void CMainWindow::dockWidget_topLevelChanged(bool isFloating)
+//{
+//if(isFloating)
+//{ ui.dockWidget->setWindowFlags(Qt::Window);
+//// setWindowFlags calls setParent() when changing the flags for a window, causing the widget to be hidden.
+//// You must call show() to make the widget visible again
+//ui.dockWidget->show();
+//}
+//}
