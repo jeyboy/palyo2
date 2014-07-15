@@ -1,7 +1,7 @@
-#include "tab.h"
+#include "widget.h"
 #include <QDebug>
 
-void Tab::init(CBHash params, QJsonObject * hash) {
+void Widget::init(CBHash params, QJsonObject * hash) {
     switch(params["t"]) {
         case VIEW_LIST: {
             view = (View *)new ListView(this, params, hash);
@@ -49,11 +49,12 @@ void Tab::init(CBHash params, QJsonObject * hash) {
         view -> getModel() -> refresh();
 }
 
-Tab::Tab(CBHash params, QWidget * parent) : QWidget(parent) {
+Widget::Widget(CBHash params, const QString &title, QWidget *parent,
+               Qt::WindowFlags flags) : QDockWidget(title, parent, flags) {
     init(params);
 }
-
-Tab::Tab(QJsonObject hash, QWidget * parent) : QWidget(parent) {
+Widget::Widget(QJsonObject hash, const QString &title, QWidget *parent,
+               Qt::WindowFlags flags) : QDockWidget(title, parent, flags) {
     QJsonObject set = hash["set"].toObject();
     CBHash params = CBHash();
 
@@ -64,32 +65,32 @@ Tab::Tab(QJsonObject hash, QWidget * parent) : QWidget(parent) {
     init(params, &hash);
 }
 
-Tab::~Tab() {
-    delete view;
+Widget::~Widget() {
+//    delete view;
 }
 
-QString Tab::getName() const {
+QString Widget::getName() const {
     int i = tabber -> indexOf((QWidget*)this);
     return tabber -> tabText(i).split('(').first(); //.section('(', 0, -1);
 }
-void Tab::setName(QString newName) {
+void Widget::setName(QString newName) {
     setNameWithCount(newName);
 }
 
-View * Tab::getView() const {
+View * Widget::getView() const {
     return view;
 }
 
-void Tab::updateHeader(int /*new_count*/) {
+void Widget::updateHeader(int /*new_count*/) {
     setNameWithCount(getName());
 }
 
-void Tab::setNameWithCount(QString name) {
+void Widget::setNameWithCount(QString name) {
     int i = tabber -> indexOf((QWidget*)this);
     tabber -> setTabText(i, name + "(" + QString::number(view -> getModel() -> itemsCount()) + ")");
 }
 
-QJsonObject Tab::toJSON(QString name) {
+QJsonObject Widget::toJSON(QString name) {
     QJsonObject res = view -> toJSON();
     res["n"] = name;
     if (Player::instance() -> currentPlaylist() == view) {
@@ -102,15 +103,15 @@ QJsonObject Tab::toJSON(QString name) {
     return res;
 }
 
-bool Tab::isEditable() const {
+bool Widget::isEditable() const {
     return view -> isEditable();
 }
 
-void Tab::startRoutine() {
+void Widget::startRoutine() {
     view -> setHidden(true);
     spinnerContainer -> setHidden(false);
 }
-void Tab::stopRoutine() {
+void Widget::stopRoutine() {
     spinnerContainer -> setHidden(true);
     view -> setHidden(false);
 }

@@ -80,7 +80,6 @@ SOURCES += main.cpp\
     override/notify_timer.cpp \
     override/clickable_label.cpp \
     override/tabber.cpp \
-    override/tab.cpp \
     override/custom_network_access_manager.cpp \
     override/slider.cpp \
     single_application.cpp \
@@ -94,7 +93,8 @@ SOURCES += main.cpp\
     dialogs/captchadialog.cpp \
     model/web/deleted_list.cpp \
     model/web/web_model.cpp \
-    widgets.cpp
+    widgets.cpp \
+    override/widget.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -155,7 +155,6 @@ HEADERS  += mainwindow.h \
     override/notify_timer.h \
     override/clickable_label.h\
     override/tabber.h \
-    override/tab.h \
     override/custom_network_access_manager.h \
     override/slider.h \
     single_application.h \
@@ -172,7 +171,9 @@ HEADERS  += mainwindow.h \
     override/tree_view_style.h \
     model/web/web_model.h \
     misc/stylesheets.h \
-    widgets.h
+    widgets.h \
+    titlebar.h \
+    override/widget.h
     model/view_types.h
 
 unix:!mac {

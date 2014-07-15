@@ -1,7 +1,7 @@
-#ifndef TAB_H
-#define TAB_H
+#ifndef WIDGET_H
+#define WIDGET_H
 
-#include <QWidget>
+#include <QDockWidget>
 #include <QBoxLayout>
 #include <QJsonObject>
 
@@ -19,20 +19,19 @@
 
 #ifndef CBHASH
 #define CBHASH
-
   #include <QHash>
   typedef QHash <QString, int> CBHash;
   Q_DECLARE_METATYPE(CBHash);
 #endif // CBHASH
 
-class Tab : public QWidget {
+class Widget : public QDockWidget {
     Q_OBJECT
 public:
     void init(CBHash params, QJsonObject * hash = 0);
 
-    explicit Tab(CBHash params, QWidget * parent = 0);
-    explicit Tab(QJsonObject hash, QWidget * parent = 0);
-    ~Tab();
+    explicit Widget(CBHash params, const QString &title, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    explicit Widget(QJsonObject hash, const QString &title, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ~Widget();
 
     QString getName() const;
     void setName(QString newName);
@@ -54,15 +53,10 @@ protected:
 
 private:
     View * view;
-    QTabWidget * tabber;
-
     QLabel * spinnerContainer;
-
-//private slots:
-//    void handleListClicked(const QModelIndex &index);
 };
 
-#endif // TAB_H
+#endif // WIDGET_H
 
 //#include <QListView>
 //#include <QStandardItemModel>

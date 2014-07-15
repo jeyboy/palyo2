@@ -89,8 +89,16 @@ void MainWindow::initialization() {
             << "Sally Hobart, Tiroli Tea, 67 Long River, Fedula");
     QDockWidget * dockWidget1 = Widgets::instance(this) -> createDocBar("LOL", customerList);
     QDockWidget * dockWidget2 = Widgets::instance(this) -> createDocBar("LOL2", customerList);
-
     tabifyDockWidget(dockWidget1, dockWidget2);
+
+    QDockWidget * dockWidget3 = Widgets::instance(this) -> createDocBar("LOL3", customerList);
+    tabifyDockWidget(dockWidget2, dockWidget3);
+    QDockWidget * dockWidget4 = Widgets::instance(this) -> createDocBar("LOL4", customerList);
+    tabifyDockWidget(dockWidget3, dockWidget4);
+    QDockWidget * dockWidget5 = Widgets::instance(this) -> createDocBar("LOL5", customerList);
+    tabifyDockWidget(dockWidget4, dockWidget5);
+    QDockWidget * dockWidget6 = Widgets::instance(this) -> createDocBar("LOL5", customerList);
+    tabifyDockWidget(dockWidget5, dockWidget6);
 }
 
 //TODO: menu finish needed
