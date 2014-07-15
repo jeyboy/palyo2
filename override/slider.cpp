@@ -55,8 +55,8 @@ void Slider::paintEvent(QPaintEvent * event) {
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(rect.x(), rect.y(), rect.width() - 1, 3);
-                p.fillRect(rect.x(), rect.y(), (rect.width() - 1) * pos, 3, fillColor);
+                p.drawRect(margin, rect.y(), rect.width() - margin - 1, 3);
+                p.fillRect(margin, rect.y(), (rect.width() - margin - 1) * pos, 3, fillColor);
             }
         }
     } else {
@@ -84,8 +84,8 @@ void Slider::paintEvent(QPaintEvent * event) {
         if (position_slider) {
             float pos = Player::instance() -> getRemoteFileDownloadPosition();
             if (Player::instance() -> getSize() > 0 && pos < 1) {
-                p.drawRect(rect.x(), rect.y(), 3, rect.height() - 1);
-                p.fillRect(rect.x(), rect.height(), 3, -((rect.height() - 1) * pos), fillColor);
+                p.drawRect(rect.x(), margin, 3, rect.height() - margin - 1);
+                p.fillRect(rect.x(), rect.height(), 3, -((rect.height() - margin - 1) * pos), fillColor);
             }
         }
     }
