@@ -477,10 +477,8 @@ void AudioPlayer::play() {
 
             if (chan) {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
-                duration = BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE)) * 1000;
+                duration = round(BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE))) * 1000;
                 durationChanged(duration);
-
-
 
                 BASS_CHANNELINFO info;
                 if (BASS_ChannelGetInfo(chan, &info))
