@@ -20,6 +20,8 @@
 #include "model/model.h"
 #include "model/model_item.h"
 
+#include "override/widget.h"
+
 #ifndef CBHASH
 #define CBHASH
   #include <QHash>
@@ -46,11 +48,14 @@ public:
 
 private:
     Widgets(QObject * parent) : QObject(parent) {
+        commonPlaylist = 0;
+        activePlaylist = 0;
 
+        store = new DataStore("tabs.json");
     }
 
     static Widgets *self;
-    QDockWidget * commonPlaylist;
+    QDockWidget * commonPlaylist, * activePlaylist;
     DataStore * store;
 
 };

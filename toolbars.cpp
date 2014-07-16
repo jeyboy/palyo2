@@ -120,7 +120,6 @@ void ToolBars::load(QMainWindow * window, QJsonArray & bars) {
 
 void ToolBars::save(QMainWindow * window, DataStore * settings) {
     QList<QToolBar *> toolbars = window -> findChildren<QToolBar *>();
-    qDebug() << toolbars.length();
 
     if (toolbars.length() > 0) {
         QJsonArray toolbar_array = QJsonArray();

@@ -12,8 +12,6 @@
 #include "dialogs/settings_dialog.h"
 #include "dialogs/relationdialog.h"
 
-#include "override/tab.h"
-
 #include "media/library.h"
 #include "media/player.h"
 
@@ -52,7 +50,7 @@ private slots:
     void showVKTabDialog();
     void showSoundcloudTabDialog();
 
-    void showAttTabDialog(Tab * tab = 0);
+    void showAttTabDialog(Widget * tab = 0);
 
     void openFolderTriggered();
 

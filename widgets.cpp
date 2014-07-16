@@ -10,58 +10,19 @@ Widgets *Widgets::instance(QObject * parent) {
     return self;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-Tabber::Tabber(QWidget *parent) : QTabWidget(parent) {
-    commonPlaylist = 0;
-
-//    tabber -> setTabBar(0); // TODO: custom tab bar
-    setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
-    setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
-
-    setStyleSheet(Stylesheets::treeViewStyles());
-
-    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
-    connect(this, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
-    connect(Player::instance(), SIGNAL(playlistChanged(QWidget *, QWidget *)), this, SLOT(updateActiveTab(QWidget *, QWidget *)));
-
-    store = new DataStore("tabs.json");
-}
-
-Tabber::~Tabber() {
-    delete store;
-}
-
-int Tabber::addTab(QString name, CBHash settings) {
-    int index = QTabWidget::addTab(new Tab(settings, this), name);
-    (static_cast<Tab *>(widget(index))) -> updateHeader();
-    setCurrentIndex(index);
-    return index;
-}
-
-Tab * Tabber::toActiveTab() {
+QDockWidget * Widgets::toActiveWidget() {
     if (Player::instance() -> currentPlaylist()) {
-        Tab * tab = (Tab *)Player::instance() -> currentPlaylist() -> parentWidget();
-        setCurrentIndex(indexOf(tab));
+        QDockWidget * tab = (QDockWidget *)Player::instance() -> currentPlaylist() -> parentWidget();
+        tab -> raise();
         return tab;
     } else return 0;
 }
 
-Tab * Tabber::currentTab() {
-    return static_cast<Tab *>(currentWidget());
+QDockWidget * Widgets::currentWidget() {
+    return activePlaylist;
 }
 
-Tab * Tabber::commonTab() {
+QDockWidget * Widgets::commonWidget() {
     if (commonPlaylist == 0) {
         TabDialog dialog;
         CBHash settings = dialog.getSettings(); // get default settings
@@ -70,66 +31,57 @@ Tab * Tabber::commonTab() {
         settings.insert("c", 1); // is common
 
         addTab("Common", settings);
-        commonPlaylist = currentTab();
+        commonPlaylist = currentWidget();
     } else {
-        setCurrentIndex(indexOf(commonPlaylist));
+        commonPlaylist -> raise();
     }
 
     return commonPlaylist;
 }
 
-void Tabber::load() {
-    if (store -> state) {
-        QJsonObject tab;
-
-        foreach(QString key, store -> keys()) {
-            tab = store -> read(key).toObject();
-            Tab * new_tab = new Tab(tab, this);
-
-            if (new_tab -> getView() -> isCommon())
-                commonPlaylist = new_tab;
-
-            QTabWidget::addTab(new_tab, tab["n"].toString());
-            new_tab -> updateHeader();
-
-            if (tab.contains("pv")) {
-                new_tab -> getView() -> execItem(new_tab -> getView() -> fromPath(tab.value("pp").toString()), true);
-                if (tab.contains("pt")) {
-                    Player::instance() -> setStartPosition(tab.value("pt").toInt());
-//                  Player::instance() -> play();
-                }
-            }
-        }
-    }
-}
-
-void Tabber::save() {
-    Player::instance() -> pause();
-    store -> clear();
-    Tab * tab;
-    for(int i = 0; i < count(); i++) {
-        tab = (Tab*)(widget(i));
-        if (tab == commonPlaylist) {
-            // logic for common playlist // at this time common list did not save
-        } else {
-            store -> write(QString::number(i) + "h", tab -> toJSON(tab -> getName()));
-        }
-    }
-
-    store -> save();
-    Player::instance() -> stop();
+void Widgets::updateIconSize() {
+//    Tab * tab;
+//    int dimension = Settings::instance() -> getIconHeight();
+//    QSize size(dimension, dimension);
+//    for(int i = 0; i < count(); i++) {
+//        tab = (Tab*)(widget(i));
+//        tab -> getView() -> setIconSize(size);
+//    }
 }
 
 
 
-void Tabber::updateIconSize() {
-    Tab * tab;
-    int dimension = Settings::instance() -> getIconHeight();
-    QSize size(dimension, dimension);
-    for(int i = 0; i < count(); i++) {
-        tab = (Tab*)(widget(i));
-        tab -> getView() -> setIconSize(size);
-    }
+
+
+
+//Tabber::Tabber(QWidget *parent) : QTabWidget(parent) {
+//    commonPlaylist = 0;
+
+////    tabber -> setTabBar(0); // TODO: custom tab bar
+//    setTabPosition((QTabWidget::TabPosition)Settings::instance() -> getTabPosition());
+//    setUsesScrollButtons(Settings::instance() -> getScrollButtonUsage());
+
+//    setStyleSheet(Stylesheets::treeViewStyles());
+
+//    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(handleTabCloseRequested(int)));
+//    connect(this, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentChanged(int)));
+//    connect(Player::instance(), SIGNAL(playlistChanged(QWidget *, QWidget *)), this, SLOT(updateActiveTab(QWidget *, QWidget *)));
+
+//    store = new DataStore("tabs.json");
+//}
+
+int Widgets::addTab(QString name, CBHash settings) {
+    ((QMainWindow *)parent()) -> addDockWidget(
+                Qt::LeftDockWidgetArea,
+                new Widget(settings, parent())
+    );
+//    int index = QTabWidget::addTab(new Tab(settings, this), name);
+
+
+//    int index = QTabWidget::addTab(new Tab(settings, this), name);
+//    (static_cast<Tab *>(widget(index))) -> updateHeader();
+//    setCurrentIndex(index);
+    return index;
 }
 
 void Tabber::updateActiveTab(QWidget * last, QWidget * current) {
@@ -194,94 +146,67 @@ void Tabber::handleTabCloseRequested(int index) {
 
 
 
-void Widgets::load(QMainWindow * window, QJsonArray & bars) {
-//    if (bars.count() > 0) {
-//        QList<QString> barsList;
-//        barsList.append("Media"); barsList.append("Media+"); barsList.append("Media+Position"); barsList.append("Media+Time");
-//        barsList.append("Media+Volume"); barsList.append("Controls"); barsList.append("Spectrum");
+void Widgets::load(QMainWindow * window) {
+    if (store -> state) {
+        QJsonObject tab, settings;
 
-//        QJsonObject obj, actionObj;
-//        QString barName;
-//        QToolBar * curr_bar;
+        foreach(QString key, store -> keys()) {
+            tab = store -> read(key).toObject();
+            settings = tab.value("settings").toObject();
+            Widget * new_tab = new Widget(tab, this); // name, (QWidget *)parent()
+            new_tab -> setObjectName(settings.value("name").toString());
+            window -> addDockWidget((Qt::DockWidgetArea)obj.value("area").toInt(), new_tab);
 
-//        foreach(QJsonValue bar, bars) {
-//            obj = bar.toObject();
-//            barName = obj.value("title").toString();
-//            barsList.removeOne(barName);
-//            curr_bar = linkNameToToolbars(barName);
-//            curr_bar -> setMovable(obj.value("movable").toBool());
+            if (new_tab -> getView() -> isCommon())
+                commonPlaylist = new_tab;
 
-//            window -> addToolBar((Qt::ToolBarArea)obj.value("area").toInt(), curr_bar);
+//            QTabWidget::addTab(new_tab, tab["n"].toString());
+//            new_tab -> updateHeader();
 
-//            if (obj.contains("actions")) {
-//                QJsonArray actions = obj.value("actions").toArray();
-
-//                foreach(QJsonValue act, actions) {
-//                    actionObj = act.toObject();
-//                    addPanelButton(actionObj.value("name").toString(), actionObj.value("path").toString(), curr_bar);
-//                }
-//            }
-//        }
-
-//        recreateToolbars(window, barsList);
-//    } else {
-//        createToolbars(window);
-//    }
+            if (tab.contains("pv")) {
+                new_tab -> getView() -> execItem(new_tab -> getView() -> fromPath(tab.value("pp").toString()), true);
+                if (tab.contains("pt")) {
+                    Player::instance() -> setStartPosition(tab.value("pt").toInt());
+//                  Player::instance() -> play();
+                }
+            }
+        }
+    }
 }
 
-void Widgets::save(QMainWindow * window, DataStore * settings) {
-//    QList<QToolBar *> toolbars = window -> findChildren<QToolBar *>();
-//    qDebug() << toolbars.length();
+void Widgets::save(QMainWindow * window) {
+    store -> clear();
+    Player::instance() -> pause();
 
-//    if (toolbars.length() > 0) {
-//        QJsonArray toolbar_array = QJsonArray();
-//        QJsonObject curr_tab;
-//        QList<QAction*> actions;
-//        ToolbarButton* button;
+    QList<QDockWidget *> widgets = window -> findChildren<QDockWidget *>();
 
-//        foreach(QToolBar * bar, toolbars) {
-//            curr_tab = QJsonObject();
+    if (widgets.length() > 0) {
+        int i = 0;
+        QJsonObject curr_widget, obj;
 
-//            curr_tab.insert("area", window -> toolBarArea(bar));
-//            curr_tab.insert("title", bar -> windowTitle());
+        foreach(QDockWidget * widget, widgets) {
+            curr_widget = QJsonObject();
+
+            curr_tab.insert("area", window -> dockWidgetArea(widget));
+//            curr_tab.insert("title", widget -> windowTitle());
+            curr_tab.insert("name", widget -> objectName());
 //            curr_tab.insert("movable", bar -> isMovable());
 
-//            if (bar -> windowTitle() != "Media"
-//                    && bar -> windowTitle() != "Media+"
-//                    && bar -> windowTitle() != "Media+Position"
-//                    && bar -> windowTitle() != "Media+Time"
-//                    && bar -> windowTitle() != "Media+Volume"
-//                    && bar -> windowTitle() != "Controls"
-//                    && bar -> windowTitle() != "Spectrum"
-//               ) {
-//                actions = bar -> actions();
-//                if (actions.length() > 0) {
-//                    QJsonArray action_array = QJsonArray();
-//                    QJsonObject curr_act;
 
-//                    foreach(QAction * act, actions) {
-//                        if (QString(act -> metaObject() -> className()) == "QWidgetAction") {
-//                            curr_act = QJsonObject();
-//                            button = (ToolbarButton*) bar -> widgetForAction(act);
+            /////////////////////////////////
+            if (widget == commonPlaylist) {
+                // logic for common playlist // at this time common list did not save
+            } else {
+                obj = widget -> toJSON(tab -> getName());
+                obj.insert("settings", curr_tab);
+                store -> write(QString::number(++i) + "h", obj);
+            }
+            /////////////////////////////////
+        }
+    }
 
-//                            curr_act.insert("path", button -> path);
-//                            curr_act.insert("name", button -> text());
-//                        }
-//                        action_array.append(curr_act);
-//                    }
-
-//                    if (action_array.count() > 0)
-//                        curr_tab.insert("actions", action_array);
-//                }
-//            }
-
-//            toolbar_array.append(curr_tab);
-
-//    //        bar -> toolButtonStyle();
-//        }
-
-//        settings -> write("bars", toolbar_array);
-//    }
+    store -> save();
+    Player::instance() -> stop();
 }
 
 QDockWidget * Widgets::createDocBar(QString name, QWidget * content, Qt::DockWidgetArea place) {

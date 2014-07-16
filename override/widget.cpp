@@ -29,7 +29,8 @@ void Widget::init(CBHash params, QJsonObject * hash) {
 //    view -> setResizeMode();
 
     this -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom, this));
-    this -> layout() -> addWidget(view);
+//    this -> layout() -> addWidget(view);
+    setWidget(view);
 
 
     spinnerContainer = new QLabel;
@@ -40,7 +41,6 @@ void Widget::init(CBHash params, QJsonObject * hash) {
 
 
     this -> layout() -> setContentsMargins(0, 0, 0, 0);
-    tabber = (QTabWidget *)parent();
 
     connect(view, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
     connect(view, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
@@ -70,8 +70,7 @@ Widget::~Widget() {
 }
 
 QString Widget::getName() const {
-    int i = tabber -> indexOf((QWidget*)this);
-    return tabber -> tabText(i).split('(').first(); //.section('(', 0, -1);
+    return windowIconText().split('(').first(); //.section('(', 0, -1);
 }
 void Widget::setName(QString newName) {
     setNameWithCount(newName);
@@ -86,8 +85,7 @@ void Widget::updateHeader(int /*new_count*/) {
 }
 
 void Widget::setNameWithCount(QString name) {
-    int i = tabber -> indexOf((QWidget*)this);
-    tabber -> setTabText(i, name + "(" + QString::number(view -> getModel() -> itemsCount()) + ")");
+    setWindowIconText(name + "(" + QString::number(view -> getModel() -> itemsCount()) + ")");
 }
 
 QJsonObject Widget::toJSON(QString name) {
