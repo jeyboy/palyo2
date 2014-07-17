@@ -2,6 +2,9 @@
 #include <QDebug>
 
 void Widget::init(CBHash params, QJsonObject * hash) {
+    setObjectName(hash -> value("settings").toObject().value("name").toString("DW_" + QString::number(QDateTime::currentMSecsSinceEpoch())));
+    qDebug() << objectName();
+
 //    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     switch(params["t"]) {
