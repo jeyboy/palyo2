@@ -10,19 +10,19 @@ Widgets *Widgets::instance(QObject * parent) {
     return self;
 }
 
-QDockWidget * Widgets::toActiveWidget() {
+Widget * Widgets::toActiveWidget() {
     if (Player::instance() -> currentPlaylist()) {
-        QDockWidget * tab = (QDockWidget *)Player::instance() -> currentPlaylist() -> parentWidget();
+        Widget * tab = (Widget *)Player::instance() -> currentPlaylist() -> parentWidget();
         tab -> raise();
         return tab;
     } else return 0;
 }
 
-QDockWidget * Widgets::currentWidget() {
+Widget * Widgets::currentWidget() {
     return activePlaylist;
 }
 
-QDockWidget * Widgets::commonWidget() {
+Widget * Widgets::commonWidget() {
     if (commonPlaylist == 0) {
         TabDialog dialog;
         CBHash settings = dialog.getSettings(); // get default settings
@@ -30,7 +30,7 @@ QDockWidget * Widgets::commonWidget() {
         settings.insert("t", 2); // is one level tree
         settings.insert("c", 1); // is common
 
-        addTab("Common", settings);
+        addWidget("Common", settings);
         commonPlaylist = currentWidget();
     } else {
         commonPlaylist -> raise();
@@ -70,10 +70,11 @@ void Widgets::updateIconSize() {
 //    store = new DataStore("tabs.json");
 //}
 
-int Widgets::addTab(QString name, CBHash settings) {
+Widget * Widgets::addWidget(QString name, CBHash settings) {
+    Widget * widget = new Widget(settings, name, (QWidget *)parent());
     ((QMainWindow *)parent()) -> addDockWidget(
                 Qt::LeftDockWidgetArea,
-                new Widget(settings, parent())
+                widget
     );
 //    int index = QTabWidget::addTab(new Tab(settings, this), name);
 
@@ -81,53 +82,62 @@ int Widgets::addTab(QString name, CBHash settings) {
 //    int index = QTabWidget::addTab(new Tab(settings, this), name);
 //    (static_cast<Tab *>(widget(index))) -> updateHeader();
 //    setCurrentIndex(index);
-    return index;
+    return widget;
 }
 
-void Tabber::updateActiveTab(QWidget * last, QWidget * current) {
-    int index;
 
-    if (last != 0) {
-        index = indexOf(last -> parentWidget());
-        setTabIcon(index, QIcon());
-    }
 
-    if (current != 0) {
-        index = indexOf(current -> parentWidget());
-        setTabIcon(index, QIcon(":/active_tab"));
-    }
-}
 
-void Tabber::handleCurrentChanged(int index) {
-    if (index == -1) {
-        Player::instance() -> setActivePlaylist(0);
-    } else {
-        Tab * new_tab = static_cast<Tab *>(widget(index));
 
-        Player::instance() -> setActivePlaylist(const_cast<View *>(new_tab -> getView()));
-    }
-}
 
-void Tabber::handleTabCloseRequested(int index) {
-    Tab * del_tab = static_cast<Tab *>(widget(index));
 
-    if (del_tab -> getView() -> getModel() -> itemsCount() > 0)
-        if (QMessageBox::warning(this, "Tab deletion", "Tab is not empty. Are you sure?", QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Ok)
-            return;
 
-    if (del_tab == commonPlaylist)
-        commonPlaylist = 0;
 
-    if (Player::instance() -> currentPlaylist() == del_tab -> getView()) {
-        Player::instance() -> removePlaylist();
-    }
 
-    if (Player::instance() -> currentActivePlaylist() == del_tab -> getView()) {
-        Player::instance() -> setActivePlaylist(0);
-    }
+//void Tabber::updateActiveTab(QWidget * last, QWidget * current) {
+//    int index;
 
-    removeTab(index);
-}
+//    if (last != 0) {
+//        index = indexOf(last -> parentWidget());
+//        setTabIcon(index, QIcon());
+//    }
+
+//    if (current != 0) {
+//        index = indexOf(current -> parentWidget());
+//        setTabIcon(index, QIcon(":/active_tab"));
+//    }
+//}
+
+//void Tabber::handleCurrentChanged(int index) {
+//    if (index == -1) {
+//        Player::instance() -> setActivePlaylist(0);
+//    } else {
+//        Tab * new_tab = static_cast<Tab *>(widget(index));
+
+//        Player::instance() -> setActivePlaylist(const_cast<View *>(new_tab -> getView()));
+//    }
+//}
+
+//void Tabber::handleTabCloseRequested(int index) {
+//    Tab * del_tab = static_cast<Tab *>(widget(index));
+
+//    if (del_tab -> getView() -> getModel() -> itemsCount() > 0)
+//        if (QMessageBox::warning(this, "Tab deletion", "Tab is not empty. Are you sure?", QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Ok)
+//            return;
+
+//    if (del_tab == commonPlaylist)
+//        commonPlaylist = 0;
+
+//    if (Player::instance() -> currentPlaylist() == del_tab -> getView()) {
+//        Player::instance() -> removePlaylist();
+//    }
+
+//    if (Player::instance() -> currentActivePlaylist() == del_tab -> getView()) {
+//        Player::instance() -> setActivePlaylist(0);
+//    }
+
+//    removeTab(index);
+//}
 
 
 
@@ -153,9 +163,9 @@ void Widgets::load(QMainWindow * window) {
         foreach(QString key, store -> keys()) {
             tab = store -> read(key).toObject();
             settings = tab.value("settings").toObject();
-            Widget * new_tab = new Widget(tab, this); // name, (QWidget *)parent()
+            Widget * new_tab = new Widget(tab, settings.value("title").toString(), (QWidget *)parent()); // name, (QWidget *)parent()
             new_tab -> setObjectName(settings.value("name").toString());
-            window -> addDockWidget((Qt::DockWidgetArea)obj.value("area").toInt(), new_tab);
+            window -> addDockWidget((Qt::DockWidgetArea)settings.value("area").toInt(), new_tab);
 
             if (new_tab -> getView() -> isCommon())
                 commonPlaylist = new_tab;
@@ -187,18 +197,18 @@ void Widgets::save(QMainWindow * window) {
         foreach(QDockWidget * widget, widgets) {
             curr_widget = QJsonObject();
 
-            curr_tab.insert("area", window -> dockWidgetArea(widget));
-//            curr_tab.insert("title", widget -> windowTitle());
-            curr_tab.insert("name", widget -> objectName());
-//            curr_tab.insert("movable", bar -> isMovable());
+            curr_widget.insert("area", window -> dockWidgetArea(widget));
+            curr_widget.insert("title", widget -> windowTitle());
+            curr_widget.insert("name", widget -> objectName());
+//            curr_widget.insert("movable", bar -> isMovable());
 
 
             /////////////////////////////////
             if (widget == commonPlaylist) {
                 // logic for common playlist // at this time common list did not save
             } else {
-                obj = widget -> toJSON(tab -> getName());
-                obj.insert("settings", curr_tab);
+                obj = ((Widget *)widget) -> toJSON(((Widget *)widget) -> getName());
+                obj.insert("settings", curr_widget);
                 store -> write(QString::number(++i) + "h", obj);
             }
             /////////////////////////////////

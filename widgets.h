@@ -41,6 +41,12 @@ public:
         delete self;
     }
 
+    Widget * toActiveWidget();
+    Widget * currentWidget();
+    Widget * commonWidget();
+    void updateIconSize();
+    Widget * addWidget(QString name, CBHash settings);
+
     void load(QMainWindow * window);
     void save(QMainWindow * window);
 
@@ -55,7 +61,7 @@ private:
     }
 
     static Widgets *self;
-    QDockWidget * commonPlaylist, * activePlaylist;
+    Widget * commonPlaylist, * activePlaylist;
     DataStore * store;
 
 };

@@ -70,7 +70,7 @@ Widget::~Widget() {
 }
 
 QString Widget::getName() const {
-    return windowIconText().split('(').first(); //.section('(', 0, -1);
+    return windowTitle().split('(').first(); //.section('(', 0, -1);
 }
 void Widget::setName(QString newName) {
     setNameWithCount(newName);
@@ -85,7 +85,7 @@ void Widget::updateHeader(int /*new_count*/) {
 }
 
 void Widget::setNameWithCount(QString name) {
-    setWindowIconText(name + "(" + QString::number(view -> getModel() -> itemsCount()) + ")");
+    setWindowTitle(name + "(" + QString::number(view -> getModel() -> itemsCount()) + ")");
 }
 
 QJsonObject Widget::toJSON(QString name) {
