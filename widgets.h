@@ -50,7 +50,7 @@ public:
     void load(QMainWindow * window);
     void save(QMainWindow * window);
 
-    QDockWidget * createDocBar(QString name, QWidget * content, Qt::DockWidgetArea place = Qt::RightDockWidgetArea);
+//    QDockWidget * createDocBar(QString name, QWidget * content, Qt::DockWidgetArea place = Qt::RightDockWidgetArea);
 
 private:
     Widgets(QObject * parent) : QObject(parent) {

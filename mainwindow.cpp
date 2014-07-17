@@ -79,26 +79,7 @@ void MainWindow::initialization() {
 //    player.setMedia(QUrl::fromLocalFile("C:/Users/JB/Desktop/Akon_Ft_French_Montana_-_Hurt_Somebody.mp3"));
 //    player.play();
 
-    QListWidget * customerList = new QListWidget(this);
-    customerList->addItems(QStringList()
-            << "John Doe, Harmony Enterprises, 12 Lakeside, Ambleton"
-            << "Jane Doe, Memorabilia, 23 Watersedge, Beaton"
-            << "Tammy Shea, Tiblanka, 38 Sea Views, Carlton"
-            << "Tim Sheen, Caraba Gifts, 48 Ocean Way, Deal"
-            << "Sol Harvey, Chicos Coffee, 53 New Springs, Eccleston"
-            << "Sally Hobart, Tiroli Tea, 67 Long River, Fedula");
-    QDockWidget * dockWidget1 = Widgets::instance(this) -> createDocBar("LOL", customerList);
-    QDockWidget * dockWidget2 = Widgets::instance(this) -> createDocBar("LOL2", customerList);
-    tabifyDockWidget(dockWidget1, dockWidget2);
-
-    QDockWidget * dockWidget3 = Widgets::instance(this) -> createDocBar("LOL3", customerList);
-    tabifyDockWidget(dockWidget2, dockWidget3);
-    QDockWidget * dockWidget4 = Widgets::instance(this) -> createDocBar("LOL4", customerList);
-    tabifyDockWidget(dockWidget3, dockWidget4);
-    QDockWidget * dockWidget5 = Widgets::instance(this) -> createDocBar("LOL5", customerList);
-    tabifyDockWidget(dockWidget4, dockWidget5);
-    QDockWidget * dockWidget6 = Widgets::instance(this) -> createDocBar("LOL5", customerList);
-    tabifyDockWidget(dockWidget5, dockWidget6);
+//    setDockNestingEnabled(false);
 }
 
 //TODO: menu finish needed

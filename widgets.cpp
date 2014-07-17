@@ -164,8 +164,8 @@ void Widgets::load(QMainWindow * window) {
             tab = store -> read(key).toObject();
             settings = tab.value("settings").toObject();
             Widget * new_tab = new Widget(tab, settings.value("title").toString(), (QWidget *)parent()); // name, (QWidget *)parent()
-            new_tab -> setObjectName(settings.value("name").toString());
-            window -> addDockWidget((Qt::DockWidgetArea)settings.value("area").toInt(), new_tab);
+            new_tab -> setObjectName(settings.value("name").toString("DW_" + QString::number(QDateTime::currentMSecsSinceEpoch())));
+            window -> addDockWidget((Qt::DockWidgetArea)settings.value("area").toInt(1), new_tab);
 
             if (new_tab -> getView() -> isCommon())
                 commonPlaylist = new_tab;
@@ -219,21 +219,21 @@ void Widgets::save(QMainWindow * window) {
     Player::instance() -> stop();
 }
 
-QDockWidget * Widgets::createDocBar(QString name, QWidget * content, Qt::DockWidgetArea place) {
-    QDockWidget * dock = new QDockWidget(name, (QWidget *)parent());
-    dock -> setObjectName("DW_" + name + QString::number(QDateTime::currentMSecsSinceEpoch()));
-    dock -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom, dock));
-    dock -> setFeatures(
-                QDockWidget::DockWidgetClosable |
-                QDockWidget::DockWidgetMovable |
-                QDockWidget::DockWidgetFloatable |
-                QDockWidget::DockWidgetVerticalTitleBar
-    );
-//    dock -> setTitleBarWidget(new Titlebar(dock));
-//    dock -> showFullScreen();
-    dock -> setWidget(content);
-//    dock -> layout() -> setAlignment(content, Qt::AlignCenter);
-    ((QMainWindow *)parent()) -> addDockWidget(place, dock);
-    //    viewMenu->addAction(dock->toggleViewAction());
-    return dock;
-}
+//QDockWidget * Widgets::createDocBar(QString name, QWidget * content, Qt::DockWidgetArea place) {
+//    QDockWidget * dock = new QDockWidget(name, (QWidget *)parent());
+//    dock -> setObjectName("DW_" + name + QString::number(QDateTime::currentMSecsSinceEpoch()));
+//    dock -> setLayout(new QBoxLayout(QBoxLayout::TopToBottom, dock));
+//    dock -> setFeatures(
+//                QDockWidget::DockWidgetClosable |
+//                QDockWidget::DockWidgetMovable |
+//                QDockWidget::DockWidgetFloatable |
+//                QDockWidget::DockWidgetVerticalTitleBar
+//    );
+////    dock -> setTitleBarWidget(new Titlebar(dock));
+////    dock -> showFullScreen();
+//    dock -> setWidget(content);
+////    dock -> layout() -> setAlignment(content, Qt::AlignCenter);
+//    ((QMainWindow *)parent()) -> addDockWidget(place, dock);
+//    //    viewMenu->addAction(dock->toggleViewAction());
+//    return dock;
+//}
