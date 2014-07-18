@@ -114,7 +114,7 @@ bool ModelItem::isFolder() const { return false; }
 
 bool ModelItem::isPlayable() const {
     bool showBatch = Settings::instance() -> isCheckboxShow();
-    return (!showBatch || (showBatch && getState() -> isChecked()));
+    return !isFolder() && (!showBatch || (showBatch && getState() -> isChecked()));
 }
 
 bool ModelItem::hasInfo() const {

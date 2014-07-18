@@ -613,7 +613,7 @@ ModelItem * View::nextItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item -> isFolder() && item -> isPlayable()) {
+            if (item -> isPlayable()) {
                 return item;
             } else {
                 curr = item;
@@ -644,7 +644,7 @@ ModelItem * View::prevItem(ModelItem * curr) {
         }
 
         if (item != 0) {
-            if (!item -> isFolder() && item -> isPlayable()) {
+            if (item -> isPlayable()) {
                 return item;
             } else {
                 curr = item;
@@ -683,19 +683,6 @@ void View::dragMoveEvent(QDragMoveEvent * event) {
 
 void View::dropEvent(QDropEvent *event) {
     QTreeView::dropEvent(event);
-
-
-//    if (event -> source() == this) {
-//        QTreeView::dropEvent(event);
-//    } else
-//        if (event -> mimeData() -> hasUrls()) {
-//            QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
-//            model -> refresh();
-//            scrollTo(modelIndex);
-//            expand(modelIndex);
-//            event -> accept();
-//        } else
-//            event -> ignore();
 }
 
 void View::keyPressEvent(QKeyEvent *event) {
