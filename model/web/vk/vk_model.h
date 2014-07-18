@@ -24,6 +24,11 @@ protected slots:
     void proceedAudioList(QJsonObject &);
     void proceedAudioList(QJsonArray &, ModelItem *, QHash<ModelItem*, QString> &);
     void proceedAudioListUpdate(QJsonObject &, QHash<ModelItem *, QString> &);
+protected:
+    QModelIndex dropProcession(const QList<QUrl> & list);
+
+    void filesRoutine(ModelItem * index, QFileInfo currFile);
+    void filesRoutine(ModelItem * index, QList<QUrl> list);
 };
 
 

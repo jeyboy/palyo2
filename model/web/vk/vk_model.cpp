@@ -50,6 +50,42 @@ void VkModel::refreshWall() {
 //    emit hideSpinner();
 //}
 
+
+QModelIndex VkModel::dropProcession(const QList<QUrl> & list) {
+//    ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path());
+//    filesRoutine(index, list);
+//    return model -> index(index);
+}
+
+void VkModel::filesRoutine(ModelItem * index, QFileInfo currFile){
+//    QFileInfoList fileList = folderFiles(currFile);
+
+//    foreach(QFileInfo file, fileList) {
+//        FileItem * fi = new FileItem(file.fileName(), index);
+//        model -> appendRow(fi -> toModelItem());
+//    }
+
+//    QFileInfoList folderList = folderDirectories(currFile);
+
+//    foreach(QFileInfo file, folderList) {
+//        ModelItem * new_index = model -> addFolder(file.fileName(), index);
+//        filesRoutine(new_index, file);
+//    }
+}
+
+void VkModel::filesRoutine(ModelItem * index, QList<QUrl> list){
+//    foreach(QUrl url, list) {
+//        QFileInfo file = QFileInfo(url.toLocalFile());
+//        if (file.isDir()) {
+//            ModelItem * new_index = model -> addFolder(file.fileName(), index);
+//            filesRoutine(new_index, file);
+//        } else {
+//            FileItem * fi = new FileItem(file.fileName(), index);
+//            model -> appendRow(fi -> toModelItem());
+//        }
+//    }
+}
+
 void VkModel::proceedWallList(QJsonObject & hash) {
 //    hash.value("date").toInt()// top date
     qDebug() << "DATE " << QDateTime::fromTime_t(hash.value("date").toInt());

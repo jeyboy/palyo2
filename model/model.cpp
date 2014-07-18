@@ -10,6 +10,22 @@ Model::Model(QJsonObject *hash, QObject *parent) : QAbstractItemModel(parent) {
         rootItem = new FolderItem();
         count = 0;
     }
+
+    filtersList << "*.wav"
+                << "*.aiff"
+                << "*.aif"
+                << "*.mp3"
+                << "*.mp2"
+                << "*.mp1"
+                << "*.ogg"
+                << "*.wma"
+                << "*.mpc"
+                << "*.aac"
+                << "*.alac"
+                << "*.ac3"
+                << "*.wv"
+                << "*.ape"
+                << "*.flac";
 }
 
 Model::~Model() {
@@ -402,6 +418,38 @@ QMimeData * Model::mimeData(const QModelIndexList &indexes) const {
 }
 
 bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
-//    TODO: add move logic
+//    if (action == Qt::CopyAction) {
+
+//    } else {
+
+//    }
+
+    if (data -> hasUrls()) {
+        QModelIndex modelIndex = dropProcession(data -> urls());
+        refresh();
+//        scrollTo(modelIndex);
+//        expand(modelIndex);
+    }
+
     return true;
+}
+
+ModelItem * Model::createItem(QString path, ModelItem * parent) {
+   return (new FileItem(path, parent)) -> toModelItem();
+}
+
+QString Model::folderName(QFileInfo & info) {
+    QString name = info.dir().dirName();
+    if (name.isEmpty())
+        name = info.dir().path().split('/').first();
+    return name;
+}
+
+QFileInfoList Model::folderFiles(QFileInfo file) {
+    return QDir(file.filePath()).entryInfoList(filtersList, QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
+}
+
+QFileInfoList Model::folderDirectories(QFileInfo file) {
+    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden);
+//    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
 }

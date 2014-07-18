@@ -278,7 +278,7 @@ void MainWindow::outputActiveItem(ModelItem *, ModelItem * to) {
 }
 
 void MainWindow::putToCommonTab(QList<QUrl> urls) {
-    ui -> tabber -> commonTab() -> getView() -> dropProcession(urls);
+    ui -> tabber -> commonTab() -> getView() -> getModel() -> dropProcession(urls);
     ui -> tabber -> commonTab() -> getView() -> getModel() -> refresh();
 
     if (!Player::instance() -> isPlayed()) {

@@ -70,22 +70,6 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
 
     header() -> setSectionResizeMode(0, QHeaderView::Interactive);
 //    header()->setStretchLastSection(false);
-
-    filtersList << "*.wav"
-                << "*.aiff"
-                << "*.aif"
-                << "*.mp3"
-                << "*.mp2"
-                << "*.mp1"
-                << "*.ogg"
-                << "*.wma"
-                << "*.mpc"
-                << "*.aac"
-                << "*.alac"
-                << "*.ac3"
-                << "*.wv"
-                << "*.ape"
-                << "*.flac";
 }
 
 View::~View() {
@@ -435,13 +419,6 @@ void View::openLocation() {
     item -> openLocation();
 }
 
-QString View::folderName(QFileInfo & info) {
-    QString name = info.dir().dirName();
-    if (name.isEmpty())
-        name = info.dir().path().split('/').first();
-    return name;
-}
-
 void View::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const {
     ModelItem * item = model -> getItem(index);
 
@@ -684,19 +661,6 @@ ModelItem * View::prevItem(ModelItem * curr) {
     }
 }
 
-QFileInfoList View::folderFiles(QFileInfo file) {
-    return QDir(file.filePath()).entryInfoList(filtersList, QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
-}
-
-QFileInfoList View::folderDirectories(QFileInfo file) {
-    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden);
-//    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
-}
-
-ModelItem * View::createItem(QString path, ModelItem * parent) {
-   return (new FileItem(path, parent)) -> toModelItem();
-}
-
 void View::dragEnterEvent(QDragEnterEvent *event) {
     QTreeView::dragEnterEvent(event);
     event -> setDropAction(
@@ -718,17 +682,20 @@ void View::dragMoveEvent(QDragMoveEvent * event) {
 }
 
 void View::dropEvent(QDropEvent *event) {
-    if (event -> source() == this) {
-        QTreeView::dropEvent(event);
-    } else
-        if (event -> mimeData() -> hasUrls()) {
-            QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
-            model -> refresh();
-            scrollTo(modelIndex);
-            expand(modelIndex);
-            event -> accept();
-        } else
-            event -> ignore();
+    QTreeView::dropEvent(event);
+
+
+//    if (event -> source() == this) {
+//        QTreeView::dropEvent(event);
+//    } else
+//        if (event -> mimeData() -> hasUrls()) {
+//            QModelIndex modelIndex = dropProcession(event -> mimeData() -> urls());
+//            model -> refresh();
+//            scrollTo(modelIndex);
+//            expand(modelIndex);
+//            event -> accept();
+//        } else
+//            event -> ignore();
 }
 
 void View::keyPressEvent(QKeyEvent *event) {

@@ -71,8 +71,6 @@ public:
 
     int itemsCount() const;
 
-    virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
-
     void downloadSelected(QString savePath, bool markAsLiked = false);
     void copyItemsFrom(View * otherView);
 
@@ -98,7 +96,6 @@ protected slots:
     void modelUpdate();
 
 protected:
-    QString folderName(QFileInfo & info);
     void drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const;
     void resizeEvent(QResizeEvent *);
     bool prepareDownloading(QString path);
@@ -112,11 +109,6 @@ protected:
     ModelItem * nextItem(ModelItem * curr);
     ModelItem * prevItem(ModelItem * curr);
 
-    QFileInfoList folderFiles(QFileInfo file);
-    QFileInfoList folderDirectories(QFileInfo file);
-
-    virtual ModelItem * createItem(QString path, ModelItem * parent);
-
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
     virtual void dropEvent(QDropEvent *event);
@@ -127,7 +119,6 @@ protected:
 
     Model * model;
     CBHash settings;
-    QStringList filtersList;
     QPoint dragStartPoint;
 };
 

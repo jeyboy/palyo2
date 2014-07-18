@@ -63,7 +63,8 @@ public:
     Qt::DropActions supportedDropActions() const;
     QStringList mimeTypes() const;
     QMimeData * mimeData(const QModelIndexList &indexes) const;
-    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+    virtual QModelIndex dropProcession(const QList<QUrl> & list) = 0;
 
     void refreshItem(ModelItem * item);
     void removeFolderPrebuild(ModelItem * temp);
@@ -89,8 +90,14 @@ public slots:
     void itemDownloadFinished(ModelItem * itemObj, bool success);
 
 protected:   
+    virtual ModelItem * createItem(QString path, ModelItem * parent);
+    QString folderName(QFileInfo & info);
+    QFileInfoList folderFiles(QFileInfo file);
+    QFileInfoList folderDirectories(QFileInfo file);
+
     int count;
     ModelItem * rootItem;
+    QStringList filtersList;
 };
 
 #endif // MODEL_H

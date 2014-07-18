@@ -14,6 +14,10 @@ class TreeModel : public Model {
 public:
     TreeModel(QJsonObject * hash = 0, QObject *parent = 0);
     ~TreeModel();
+protected:
+    QModelIndex dropProcession(const QList<QUrl> & list);
+    void filesRoutine(ModelItem * index, QFileInfo currFile);
+    void filesRoutine(ModelItem * index, QList<QUrl> list);
 };
 
 

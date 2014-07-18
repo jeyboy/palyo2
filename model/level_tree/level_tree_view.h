@@ -9,10 +9,5 @@ class LevelTreeView : public View {
 public:
     LevelTreeView(QWidget * parent, CBHash settinsSet, QJsonObject * attrs = 0);
     ~LevelTreeView();
-
-protected:
-    QModelIndex dropProcession(const QList<QUrl> & list);
-    void filesRoutine(ModelItem * index, QFileInfo currFile);
-    void filesRoutine(ModelItem * index, QList<QUrl> list);
 };
 #endif // LEVEL_TREE_VIEW_H

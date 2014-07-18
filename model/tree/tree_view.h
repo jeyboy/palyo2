@@ -10,11 +10,6 @@ public:
     TreeView(QWidget * parent, CBHash settinsSet, QJsonObject * hash = 0);
     TreeView(Model * newModel, QWidget *parent, CBHash settingsSet);
     ~TreeView();
-
-protected:
-    QModelIndex dropProcession(const QList<QUrl> & list);
-    void filesRoutine(ModelItem * index, QFileInfo currFile);
-    void filesRoutine(ModelItem * index, QList<QUrl> list);
 };
 
 #endif // TREE_VIEW_H
