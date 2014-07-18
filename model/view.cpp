@@ -57,6 +57,8 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
     connect(this, SIGNAL(collapsed(const QModelIndex &)), model, SLOT(collapsed(const QModelIndex &)));
 
     connect(model, SIGNAL(expandNeeded(const QModelIndex &)), this, SLOT(expand(const QModelIndex &)));
+    connect(model, SIGNAL(spoilNeeded(const QModelIndex &)), this, SLOT(updateSelection(QModelIndex)));
+
     connect(model, SIGNAL(itemsCountChanged(int)), parent, SLOT(updateHeader(int)));
     connect(model, SIGNAL(showSpinner()), this, SLOT(startRoutine()));
     connect(model, SIGNAL(hideSpinner()), this, SLOT(stopRoutine()));
@@ -98,7 +100,6 @@ void View::scrollToActive() {
 
 void View::proceedPrev() {
     ModelItem * item = activeItem(false);
-
     if (item == 0) return;
 
     item = prevItem(item);
@@ -306,8 +307,14 @@ void View::updateSelection(QModelIndex candidate) {
         ModelItem * item = getModel() -> getItem(candidate);
 
         if (item -> isFolder()) {
-            if ((item = nextItem(item)))
-              setCurrentIndex(getModel() -> index(item));
+            item = nextItem(item);
+        }
+
+        if (item) {
+            QModelIndex newIndex = getModel() -> index(item);
+            setCurrentIndex(newIndex);
+            expand(newIndex);
+            scrollTo(newIndex);
         }
     }
 }

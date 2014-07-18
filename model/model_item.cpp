@@ -95,10 +95,6 @@ QString ModelItem::getDownloadTitle() const {
     return ret;
 }
 
-QString ModelItem::getTitle() const {
-    return title;
-}
-
 void ModelItem::openLocation() {
     if (!parent() -> fullPath().isEmpty())
         QDesktopServices::openUrl(parent() -> toUrl());

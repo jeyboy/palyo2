@@ -1,4 +1,5 @@
 #include "model.h"
+#include "view.h"
 #include <QDebug>
 
 
@@ -288,7 +289,7 @@ void Model::libraryResponse() {
     obj -> deleteLater();
 }
 
-void Model::refresh() {   
+void Model::refresh() {
     beginResetModel();
     endResetModel();
 //    emit itemsCountChanged(count);
@@ -417,7 +418,7 @@ QMimeData * Model::mimeData(const QModelIndexList &indexes) const {
     return mimeData;
 }
 
-bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
+bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parentIndex) {
 //    if (action == Qt::CopyAction) {
 
 //    } else {
@@ -427,8 +428,7 @@ bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, 
     if (data -> hasUrls()) {
         QModelIndex modelIndex = dropProcession(data -> urls());
         refresh();
-//        scrollTo(modelIndex);
-//        expand(modelIndex);
+        emit spoilNeeded(modelIndex);
     }
 
     return true;

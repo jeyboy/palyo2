@@ -54,7 +54,7 @@
 
 class ModelItem {
 public:   
-    static QString buildUid(QString owner, QString id) { return owner + "_" + id;}
+    inline static QString buildUid(QString owner, QString id) { return owner + "_" + id;}
 
     ModelItem(int initState = STATE_DEFAULT | STATE_CHECKED);
     ModelItem(QJsonObject * hash, ModelItem * parent = 0);
@@ -63,7 +63,7 @@ public:
 
     QString fullPath() const;
     QString getDownloadTitle() const;
-    QString getTitle() const;
+    inline QString getTitle() const { return title; }
     void openLocation();
     virtual bool removePhysicalObject() = 0;
 
