@@ -38,7 +38,7 @@ QModelIndex LevelTreeBreadcrumbModel::dropProcession(const QList<QUrl> & list) {
 }
 
 void LevelTreeBreadcrumbModel::filesRoutine(ModelItem * index, QFileInfo currFile) {
-    QFileInfoList folderList = folderDirectories(currFile);
+    QFileInfoList folderList = Extensions::instance() -> folderDirectories(currFile);
     ModelItem * newFolder;
 
     foreach(QFileInfo file, folderList) {
@@ -49,7 +49,7 @@ void LevelTreeBreadcrumbModel::filesRoutine(ModelItem * index, QFileInfo currFil
     }
 
 
-    QFileInfoList fileList = folderFiles(currFile);
+    QFileInfoList fileList = Extensions::instance() -> folderFiles(currFile);
 
     foreach(QFileInfo file, fileList) {
         appendRow(createItem(file.filePath(), index));

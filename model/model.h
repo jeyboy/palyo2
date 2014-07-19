@@ -20,6 +20,7 @@
 #include "model/web/vk/vk_file.h"
 #include "model/web/soundcloud/soundcloud_playlist.h"
 #include "model/web/soundcloud/soundcloud_file.h"
+#include "misc/extensions.h"
 
 class ModelItem;
 
@@ -90,12 +91,9 @@ public slots:
 protected:   
     virtual ModelItem * createItem(QString path, ModelItem * parent);
     QString folderName(QFileInfo & info);
-    QFileInfoList folderFiles(QFileInfo file);
-    QFileInfoList folderDirectories(QFileInfo file);
 
     int count;
     ModelItem * rootItem;
-    QStringList filtersList;
 };
 
 #endif // MODEL_H

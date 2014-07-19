@@ -6,6 +6,7 @@
 #include <QJsonDocument>
 #include <QFile>
 #include <QStringList>
+#include <QVariant>
 
 class DataStore {
 public:
@@ -15,12 +16,13 @@ public:
     bool load();
     bool save();
 
-    QJsonValueRef read(QString key);
+    QJsonValue read(QString key);
     void write(QString key, double value);
     void write(QString key, QJsonArray value);
     void write(QString key, QJsonObject value);
     void write(QString key, QString value);
     void write(QString key, int value);
+    void write(QString key, QVariant value);
     void append(QString key, QString subkey, QString value);
     void clear();
     QStringList keys();

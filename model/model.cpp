@@ -12,22 +12,6 @@ Model::Model(QJsonObject *hash, QObject *parent) : QAbstractItemModel(parent) {
         rootItem = new FolderItem();
         count = 0;
     }
-
-    filtersList << "*.wav"
-                << "*.aiff"
-                << "*.aif"
-                << "*.mp3"
-                << "*.mp2"
-                << "*.mp1"
-                << "*.ogg"
-                << "*.wma"
-                << "*.mpc"
-                << "*.aac"
-                << "*.alac"
-                << "*.ac3"
-                << "*.wv"
-                << "*.ape"
-                << "*.flac";
 }
 
 Model::~Model() {
@@ -434,13 +418,4 @@ QString Model::folderName(QFileInfo & info) {
     if (name.isEmpty())
         name = info.dir().path().split('/').first();
     return name;
-}
-
-QFileInfoList Model::folderFiles(QFileInfo file) {
-    return QDir(file.filePath()).entryInfoList(filtersList, QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
-}
-
-QFileInfoList Model::folderDirectories(QFileInfo file) {
-    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden);
-//    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
 }

@@ -29,7 +29,7 @@ QModelIndex LevelTreeModel::dropProcession(const QList<QUrl> & list) {
 }
 
 void LevelTreeModel::filesRoutine(ModelItem * index, QFileInfo currFile) {
-    QFileInfoList folderList = folderDirectories(currFile);
+    QFileInfoList folderList = Extensions::instance() -> folderDirectories(currFile);
     ModelItem * newFolder;
     bool already_exist;
 
@@ -42,7 +42,7 @@ void LevelTreeModel::filesRoutine(ModelItem * index, QFileInfo currFile) {
     }
 
 
-    QFileInfoList fileList = folderFiles(currFile);
+    QFileInfoList fileList = Extensions::instance() -> folderFiles(currFile);
 
     foreach(QFileInfo file, fileList) {
         appendRow(createItem(file.filePath(), index));

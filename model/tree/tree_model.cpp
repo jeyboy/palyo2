@@ -18,14 +18,14 @@ QModelIndex TreeModel::dropProcession(const QList<QUrl> & list) {
 }
 
 void TreeModel::filesRoutine(ModelItem * index, QFileInfo currFile){
-    QFileInfoList folderList = folderDirectories(currFile);
+    QFileInfoList folderList = Extensions::instance() -> folderDirectories(currFile);
 
     foreach(QFileInfo file, folderList) {
         ModelItem * new_index = addFolder(file.fileName(), index);
         filesRoutine(new_index, file);
     }
 
-    QFileInfoList fileList = folderFiles(currFile);
+    QFileInfoList fileList = Extensions::instance() -> folderFiles(currFile);
 
     foreach(QFileInfo file, fileList) {
         appendRow(createItem(file.fileName(), index));

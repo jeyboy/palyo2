@@ -44,8 +44,8 @@ QStringList DataStore::keys() {
     return json.keys();
 }
 
-QJsonValueRef DataStore::read(QString key) {
-    return json[key];
+QJsonValue DataStore::read(QString key) {
+    return json.value(key);
 }
 
 void DataStore::write(QString key, double value) {
@@ -64,6 +64,10 @@ void DataStore::write(QString key, QString value) {
 void DataStore::write(QString key, int value) {
     json[key] = value;
 }
+void DataStore::write(QString key, QVariant value) {
+    json.insert(key, QJsonValue::fromVariant(value));
+}
+
 void DataStore::append(QString key, QString subkey, QString value) {
     QJsonObject subObj;
     subObj[subkey] = value;

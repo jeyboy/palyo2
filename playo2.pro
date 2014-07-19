@@ -94,7 +94,8 @@ SOURCES += main.cpp\
     dialogs/captchadialog.cpp \
     model/web/deleted_list.cpp \
     model/web/web_model.cpp \
-    misc/rand.cpp
+    misc/rand.cpp \
+    misc/extensions.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -172,7 +173,8 @@ HEADERS  += mainwindow.h \
     override/tree_view_style.h \
     model/web/web_model.h \
     misc/stylesheets.h \
-    misc/rand.h
+    misc/rand.h \
+    misc/extensions.h
     model/view_types.h
 
 unix:!mac {
