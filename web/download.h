@@ -43,7 +43,7 @@ public:
         delete self;
     }
 
-    int getProgress() const;
+    int getProgress(ModelItem * item) const;
     int getQueueLength() const;
 
 protected slots:
@@ -78,9 +78,11 @@ private:
         progress = 0;
         downloader = 0;
         isReady = true;
+        currPosition = 0;
     }
 
     QFutureWatcher<QNetworkReply *> * downloader;
+    DownloadPosition * currPosition;
     static Download *self;
     QTimer remoteTimer;
     int progress;

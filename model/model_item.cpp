@@ -1,6 +1,7 @@
 #include "model_item.h"
 #include "media/library.h"
 #include "media/player.h"
+#include "misc/rand.h"
 #include <QDebug>
 #include <algorithm>
 
@@ -13,7 +14,6 @@ ModelItem::ModelItem(int initState) {
     path = QString();
     title = QString("--(O_o)--");
     extension = QString();
-    progress = -1;
     genreID = -1;
     duration = -1;
     size = -1;
@@ -34,7 +34,6 @@ ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     size = hash -> value("b").toInt(-1);
     info = hash -> value("a").toString("");
     bpm = hash -> value("m").toInt(0);
-    progress = -1;
 
     if (parent != 0) {
        parent -> appendChild(this);
@@ -51,7 +50,6 @@ ModelItem::ModelItem(const QString filePath, QString fileName, ModelItem * paren
     title = fileName.replace("\n", " ");
     path = filePath;
     genreID = genre_id;
-    progress = -1;
     bpm = 0;
     duration = itemDuration;
 //    extension = fileExtension;
@@ -102,47 +100,6 @@ void ModelItem::openLocation() {
         QFileInfo info(fullPath());
         QDesktopServices::openUrl(QUrl::fromLocalFile(info.path()));
     }
-}
-
-bool ModelItem::isRemote() const { return false; }
-
-bool ModelItem::isFolder() const { return false; }
-
-bool ModelItem::isPlayable() const {
-    bool showBatch = Settings::instance() -> isCheckboxShow();
-    return !isFolder() && (!showBatch || (showBatch && getState() -> isChecked()));
-}
-
-bool ModelItem::hasInfo() const {
-    return !Settings::instance() -> isShowInfo() || (Settings::instance() -> isShowInfo() && !info.isEmpty());
-}
-
-void ModelItem::setInfo(QString newInfo) {
-    info = newInfo;
-}
-
-void ModelItem::setBpm(int newBeat) {
-    bpm = newBeat;
-}
-
-void ModelItem::setDuration(QString newDuration) {
-    duration = newDuration;
-}
-void ModelItem::setGenre(int newGenreID) {
-    genreID = newGenreID;
-}
-
-void ModelItem::setPath(QString newPath) {
-    qDebug() << "Update Path " << newPath;
-    path = newPath;
-}
-
-int ModelItem::getDownloadProgress() const {
-    return progress;
-}
-
-void ModelItem::setDownloadProgress(int percentageVal) {
-    progress = percentageVal;
 }
 
 QStringList ModelItem::getInfo() const {
@@ -249,7 +206,6 @@ QVariant ModelItem::data(int column) const {
         case FOLDERID: return isFolder();
         case TITLESCACHEID: return QVariant(*getTitlesCache());
         case STATEID: return getState() -> currStateValue();
-        case PROGRESSID: return progress;
         default: return QVariant();
     }
 }
@@ -318,19 +274,9 @@ QList<ModelItem *> * ModelItem::childItemsList() { return 0;}
 
 void ModelItem::shuffle() {
     if (isFolder()) {
-        qsrand((uint)QTime::currentTime().msec());
-        QList<ModelItem *> * list = childItemsList();
-        int n = list -> count() - 1;
-        for (int i = 0; i < n; ++i) {
-            int ro = randInt(i, n);
-            list -> swap(i, ro);
-        }
+        Rand::shuffle(childItemsList());
 
-        foreach(ModelItem * item, *list)
+        foreach(ModelItem * item, *childItemsList())
             item -> shuffle();
     }
-}
-
-int ModelItem::randInt(int low, int high) {
-    return qrand() % ((high + 1) - low) + low;
 }

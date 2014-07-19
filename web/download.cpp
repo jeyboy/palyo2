@@ -18,10 +18,9 @@ void Download::onTimer() {
             isReady = false;
 
             ModelItem * item = queue -> takeFirst();
-            item -> setDownloadProgress(0);
             QNetworkReply * m_http = manager() -> get(QNetworkRequest(item -> toUrl()));
-            DownloadPosition * pos = downloads -> take(item);
-            downloads -> insert(m_http, pos);
+            currPosition = downloads -> take(item);
+            downloads -> insert(m_http, currPosition);
             QObject::connect(m_http, SIGNAL(finished()), this, SLOT(downloadConnectionResponsed()));
             emit slotChanged("(Downloads remain: " + QString::number(queue -> count()) + ") " + item -> data(TITLEID).toString());
         }
@@ -31,6 +30,7 @@ void Download::onTimer() {
 void Download::finishDownload() {
     emit slotChanged("(O_o)");
 //    QFutureWatcher<QNetworkReply *> * curr = (QFutureWatcher<QNetworkReply *>)sender();
+    currPosition = 0;
     delete downloader -> result();
     isReady = true;
     delete downloader;
@@ -63,20 +63,20 @@ void Download::downloadConnectionResponsed() {
 
 QNetworkReply * Download::downloading(QNetworkReply * reply) {
     DownloadPosition * position = downloads -> value(reply);
-    QObject::connect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
-    QObject::connect(this, SIGNAL(downloadProgress(ModelItem *, int)), position -> model, SLOT(itemDownloadProgress(ModelItem *, int)));
+//    QObject::connect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
+//    QObject::connect(this, SIGNAL(downloadProgress(ModelItem *, int)), position -> model, SLOT(itemDownloadProgress(ModelItem *, int)));
 
     QFile file(position -> savePath.toLocalFile());
 
 //    QIODevice::Append | QIODevice::Unbuffered
 
     if (!file.open(QIODevice::WriteOnly)) {
-        emit downloadError(position -> item, file.errorString());
-        emit downloadFinished(position -> item, false);
+//        emit downloadError(position -> item, file.errorString());
+//        emit downloadFinished(position -> item, false);
     } else {
         if (!file.resize(reply -> bytesAvailable())) {
-            emit downloadError(position -> item, file.errorString());
-            emit downloadFinished(position -> item, false);
+//            emit downloadError(position -> item, file.errorString());
+//            emit downloadFinished(position -> item, false);
         } else {
             QByteArray buffer;
             qint64 pos = 0;
@@ -94,8 +94,8 @@ QNetworkReply * Download::downloading(QNetworkReply * reply) {
                 }
 
                 catch(...) {
-                    emit downloadError(position -> item, "Some error occured while download...");
-                    emit downloadFinished(position -> item, false);
+//                    emit downloadError(position -> item, "Some error occured while download...");
+//                    emit downloadFinished(position -> item, false);
                 }
             }
 
@@ -106,8 +106,8 @@ QNetworkReply * Download::downloading(QNetworkReply * reply) {
     }
 
 
-    QObject::disconnect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
-    QObject::disconnect(this, SIGNAL(downloadProgress(ModelItem *, int)), position -> model, SLOT(itemDownloadProgress(ModelItem *, int)));
+//    QObject::disconnect(this, SIGNAL(downloadFinished(ModelItem *, bool)), position -> model, SLOT(itemDownloadFinished(ModelItem *, bool)));
+//    QObject::disconnect(this, SIGNAL(downloadProgress(ModelItem *, int)), position -> model, SLOT(itemDownloadProgress(ModelItem *, int)));
     return reply;
 }
 
@@ -115,8 +115,10 @@ CustomNetworkAccessManager * Download::manager() const {
     return netManager;
 }
 
-int Download::getProgress() const {
-    return progress;
+int Download::getProgress(ModelItem * item) const {
+    if (currPosition && currPosition -> item == item)
+        return progress;
+    else return -1;
 }
 
 int Download::getQueueLength() const {

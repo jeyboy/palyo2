@@ -68,20 +68,20 @@ public:
     virtual bool removePhysicalObject() = 0;
 
     virtual bool isExist() const = 0;
-    virtual bool isRemote() const;
-    virtual bool isFolder() const;
-    bool isPlayable() const;
+    inline virtual bool isRemote() const { return false; }
+    inline virtual bool isFolder() const { return false; }
+    inline bool isPlayable() const {
+        bool showBatch = Settings::instance() -> isCheckboxShow();
+        return !isFolder() && (!showBatch || (showBatch && getState() -> isChecked()));
+    }
 
-    bool hasInfo() const;
-    void setInfo(QString newInfo);
+    inline bool hasInfo() const {return !Settings::instance() -> isShowInfo() || (Settings::instance() -> isShowInfo() && !info.isEmpty());}
+    inline void setInfo(QString newInfo) {info = newInfo;}
 
-    void setBpm(int newBeat);
-    void setDuration(QString newDuration);
-    void setGenre(int newGenreID);
-    void setPath(QString newPath);
-
-    int getDownloadProgress() const;
-    void setDownloadProgress(int percentageVal);
+    inline void setBpm(int newBeat) { bpm = newBeat; }
+    inline void setDuration(QString newDuration) {duration = newDuration;}
+    inline void setGenre(int newGenreID) {genreID = newGenreID;}
+    inline void setPath(QString newPath) {path = newPath;}
 
     QStringList getInfo() const;
 
@@ -127,10 +127,8 @@ public:
     virtual QList<ModelItem *> * childItemsList(); // stub
 
     void shuffle();
-    int randInt(int low, int high);
 protected:
 
-    qint8 progress;
     QList<QString> * titlesCache;
 
     ModelItem * parentItem;
@@ -139,12 +137,14 @@ protected:
     QString path;
     QString title;
     QString extension;
+
     QString info;
+    QString duration;
 
     qint16 bpm;
-    int size;
-    QString duration;
     qint16 genreID;
+
+    int size;
 };
 
 

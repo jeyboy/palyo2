@@ -1,5 +1,6 @@
 #include "model.h"
 #include "view.h"
+#include "web/download.h"
 #include <QDebug>
 
 
@@ -95,7 +96,7 @@ QVariant Model::data(const QModelIndex &index, int role) const {
             return item -> getState() -> currStateValue();
         case PROGRESSID:
             item = getItem(index);
-            return QVariant(item -> getDownloadProgress());
+            return Download::instance() -> getProgress(item);
         case INFOID:
             item = getItem(index);
             return QVariant(item -> getInfo());
@@ -378,16 +379,6 @@ void Model::expanded(const QModelIndex &index) {
 void Model::collapsed(const QModelIndex &index) {
     ModelItem * item = getItem(index);
     item -> getState() -> unsetExpanded();
-}
-
-void Model::itemDownloadProgress(ModelItem * item, int percentage) {
-    item -> setDownloadProgress(percentage);
-    qDebug() << percentage;
-    refreshItem(item);
-}
-void Model::itemDownloadFinished(ModelItem * item, bool success) {
-    item -> setDownloadProgress(-1);
-    refreshItem(item);
 }
 
 /////////////////////////////////////////////////////////

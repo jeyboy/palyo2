@@ -87,9 +87,6 @@ public slots:
     void expanded(const QModelIndex &index);
     void collapsed(const QModelIndex &index);
 
-    void itemDownloadProgress(ModelItem * itemObj, int percentage);
-    void itemDownloadFinished(ModelItem * itemObj, bool success);
-
 protected:   
     virtual ModelItem * createItem(QString path, ModelItem * parent);
     QString folderName(QFileInfo & info);
