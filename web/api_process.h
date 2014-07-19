@@ -60,7 +60,7 @@ protected slots:
 
 private:
     ApiProcess() {
-        captchaDialog = new CaptchaDialog(QApplication::activeWindow());
+        captchaDialog = new CaptchaDialog(QApplication::allWidgets().first());
     }
 
     QList<QFutureWatcher<ApiFuncContainer *> *> processes;
