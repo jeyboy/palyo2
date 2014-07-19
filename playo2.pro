@@ -95,7 +95,8 @@ SOURCES += main.cpp\
     model/web/deleted_list.cpp \
     model/web/web_model.cpp \
     misc/rand.cpp \
-    misc/extensions.cpp
+    misc/extensions.cpp \
+    dialogs/extension_dialog.cpp \
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -174,7 +175,8 @@ HEADERS  += mainwindow.h \
     model/web/web_model.h \
     misc/stylesheets.h \
     misc/rand.h \
-    misc/extensions.h
+    misc/extensions.h \
+    dialogs/extension_dialog.h
     model/view_types.h
 
 unix:!mac {
@@ -210,7 +212,8 @@ FORMS    += mainwindow.ui \
     dialogs/web_dialog.ui \
     dialogs/settings_dialog.ui \
     dialogs/relationdialog.ui \
-    dialogs/captchadialog.ui
+    dialogs/captchadialog.ui \
+    dialogs/extension_dialog.ui
 
 RESOURCES += \
     picts.qrc
