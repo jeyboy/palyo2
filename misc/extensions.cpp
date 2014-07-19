@@ -20,3 +20,7 @@ QFileInfoList Extensions::folderDirectories(QFileInfo file) {
 QStringList & Extensions::activeFilterList() const {
     return filters.value(activeFilter, filters.values().first());
 }
+
+QStringList & Extensions::filterList(QString & name) const {
+    return filters.value(name, filters.values().first());
+}

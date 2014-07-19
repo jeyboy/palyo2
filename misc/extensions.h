@@ -22,6 +22,7 @@ public:
     QFileInfoList folderFiles(QFileInfo file);
     QFileInfoList folderDirectories(QFileInfo file);
     QStringList & activeFilterList() const;
+    QStringList & filterList(QString & name) const;
     inline QString & activeFilterName() const { return activeFilter; }
     inline QStringList & presetsList() const { return QStringList(filters.keys()); }
 
