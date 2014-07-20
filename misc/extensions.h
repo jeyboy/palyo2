@@ -24,6 +24,8 @@ public:
     QStringList activeFilterList() const;
     QStringList filterList(const QString & name) const;
     void filterListUpdate(const QString & name, QStringList & list);
+
+    inline void setActiveFilterName(const QString & name) { activeFilter = name; }
     inline QString activeFilterName() const { return activeFilter; }
     inline QStringList presetsList() const { return QStringList(filters.keys()); }
 

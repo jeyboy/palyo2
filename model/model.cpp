@@ -1,6 +1,7 @@
 #include "model.h"
 #include "view.h"
 #include "web/download.h"
+#include "dialogs/extension_dialog.h"
 #include <QDebug>
 
 
@@ -401,6 +402,12 @@ bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, 
 //    }
 
     if (data -> hasUrls()) {
+        qDebug() << "LOL " << QApplication::activeWindow();
+        ExtensionDialog * ed = new ExtensionDialog(QApplication::activeWindow());
+        qDebug() << "LOL2";
+        ed -> exec();
+        qDebug() << "LOL3";
+
         QModelIndex modelIndex = dropProcession(data -> urls());
         refresh();
         emit spoilNeeded(modelIndex);

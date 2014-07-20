@@ -1,6 +1,7 @@
 #include "extension_dialog.h"
 #include "ui_extension_dialog.h"
 #include "misc/extensions.h"
+#include <QDebug>
 
 #include <QStringListModel>
 
@@ -8,8 +9,8 @@ ExtensionDialog::ExtensionDialog(QWidget *parent) :
     QDialog(parent), ui(new Ui::ExtensionDialog) {
     ui -> setupUi(this);
 
-    ui -> presets -> addItems(Extensions::instance() -> presetsList());
     ui -> presetExtensions -> setModel(new QStringListModel(Extensions::instance() -> activeFilterList(), this));
+    ui -> presets -> addItems(Extensions::instance() -> presetsList());
 }
 
 ExtensionDialog::~ExtensionDialog() {
@@ -21,7 +22,8 @@ void ExtensionDialog::on_addPreset_clicked() {
 }
 
 void ExtensionDialog::on_presets_currentIndexChanged(const QString & name) {
-    ((QStringListModel *)ui -> presetExtensions -> model()) -> setStringList(Extensions::instance() -> filterList(name));
+    Extensions::instance() -> setActiveFilterName(name);
+    ((QStringListModel *)ui -> presetExtensions -> model()) -> setStringList(Extensions::instance() -> activeFilterList());
 }
 
 void ExtensionDialog::on_addExtension_clicked() {
@@ -37,7 +39,9 @@ void ExtensionDialog::on_addExtension_clicked() {
         proceedFilter(newPreset, list);
     }
 
+    ui -> extension -> setText("");
     Extensions::instance() -> filterListUpdate(ui -> presets -> currentText(), list);
+    ((QStringListModel *)ui -> presetExtensions -> model()) -> setStringList(list);
 }
 
 void ExtensionDialog::proceedFilter(QString & filter, QStringList & preset) {
@@ -45,5 +49,5 @@ void ExtensionDialog::proceedFilter(QString & filter, QStringList & preset) {
         filter = "*." + filter;
 
     if (!preset.contains(filter))
-        preset.append(preset);
+        preset.append(filter);
 }
