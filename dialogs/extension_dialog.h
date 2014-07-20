@@ -22,6 +22,8 @@ private slots:
     void on_addExtension_clicked();
 
 private:
+    void proceedFilter(QString & filter, QStringList & preset);
+
     Ui::ExtensionDialog *ui;
 };
 

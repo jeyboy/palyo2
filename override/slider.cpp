@@ -36,7 +36,7 @@ void Slider::paintEvent(QPaintEvent * event) {
         rect.moveLeft(rect.left() + margin + 1); // +1 border
         rect.setWidth(rect.width() - margin * 2 - 2); // -2 border
 
-        while(temp < 16) {
+        while(temp < 24) {
             temp = ((float)(rect.width())) / (step / ++multiplyer);
         }
 
@@ -62,7 +62,7 @@ void Slider::paintEvent(QPaintEvent * event) {
         rect.moveTop(rect.top() + margin + 1); // +1 border
         rect.setHeight(rect.height() - margin * 2 - 2); // -2 border
 
-        while(temp < 16) {
+        while(temp < 24) {
             temp = ((float)(rect.height())) / (step / ++multiplyer);
         }
 

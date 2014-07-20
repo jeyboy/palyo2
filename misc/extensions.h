@@ -21,10 +21,11 @@ public:
 
     QFileInfoList folderFiles(QFileInfo file);
     QFileInfoList folderDirectories(QFileInfo file);
-    QStringList & activeFilterList() const;
-    QStringList & filterList(QString & name) const;
-    inline QString & activeFilterName() const { return activeFilter; }
-    inline QStringList & presetsList() const { return QStringList(filters.keys()); }
+    QStringList activeFilterList() const;
+    QStringList filterList(const QString & name) const;
+    void filterListUpdate(const QString & name, QStringList & list);
+    inline QString activeFilterName() const { return activeFilter; }
+    inline QStringList presetsList() const { return QStringList(filters.keys()); }
 
 private:
     Extensions() {

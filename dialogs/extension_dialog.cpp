@@ -21,10 +21,29 @@ void ExtensionDialog::on_addPreset_clicked() {
 }
 
 void ExtensionDialog::on_presets_currentIndexChanged(const QString & name) {
-    ui -> presetExtensions -> model() -> removeRows(0, 255);
-    ui -> presetExtensions -> addItems(Extensions::instance() -> filterList(name));
+    ((QStringListModel *)ui -> presetExtensions -> model()) -> setStringList(Extensions::instance() -> filterList(name));
 }
 
 void ExtensionDialog::on_addExtension_clicked() {
+    QStringList list = ((QStringListModel *)ui -> presetExtensions -> model()) -> stringList();
+    QString newPreset = ui -> extension -> text().replace(' ', "").toLower();
+    if (newPreset.isEmpty()) return;
 
+    if (newPreset.contains(',')) {
+        QStringList newPresets = newPreset.split(',', QString::SkipEmptyParts);
+        foreach(QString name, newPresets)
+            proceedFilter(name, list);
+    } else {
+        proceedFilter(newPreset, list);
+    }
+
+    Extensions::instance() -> filterListUpdate(ui -> presets -> currentText(), list);
+}
+
+void ExtensionDialog::proceedFilter(QString & filter, QStringList & preset) {
+    if (!filter.startsWith("*."))
+        filter = "*." + filter;
+
+    if (!preset.contains(filter))
+        preset.append(preset);
 }

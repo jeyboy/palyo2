@@ -17,10 +17,14 @@ QFileInfoList Extensions::folderDirectories(QFileInfo file) {
 //    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
 }
 
-QStringList & Extensions::activeFilterList() const {
+QStringList Extensions::activeFilterList() const {
     return filters.value(activeFilter, filters.values().first());
 }
 
-QStringList & Extensions::filterList(QString & name) const {
+QStringList Extensions::filterList(const QString & name) const {
     return filters.value(name, filters.values().first());
+}
+
+void Extensions::filterListUpdate(const QString & name, QStringList & newList) {
+    filters.insert(name, newList);
 }
