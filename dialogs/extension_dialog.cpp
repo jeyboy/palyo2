@@ -11,14 +11,15 @@ ExtensionDialog::ExtensionDialog(QWidget *parent) :
 
     ui -> presetExtensions -> setModel(new QStringListModel(Extensions::instance() -> activeFilterList(), this));
     ui -> presets -> addItems(Extensions::instance() -> presetsList());
+    ui -> presets -> setCurrentIndex(ui -> presets -> findText(Extensions::instance() -> activeFilterName()));
+
+    ui -> newPresetName -> setVisible(false);
+    ui -> addPreset -> setVisible(false);
+    ui -> cancelPreset -> setVisible(false);
 }
 
 ExtensionDialog::~ExtensionDialog() {
     delete ui;
-}
-
-void ExtensionDialog::on_addPreset_clicked() {
-
 }
 
 void ExtensionDialog::on_presets_currentIndexChanged(const QString & name) {
@@ -44,10 +45,46 @@ void ExtensionDialog::on_addExtension_clicked() {
     ((QStringListModel *)ui -> presetExtensions -> model()) -> setStringList(list);
 }
 
+void ExtensionDialog::on_removeFilter_clicked() {
+    foreach(QModelIndex index, ui -> presetExtensions -> selectedIndexes()) {
+//        index.data()
+    }
+}
+
 void ExtensionDialog::proceedFilter(QString & filter, QStringList & preset) {
     if (!filter.startsWith("*."))
         filter = "*." + filter;
 
     if (!preset.contains(filter))
         preset.append(filter);
+}
+
+void ExtensionDialog::on_newPreset_clicked() {
+    ui -> newPresetName -> setVisible(true);
+    ui -> addPreset -> setVisible(true);
+    ui -> cancelPreset -> setVisible(true);
+}
+
+void ExtensionDialog::on_removePreset_clicked() {
+
+}
+
+void ExtensionDialog::on_addPreset_clicked() {
+    Extensions::instance() -> addNewPreset(ui -> newPresetName -> text());
+    ui -> presets -> clear();
+    Extensions::instance() -> setActiveFilterName(ui -> newPresetName -> text());
+    ui -> presets -> addItems(Extensions::instance() -> presetsList());
+    ui -> presets -> setCurrentIndex(ui -> presets -> findText(Extensions::instance() -> activeFilterName()));
+
+    ui -> newPresetName -> setVisible(false);
+    ui -> addPreset -> setVisible(false);
+    ui -> cancelPreset -> setVisible(false);
+    ui -> newPresetName -> setText("");
+}
+
+void ExtensionDialog::on_cancelPreset_clicked() {
+    ui -> newPresetName -> setVisible(false);
+    ui -> addPreset -> setVisible(false);
+    ui -> cancelPreset -> setVisible(false);
+    ui -> newPresetName -> setText("");
 }

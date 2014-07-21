@@ -28,3 +28,11 @@ QStringList Extensions::filterList(const QString & name) const {
 void Extensions::filterListUpdate(const QString & name, QStringList & newList) {
     filters.insert(name, newList);
 }
+
+void Extensions::addNewPreset(QString name) {
+    filters.insert(name, QStringList());
+}
+
+void Extensions::removePreset(QString name) {
+    filters.remove(name);
+}

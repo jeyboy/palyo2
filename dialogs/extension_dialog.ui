@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>291</width>
-    <height>300</height>
+    <height>295</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>201</width>
+     <width>181</width>
      <height>22</height>
     </rect>
    </property>
@@ -46,9 +46,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>40</y>
-     <width>271</width>
-     <height>181</height>
+     <y>70</y>
+     <width>211</width>
+     <height>151</height>
     </rect>
    </property>
   </widget>
@@ -78,14 +78,78 @@
   <widget class="QPushButton" name="addPreset">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>10</y>
-     <width>61</width>
+     <x>200</x>
+     <y>40</y>
+     <width>31</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
     <string>Add</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="newPreset">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>10</y>
+     <width>31</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="newPresetName">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>181</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancelPreset">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>40</y>
+     <width>51</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="removePreset">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>10</y>
+     <width>51</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Remove</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="removeFilter">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>70</y>
+     <width>51</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Remove 
+selected 
+filter</string>
    </property>
   </widget>
  </widget>

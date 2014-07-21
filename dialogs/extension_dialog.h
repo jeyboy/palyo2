@@ -21,6 +21,14 @@ private slots:
 
     void on_addExtension_clicked();
 
+    void on_newPreset_clicked();
+
+    void on_cancelPreset_clicked();
+
+    void on_removePreset_clicked();
+
+    void on_removeFilter_clicked();
+
 private:
     void proceedFilter(QString & filter, QStringList & preset);
 

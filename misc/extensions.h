@@ -10,24 +10,29 @@
 class Extensions {
 public:
     ~Extensions() {
-        ext -> clear();
-        ext -> save();
+        delete ext;
     }
 
     static Extensions * instance();
     static void close() {
+        self -> base() -> clear();
+        self -> base() -> save();
         delete self;
     }
 
     QFileInfoList folderFiles(QFileInfo file);
     QFileInfoList folderDirectories(QFileInfo file);
+
     QStringList activeFilterList() const;
     QStringList filterList(const QString & name) const;
     void filterListUpdate(const QString & name, QStringList & list);
+    void addNewPreset(QString name);
+    void removePreset(QString name);
 
     inline void setActiveFilterName(const QString & name) { activeFilter = name; }
     inline QString activeFilterName() const { return activeFilter; }
     inline QStringList presetsList() const { return QStringList(filters.keys()); }
+    inline DataStore * base() const { return ext;}
 
 private:
     Extensions() {
