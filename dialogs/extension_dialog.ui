@@ -42,12 +42,12 @@
     </rect>
    </property>
   </widget>
-  <widget class="QListView" name="presetExtensions">
+  <widget class="SimpleListView" name="presetExtensions">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>70</y>
-     <width>211</width>
+     <width>271</width>
      <height>151</height>
     </rect>
    </property>
@@ -137,22 +137,14 @@
     <string>Remove</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="removeFilter">
-   <property name="geometry">
-    <rect>
-     <x>230</x>
-     <y>70</y>
-     <width>51</width>
-     <height>151</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Remove 
-selected 
-filter</string>
-   </property>
-  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SimpleListView</class>
+   <extends>QListView</extends>
+   <header>override/simple_list_view.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

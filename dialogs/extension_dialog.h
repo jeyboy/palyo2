@@ -14,6 +14,10 @@ public:
     explicit ExtensionDialog(QWidget *parent = 0);
     ~ExtensionDialog();
 
+protected:
+    void updatePresets(bool clear = true);
+    void updatePresetsButtons(bool show = true);
+
 private slots:
     void on_addPreset_clicked();
 
@@ -26,8 +30,6 @@ private slots:
     void on_cancelPreset_clicked();
 
     void on_removePreset_clicked();
-
-    void on_removeFilter_clicked();
 
 private:
     void proceedFilter(QString & filter, QStringList & preset);

@@ -97,6 +97,7 @@ SOURCES += main.cpp\
     misc/rand.cpp \
     misc/extensions.cpp \
     dialogs/extension_dialog.cpp \
+    override/simple_list_view.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -176,7 +177,8 @@ HEADERS  += mainwindow.h \
     misc/stylesheets.h \
     misc/rand.h \
     misc/extensions.h \
-    dialogs/extension_dialog.h
+    dialogs/extension_dialog.h \
+    override/simple_list_view.h
     model/view_types.h
 
 unix:!mac {

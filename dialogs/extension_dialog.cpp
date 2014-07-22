@@ -10,16 +10,26 @@ ExtensionDialog::ExtensionDialog(QWidget *parent) :
     ui -> setupUi(this);
 
     ui -> presetExtensions -> setModel(new QStringListModel(Extensions::instance() -> activeFilterList(), this));
-    ui -> presets -> addItems(Extensions::instance() -> presetsList());
-    ui -> presets -> setCurrentIndex(ui -> presets -> findText(Extensions::instance() -> activeFilterName()));
-
-    ui -> newPresetName -> setVisible(false);
-    ui -> addPreset -> setVisible(false);
-    ui -> cancelPreset -> setVisible(false);
+    updatePresets();
+    updatePresetsButtons(false);
 }
 
 ExtensionDialog::~ExtensionDialog() {
     delete ui;
+}
+
+void ExtensionDialog::updatePresets(bool clear) {
+    if (clear)
+        ui -> presets -> clear();
+    ui -> presets -> addItems(Extensions::instance() -> presetsList());
+    if (!Extensions::instance() -> activeFilterName().isNull())
+        ui -> presets -> setCurrentIndex(ui -> presets -> findText(Extensions::instance() -> activeFilterName()));
+}
+
+void ExtensionDialog::updatePresetsButtons(bool show) {
+    ui -> newPresetName -> setVisible(show);
+    ui -> addPreset -> setVisible(show);
+    ui -> cancelPreset -> setVisible(show);
 }
 
 void ExtensionDialog::on_presets_currentIndexChanged(const QString & name) {
@@ -34,8 +44,9 @@ void ExtensionDialog::on_addExtension_clicked() {
 
     if (newPreset.contains(',')) {
         QStringList newPresets = newPreset.split(',', QString::SkipEmptyParts);
-        foreach(QString name, newPresets)
+        foreach(QString name, newPresets) {
             proceedFilter(name, list);
+        }
     } else {
         proceedFilter(newPreset, list);
     }
@@ -43,12 +54,6 @@ void ExtensionDialog::on_addExtension_clicked() {
     ui -> extension -> setText("");
     Extensions::instance() -> filterListUpdate(ui -> presets -> currentText(), list);
     ((QStringListModel *)ui -> presetExtensions -> model()) -> setStringList(list);
-}
-
-void ExtensionDialog::on_removeFilter_clicked() {
-    foreach(QModelIndex index, ui -> presetExtensions -> selectedIndexes()) {
-//        index.data()
-    }
 }
 
 void ExtensionDialog::proceedFilter(QString & filter, QStringList & preset) {
@@ -60,31 +65,26 @@ void ExtensionDialog::proceedFilter(QString & filter, QStringList & preset) {
 }
 
 void ExtensionDialog::on_newPreset_clicked() {
-    ui -> newPresetName -> setVisible(true);
-    ui -> addPreset -> setVisible(true);
-    ui -> cancelPreset -> setVisible(true);
+    updatePresetsButtons(true);
 }
 
 void ExtensionDialog::on_removePreset_clicked() {
-
+    if (ui -> presets -> count() > 0) {
+        Extensions::instance() -> removePreset(ui -> presets -> currentText());
+        updatePresets();
+    }
 }
 
 void ExtensionDialog::on_addPreset_clicked() {
     Extensions::instance() -> addNewPreset(ui -> newPresetName -> text());
     ui -> presets -> clear();
     Extensions::instance() -> setActiveFilterName(ui -> newPresetName -> text());
-    ui -> presets -> addItems(Extensions::instance() -> presetsList());
-    ui -> presets -> setCurrentIndex(ui -> presets -> findText(Extensions::instance() -> activeFilterName()));
-
-    ui -> newPresetName -> setVisible(false);
-    ui -> addPreset -> setVisible(false);
-    ui -> cancelPreset -> setVisible(false);
+    updatePresets();
+    updatePresetsButtons(false);
     ui -> newPresetName -> setText("");
 }
 
 void ExtensionDialog::on_cancelPreset_clicked() {
-    ui -> newPresetName -> setVisible(false);
-    ui -> addPreset -> setVisible(false);
-    ui -> cancelPreset -> setVisible(false);
+    updatePresetsButtons(false);
     ui -> newPresetName -> setText("");
 }
