@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QApplication::setWindowIcon(QIcon(":icon"));
     setWindowTitle("Playo");
     setAcceptDrops(true);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     initialization();
 }
@@ -150,7 +151,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     ToolBars::instance(this) -> save(this, settings);
 
     settings -> write("settings", Settings::instance() -> toJson());
-
     settings -> save();
 
     QSettings stateSettings("settings.ini", QSettings::IniFormat, this);
@@ -162,14 +162,18 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
     m_tray.hide();
     event -> accept();
+//    QApplication::quit();
 }
 
 MainWindow::~MainWindow() {
+    qDebug() << "zasdfa";
     delete ui;
 
     ///////////////////////////////////////////////
     /// close singletons
     ///////////////////////////////////////////////
+
+        Extensions::close();
         IconProvider::close();
         Library::close();
         Player::close();

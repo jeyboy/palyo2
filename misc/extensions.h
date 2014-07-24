@@ -6,17 +6,26 @@
 #include <QDir>
 #include <QFileInfo>
 #include "misc/data_store.h"
+#include <QDebug>
 
 class Extensions {
 public:
     ~Extensions() {
+        ext -> clear();
+        ext -> write("active", activeFilterName());
+
+        QJsonObject filtersObj;
+        foreach(QString key, filters.keys()) {
+            filtersObj.insert(key, QJsonValue::fromVariant(filters.value(key)));
+        }
+
+        ext -> write("filters", filtersObj);
+        ext -> save();
         delete ext;
     }
 
     static Extensions * instance();
     static void close() {
-        self -> base() -> clear();
-        self -> base() -> save();
         delete self;
     }
 
@@ -32,7 +41,6 @@ public:
     inline void setActiveFilterName(const QString & name) { activeFilter = name; }
     inline QString activeFilterName() const { return activeFilter; }
     inline QStringList presetsList() const { return QStringList(filters.keys()); }
-    inline DataStore * base() const { return ext;}
 
 private:
     Extensions() {
@@ -40,7 +48,10 @@ private:
 
         if (ext -> state) {
             activeFilter = ext -> read("active").toString("all");
-            filters = ext -> read("filters").toVariant().value<QHash<QString, QStringList> >();
+            QJsonObject obj = ext -> read("filters").toObject();
+            foreach (QString key, obj.keys()) {
+                filters.insert(key, obj.value(key).toVariant().value<QStringList>());
+            }
         } else {
             QStringList commonfiltersList;
             commonfiltersList << "*.*";
