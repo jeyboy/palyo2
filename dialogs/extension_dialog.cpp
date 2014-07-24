@@ -23,9 +23,9 @@ void ExtensionDialog::updatePresets(bool clear) {
     if (clear)
         ui -> presets -> clear();
     ui -> presets -> addItems(Extensions::instance() -> presetsList());
+    ui -> presets -> blockSignals(false);
     if (!Extensions::instance() -> activeFilterName().isNull())
         ui -> presets -> setCurrentIndex(ui -> presets -> findText(Extensions::instance() -> activeFilterName()));
-    ui -> presets -> blockSignals(false);
 }
 
 void ExtensionDialog::updatePresetsButtons(bool show) {

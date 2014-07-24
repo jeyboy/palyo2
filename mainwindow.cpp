@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "dialogs/extension_dialog.h"
-
 #include <QDesktopServices>
 #include <QDebug>
 
@@ -81,10 +79,6 @@ void MainWindow::initialization() {
 ////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/Yellow Claw feat. Rochelle - Shotgun .mp3")); // ~145
 //    player.setMedia(QUrl::fromLocalFile("C:/Users/JB/Desktop/Akon_Ft_French_Montana_-_Hurt_Somebody.mp3"));
 //    player.play();
-
-    ExtensionDialog * ed = new ExtensionDialog(QApplication::activeWindow());
-    qDebug() << "LOL2";
-    ed -> exec();
 }
 
 //TODO: menu finish needed
