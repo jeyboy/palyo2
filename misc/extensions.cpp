@@ -9,12 +9,16 @@ Extensions *Extensions::instance() {
 }
 
 QFileInfoList Extensions::folderFiles(QFileInfo file) {
-    return QDir(file.filePath()).entryInfoList(filters.value(activeFilter), QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
+    return QDir(file.filePath()).entryInfoList(activeFilterList(), QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
 }
 
 QFileInfoList Extensions::folderDirectories(QFileInfo file) {
     return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden);
 //    return QDir(file.filePath()).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden);
+}
+
+bool Extensions::respondToExtension(QString ext) const {
+    return activeFilterList().contains("*." + ext) || activeFilterList().contains("*.*");
 }
 
 QStringList Extensions::activeFilterList() const {

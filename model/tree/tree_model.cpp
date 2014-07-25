@@ -39,7 +39,8 @@ void TreeModel::filesRoutine(ModelItem * index, QList<QUrl> list){
             ModelItem * new_index = addFolder(file.fileName(), index);
             filesRoutine(new_index, file);
         } else {
-            appendRow(createItem(file.fileName(), index));
+            if (Extensions::instance() -> respondToExtension(file.suffix()))
+                appendRow(createItem(file.fileName(), index));
         }
     }
 }

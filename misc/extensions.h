@@ -32,6 +32,7 @@ public:
     QFileInfoList folderFiles(QFileInfo file);
     QFileInfoList folderDirectories(QFileInfo file);
 
+    bool respondToExtension(QString ext) const;
     QStringList activeFilterList() const;
     QStringList filterList(const QString & name) const;
     void filterListUpdate(const QString & name, QStringList & list);
