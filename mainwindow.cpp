@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "media/media_player.h"
+
 #include <QDesktopServices>
 #include <QDebug>
 
@@ -14,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
 
     initialization();
+    MediaPlayer(this);
 }
 
 void MainWindow::locationCorrection() {

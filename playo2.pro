@@ -18,12 +18,14 @@ DEFINES += TAGLIB_NO_CONFIG
 
 INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/taglib/include)
 INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/bass/include)
+INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/ffmpeg/include)
 
 #INCLUDEPATH += -L"$$_PRO_FILE_PWD_/libs/include"
 #LIBS += -L"$$_PRO_FILE_PWD_/libs/" -lpsapi
 
 #CONFIG += static thread windows x11 sse sse2 x86
 CONFIG += static
+QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
 SOURCES += main.cpp\
     mainwindow.cpp \
@@ -97,7 +99,8 @@ SOURCES += main.cpp\
     misc/rand.cpp \
     misc/extensions.cpp \
     dialogs/extension_dialog.cpp \
-    override/simple_list_view.cpp
+    override/simple_list_view.cpp \
+    media/media_player.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -178,7 +181,9 @@ HEADERS  += mainwindow.h \
     misc/rand.h \
     misc/extensions.h \
     dialogs/extension_dialog.h \
-    override/simple_list_view.h
+    override/simple_list_view.h \
+    media/media_player.h \
+    media/media_player_libs.h
     model/view_types.h
 
 unix:!mac {
@@ -200,6 +205,9 @@ win32: {
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass_fx.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bassmix.lib)
+
+        LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -lswscale-2 -lavcodec -lavcodec-55 -lavdevice -lavdevice-55 -lavfilter -lavfilter-4 -lavformat -lavformat-55 -lavutil -lavutil-52 -lswresample -lswscale
+        LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -llibavcodec -llibavdevice -llibavfilter -llibavformat -llibavutil -llibpostproc -llibswresample -llibswscale -lpostproc -lpostproc-52 -lswresample-0
 }
 mac: {
         SOURCES += globalshortcut/qxtglobalshortcut_mac.cpp
