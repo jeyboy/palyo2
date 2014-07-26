@@ -10,19 +10,13 @@ View::View(Model * newModel, QWidget *parent, CBHash settingsSet) : QTreeView(pa
 
     setIndentation(12);
 
-//    setStyleSheet(QString(
-//                      "QTreeView {"
-//                          "background-color: black;"
-//                      "}"
-//                      ));
-
     setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     setDragEnabled(true);
     setAcceptDrops(true);
     setDropIndicatorShown(true);
 
-//    setStyle(new TreeViewStyle);
+    setStyle(new TreeViewStyle);
 
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::CopyAction);
@@ -681,7 +675,6 @@ void View::dragEnterEvent(QDragEnterEvent *event) {
 
 void View::dragMoveEvent(QDragMoveEvent * event) {
     QTreeView::dragMoveEvent(event);
-
     if (event -> mimeData() -> hasFormat("text/uri-list")) {
         event -> accept();
     } else

@@ -402,9 +402,8 @@ bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, 
 //    }
 
     if (data -> hasUrls()) {
-        ExtensionDialog * ed = new ExtensionDialog(QApplication::activeWindow());
-        ed -> exec();
-
+        ExtensionDialog(QApplication::activeWindow()).exec();
+        //TODO: add parentIndex to the dropProcession
         QModelIndex modelIndex = dropProcession(data -> urls());
         refresh();
         emit spoilNeeded(modelIndex);

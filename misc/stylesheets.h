@@ -3,6 +3,12 @@
 
 #include <QString>
 
+//    setStyleSheet(QString(
+//                      "QTreeView {"
+//                          "background-color: black;"
+//                      "}"
+//                      ));
+
 class Stylesheets {
 public:
     static QString appStyles() {
