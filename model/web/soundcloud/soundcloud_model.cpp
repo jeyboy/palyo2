@@ -53,8 +53,10 @@ void SoundcloudModel::filesRoutine(ModelItem * index, QList<QUrl> list){
 //            ModelItem * new_index = model -> addFolder(file.fileName(), index);
 //            filesRoutine(new_index, file);
 //        } else {
-//            FileItem * fi = new FileItem(file.fileName(), index);
-//            model -> appendRow(fi -> toModelItem());
+//            if (Extensions::instance() -> respondToExtension(file.suffix())) {
+//              FileItem * fi = new FileItem(file.fileName(), index);
+//              model -> appendRow(fi -> toModelItem());
+//            }
 //        }
 //    }
 }

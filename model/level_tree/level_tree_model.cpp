@@ -62,7 +62,8 @@ void LevelTreeModel::filesRoutine(ModelItem * index, QList<QUrl> list) {
             if (!already_exist && newFolder -> childCount() == 0)
                 removeFolderPrebuild(newFolder);
         } else {
-            appendRow(createItem(file.filePath(), index));
+            if (Extensions::instance() -> respondToExtension(file.suffix()))
+                appendRow(createItem(file.filePath(), index));
         }
     }
 }

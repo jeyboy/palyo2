@@ -35,7 +35,8 @@ void ListModel::filesRoutine(ModelItem * index, QList<QUrl> list){
         if (file.isDir()) {
             filesRoutine(index, file);
         } else {
-            appendRow(createItem(file.filePath(), index));
+            if (Extensions::instance() -> respondToExtension(file.suffix()))
+                appendRow(createItem(file.filePath(), index));
         }
     }
 }
