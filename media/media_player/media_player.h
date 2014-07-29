@@ -3,29 +3,31 @@
 
 #include <QWidget>
 #include <QUrl>
+#include <QTimer>
 
-extern "C" {
-    #include "media_player_libs.h"
-}
-
-#define INBUF_SIZE 4096
-#define AUDIO_INBUF_SIZE 20480
-#define AUDIO_REFILL_THRESH 4096
+#include "stream_decoder.h"
 
 class MediaPlayer : public QWidget {
     Q_OBJECT
 public:
 
     MediaPlayer(QWidget * parent = 0);
+    ~MediaPlayer();
+
+    bool play(QUrl url);
+    bool pause();
+    bool stop();
+
+    bool tags(QHash<QString, QString> &);
+
+protected slots:
+    void newIteration();
 
 protected:
-    bool openObject(QUrl url);
-    void closeObject();
-
-    bool nextFrame();
+    bool openContext(QUrl url);
+    void closeContext();
 
 private:
-
 //    /* options specified by the user */
 //    AVInputFormat *file_iformat;
 //    const char *input_filename;
@@ -76,10 +78,16 @@ private:
 
 //    AVPacket flush_pkt;
 
-    AVFormatContext * currObj;
-    AVPacket * currFrame;
+    StreamDecoder * decoder;
+    QAudioOutput * soundOutput;
+    QBuffer * soundBuffer;
+
+    QTimer * masterClock;
+
     QWidget * screen;
     bool isRemote;
+
+    AVFormatContext * context;
 };
 
 #endif // MEDIA_PLAYER_H

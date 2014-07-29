@@ -100,7 +100,9 @@ SOURCES += main.cpp\
     misc/extensions.cpp \
     dialogs/extension_dialog.cpp \
     override/simple_list_view.cpp \
-    media/media_player.cpp
+    media/media_player/media_player.cpp \
+    media/media_player/stream_decoder.cpp \
+    media/media_player/stream.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -182,8 +184,12 @@ HEADERS  += mainwindow.h \
     misc/extensions.h \
     dialogs/extension_dialog.h \
     override/simple_list_view.h \
-    media/media_player.h \
-    media/media_player_libs.h
+    media/media_player/media_player.h \
+    media/media_player/media_player_libs.h \
+    media/media_player/master_clock.h \
+    media/media_player/media_player_utils.h \
+    media/media_player/stream_decoder.h \
+    media/media_player/stream.h
     model/view_types.h
 
 unix:!mac {

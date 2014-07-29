@@ -1,16 +1,82 @@
 #include "media_player.h"
 
 MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
-  , currObj(NULL)
-  , screen(NULL)
-  , isRemote(false) {
+  , currObj(0)
+  , screen(0)
+  , isRemote(false)
+  , decoder(0)
+  , audioInput(0)
+  , outputFile(0) {
     avcodec_register_all();
-    avco
+
+    soundOutput = new QAudioOutput(QAudioFormat(), this);
+    soundOutput -> start(soundBuffer);
+    soundOutput -> suspend();
+
+    masterClock = new QTimer(this);
+    masterClock -> setInterval(1000 / 25);
+    connect(masterClock, SIGNAL(timeout()), this, SLOT(newIteration()));
 }
 
-//////////////PROTECTED//////////////
+MediaPlayer::~MediaPlayer() {
+    stop();
 
-bool MediaPlayer::openObject(QUrl url) {
+    delete soundOutput;
+    delete soundBuffer;
+
+    delete masterClock;
+
+    delete context;
+
+    delete screen; // ?
+}
+
+bool MediaPlayer::play(QUrl url) {
+    stop();
+
+    bool res = openObject(url) && findStreams();
+    decoder = new StreamDecoder(context);
+
+    resume();
+    return res;
+}
+
+bool MediaPlayer::resume() {
+    soundOutput -> resume();
+    masterClock -> start();
+}
+
+bool MediaPlayer::pause() {
+    soundOutput -> suspend();
+    masterClock -> stop();
+}
+
+bool MediaPlayer::stop() {
+    masterClock -> stop();
+    soundOutput -> stop();
+    closeContext();
+}
+
+bool MediaPlayer::tags(QHash<QString, QString> & ret) {
+    if (currObj) {
+        AVDictionaryEntry *tag = NULL;
+        while ((tag = av_dict_get(currObj -> metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
+            ret.insert(tag -> key, tag -> value);
+        return true;
+    }
+
+    return false;
+}
+
+/////////////// SLOTS ////////////////////////////////
+
+void MediaPlayer::newIteration() {
+
+}
+
+////////////// PROTECTED //////////////////////////////////
+
+bool MediaPlayer::openContext(QUrl url) {
 //    const char    *url = "in.mp3";
     QString path;
     if ((isRemote = url.isLocalFile())) {
@@ -24,28 +90,29 @@ bool MediaPlayer::openObject(QUrl url) {
     av_dict_set(&options, "video_size", "640x480", 0);
     av_dict_set(&options, "pixel_format", "rgb24", 0);
 
-    if (avformat_open_input(&currObj, path.data(), NULL, &options) < 0) {
+    if (avformat_open_input(&context, path.data(), NULL, &options) < 0) {
         abort();
         av_dict_free(&options);
         return false;
     }
     av_dict_free(&options);
 
-    if (avformat_find_stream_info(currObj) < 0)
+    if (avformat_find_stream_info(context) < 0)
         return false;
 
     return true;
 }
 
-void MediaPlayer::closeObject() {
-    avformat_close_input(&currObj);
+void MediaPlayer::closeContext() {
+    avformat_close_input(&context);
+
     if (isRemote)
         avformat_network_deinit();
 }
 
-bool MediaPlayer::nextFrame() {
-    return av_read_frame(currObj, currFrame) == 0;
-}
+////////////////////// PRIVATE //////////////////////////////
+
+
 
 //static int opt_width(void *optctx, const char *opt, const char *arg)
 //{
@@ -1090,10 +1157,6 @@ bool MediaPlayer::nextFrame() {
 //    exit(0);
 //}
 
-//static void sigterm_handler(int sig)
-//{
-//    exit(123);
-//}
 
 //static void set_default_window_size(int width, int height, AVRational sar)
 //{
@@ -1141,17 +1204,6 @@ bool MediaPlayer::nextFrame() {
 //    is->height = screen->h;
 
 //    return 0;
-//}
-
-///* display the current picture, if any */
-//static void video_display(VideoState *is)
-//{
-//    if (!screen)
-//        video_open(is, 0, NULL);
-//    if (is->audio_st && is->show_mode != SHOW_MODE_VIDEO)
-//        video_audio_display(is);
-//    else if (is->video_st)
-//        video_image_display(is);
 //}
 
 //static double get_clock(Clock *c)
