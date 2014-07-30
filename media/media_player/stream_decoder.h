@@ -11,7 +11,7 @@
 class StreamDecoder : public QThread {
     Q_OBJECT
 public:
-    StreamDecoder(AVFormatContext * currContext, QObject * parent);
+    StreamDecoder(AVFormatContext * currContext, QObject * parent = 0);
     ~StreamDecoder();
 
     QAudioFormat prepareAudioFormat();

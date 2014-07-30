@@ -7,8 +7,8 @@
 class Stream : public QThread {
     Q_OBJECT
 public:
-    Stream(AVFormatContext * context, uint streamIndex, Priority priority = InheritPriority);
-    ~Stream();
+    Stream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority = InheritPriority);
+    virtual ~Stream();
 
     inline bool isValid() const { return state; }
     inline uint index() const { return uindex; }

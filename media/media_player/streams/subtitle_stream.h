@@ -5,7 +5,7 @@
 
 class SubtitleStream : public Stream {
 public:
-    SubtitleStream(AVFormatContext * context, uint streamIndex, Priority priority = InheritPriority);
+    SubtitleStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
 };
 
 #endif // SUBTITLE_STREAM_H

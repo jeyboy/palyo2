@@ -1,7 +1,7 @@
 #include "audio_stream.h"
 
-AudioStream::AudioStream(AVFormatContext * context, uint streamIndex, Priority priority)
-    : Stream(context, streamIndex, priority) {
+AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
+    : Stream(context, streamIndex, parent, priority) {
 
 }
 

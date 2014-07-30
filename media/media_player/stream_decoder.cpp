@@ -11,10 +11,26 @@ StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : 
 }
 
 StreamDecoder::~StreamDecoder() {
+    videoStream -> stop();
+    videoStream -> wait();
+
+    audioStream -> stop();
+    audioStream -> wait();
+
+    subtitleStream -> stop();
+    subtitleStream -> wait();
+
     delete currFrame;
-    delete videoStream;
-    delete audioStream;
-    delete subtitleStream;
+    currFrame = 0;
+
+//    delete videoStream;
+//    videoStream = 0;
+
+//    delete audioStream;
+//    audioStream = 0;
+
+//    delete subtitleStream;
+//    subtitleStream = 0;
 }
 
 QAudioFormat StreamDecoder::prepareAudioFormat() {
@@ -41,9 +57,10 @@ uint StreamDecoder::bestStream(Stream * audio, Stream * video) {
 }
 
 void StreamDecoder::findStreams() {
-    videoStream = new VideoStream(context, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
-    audioStream = new AudioStream(context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, -1, bestStream(audioStream, videoStream), NULL, 0));
-    subtitleStream = new SubtitleStream(context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
+    videoStream = new VideoStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
+//    connect(search, SIGNAL(finished()), searchThread, SLOT(deleteLater()));
+    audioStream = new AudioStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, -1, bestStream(audioStream, videoStream), NULL, 0));
+    subtitleStream = new SubtitleStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
         emit errorOccurred("No one audio or video streams founds");

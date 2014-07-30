@@ -16,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
 
     initialization();
-    MediaPlayer(this);
+    MediaPlayer m(this);
+    m.play(QUrl::fromLocalFile("F:/test.mp4"));
 }
 
 void MainWindow::locationCorrection() {
@@ -163,7 +164,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 MainWindow::~MainWindow() {
-    qDebug() << "zasdfa";
     delete ui;
 
     ///////////////////////////////////////////////

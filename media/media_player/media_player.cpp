@@ -1,11 +1,13 @@
 #include "media_player.h"
 
 MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
-  , context(0)
+  , decoder(0)
+  , soundOutput(0)
   , screen(0)
   , isRemote(false)
-  , decoder(0)
-  , soundOutput(0) {
+  , context(0) {
+
+    av_register_all();
     avcodec_register_all();
 
     soundBuffer = new QBuffer(this);
@@ -20,6 +22,8 @@ MediaPlayer::~MediaPlayer() {
     stop();
 
     delete soundOutput;
+
+    soundBuffer -> close();
     delete soundBuffer;
 
     delete masterClock;

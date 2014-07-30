@@ -6,7 +6,7 @@
 
 class AudioStream : public Stream {
 public:
-    AudioStream(AVFormatContext * context, uint streamIndex, Priority priority = InheritPriority);
+    AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     void fillFormat(QAudioFormat & format);
 
 private:

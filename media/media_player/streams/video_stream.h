@@ -5,7 +5,8 @@
 
 class VideoStream : public Stream {
 public:
-    VideoStream(AVFormatContext * context, uint streamIndex, Priority priority = InheritPriority);
+    VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
+    ~VideoStream() {}
 };
 
 #endif // VIDEO_STREAM_H

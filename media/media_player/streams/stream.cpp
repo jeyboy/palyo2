@@ -1,10 +1,15 @@
 #include "stream.h"
 #include <qDebug>
 
-Stream::Stream(AVFormatContext * context, uint streamIndex, Priority priority) : QThread(), state(true), exitRequired(false), stream(0), codec(0) {
+Stream::Stream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : QThread(parent), state(true), exitRequired(false), stream(0), codec(0) {
+    if (streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND) {
+        state = false;
+        return;
+    }
+
     uindex = streamIndex;
 
-    AVStream * stream = context -> streams[uindex];
+    stream = context -> streams[uindex];
 
     if (stream == 0) {
         state = false;
@@ -28,12 +33,15 @@ Stream::Stream(AVFormatContext * context, uint streamIndex, Priority priority) :
 }
 
 Stream::~Stream() {
-    if (codec) {
-        avcodec_close(stream -> codec);
-        delete codec;
-    }
+    qDebug() << " ******* " << state;
+    stop();
 
-    delete stream;
+//    if (stream) {
+//        avcodec_close(stream -> codec);
+//    }
+
+//    delete codec;
+//    delete stream;
 }
 
 void Stream::run() {
