@@ -1,6 +1,7 @@
 #include "stream.h"
+#include <qDebug>
 
-Stream::Stream(AVFormatContext * context, uint streamIndex) : QObject(), state(true), stream(0), codec(0) {
+Stream::Stream(AVFormatContext * context, uint streamIndex, Priority priority) : QThread(), state(true), exitRequired(false), stream(0), codec(0) {
     uindex = streamIndex;
 
     AVStream * stream = context -> streams[uindex];
@@ -21,13 +22,28 @@ Stream::Stream(AVFormatContext * context, uint streamIndex) : QObject(), state(t
     if (avcodec_open2(codec_context, codec, NULL) < 0) {
         state = false;
     }
+
+    if (state)
+        start(priority);
 }
 
 Stream::~Stream() {
-    delete stream;
-
     if (codec) {
-        avcodec_close(codec);
+        avcodec_close(stream -> codec);
         delete codec;
     }
+
+    delete stream;
+}
+
+void Stream::run() {
+    while(!exitRequired) {
+
+    }
+
+    qDebug() << "Stopped";
+}
+
+void Stream::stop() {
+    exitRequired = true;
 }

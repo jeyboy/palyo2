@@ -102,7 +102,10 @@ SOURCES += main.cpp\
     override/simple_list_view.cpp \
     media/media_player/media_player.cpp \
     media/media_player/stream_decoder.cpp \
-    media/media_player/stream.cpp
+    media/media_player/streams/stream.cpp \
+    media/media_player/streams/audio_stream.cpp \
+    media/media_player/streams/video_stream.cpp \
+    media/media_player/streams/subtitle_stream.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -189,7 +192,10 @@ HEADERS  += mainwindow.h \
     media/media_player/master_clock.h \
     media/media_player/media_player_utils.h \
     media/media_player/stream_decoder.h \
-    media/media_player/stream.h
+    media/media_player/streams/stream.h \
+    media/media_player/streams/audio_stream.h \
+    media/media_player/streams/video_stream.h \
+    media/media_player/streams/subtitle_stream.h
     model/view_types.h
 
 unix:!mac {

@@ -1,8 +1,8 @@
 #include "stream_decoder.h"
+#include <qDebug>
 
 StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : QThread(parent)
 , state(true)
-, currThread(0)
 , videoStream(0)
 , audioStream(0)
 , subtitleStream(0) {
@@ -17,18 +17,33 @@ StreamDecoder::~StreamDecoder() {
     delete subtitleStream;
 }
 
+QAudioFormat StreamDecoder::prepareAudioFormat() {
+    QAudioFormat format;
+    format.setCodec("audio/pcm");
+    audioStream -> fillFormat(format);
+
+    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+
+    if (!info.isFormatSupported(format)) {
+        qWarning()<<"raw audio format not supported by backend, cannot play audio.";
+        format = info.nearestFormat(format);
+    }
+
+    return format;
+}
+
 ///////////////////////// Private //////////////////////////////////
 
 uint StreamDecoder::bestStream(Stream * audio, Stream * video) {
-    if (audio && audio -> index() > -1)
+    if (audio != 0 && audio -> index() > -1)
         return audio -> index();
     return video -> index();
 }
 
-bool StreamDecoder::findStreams() {
-    videoStream = new Stream(context, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
-    audioStream = new Stream(context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, -1, bestStream(audioStream, videoStream), NULL, 0));
-    subtitleStream = new Stream(context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
+void StreamDecoder::findStreams() {
+    videoStream = new VideoStream(context, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
+    audioStream = new AudioStream(context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, -1, bestStream(audioStream, videoStream), NULL, 0));
+    subtitleStream = new SubtitleStream(context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
         emit errorOccurred("No one audio or video streams founds");

@@ -15,8 +15,9 @@ public:
     ~MediaPlayer();
 
     bool play(QUrl url);
-    bool pause();
-    bool stop();
+    void resume();
+    void pause();
+    void stop();
 
     bool tags(QHash<QString, QString> &);
 

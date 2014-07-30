@@ -1,17 +1,15 @@
 #include "media_player.h"
 
 MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
-  , currObj(0)
+  , context(0)
   , screen(0)
   , isRemote(false)
   , decoder(0)
-  , audioInput(0)
-  , outputFile(0) {
+  , soundOutput(0) {
     avcodec_register_all();
 
-    soundOutput = new QAudioOutput(QAudioFormat(), this);
-    soundOutput -> start(soundBuffer);
-    soundOutput -> suspend();
+    soundBuffer = new QBuffer(this);
+    soundBuffer -> open(QIODevice::ReadWrite);
 
     masterClock = new QTimer(this);
     masterClock -> setInterval(1000 / 25);
@@ -34,34 +32,50 @@ MediaPlayer::~MediaPlayer() {
 bool MediaPlayer::play(QUrl url) {
     stop();
 
-    bool res = openObject(url) && findStreams();
-    decoder = new StreamDecoder(context);
+    bool res = openContext(url);
+    decoder = new StreamDecoder(context, this);
+    res &= decoder -> isValid();
 
-    resume();
+    if (res) {
+        if (decoder -> hasAudio()) {
+            soundOutput = new QAudioOutput(decoder -> prepareAudioFormat(), this);
+            soundOutput -> start(soundBuffer);
+            soundOutput -> suspend();
+        }
+
+        resume();
+    }
+
     return res;
 }
 
-bool MediaPlayer::resume() {
+void MediaPlayer::resume() {
     soundOutput -> resume();
     masterClock -> start();
 }
 
-bool MediaPlayer::pause() {
+void MediaPlayer::pause() {
     soundOutput -> suspend();
     masterClock -> stop();
 }
 
-bool MediaPlayer::stop() {
+void MediaPlayer::stop() {
     masterClock -> stop();
-    soundOutput -> stop();
+    if (soundOutput) {
+        soundOutput -> stop();
+        delete soundOutput;
+        soundOutput = 0;
+    }
     closeContext();
 }
 
 bool MediaPlayer::tags(QHash<QString, QString> & ret) {
-    if (currObj) {
-        AVDictionaryEntry *tag = NULL;
-        while ((tag = av_dict_get(currObj -> metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
+    if (context) {
+        AVDictionaryEntry * tag = 0;
+        while ((tag = av_dict_get(context -> metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
             ret.insert(tag -> key, tag -> value);
+            delete tag;
+        }
         return true;
     }
 
@@ -90,14 +104,14 @@ bool MediaPlayer::openContext(QUrl url) {
     av_dict_set(&options, "video_size", "640x480", 0);
     av_dict_set(&options, "pixel_format", "rgb24", 0);
 
-    if (avformat_open_input(&context, path.data(), NULL, &options) < 0) {
+    if (avformat_open_input(&context, path.toUtf8().data(), NULL, &options) < 0) {
         abort();
         av_dict_free(&options);
         return false;
     }
     av_dict_free(&options);
 
-    if (avformat_find_stream_info(context) < 0)
+    if (avformat_find_stream_info(context, NULL) < 0)
         return false;
 
     return true;

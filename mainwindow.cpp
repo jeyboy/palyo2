@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "media/media_player.h"
+#include "media/media_player/media_player.h"
 
 #include <QDesktopServices>
 #include <QDebug>

@@ -3,13 +3,18 @@
 
 #include <QThread>
 #include "media_player_utils.h"
-#include "stream.h"
+
+#include "streams/audio_stream.h"
+#include "streams/video_stream.h"
+#include "streams/subtitle_stream.h"
 
 class StreamDecoder : public QThread {
-
+    Q_OBJECT
 public:
     StreamDecoder(AVFormatContext * currContext, QObject * parent);
     ~StreamDecoder();
+
+    QAudioFormat prepareAudioFormat();
 
     inline bool isValid() const { return state; }
 
@@ -34,9 +39,9 @@ private:
     AVFormatContext * context;
     AVPacket * currFrame;
 
-    Stream * videoStream;
-    Stream * audioStream;
-    Stream * subtitleStream;
+    VideoStream * videoStream;
+    AudioStream * audioStream;
+    SubtitleStream * subtitleStream;
 };
 
 #endif // STREAM_DECODER_H
