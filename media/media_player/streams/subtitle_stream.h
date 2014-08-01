@@ -1,11 +1,16 @@
 #ifndef SUBTITLE_STREAM_H
 #define SUBTITLE_STREAM_H
 
-#include "stream.h"
+#include "media_stream.h"
 
-class SubtitleStream : public Stream {
+class SubtitleStream : public MediaStream {
 public:
     SubtitleStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
+
+    void suspendOutput();
+    void resumeOutput();
+protected:
+    void routine();
 };
 
 #endif // SUBTITLE_STREAM_H

@@ -8,19 +8,20 @@
 #include "streams/video_stream.h"
 #include "streams/subtitle_stream.h"
 
-class StreamDecoder : public QThread {
+class StreamDecoder : public QObject {
     Q_OBJECT
 public:
     StreamDecoder(AVFormatContext * currContext, QObject * parent = 0);
     ~StreamDecoder();
-
-    QAudioFormat prepareAudioFormat();
 
     inline bool isValid() const { return state; }
 
     inline bool hasAudio() const { return audioStream -> isValid(); }
     inline bool hasVideo() const { return videoStream -> isValid(); }
     inline bool hasSubtitles() const { return subtitleStream -> isValid(); }
+
+    void suspendOutput();
+    void resumeOutput();
 signals:
     void errorOccurred(QString message);
     void stopped();

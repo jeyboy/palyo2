@@ -30,8 +30,6 @@ protected:
 
 private:
     StreamDecoder * decoder;
-    QAudioOutput * soundOutput;
-    QBuffer * soundBuffer;
 
     QTimer * masterClock;
 

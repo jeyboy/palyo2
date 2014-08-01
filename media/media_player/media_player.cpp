@@ -2,16 +2,12 @@
 
 MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
   , decoder(0)
-  , soundOutput(0)
   , screen(0)
   , isRemote(false)
   , context(0) {
 
     av_register_all();
     avcodec_register_all();
-
-    soundBuffer = new QBuffer(this);
-    soundBuffer -> open(QIODevice::ReadWrite);
 
     masterClock = new QTimer(this);
     masterClock -> setInterval(1000 / 25);
@@ -20,11 +16,6 @@ MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
 
 MediaPlayer::~MediaPlayer() {
     stop();
-
-    delete soundOutput;
-
-    soundBuffer -> close();
-    delete soundBuffer;
 
     delete masterClock;
 
@@ -41,12 +32,6 @@ bool MediaPlayer::play(QUrl url) {
     res &= decoder -> isValid();
 
     if (res) {
-        if (decoder -> hasAudio()) {
-            soundOutput = new QAudioOutput(decoder -> prepareAudioFormat(), this);
-            soundOutput -> start(soundBuffer);
-            soundOutput -> suspend();
-        }
-
         resume();
     }
 
@@ -54,22 +39,18 @@ bool MediaPlayer::play(QUrl url) {
 }
 
 void MediaPlayer::resume() {
-    soundOutput -> resume();
+    decoder -> resumeOutput();
     masterClock -> start();
 }
 
 void MediaPlayer::pause() {
-    soundOutput -> suspend();
+    decoder -> suspendOutput();
     masterClock -> stop();
 }
 
 void MediaPlayer::stop() {
+    decoder -> resumeOutput();
     masterClock -> stop();
-    if (soundOutput) {
-        soundOutput -> stop();
-        delete soundOutput;
-        soundOutput = 0;
-    }
     closeContext();
 }
 
@@ -95,7 +76,6 @@ void MediaPlayer::newIteration() {
 ////////////// PROTECTED //////////////////////////////////
 
 bool MediaPlayer::openContext(QUrl url) {
-//    const char    *url = "in.mp3";
     QString path;
     if ((isRemote = url.isLocalFile())) {
         path = url.toLocalFile();
@@ -122,6 +102,8 @@ bool MediaPlayer::openContext(QUrl url) {
 }
 
 void MediaPlayer::closeContext() {
+    delete decoder;
+
     avformat_close_input(&context);
 
     if (isRemote)

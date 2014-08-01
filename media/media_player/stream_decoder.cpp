@@ -1,7 +1,7 @@
 #include "stream_decoder.h"
 #include <qDebug>
 
-StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : QThread(parent)
+StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : QObject(parent)
 , state(true)
 , videoStream(0)
 , audioStream(0)
@@ -33,19 +33,11 @@ StreamDecoder::~StreamDecoder() {
 //    subtitleStream = 0;
 }
 
-QAudioFormat StreamDecoder::prepareAudioFormat() {
-    QAudioFormat format;
-    format.setCodec("audio/pcm");
-    audioStream -> fillFormat(format);
+void StreamDecoder::suspendOutput() {
 
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+}
+void StreamDecoder::resumeOutput() {
 
-    if (!info.isFormatSupported(format)) {
-        qWarning()<<"raw audio format not supported by backend, cannot play audio.";
-        format = info.nearestFormat(format);
-    }
-
-    return format;
 }
 
 ///////////////////////// Private //////////////////////////////////
