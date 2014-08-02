@@ -193,13 +193,10 @@ unix:!mac {
         SOURCES += globalshortcut/qxtglobalshortcut_x11.cpp
 #            file_registration/file_registration_x11.cpp
 
-        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib/taglib-project.so)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.so)
 }
 win32: {
         SOURCES += globalshortcut/qxtglobalshortcut_win.cpp
-#            file_registration/file_registration_win.cpp
-        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib/taglib-project.dll)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass_fx.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bassmix.lib)
@@ -222,3 +219,10 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     picts.qrc
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/taglib/release/ -ltaglib-project
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/taglib/debug/ -ltaglib-project
+else:unix:!macx: LIBS += -L$$PWD/libs/taglib/ -ltaglib-project
+
+INCLUDEPATH += $$PWD/libs/taglib
+DEPENDPATH += $$PWD/libs/taglib
