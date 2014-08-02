@@ -190,7 +190,7 @@ unix:!mac {
         SOURCES += globalshortcut/qxtglobalshortcut_x11.cpp
 #            file_registration/file_registration_x11.cpp
 
-        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib/taglib-project.a)
+        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib/taglib-project.so)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.so)
 }
 win32: {
