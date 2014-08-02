@@ -1,7 +1,7 @@
 #ifndef HOTKEY_EDITOR_H
 #define HOTKEY_EDITOR_H
 
-#include <QKeySequenceEdit>
+#include "override/qkeysequenceedit/qkeysequenceedit.h"  //<QKeySequenceEdit>
 #include <QKeyEvent>
 
 #include "misc/hotkey_manager.h"

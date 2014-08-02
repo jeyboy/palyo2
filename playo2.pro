@@ -97,7 +97,8 @@ SOURCES += main.cpp\
     misc/rand.cpp \
     misc/extensions.cpp \
     dialogs/extension_dialog.cpp \
-    override/simple_list_view.cpp
+    override/simple_list_view.cpp \
+    override/qkeysequenceedit/qkeysequenceedit.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -178,7 +179,9 @@ HEADERS  += mainwindow.h \
     misc/rand.h \
     misc/extensions.h \
     dialogs/extension_dialog.h \
-    override/simple_list_view.h
+    override/simple_list_view.h \
+    override/qkeysequenceedit/qkeysequenceedit.h \
+    override/qkeysequenceedit/qkeysequenceedit_p.h
     model/view_types.h
 
 unix:!mac {
