@@ -16,15 +16,7 @@ AudioStream::~AudioStream() {
     outputStream -> wait();
 }
 
-void AudioStream::decode(unsigned char* bytes, int size) {
-    if (size <= 0) return;
 
-    AVPacket * packet = new AVPacket();
-    av_init_packet(packet);
-    packet -> size = size;
-    packet -> data = bytes;
-    packets.append(packet);
-}
 
 void AudioStream::stop() {
     outputStream -> stop();

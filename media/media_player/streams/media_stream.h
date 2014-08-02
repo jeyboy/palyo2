@@ -9,6 +9,8 @@ public:
     MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority = InheritPriority);
     virtual ~MediaStream();
 
+    void decode(unsigned char* bytes, int size);
+
     inline bool isValid() const { return state; }
     inline uint index() const { return uindex; }
 

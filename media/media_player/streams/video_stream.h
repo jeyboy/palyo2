@@ -8,17 +8,18 @@
 class VideoStream : public MediaStream {
 public:
     VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
-    ~VideoStream() {}
+    ~VideoStream();
 
     void suspendOutput();
     void resumeOutput();
-
-    bool decodeFrame(unsigned char* bytes, int size);
 protected:
     void routine();
 private:
     AVFrame * RGBFrame;
-    QList<QImage> videoBuffer;
+    QList<QImage *> videoBuffer;
+
+    unsigned char * RGBBuffer;
+    SwsContext* resampleContext;
 };
 
 #endif // VIDEO_STREAM_H

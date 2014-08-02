@@ -11,7 +11,6 @@ public:
     AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     ~AudioStream();
 
-    void decode(unsigned char * bytes, int size);
     void stop();
 
     void suspendOutput();
