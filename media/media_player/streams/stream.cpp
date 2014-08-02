@@ -1,12 +1,12 @@
 #include "stream.h"
 #include <qDebug>
 
-Stream::Stream(QObject * parent, Priority priority) : QThread(parent), exitRequired(false) {
+Stream::Stream(QObject * parent, Priority priority) : QThread(parent), exitRequired(false), mutex(0) {
     start(priority);
 }
 
 Stream::~Stream() {
-    qDebug() << " ******* " << state;
+    qDebug() << "STream";
     stop();
 
 // this strings throw error

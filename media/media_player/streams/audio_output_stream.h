@@ -6,16 +6,15 @@
 
 class AudioOutputStream : public Stream {
 public:
-    AudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority = InheritPriority);
-
+    AudioOutputStream(QObject * parent, QAudioFormat & format, QMutex * mutex, Priority priority = InheritPriority);
+    ~AudioOutputStream();
 protected:
     void routine();
 private:
     QAudioOutput * soundOutput;
     QIODevice * audioIO;
 
-    QByteArray audioBuffer;
-    QList<int> audioBufferSizes;
+    QList<QByteArray> audioBuffers;
 };
 
 #endif // AUDIO_OUTPUT_STREAM_H

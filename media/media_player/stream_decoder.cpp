@@ -11,6 +11,7 @@ StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : 
 }
 
 StreamDecoder::~StreamDecoder() {
+    qDebug() << "decoder";
     videoStream -> stop();
     videoStream -> wait();
 
@@ -42,7 +43,7 @@ void StreamDecoder::resumeOutput() {
 
 ///////////////////////// Private //////////////////////////////////
 
-uint StreamDecoder::bestStream(Stream * audio, Stream * video) {
+uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {
     if (audio != 0 && audio -> index() > -1)
         return audio -> index();
     return video -> index();

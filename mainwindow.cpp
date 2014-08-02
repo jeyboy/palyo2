@@ -16,8 +16,10 @@ MainWindow::MainWindow(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
 
     initialization();
+
     MediaPlayer m(this);
     m.play(QUrl::fromLocalFile("F:/test.mp4"));
+    qDebug() << "LOL";
 }
 
 void MainWindow::locationCorrection() {

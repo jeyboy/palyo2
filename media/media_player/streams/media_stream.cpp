@@ -1,6 +1,8 @@
 #include "media_stream.h"
 
 MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : Stream(parent, priority), state(true), stream(0), codec(0) {
+    mutex = new QMutex();
+
     if (streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND) {
         state = false;
         stop();
@@ -38,5 +40,6 @@ MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * p
 }
 
 MediaStream::~MediaStream() {
-
+    qDebug() << " ******* " << state;
+    delete mutex;
 }

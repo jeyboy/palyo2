@@ -1,6 +1,12 @@
 #include "single_application.h"
 
 SingleApplication::SingleApplication(int &argc, char *argv[], const QString uniqueKey) : QApplication(argc, argv) {
+    // fix for linux crashed app memory clear
+    {
+        QSharedMemory shmem(uniqueKey);
+        shmem.attach();
+    }
+
     sharedMemory.setKey(uniqueKey);
     if (sharedMemory.attach())
         _isRunning = true;

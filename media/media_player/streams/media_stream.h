@@ -15,7 +15,7 @@ public:
     virtual void suspendOutput() = 0;
     virtual void resumeOutput() = 0;
 protected:
-    virtual void routine() = 0;
+    virtual void routine() {} // stub
 
     bool state;
     AVStream * stream;

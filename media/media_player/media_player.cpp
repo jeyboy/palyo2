@@ -15,6 +15,7 @@ MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
 }
 
 MediaPlayer::~MediaPlayer() {
+    qDebug() << "player";
     stop();
 
     delete masterClock;
@@ -50,7 +51,8 @@ void MediaPlayer::pause() {
 
 void MediaPlayer::stop() {
     decoder -> resumeOutput();
-    masterClock -> stop();
+    if (masterClock -> isActive())
+        masterClock -> stop();
     closeContext();
 }
 
@@ -104,7 +106,8 @@ bool MediaPlayer::openContext(QUrl url) {
 void MediaPlayer::closeContext() {
     delete decoder;
 
-    avformat_close_input(&context);
+    if (context)
+        avformat_close_input(&context);
 
     if (isRemote)
         avformat_network_deinit();

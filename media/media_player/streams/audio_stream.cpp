@@ -8,10 +8,11 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     QAudioFormat format;
     fillFormat(format);
 
-    outputStream = new AudioOutputStream(this, format, priority);
+    outputStream = new AudioOutputStream(this, format, mutex, priority);
 }
 
 AudioStream::~AudioStream() {
+    qDebug() << "Audion stream";
     outputStream -> stop();
     outputStream -> wait();
 }

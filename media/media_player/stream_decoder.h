@@ -28,7 +28,7 @@ signals:
     void finished();
 
 private:
-    uint bestStream(Stream * audio, Stream * video);
+    uint bestStream(AudioStream * audio, VideoStream * video);
     void findStreams();
     bool nextFrame();
 
