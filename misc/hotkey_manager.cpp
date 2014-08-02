@@ -1,5 +1,5 @@
 #include "hotkey_manager.h"
-#include <qDebug>
+#include <QDebug>
 
 HotkeyManager *HotkeyManager::self = 0;
 

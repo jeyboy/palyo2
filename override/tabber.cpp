@@ -78,7 +78,7 @@ void Tabber::load() {
             if (tab.contains("pv")) {
                 new_tab -> getView() -> execItem(new_tab -> getView() -> fromPath(tab.value("pp").toString()), true);
                 if (tab.contains("pt")) {
-                    Player::instance() -> setStartPosition(tab.value("pt").toInt());
+                    Player::instance() -> setStartPosition(tab.value("pt").toDouble());
 //                  Player::instance() -> play();
                 }
             }

@@ -79,7 +79,7 @@ void SoundcloudModel::proceedResponse(QJsonObject & hash) {
             filesAr = iterObj.value("tracks").toArray();
 
             if (filesAr.size() > 0) {
-                folder = addFolder(iterObj.value("title").toString(), rootItem, QString::number(iterObj.value("id").toInt()));
+                folder = addFolder(iterObj.value("title").toString(), rootItem, QString::number((int)iterObj.value("id").toDouble()));
 
                 proceedResponse(filesAr, folder, store);
             }
@@ -101,7 +101,7 @@ void SoundcloudModel::proceedResponse(QJsonObject & hash) {
         foreach(QJsonValue obj, ar) {
             iterObj = obj.toObject();
             SoundcloudApi::instance() -> addGroup(
-                            QString::number(iterObj.value("id").toInt()),
+                            QString::number((int)iterObj.value("id").toDouble()),
                             iterObj.value("name").toString()
                         );
         }
@@ -118,7 +118,7 @@ void SoundcloudModel::proceedResponse(QJsonObject & hash) {
                 name = iterObj.value("username").toString();
 
             SoundcloudApi::instance() -> addFriend(
-                            QString::number(iterObj.value("id").toInt()),
+                            QString::number((int)iterObj.value("id").toDouble()),
                             name
                         );
         }
@@ -134,7 +134,7 @@ void SoundcloudModel::proceedResponse(QJsonObject & hash) {
                 name = iterObj.value("username").toString();
 
             SoundcloudApi::instance() -> addFriend(
-                            QString::number(iterObj.value("id").toInt()),
+                            QString::number((int)iterObj.value("id").toDouble()),
                             name
                         );
         }
@@ -161,8 +161,8 @@ void SoundcloudModel::proceedResponse(QJsonArray & ar, ModelItem * parent, QHash
 
         if (fileIterObj.isEmpty()) continue;
 
-        owner = QString::number(fileIterObj.value("user_id").toInt());
-        id = QString::number(fileIterObj.value("id").toInt());
+        owner = QString::number((int)fileIterObj.value("user_id").toDouble());
+        id = QString::number((int)fileIterObj.value("id").toDouble());
         key = ModelItem::buildUid(owner, id);
         items = store.keys(key);
         if (items.isEmpty() && !containsUID(key)) {
@@ -183,18 +183,18 @@ void SoundcloudModel::proceedResponse(QJsonArray & ar, ModelItem * parent, QHash
                             id,
                             parent,
                             Genre::instance() -> toInt(fileIterObj.value("genre").toString()),
-                            Duration::fromMillis(fileIterObj.value("duration").toInt(0)),
-                            original ? fileIterObj.value("original_content_size").toInt() : -1,
-                            fileIterObj.value("bpm").toInt(0)
+                            Duration::fromMillis((int)fileIterObj.value("duration").toDouble(0)),
+                            original ? fileIterObj.value("original_content_size").toDouble() : -1,
+                            fileIterObj.value("bpm").toDouble(0)
                         );
 
             appendRow(newItem -> toModelItem());
-            qDebug() << "NEW ITEM " << original << " " << newItem -> data(0) << " " << fileIterObj.value("bpm").toInt(0);
+            qDebug() << "NEW ITEM " << original << " " << newItem -> data(0) << " " << fileIterObj.value("bpm").toDouble(0);
         } else {
             foreach(ModelItem * item, items) {
 //                store.remove(item);
                 item -> setPath(fileIterObj.value("url").toString());
-                item -> setGenre(fileIterObj.value("genre_id").toInt(-1));
+                item -> setGenre(fileIterObj.value("genre_id").toDouble(-1));
             }
             store.remove(items.first());
         }

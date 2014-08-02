@@ -14,8 +14,11 @@
 #include "misc/format.h"
 #include "duration.h"
 
-void __stdcall endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);
-void __stdcall endTrackDownloading(HSYNC, DWORD, DWORD, void * user);
+//void __stdcall endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);
+//void __stdcall endTrackDownloading(HSYNC, DWORD, DWORD, void * user);
+
+void endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);
+void endTrackDownloading(HSYNC, DWORD, DWORD, void * user);
 
 // TODO: add proxy realization
 //if (MESS(41,BM_GETCHECK,0,0))

@@ -29,7 +29,7 @@ public:
 private:
     void readInfo(TagLib::FileRef f);
 
-    std::wstring fileName;
+    std::string fileName;
 
     QString artist;
     QString title;

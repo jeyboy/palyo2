@@ -3,7 +3,7 @@
 
 MediaInfo::MediaInfo(QString filepath, bool onlyTags) {
     readed = false;
-    fileName = filepath.toStdWString();
+    fileName = filepath.toStdString();
     TagLib::FileRef f(fileName.c_str(), !onlyTags, onlyTags ? TagLib::AudioProperties::Fast : TagLib::AudioProperties::Accurate);
 
     if (!f.isNull()) {

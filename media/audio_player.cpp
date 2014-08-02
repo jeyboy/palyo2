@@ -1,6 +1,6 @@
 #include "audio_player.h"
 #include "misc/settings.h"
-#include <QtMath>
+#include "math.h"
 #include <QDebug>
 
 //Get the percentage downloaded of an internet file stream, or the buffer level when streaming in blocks.
@@ -43,9 +43,9 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
         throw "An incorrect version of BASS.DLL was loaded";
     }
 
-    if (HIWORD(BASS_FX_GetVersion()) != BASSVERSION) {
-        throw "An incorrect version of BASS_FX.DLL was loaded";
-    }
+//    if (HIWORD(BASS_FX_GetVersion()) != BASSVERSION) {
+//        throw "An incorrect version of BASS_FX.DLL was loaded";
+//    }
 
 
     if (!BASS_Init(-1, 44100, 0, NULL, NULL))
@@ -153,7 +153,7 @@ bool AudioPlayer::isStoped() const {
 
 int AudioPlayer::openRemoteChannel(QString path) {
     BASS_ChannelStop(chan);
-    chan = BASS_StreamCreateURL(path.toStdWString().c_str(), 0, BASS_SAMPLE_FLOAT, NULL, 0);
+    chan = BASS_StreamCreateURL(path.toStdString().c_str(), 0, BASS_SAMPLE_FLOAT, NULL, 0);
 
 //    BASS_Encode_Start(channel, "output.wav", BASS_ENCODE_PCM, NULL, 0);
 
@@ -291,7 +291,7 @@ QHash<QString, QString> AudioPlayer::getFileInfo(QUrl uri, bool only_bitrate) {
     if (uri.isLocalFile()) {
         chUID = BASS_StreamCreateFile(false, uri.toLocalFile().toStdWString().c_str(), 0, 0, 0);
     } else {
-        chUID = BASS_StreamCreateURL(uri.toString().toStdWString().c_str(), 0, 0, NULL, 0);
+        chUID = BASS_StreamCreateURL(uri.toString().toStdString().c_str(), 0, 0, NULL, 0);
     }
 
     if (!chUID) {
@@ -320,25 +320,26 @@ QHash<QString, QString> AudioPlayer::getFileInfo(QUrl uri, bool only_bitrate) {
 }
 
 float AudioPlayer::getBpmValue(QUrl uri) {
-    int cochan;
+    return 0;
+//    int cochan;
 
-    if (uri.isLocalFile())
-        cochan = BASS_StreamCreateFile(false, uri.toLocalFile().toStdWString().c_str(), 0, 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN | BASS_SAMPLE_MONO);
-    else
-        cochan = BASS_StreamCreateURL(uri.toString().toStdWString().c_str(), 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | BASS_SAMPLE_MONO, NULL, 0);
+//    if (uri.isLocalFile())
+//        cochan = BASS_StreamCreateFile(false, uri.toLocalFile().toStdWString().c_str(), 0, 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | BASS_STREAM_PRESCAN | BASS_SAMPLE_MONO);
+//    else
+//        cochan = BASS_StreamCreateURL(uri.toString().toStdString().c_str(), 0, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | BASS_SAMPLE_MONO, NULL, 0);
 
-    if (cochan) {
-//        return calcBpm(cochan);
+//    if (cochan) {
+////        return calcBpm(cochan);
 
-        int playBackDuration = BASS_ChannelBytes2Seconds(cochan, BASS_ChannelGetLength(cochan, BASS_POS_BYTE));
+//        int playBackDuration = BASS_ChannelBytes2Seconds(cochan, BASS_ChannelGetLength(cochan, BASS_POS_BYTE));
 
-        return BASS_FX_BPM_DecodeGet(cochan,
-                              0,
-                              playBackDuration,
-                              MAKEWORD(20, 180),
-                              BASS_FX_FREESOURCE, //BASS_FX_BPM_BKGRND // BASS_FX_BPM_MULT2
-                              NULL, NULL);
-    } else return 0;
+//        return BASS_FX_BPM_DecodeGet(cochan,
+//                              0,
+//                              playBackDuration,
+//                              MAKEWORD(20, 180),
+//                              BASS_FX_FREESOURCE, //BASS_FX_BPM_BKGRND // BASS_FX_BPM_MULT2
+//                              NULL, NULL);
+//    } else return 0;
 }
 
 // did not work :(
@@ -365,15 +366,15 @@ float AudioPlayer::calcBpm(int channel) {
 
             float history_total = 0;
 
-            for(int history_pos = 0; history_pos < history[band].length(); history_pos++)
+            for(int history_pos = 0; history_pos < history[band].count(); history_pos++)
                 history_total += history[band][history_pos];
 
             if ((energy_aprox * energy) > (history_aprox * history_total * C))
                 beats += 1;
 
             history[band].append(energy);
-            if (history[band].length() > history_lim)
-                history[band].removeFirst();
+            if (history[band].count() > history_lim)
+                history[band].remove(0);
         }
 
 //        delete [] fft;
@@ -397,14 +398,14 @@ QVector<int> AudioPlayer::getSpectrum() {
 
     for (x = 0; x < spectrumBandsCount; x++) {
         float peak = 0;
-        int b1 = qPow(2, x * 10.0 / (spectrumBandsCount - 1));
+        int b1 = pow(2, x * 10.0 / (spectrumBandsCount - 1));
         if (b1 > 1023) b1 = 1023;
         if (b1 <= b0) b1 = b0 + 1; // make sure it uses at least 1 FFT bin
         for (; b0 < b1; b0++)
             if (peak < fft[1 + b0])
                 peak = fft[1 + b0];
 
-        y = qSqrt(peak) * spectrumMultiplicity * spectrumHeight + defaultSpectrumLevel; // 4 // scale it (sqrt to make low values more visible)
+        y = sqrt(peak) * spectrumMultiplicity * spectrumHeight + defaultSpectrumLevel; // 4 // scale it (sqrt to make low values more visible)
         if (y > spectrumHeight) y = spectrumHeight; // cap it
         if (y < defaultSpectrumLevel) y = defaultSpectrumLevel; // cap it
 
@@ -432,7 +433,7 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
         peaks.clear();
         peaks.fill(0, channelsCount);
 
-        int b1 = qPow(2, x * 10.0 / (workSpectrumBandsCount - 1)) * channelsCount;
+        int b1 = pow(2, x * 10.0 / (workSpectrumBandsCount - 1)) * channelsCount;
         if (b1 - channelsCount <= b0) b1 = b0 + channelsCount * 2; // make sure it uses at least 2 FFT bin
         if (b1 > gLimit - 1) b1 = gLimit - 1; // prevent index overflow
 
@@ -443,7 +444,7 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
         }
 
         for (z = 0; z < channelsCount; z++) {
-            y = qSqrt(peaks[z]) * spectrumMultiplicity * spectrumHeight + defaultSpectrumLevel; // 4 // scale it (sqrt to make low values more visible)
+            y = sqrt(peaks[z]) * spectrumMultiplicity * spectrumHeight + defaultSpectrumLevel; // 4 // scale it (sqrt to make low values more visible)
             if (y > spectrumHeight) y = spectrumHeight; // cap it
             if (y < defaultSpectrumLevel) y = defaultSpectrumLevel; // cap it
 

@@ -1,5 +1,5 @@
 #include "hotkey_model.h"
-#include <qDebug>
+#include <QDebug>
 
 HotkeyModel::HotkeyModel(QList<HotkeyModelItem *> * toplevelchilds, QObject *parent) : QAbstractItemModel(parent) {   
     QVector<QVariant> rootData;

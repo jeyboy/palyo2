@@ -112,7 +112,7 @@ QString SoundcloudApi::proceedAuthResponse(const QUrl & url) {
 
             doc = responseToJson(m_http -> readAll());
 
-            setParams(newToken, QString::number(doc.value("id").toInt()), "");
+            setParams(newToken, QString::number(doc.value("id").toDouble()), "");
 
             return "accept";
         }
@@ -292,7 +292,7 @@ QString SoundcloudApi::getAPIUrl() {
 
 void SoundcloudApi::errorSend(QJsonObject & doc, const QObject * obj) {
     QJsonObject error = doc.value("error").toObject();
-    int err_code = error.value("error_code").toInt();
+    int err_code = error.value("error_code").toDouble();
     QString err_msg = error.value("error_msg").toString();
 
     connect(this, SIGNAL(errorReceived(int,QString&)), obj, SLOT(errorReceived(int,QString&)));

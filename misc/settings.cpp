@@ -362,7 +362,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     folderColor1 = folderColor1Var.isValid() ? folderColor1Var.value<QColor>() : QColor(220, 220, 220);
 
     itemFontName = settingsObj.value("item_font_name").toString("Arial");
-    itemFontSize = settingsObj.value("item_font_size").toInt(9);
+    itemFontSize = settingsObj.value("item_font_size").toDouble(9);
 
     QVariant itemTextColorVar = settingsObj.value("item_text_color").toVariant();
     itemTextColor = itemTextColorVar.isValid() ? itemTextColorVar.value<QColor>() : QColor(0, 0, 0);
@@ -371,7 +371,7 @@ void Settings::fromJson(QJsonObject settingsObj) {
     selectedItemTextColor = selectedItemTextColorVar.isValid() ? selectedItemTextColorVar.value<QColor>() : QColor(255, 255, 255);
 
     itemInfoFontName = settingsObj.value("item_info_font_name").toString("Arial");
-    itemInfoFontSize = settingsObj.value("item_info_font_size").toInt(7);
+    itemInfoFontSize = settingsObj.value("item_info_font_size").toDouble(7);
 
     itemTextColorVar = settingsObj.value("item_info_text_color").toVariant();
     itemInfoColor = itemTextColorVar.isValid() ? itemTextColorVar.value<QColor>() : QColor(0, 0, 0);
@@ -379,9 +379,9 @@ void Settings::fromJson(QJsonObject settingsObj) {
     selectedItemTextColorVar = settingsObj.value("selected_item_info_text_color").toVariant();
     selectedItemInfoColor = selectedItemTextColorVar.isValid() ? selectedItemTextColorVar.value<QColor>() : QColor(255, 255, 255);
 
-    tabPosition = settingsObj.value("tab_position").toInt(0);
+    tabPosition = settingsObj.value("tab_position").toDouble(0);
 
-    itemHeight = settingsObj.value("item_height").toInt(18);
+    itemHeight = settingsObj.value("item_height").toDouble(18);
 
     useScrollButtons = settingsObj.value("use_scroll_buttons").toBool(true);
 
@@ -393,13 +393,13 @@ void Settings::fromJson(QJsonObject settingsObj) {
     QVariant specColorVar2 = settingsObj.value("spectrum_color2").toVariant();
     spectrumColor2 = specColorVar2.isValid() ? specColorVar2.value<QColor>() : QColor(255, 255, 255);
 
-    spectrumFreqRate = settingsObj.value("spectrum_rate").toInt(20);
-    spectrumBarsCount = settingsObj.value("spectrum_bars_count").toInt(30);
+    spectrumFreqRate = settingsObj.value("spectrum_rate").toDouble(20);
+    spectrumBarsCount = settingsObj.value("spectrum_bars_count").toDouble(30);
 
-    spectrumHeight = settingsObj.value("spectrum_height").toInt(60);
+    spectrumHeight = settingsObj.value("spectrum_height").toDouble(60);
     comboSpectrum = settingsObj.value("spectrum_combo").toBool(false);
 
-    spectrumMultiplier = settingsObj.value("spectrum_multiplier").toInt(3);
+    spectrumMultiplier = settingsObj.value("spectrum_multiplier").toDouble(3);
 }
 
 QJsonObject Settings::toJson() {

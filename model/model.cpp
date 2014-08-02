@@ -8,7 +8,7 @@
 Model::Model(QJsonObject *hash, QObject *parent) : QAbstractItemModel(parent) {
     if (hash != 0) {
         rootItem = new FolderItem(hash);
-        count = hash -> value("l").toInt();
+        count = hash -> value("l").toDouble();
     } else {
         rootItem = new FolderItem();
         count = 0;

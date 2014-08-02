@@ -23,7 +23,7 @@ FolderItem::FolderItem(QJsonObject * hash, ModelItem *parent) : ModelItem(hash, 
 
         foreach(QJsonValue obj, ar) {
             iterObj = obj.toObject();
-            switch(iterObj.value("i").toInt()) {
+            switch((int)iterObj.value("i").toDouble()) {
                 case FILE_ITEM: {
                     new FileItem(&iterObj, this -> toModelItem());
                 break;}

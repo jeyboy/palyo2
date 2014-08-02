@@ -1,6 +1,6 @@
 #include "relationdialog.h"
 #include "ui_relationdialog.h"
-#include <qDebug>
+#include <QDebug>
 
 RelationDialog::RelationDialog(WebApi * currApi, QWidget *parent) : QDialog(parent), ui(new Ui::RelationDialog) {
     ui->setupUi(this);

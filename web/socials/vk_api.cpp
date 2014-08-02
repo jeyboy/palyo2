@@ -80,8 +80,8 @@ ApiFuncContainer * VkApi::wallMediaRoutine(ApiFuncContainer * func, int offset, 
 
         res.append(doc.value("posts").toArray().toVariantList());
 
-        offset = doc.value("offset").toInt();
-        count = doc.value("count").toInt();
+        offset = doc.value("offset").toDouble();
+        count = doc.value("count").toDouble();
         if (offset >= count)
             break;
     }
@@ -128,7 +128,7 @@ ApiFuncContainer * VkApi::audioAlbumsRoutine(ApiFuncContainer * func, int offset
         temp.append(res);
         res = temp;
 //        res.append(doc.value("albums").toArray().toVariantList());
-        offset = doc.value("offset").toInt();
+        offset = doc.value("offset").toDouble();
         finished = doc.value("finished").toBool();
         if (finished)
             break;
@@ -164,7 +164,7 @@ ApiFuncContainer * VkApi::audioListRoutine(ApiFuncContainer * func) {
         bool finished = func -> result.value("albums_finished").toBool();
 
         if (!finished) {
-            int offset = func -> result.value("albums_offset").toInt();
+            int offset = func -> result.value("albums_offset").toDouble();
             audioAlbumsRoutine(func, offset);
         }
     }
@@ -210,7 +210,7 @@ bool VkApi::responseRoutine(QNetworkReply * reply, FuncContainer func, QJsonObje
 }
 
 bool VkApi::errorSend(QJsonObject & error, FuncContainer func, QUrl url) {
-    int err_code = error.value("error_code").toInt();
+    int err_code = error.value("error_code").toDouble();
     QString err_msg = error.value("error_msg").toString();
 
     qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ERROR " << error;
