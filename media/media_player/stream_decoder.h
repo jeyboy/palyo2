@@ -1,14 +1,13 @@
 #ifndef STREAM_DECODER_H
 #define STREAM_DECODER_H
 
-#include <QThread>
 #include "media_player_utils.h"
 
 #include "streams/audio_stream.h"
 #include "streams/video_stream.h"
 #include "streams/subtitle_stream.h"
 
-class StreamDecoder : public QObject {
+class StreamDecoder : public Stream {
     Q_OBJECT
 public:
     StreamDecoder(AVFormatContext * currContext, QObject * parent = 0);
@@ -26,6 +25,9 @@ signals:
     void errorOccurred(QString message);
     void stopped();
     void finished();
+
+protected:
+    void routine();
 
 private:
     uint bestStream(AudioStream * audio, VideoStream * video);

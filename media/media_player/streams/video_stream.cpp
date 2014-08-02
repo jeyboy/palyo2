@@ -3,6 +3,7 @@
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : MediaStream(context, streamIndex, parent, priority) {
 
+    bufferLimit = 50;
     RGBFrame = av_frame_alloc();
 }
 
@@ -18,7 +19,7 @@ void VideoStream::resumeOutput() {
 }
 
 void VideoStream::routine() {
-    if (packets.isEmpty()) return;
+    if (packets.isEmpty() || videoBuffer.length() >= bufferLimit) return;
 
     AVPacket * packet = packets.takeFirst();
 
@@ -83,4 +84,7 @@ void VideoStream::routine() {
         packet -> size -= len;
         packet -> data += len;
     }
+
+    av_free_packet(packet);
+    delete packet;
 }

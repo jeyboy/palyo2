@@ -22,6 +22,7 @@ protected:
     bool state;
     AVStream * stream;
     uint uindex;
+    int bufferLimit;
     AVCodec * codec; // this var is possible to get through stream -> codec()
     AVFrame * frame;
     QList<AVPacket*> packets;

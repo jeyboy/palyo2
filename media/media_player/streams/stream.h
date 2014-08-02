@@ -14,10 +14,13 @@ public:
 
     void run();
     void stop();
+    void suspend();
+    void resume();
 protected:
     virtual void routine() = 0;
 
     volatile bool exitRequired;
+    bool pauseRequired;
     QMutex * mutex;
 };
 

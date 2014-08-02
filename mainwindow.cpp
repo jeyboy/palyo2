@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "media/media_player/media_player.h"
-
 #include <QDesktopServices>
 #include <QDebug>
 
@@ -17,9 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initialization();
 
-    MediaPlayer m(this);
-    m.play(QUrl::fromLocalFile("F:/test.mp4"));
-    qDebug() << "LOL";
+    m = new MediaPlayer(this);
+    m -> play(QUrl::fromLocalFile("F:/test.mp4"));
 }
 
 void MainWindow::locationCorrection() {
@@ -166,6 +163,9 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 MainWindow::~MainWindow() {
+    m -> stop();
+    delete m;
+
     delete ui;
 
     ///////////////////////////////////////////////

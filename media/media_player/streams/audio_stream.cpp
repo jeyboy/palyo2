@@ -2,8 +2,9 @@
 
 AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : MediaStream(context, streamIndex, parent, priority)
-    ,resampleRequire(false) {
+    , resampleRequire(false) {
 
+    bufferLimit = 500;
     QAudioFormat format;
     fillFormat(format);
 
@@ -24,10 +25,10 @@ void AudioStream::stop() {
 }
 
 void AudioStream::suspendOutput() {
-
+    outputStream -> suspend();
 }
 void AudioStream::resumeOutput() {
-
+    outputStream -> resume();
 }
 
 void AudioStream::routine() {

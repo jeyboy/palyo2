@@ -17,6 +17,8 @@
 #include "media/library.h"
 #include "media/player.h"
 
+#include "media/media_player/media_player.h"
+
 #include "toolbars.h"
 
 namespace Ui {
@@ -73,6 +75,8 @@ protected:
     QMenu* createPopupMenu();
 
 private:
+    MediaPlayer * m;
+
     Ui::MainWindow *ui;
     QSystemTrayIcon m_tray;
 

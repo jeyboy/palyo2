@@ -1,8 +1,11 @@
 #include "stream.h"
 #include <qDebug>
 
-Stream::Stream(QObject * parent, Priority priority) : QThread(parent), exitRequired(false), mutex(0) {
-    start(priority);
+Stream::Stream(QObject * parent, Priority priority) : QThread(parent)
+  , exitRequired(false)
+  , pauseRequired(false)
+  , mutex(0) {
+    setPriority(priority);
 }
 
 Stream::~Stream() {
@@ -20,7 +23,8 @@ Stream::~Stream() {
 
 void Stream::run() {
     while(!exitRequired) {
-        routine();
+        if (!pauseRequired)
+            routine();
     }
 
     qDebug() << "Stopped";
@@ -28,4 +32,11 @@ void Stream::run() {
 
 void Stream::stop() {
     exitRequired = true;
+}
+
+void Stream::suspend() {
+    pauseRequired = true;
+}
+void Stream::resume() {
+    pauseRequired = false;
 }

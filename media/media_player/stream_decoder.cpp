@@ -1,13 +1,14 @@
 #include "stream_decoder.h"
 #include <qDebug>
 
-StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : QObject(parent)
+StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : Stream(parent, QThread::TimeCriticalPriority)
 , state(true)
 , videoStream(0)
 , audioStream(0)
 , subtitleStream(0) {
     context = currContext;
     findStreams();
+    start();
 }
 
 StreamDecoder::~StreamDecoder() {
@@ -35,9 +36,25 @@ StreamDecoder::~StreamDecoder() {
 }
 
 void StreamDecoder::suspendOutput() {
+    videoStream -> suspendOutput();
+    audioStream -> suspendOutput();
+    subtitleStream -> suspendOutput();
 
+    videoStream -> suspend();
+    audioStream -> suspend();
+    subtitleStream -> suspend();
 }
 void StreamDecoder::resumeOutput() {
+    videoStream -> resumeOutput();
+    audioStream -> resumeOutput();
+    subtitleStream -> resumeOutput();
+
+    videoStream -> resume();
+    audioStream -> resume();
+    subtitleStream -> resume();
+}
+
+void StreamDecoder::routine() {
 
 }
 

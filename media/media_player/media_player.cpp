@@ -15,6 +15,13 @@ MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
 }
 
 MediaPlayer::~MediaPlayer() {
+    if (decoder) {
+        decoder -> stop();
+        decoder -> wait();
+    }
+
+    delete decoder;
+
     qDebug() << "player";
     stop();
 
@@ -50,9 +57,12 @@ void MediaPlayer::pause() {
 }
 
 void MediaPlayer::stop() {
-    decoder -> resumeOutput();
+    if (decoder)
+        decoder -> suspendOutput();
+
     if (masterClock -> isActive())
         masterClock -> stop();
+
     closeContext();
 }
 
@@ -104,7 +114,12 @@ bool MediaPlayer::openContext(QUrl url) {
 }
 
 void MediaPlayer::closeContext() {
-    delete decoder;
+    if (decoder) {
+        decoder -> stop();
+        decoder -> wait();
+        delete decoder;
+        decoder = 0;
+    }
 
     if (context)
         avformat_close_input(&context);
