@@ -22,6 +22,7 @@ protected:
     uint uindex;
     AVCodec * codec; // this var is possible to get through stream -> codec()
     AVFrame * frame;
+    QList<AVPacket*> packets;
 };
 
 

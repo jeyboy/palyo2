@@ -6,16 +6,12 @@
 
 #include <QAudioFormat>
 
-#define AUDIO_BUFFERING 8
-#define MAX_AUDIO_DATA_PENDING 50000
-#define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000 // it disappeared from avcodec.h
-
 class AudioStream : public MediaStream {
 public:
     AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     ~AudioStream();
 
-    bool decodeFrame(unsigned char * bytes, int size);
+    void decode(unsigned char * bytes, int size);
     void stop();
 
     void suspendOutput();
@@ -26,10 +22,12 @@ protected:
     void fillFormat(QAudioFormat & format);
 
 private:
-    void resampleInit();
+    void resampleInit(AVSampleFormat sampleFormat);
     AVSampleFormat compatibleCodecType(AVCodec * codec);
 
-    uint8_t * mResampleBuffer;
+    bool resampleRequire;
+
+    uint8_t * resampleBuffer;
     SwrContext* resampleContext;
 
     AudioOutputStream * outputStream;

@@ -1,9 +1,8 @@
 #include "audio_stream.h"
 
 AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
-    : MediaStream(context, streamIndex, parent, priority) {
-
-    //    resampleInit();
+    : MediaStream(context, streamIndex, parent, priority)
+    ,resampleRequire(false) {
 
     QAudioFormat format;
     fillFormat(format);
@@ -17,50 +16,14 @@ AudioStream::~AudioStream() {
     outputStream -> wait();
 }
 
-bool AudioStream::decodeFrame(unsigned char* bytes, int size) {
-    if (size <= 0)
-        return false;
+void AudioStream::decode(unsigned char* bytes, int size) {
+    if (size <= 0) return;
 
-//    mPacket.size = size;
-//    mPacket.data = bytes;
-
-//    int len, out_size;
-//    bool hasOutput = false;
-
-//    while (mPacket.size > 0) {
-//        out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-//        len = avcodec_decode_audio4(mCodecCtx, mAudioFrame, &out_size, &mPacket);
-
-//        if (len < 0) {
-//            qDebug() << "Error while decoding audio frame";
-//            return false;
-//        }
-
-//        if (out_size > 0) {
-//            // Resample from FLOAT PLANAR to S16
-//            int samples_output = swr_convert(mResampleCtx, &mResampleBuffer, 4096, (const uint8_t**)mAudioFrame->extended_data, mAudioFrame->nb_samples);
-
-//            if (samples_output > 0) {
-//                // A frame has been decoded. Queue it to our buffer.
-//                mAudioMutex.lock();
-
-//                if (mBuffered < AUDIO_BUFFERING) mBuffered++;
-
-//                mAudioBuffer.append((const char*)mResampleBuffer, samples_output*4);
-//                mAudioBufferSize.push_back(samples_output*4);
-
-//                mAudioMutex.unlock();
-//                hasOutput = true;
-//            }
-//        } else {
-//            qDebug() << "Could not get audio data from this frame";
-//        }
-
-//        mPacket.size -= len;
-//        mPacket.data += len;
-//    }
-
-//    return hasOutput;
+    AVPacket * packet = new AVPacket();
+    av_init_packet(packet);
+    packet -> size = size;
+    packet -> data = bytes;
+    packets.append(packet);
 }
 
 void AudioStream::stop() {
@@ -76,37 +39,53 @@ void AudioStream::resumeOutput() {
 }
 
 void AudioStream::routine() {
+    if (packets.isEmpty()) return;
 
-//    // Dequeue an audio frame
-//    if (mAudioBufferSize.size() > 0 && mBuffered >= AUDIO_BUFFERING && mAudioOutput->bytesFree() > 0) {
-//        mAudioMutex.lock();
+    AVPacket * packet = packets.takeFirst();
 
-//        int bufferSize = mAudioBufferSize.front();
+    int samples_output;
+    int len, out_size;
 
-//        // If we're too slow/accumulating delay, drop audio frames
-//        while (mAudioBuffer.size() > MAX_AUDIO_DATA_PENDING) {
-//            bufferSize = mAudioBufferSize.front();
-//            mAudioBuffer.remove(0, bufferSize);
-//            mAudioBufferSize.pop_front();
-//        }
+    while (packet -> size > 0) {
+        out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+        len = avcodec_decode_audio4(stream -> codec, frame, &out_size, packet);
 
-//        // Write to our audio channel
-//        QByteArray frame = mAudioBuffer.left(bufferSize);
-//        mAudioIO->write(frame);
-//        mAudioBuffer.remove(0, bufferSize);
+        if (len < 0) {
+            qDebug() << "Error while decoding audio frame";
+            return;
+        }
 
-//        mAudioMutex.unlock();
+        if (out_size > 0) {
+            // Resample to S16
+            if (resampleRequire) {
+                samples_output = swr_convert(resampleContext, &resampleBuffer, 4096, (const uint8_t**)frame -> extended_data, frame -> nb_samples);
 
-//        mAudioBufferSize.pop_front();
-//    }
+                if (samples_output > 0) {
+                    // A frame has been decoded. Queue it to our buffer.
 
-//    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    QByteArray ar((const char*)resampleBuffer, samples_output * 4);
+                    outputStream -> addBuffer(ar);
+                }
+            } else {
+                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
+                outputStream -> addBuffer(ar);
+            }
+        } else {
+            qDebug() << "Could not get audio data from this frame";
+        }
+
+        packet -> size -= len;
+        packet -> data += len;
+    }
+
+    av_free_packet(packet);
+    delete packet;
 }
 
 void AudioStream::fillFormat(QAudioFormat & format) {
     format.setCodec("audio/pcm");
     format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setSampleRate(stream -> codec -> sample_rate);
+    format.setChannelCount(stream -> codec -> channels);
     format.setChannelCount(stream -> codec -> channels);
 
     AVSampleFormat compatibleCodec = compatibleCodecType(codec);
@@ -123,16 +102,16 @@ void AudioStream::fillFormat(QAudioFormat & format) {
     } else if (compatibleCodec == AV_SAMPLE_FMT_FLT) { ///< float
         format.setSampleSize(32);
         format.setSampleType(QAudioFormat::Float);
-    } else if (compatibleCodec == AV_SAMPLE_FMT_DBL) { ///< double // did not support by QAudioFormat // maybe need conversion to float
-        format.setSampleSize(64);
-        format.setSampleType(QAudioFormat::Unknown);
     } else {
-
+        resampleInit(compatibleCodec);
+//        AV_SAMPLE_FMT_DBL,         ///< double
 //        AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar
 //        AV_SAMPLE_FMT_S16P,        ///< signed 16 bits, planar
 //        AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
 //        AV_SAMPLE_FMT_FLTP,        ///< float, planar
 //        AV_SAMPLE_FMT_DBLP,        ///< double, planar
+        format.setChannelCount(44100);
+        format.setChannelCount(2);
         format.setSampleSize(16);
         format.setSampleType(QAudioFormat::SignedInt);
     }
@@ -147,24 +126,48 @@ void AudioStream::fillFormat(QAudioFormat & format) {
 
 
 //TODO: require to update settings for fillFormat
-void AudioStream::resampleInit() {
+void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
+    resampleRequire = true;
+
+
+//    mResampleCtx = ffmpeg::swr_alloc();
+//ffmpeg::av_opt_set_int(mResampleCtx, "in_channel_layout", AV_CH_LAYOUT_STEREO, 0);
+//ffmpeg::av_opt_set_int(mResampleCtx, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0);
+//ffmpeg::av_opt_set_int(mResampleCtx, "in_sample_rate", 48000, 0);
+//ffmpeg::av_opt_set_int(mResampleCtx, "out_sample_rate", 48000, 0);
+//ffmpeg::av_opt_set_sample_fmt(mResampleCtx, "in_sample_fmt", ffmpeg::AV_SAMPLE_FMT_FLTP, 0);
+//ffmpeg::av_opt_set_sample_fmt(mResampleCtx, "out_sample_fmt", ffmpeg::AV_SAMPLE_FMT_S16, 0);
+//if (swr_init(mResampleCtx) < 0) {
+//qDebug() << "SWR_INIT ERROR";
+//}
+
+//int dst_linesize;
+//int dst_nb_samples = 4096;
+//ffmpeg::av_samples_alloc(&mResampleBuffer,
+//&dst_linesize,
+//2,
+//dst_nb_samples,
+//ffmpeg::AV_SAMPLE_FMT_S16,
+//0);
+
+
     // AVCodec however decodes audio as float, which we can't use directly
     resampleContext = swr_alloc();
-    av_opt_set_int(resampleContext, "in_channel_layout", AV_CH_LAYOUT_STEREO, 0);
-    av_opt_set_int(resampleContext, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0);
-    av_opt_set_int(resampleContext, "in_sample_rate", 48000, 0);
-    av_opt_set_int(resampleContext, "out_sample_rate", 48000, 0);
-    av_opt_set_sample_fmt(resampleContext, "in_sample_fmt", AV_SAMPLE_FMT_FLTP, 0);
+    av_opt_set_int(resampleContext, "in_channel_layout", stream -> codec -> channel_layout, 0);
+    av_opt_set_int(resampleContext, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0); // 2 channels
+    av_opt_set_int(resampleContext, "in_sample_rate", stream -> codec -> sample_rate, 0);
+    av_opt_set_int(resampleContext, "out_sample_rate", 44100, 0);
+    av_opt_set_sample_fmt(resampleContext, "in_sample_fmt", sampleFormat, 0);
     av_opt_set_sample_fmt(resampleContext, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
     if (swr_init(resampleContext) < 0) {
         qDebug() << "SWR_INIT ERROR";
     }
 
     int dst_linesize;
-    int dst_nb_samples = 4096;
-    av_samples_alloc(&mResampleBuffer,
+    int dst_nb_samples = 4096; // default is 1024
+    av_samples_alloc(&resampleBuffer,
         &dst_linesize,
-        2,
+        2, // 2 channels
         dst_nb_samples,
         AV_SAMPLE_FMT_S16,
     0);
