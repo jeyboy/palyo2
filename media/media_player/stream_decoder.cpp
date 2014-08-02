@@ -55,7 +55,21 @@ void StreamDecoder::resumeOutput() {
 }
 
 void StreamDecoder::routine() {
+    currFrame = new AVPacket();
+//    av_init_packet(currFrame);
 
+    while(av_read_frame(context, currFrame) >= 0) {
+        if (currFrame -> stream_index == audioStream -> index())
+            audioStream -> decode(currFrame);
+        else if (currFrame -> stream_index == videoStream -> index())
+            videoStream -> decode(currFrame);
+//        else if (currFrame -> stream_index == subtitleStream -> index())
+//            subtitleStream -> decode(currFrame);
+        else
+            av_free_packet(currFrame);
+
+        currFrame = new AVPacket();
+    }
 }
 
 ///////////////////////// Private //////////////////////////////////

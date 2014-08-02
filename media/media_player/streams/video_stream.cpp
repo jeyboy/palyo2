@@ -21,13 +21,15 @@ void VideoStream::resumeOutput() {
 void VideoStream::routine() {
     if (packets.isEmpty() || videoBuffer.length() >= bufferLimit) return;
 
+    mutex -> lock();
     AVPacket * packet = packets.takeFirst();
+    mutex -> unlock();
 
     int len, got_picture;
-    int width = stream -> codec -> width, height = stream -> codec -> height;
+    int width = codec_context -> width, height = codec_context -> height;
 
     while (packet -> size > 0) {
-        len = avcodec_decode_video2(stream -> codec, frame, &got_picture, packet);
+        len = avcodec_decode_video2(codec_context, frame, &got_picture, packet);
 
         if (len < 0) {
             qDebug() << "Error while decoding video frame";
@@ -40,8 +42,8 @@ void VideoStream::routine() {
                 // Determine required buffer size and allocate buffer
                 int numBytes = avpicture_get_size(AV_PIX_FMT_RGB24, width, height);
 
-                RGBFrame -> width = stream -> codec -> width;
-                RGBFrame -> height = stream -> codec -> height;
+                RGBFrame -> width = width;
+                RGBFrame -> height = height;
 
                 if (RGBBuffer)
                     delete[] RGBBuffer;
@@ -55,7 +57,7 @@ void VideoStream::routine() {
             /*if (width > 1920 || height > 1920)
                 qDebug() << "Unexpected size! " << w << " x " << h;*/
 
-            resampleContext = sws_getCachedContext(resampleContext, width, height, stream -> codec -> pix_fmt, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
+            resampleContext = sws_getCachedContext(resampleContext, width, height, codec_context -> pix_fmt, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
 
             if(resampleContext == NULL) {
                 qDebug() << "Cannot initialize the conversion context!";
@@ -85,6 +87,6 @@ void VideoStream::routine() {
         packet -> data += len;
     }
 
+    qDebug() << "FREE VIDEO";
     av_free_packet(packet);
-    delete packet;
 }

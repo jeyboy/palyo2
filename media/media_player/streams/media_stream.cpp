@@ -1,9 +1,10 @@
 #include "media_stream.h"
 
-MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : Stream(parent, priority), state(true), stream(0), codec(0) {
-    mutex = new QMutex();
-
-
+MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : Stream(parent, priority)
+  , state(true)
+  , stream(0)
+  , codec_context(0)
+  , codec(0) {
 //    if (streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND) {
 //        state = false;
 //    } else {
@@ -51,7 +52,7 @@ MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * p
         return;
     }
 
-    AVCodecContext * codec_context = stream -> codec;
+    codec_context = stream -> codec;
     codec = avcodec_find_decoder(codec_context -> codec_id);
 
     //wtf
@@ -69,20 +70,38 @@ MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * p
         return;
     }
 
-    start();
+    frame = av_frame_alloc();
+
+    start(priority);
 }
 
 MediaStream::~MediaStream() {
     qDebug() << " ******* " << state;
-    delete mutex;
+
+    avcodec_close(codec_context);
+    av_frame_free(&frame);
+
+// this strings throw error
+//    if (stream) {
+//        avcodec_close(stream -> codec);
+//    }
+
+//    delete codec;
+//    delete stream;
 }
 
-void MediaStream::decode(unsigned char* bytes, int size) {
-    if (size <= 0) return;
-
-    AVPacket * packet = new AVPacket();
-    av_init_packet(packet);
-    packet -> size = size;
-    packet -> data = bytes;
-    packets.append(packet);
+void MediaStream::decode(AVPacket * newPacket) {
+    mutex -> lock();
+    packets.append(newPacket);
+    mutex -> unlock();
 }
+
+//void MediaStream::decode(unsigned char* bytes, int size) {
+//    if (size <= 0) return;
+
+//    AVPacket * packet = new AVPacket();
+//    av_init_packet(packet);
+//    packet -> size = size;
+//    packet -> data = bytes;
+//    packets.append(packet);
+//}

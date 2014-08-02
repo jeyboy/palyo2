@@ -3,22 +3,17 @@
 
 Stream::Stream(QObject * parent, Priority priority) : QThread(parent)
   , exitRequired(false)
-  , pauseRequired(false)
-  , mutex(0) {
-    setPriority(priority);
+  , pauseRequired(false) {
+
+    mutex = new QMutex();
+//    setPriority(priority);
 }
 
 Stream::~Stream() {
     qDebug() << "STream";
     stop();
 
-// this strings throw error
-//    if (stream) {
-//        avcodec_close(stream -> codec);
-//    }
-
-//    delete codec;
-//    delete stream;
+    delete mutex;
 }
 
 void Stream::run() {

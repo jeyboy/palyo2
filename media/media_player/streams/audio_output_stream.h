@@ -10,7 +10,7 @@
 
 class AudioOutputStream : public Stream {
 public:
-    AudioOutputStream(QObject * parent, QAudioFormat & format, QMutex * mutex, Priority priority = InheritPriority);
+    AudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority = InheritPriority);
     ~AudioOutputStream();
 
     void addBuffer(QByteArray & frame);

@@ -9,10 +9,11 @@ public:
     MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority = InheritPriority);
     virtual ~MediaStream();
 
-    void decode(unsigned char* bytes, int size);
+    void decode(AVPacket * newPacket);
+//    void decode(unsigned char* bytes, int size);
 
     inline bool isValid() const { return state; }
-    inline uint index() const { return uindex; }
+    inline int index() const { return uindex; }
 
     virtual void suspendOutput() = 0;
     virtual void resumeOutput() = 0;
@@ -21,8 +22,9 @@ protected:
 
     bool state;
     AVStream * stream;
-    uint uindex;
+    int uindex;
     int bufferLimit;
+    AVCodecContext * codec_context;
     AVCodec * codec; // this var is possible to get through stream -> codec()
     AVFrame * frame;
     QList<AVPacket*> packets;

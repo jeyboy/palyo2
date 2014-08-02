@@ -8,7 +8,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     QAudioFormat format;
     fillFormat(format);
 
-    outputStream = new AudioOutputStream(this, format, mutex, priority);
+    outputStream = new AudioOutputStream(this, format, priority);
 }
 
 AudioStream::~AudioStream() {
@@ -34,14 +34,17 @@ void AudioStream::resumeOutput() {
 void AudioStream::routine() {
     if (packets.isEmpty()) return;
 
+    mutex -> lock();
     AVPacket * packet = packets.takeFirst();
+    mutex -> unlock();
 
     int samples_output;
     int len, out_size;
 
     while (packet -> size > 0) {
         out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-        len = avcodec_decode_audio4(stream -> codec, frame, &out_size, packet);
+        len = avcodec_decode_audio4(codec_context, frame, &out_size, packet);
+        qDebug() << "BLA";
 
         if (len < 0) {
             qDebug() << "Error while decoding audio frame";
@@ -71,15 +74,15 @@ void AudioStream::routine() {
         packet -> data += len;
     }
 
+    qDebug() << "EX";
     av_free_packet(packet);
-    delete packet;
 }
 
 void AudioStream::fillFormat(QAudioFormat & format) {
     format.setCodec("audio/pcm");
     format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setChannelCount(stream -> codec -> channels);
-    format.setChannelCount(stream -> codec -> channels);
+    format.setChannelCount(codec_context -> channels);
+    format.setChannelCount(codec_context -> channels);
 
     AVSampleFormat compatibleCodec = compatibleCodecType(codec);
 
@@ -146,9 +149,9 @@ void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
 
     // AVCodec however decodes audio as float, which we can't use directly
     resampleContext = swr_alloc();
-    av_opt_set_int(resampleContext, "in_channel_layout", stream -> codec -> channel_layout, 0);
+    av_opt_set_int(resampleContext, "in_channel_layout", codec_context -> channel_layout, 0);
     av_opt_set_int(resampleContext, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0); // 2 channels
-    av_opt_set_int(resampleContext, "in_sample_rate", stream -> codec -> sample_rate, 0);
+    av_opt_set_int(resampleContext, "in_sample_rate", codec_context -> sample_rate, 0);
     av_opt_set_int(resampleContext, "out_sample_rate", 44100, 0);
     av_opt_set_sample_fmt(resampleContext, "in_sample_fmt", sampleFormat, 0);
     av_opt_set_sample_fmt(resampleContext, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
