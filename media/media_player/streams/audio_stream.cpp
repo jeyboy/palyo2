@@ -2,7 +2,8 @@
 
 AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : MediaStream(context, streamIndex, parent, priority)
-    , resampleRequire(false) {
+    , resampleRequire(false)
+    , resampleContext(0) {
 
     bufferLimit = 500;
     QAudioFormat format;
@@ -15,9 +16,12 @@ AudioStream::~AudioStream() {
     qDebug() << "Audion stream";
     outputStream -> stop();
     outputStream -> wait();
+
+    delete [] resampleBuffer;
+
+    if (resampleContext)
+        swr_close(resampleContext);
 }
-
-
 
 void AudioStream::stop() {
     outputStream -> stop();
@@ -35,6 +39,8 @@ void AudioStream::routine() {
     mutex -> lock();
     if (packets.isEmpty()) {
         mutex -> unlock();
+        pauseRequired = finishAndPause;
+
         return;
     }
 
@@ -42,22 +48,31 @@ void AudioStream::routine() {
     mutex -> unlock();
 
     int samples_output;
-    int len, out_size;
+    int len, got_frame;
 
     while (packet -> size > 0) {
-        out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-        len = avcodec_decode_audio4(codec_context, frame, &out_size, packet);
+//        out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+        len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
 
         if (len < 0) {
             qDebug() << "Error while decoding audio frame";
+            av_free_packet(packet);
             return;
         }
 
-        if (out_size > 0) {
+        if (got_frame) {
+//            calcPts(packet);
+
             // Resample to S16
             if (resampleRequire) {
                 qDebug() << "USE RESAMPLE";
-                samples_output = swr_convert(resampleContext, &resampleBuffer, 4096, (const uint8_t**)frame -> extended_data, frame -> nb_samples);
+                samples_output = swr_convert(
+                                resampleContext,
+                                &resampleBuffer,
+                                resample_nb_samples,
+                                (const uint8_t**)frame -> extended_data,
+                                frame -> nb_samples
+                            );
 
                 if (samples_output > 0) {
                     // A frame has been decoded. Queue it to our buffer.
@@ -66,7 +81,8 @@ void AudioStream::routine() {
                     outputStream -> addBuffer(ar);
                 }
             } else {
-                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
+                QByteArray ar((const char*)frame -> data[0], frame -> linesize[0]);//frame -> nb_samples);
+//                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
                 outputStream -> addBuffer(ar);
             }
         } else {
@@ -137,6 +153,31 @@ void AudioStream::fillFormat(QAudioFormat & format) {
     qDebug() << format;
 }
 
+double AudioStream::calcPts(AVPacket * packet) {
+    //DO: add resample changes correction to the calculation
+
+//    if (packet -> pts != AV_NOPTS_VALUE) {
+//        //context -> audio_clock = av_q2d(stream -> time_base) * packet -> pts;
+//        return av_q2d(stream -> time_base) * packet -> pts;
+//    } else {
+//        int data_size = av_samples_get_buffer_size(
+//                    NULL,
+//                    codec_context -> channels,
+//                    frame -> nb_samples,
+//                    codec_context -> sample_fmt,
+//                    1
+//        );
+
+//        /* if no pts, then compute it */
+//        context -> audio_clock += (double)data_size /
+//        (
+//            codec_context -> channels *
+//            codec_context -> sample_rate *
+//            av_get_bytes_per_sample(codec_context -> sample_fmt)
+//        );
+//    }
+}
+
 //TODO: require to update settings for fillFormat
 void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
     resampleRequire = true;
@@ -176,11 +217,11 @@ void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
     }
 
     int dst_linesize;
-    int dst_nb_samples = 4096; // default is 1024
+    resample_nb_samples = 4096; // default is 1024
     av_samples_alloc(&resampleBuffer,
         &dst_linesize,
         2, // 2 channels
-        dst_nb_samples,
+        resample_nb_samples,
         AV_SAMPLE_FMT_S16,
     0);
 }

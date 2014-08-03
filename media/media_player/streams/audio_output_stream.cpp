@@ -32,7 +32,7 @@ void AudioOutputStream::routine() {
             audioIO -> write(audioBuffers.takeFirst());
 
             mutex -> unlock();
-//            msleep(1);
+            msleep(12);
             return;
         }
     mutex -> unlock();

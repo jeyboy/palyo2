@@ -3,6 +3,7 @@
 
 StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : Stream(parent, QThread::TimeCriticalPriority)
 , state(true)
+, finished(false)
 , videoStream(0)
 , audioStream(0)
 , subtitleStream(0) {
@@ -67,7 +68,10 @@ void StreamDecoder::routine() {
         currFrame = new AVPacket();
     } else {
         qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
-        pauseRequired = true;
+        finished = pauseRequired = true;
+        videoStream -> pauseOnComplete();
+        audioStream -> pauseOnComplete();
+        subtitleStream -> pauseOnComplete();
     }
 }
 

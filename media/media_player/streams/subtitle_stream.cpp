@@ -13,9 +13,14 @@ void SubtitleStream::resumeOutput() {
 }
 
 void SubtitleStream::routine() {
-//    mutex -> lock();
-//    AVPacket * packet = packets.takeFirst();
-//    mutex -> unlock();
+    mutex -> lock();
+    if (packets.isEmpty()) {
+        mutex -> unlock();
+        pauseRequired = finishAndPause;
 
+        return;
+    }
+    AVPacket * packet = packets.takeFirst();
+
+    mutex -> unlock();
 }
-

@@ -6,6 +6,13 @@
 
 #include <QAudioFormat>
 
+//struct AudioInfo {
+//    int channels;
+//    int sample_rate;
+//    int sample_size;
+//    int nb_samples;
+//};
+
 class AudioStream : public MediaStream {
 public:
     AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
@@ -19,6 +26,7 @@ public:
 protected:
     void routine();
     void fillFormat(QAudioFormat & format);
+    double calcPts(AVPacket * packet);
 
 private:
     void resampleInit(AVSampleFormat sampleFormat);
@@ -27,6 +35,7 @@ private:
     int selectChannelLayout(AVCodec *codec);
 
     bool resampleRequire;
+    int resample_nb_samples;
 
     uint8_t * resampleBuffer;
     SwrContext* resampleContext;

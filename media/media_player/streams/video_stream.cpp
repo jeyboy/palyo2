@@ -26,6 +26,9 @@ void VideoStream::resumeOutput() {
 void VideoStream::routine() {
     mutex -> lock();
     if (packets.isEmpty() || videoBuffer.length() >= bufferLimit) {
+        if (packets.isEmpty())
+            pauseRequired = finishAndPause;
+
         mutex -> unlock();
         return;
     }

@@ -14,6 +14,7 @@ public:
     ~StreamDecoder();
 
     inline bool isValid() const { return state; }
+    inline bool isFinished() const { return finished; }
 
     inline bool hasAudio() const { return audioStream -> isValid(); }
     inline bool hasVideo() const { return videoStream -> isValid(); }
@@ -24,7 +25,7 @@ public:
 signals:
     void errorOccurred(QString message);
     void stopped();
-    void finished();
+    void complete();
 
 protected:
     void routine();
@@ -33,7 +34,7 @@ private:
     uint bestStream(AudioStream * audio, VideoStream * video);
     void findStreams();
 
-    bool state;
+    bool state, finished;
 
     int ac = 0;
     int vc = 0;

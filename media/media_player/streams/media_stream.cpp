@@ -2,6 +2,7 @@
 
 MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : Stream(parent, priority)
   , state(true)
+  , finishAndPause(false)
   , stream(0)
   , codec_context(0)
   , codec(0)
@@ -111,3 +112,12 @@ void MediaStream::decode(AVPacket * newPacket) {
 //    packet -> data = bytes;
 //    packets.append(packet);
 //}
+
+void MediaStream::pauseOnComplete() {
+    finishAndPause = true;
+}
+
+void MediaStream::resume() {
+    finishAndPause = false;
+    Stream::resume();
+}

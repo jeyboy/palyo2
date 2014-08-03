@@ -12,6 +12,10 @@ public:
     void decode(AVPacket * newPacket);
 //    void decode(unsigned char* bytes, int size);
 
+    void pauseOnComplete();
+
+    void resume();
+
     inline bool isValid() const { return state; }
     inline int index() const { return uindex; }
 
@@ -20,7 +24,7 @@ public:
 protected:
     virtual void routine() {} // stub
 
-    bool state;
+    bool state, finishAndPause;
     AVStream * stream;
     int uindex;
     int bufferLimit;
