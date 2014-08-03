@@ -32,12 +32,11 @@ protected:
 private:
     uint bestStream(AudioStream * audio, VideoStream * video);
     void findStreams();
-    bool nextFrame();
-
-    int selectSampleRate(AVCodec *codec);
-    int selectChannelLayout(AVCodec *codec);
 
     bool state;
+
+    int ac = 0;
+    int vc = 0;
 
     AVFormatContext * context;
     AVPacket * currFrame;

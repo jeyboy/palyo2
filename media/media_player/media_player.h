@@ -14,6 +14,7 @@ public:
     MediaPlayer(QWidget * parent = 0);
     ~MediaPlayer();
 
+    void tryHu(QUrl url);
     bool play(QUrl url);
     void resume();
     void pause();

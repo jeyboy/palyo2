@@ -23,6 +23,8 @@ protected:
 private:
     void resampleInit(AVSampleFormat sampleFormat);
     AVSampleFormat compatibleCodecType(AVCodec * codec);
+    int selectSampleRate(AVCodec *codec);
+    int selectChannelLayout(AVCodec *codec);
 
     bool resampleRequire;
 

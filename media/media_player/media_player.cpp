@@ -32,7 +32,104 @@ MediaPlayer::~MediaPlayer() {
     delete screen; // ?
 }
 
+void MediaPlayer::tryHu(QUrl url) {
+    av_register_all();
+
+    QBuffer buffer;
+
+    int audioStream = -1;
+    AVFormatContext * formatContext;
+    AVCodecContext *codecContext;
+    AVCodec *codec;
+    AVPacket packet;
+
+    avformat_open_input(&formatContext, url.toLocalFile().toUtf8().data(), NULL, NULL);
+    av_find_stream_info(formatContext);
+//    av_dump_format(formatContext, 0, WMV,0);
+
+    for( unsigned int i=0; i < formatContext->nb_streams; i++ )
+    {
+    if( formatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO )
+    {
+    audioStream = i;
+    break;
+    }
+    }
+    if( audioStream == -1 )
+    {
+    qWarning() << "Didnt find audio stream";
+    return;
+    }
+
+    codecContext = formatContext->streams[audioStream]->codec;
+
+    codec = avcodec_find_decoder(codecContext->codec_id);
+    avcodec_open2(codecContext,codec, 0);
+
+    uint8_t * med_buffer = (uint8_t*)malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE + FF_INPUT_BUFFER_PADDING_SIZE);
+    buffer.open(QBuffer::WriteOnly);
+
+    while( av_read_frame(formatContext,&packet) >= 0 )
+    {
+    qint64 written=0;
+    if( packet.stream_index == audioStream )
+    {
+    qDebug() << "size= " << packet.size;
+    while(packet.size > 0)
+    {
+    int len, data_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+    //decode
+    len = avcodec_decode_audio3(codecContext, (int16_t*)med_buffer, &data_size, &packet);
+    if( len <= 0 )
+    qWarning() << "no data read to buffer";
+    if( data_size > 0 )
+    written = buffer.write((const char*)med_buffer, data_size);
+
+    packet.size -= len;
+    packet.data += len;
+
+    if( buffer.size() > 10000000 )
+    {
+    qDebug() << "buffer.size()=" << buffer.size();
+    break;
+    }
+    }
+
+    }
+
+    }
+
+    QAudioFormat format;
+    format.setSampleRate(codecContext->sample_rate);
+    format.setChannelCount(2);
+    format.setSampleSize(16);
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setSampleType(QAudioFormat::SignedInt);
+
+    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+
+    if (!info.isFormatSupported(format)) {
+    qWarning()<<"raw audio format not supported by backend, cannot play audio.";
+    format = info.nearestFormat(format);
+    }
+
+    QAudioOutput * audio = new QAudioOutput(format, this);
+
+    connect(audio,SIGNAL(stateChanged(QAudio::State)),SLOT(stateChanged(QAudio::State)));
+
+    if( !buffer.open(QBuffer::ReadWrite) )
+    qWarning() << "Couldnt open Buffer";
+
+    qDebug() << "buffer.size()=" << buffer.size();
+
+    audio->start(&buffer);
+}
+
 bool MediaPlayer::play(QUrl url) {
+//    tryHu(url);
+
+
     stop();
 
     bool res = openContext(url);

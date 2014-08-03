@@ -32,9 +32,12 @@ void AudioStream::resumeOutput() {
 }
 
 void AudioStream::routine() {
-    if (packets.isEmpty()) return;
-
     mutex -> lock();
+    if (packets.isEmpty()) {
+        mutex -> unlock();
+        return;
+    }
+
     AVPacket * packet = packets.takeFirst();
     mutex -> unlock();
 
@@ -44,7 +47,6 @@ void AudioStream::routine() {
     while (packet -> size > 0) {
         out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
         len = avcodec_decode_audio4(codec_context, frame, &out_size, packet);
-        qDebug() << "BLA";
 
         if (len < 0) {
             qDebug() << "Error while decoding audio frame";
@@ -54,6 +56,7 @@ void AudioStream::routine() {
         if (out_size > 0) {
             // Resample to S16
             if (resampleRequire) {
+                qDebug() << "USE RESAMPLE";
                 samples_output = swr_convert(resampleContext, &resampleBuffer, 4096, (const uint8_t**)frame -> extended_data, frame -> nb_samples);
 
                 if (samples_output > 0) {
@@ -74,14 +77,23 @@ void AudioStream::routine() {
         packet -> data += len;
     }
 
-    qDebug() << "EX";
     av_free_packet(packet);
 }
 
 void AudioStream::fillFormat(QAudioFormat & format) {
+//    format.setSampleRate(codec_context -> sample_rate);
+//    format.setChannelCount(2);
+//    format.setSampleSize(16);
+//    format.setCodec("audio/pcm");
+//    format.setByteOrder(QAudioFormat::LittleEndian);
+//    format.setSampleType(QAudioFormat::SignedInt);
+
+
+
+
     format.setCodec("audio/pcm");
+    format.setSampleRate(selectSampleRate(codec));
     format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setChannelCount(codec_context -> channels);
     format.setChannelCount(codec_context -> channels);
 
     AVSampleFormat compatibleCodec = compatibleCodecType(codec);
@@ -91,7 +103,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
         format.setSampleType(QAudioFormat::UnSignedInt);
     } else if (compatibleCodec == AV_SAMPLE_FMT_S16) { ///< signed 16 bits
         format.setSampleSize(16);
-        format.setSampleType(QAudioFormat::UnSignedInt);
+        format.setSampleType(QAudioFormat::SignedInt);
     } else if (compatibleCodec == AV_SAMPLE_FMT_S32) { ///< signed 32 bits
         format.setSampleSize(32);
         format.setSampleType(QAudioFormat::SignedInt);
@@ -99,6 +111,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
         format.setSampleSize(32);
         format.setSampleType(QAudioFormat::Float);
     } else {
+        qDebug() << "RESAMPLE";
         resampleInit(compatibleCodec);
 //        AV_SAMPLE_FMT_DBL,         ///< double
 //        AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar
@@ -106,11 +119,13 @@ void AudioStream::fillFormat(QAudioFormat & format) {
 //        AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
 //        AV_SAMPLE_FMT_FLTP,        ///< float, planar
 //        AV_SAMPLE_FMT_DBLP,        ///< double, planar
-        format.setChannelCount(44100);
+        format.setSampleRate(44100);
         format.setChannelCount(2);
         format.setSampleSize(16);
-        format.setSampleType(QAudioFormat::SignedInt);
+        format.setSampleType(QAudioFormat::UnSignedInt);
     }
+
+    qDebug() << format;
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
 
@@ -118,8 +133,9 @@ void AudioStream::fillFormat(QAudioFormat & format) {
         qWarning() << "raw audio format not supported by backend, cannot play audio.";
         format = info.nearestFormat(format);
     }
-}
 
+    qDebug() << format;
+}
 
 //TODO: require to update settings for fillFormat
 void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
@@ -185,4 +201,43 @@ AVSampleFormat AudioStream::compatibleCodecType(AVCodec *codec) {
     }
 
     return best_format;
+}
+
+/* just pick the highest supported samplerate */
+int AudioStream::selectSampleRate(AVCodec *codec) {
+    if (!codec -> supported_samplerates)
+        return 44100;
+
+    int best_samplerate = 0;
+    const int *p = codec -> supported_samplerates;
+
+    while (*p) {
+        best_samplerate = FFMAX(*p, best_samplerate);
+        p++;
+    }
+
+    return best_samplerate;
+}
+
+/* select layout with the highest channel count */
+int AudioStream::selectChannelLayout(AVCodec *codec) {
+    if (!codec -> channel_layouts)
+        return AV_CH_LAYOUT_STEREO;
+
+    const uint64_t *p;
+    uint64_t best_ch_layout = 0;
+    int best_nb_channels = 0;
+
+    p = codec -> channel_layouts;
+    while (*p) {
+        int nb_channels = av_get_channel_layout_nb_channels(*p);
+
+        if (nb_channels > best_nb_channels) {
+            best_ch_layout = *p;
+            best_nb_channels = nb_channels;
+        }
+        p++;
+    }
+
+    return best_ch_layout;
 }

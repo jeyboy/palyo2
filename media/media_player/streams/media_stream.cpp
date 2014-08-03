@@ -4,7 +4,8 @@ MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * p
   , state(true)
   , stream(0)
   , codec_context(0)
-  , codec(0) {
+  , codec(0)
+  , frame(0) {
 //    if (streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND) {
 //        state = false;
 //    } else {
@@ -79,7 +80,12 @@ MediaStream::~MediaStream() {
     qDebug() << " ******* " << state;
 
     avcodec_close(codec_context);
-    av_frame_free(&frame);
+
+    if (frame)
+        av_frame_free(&frame);
+
+    foreach(AVPacket * pack, packets)
+        av_free_packet(pack);
 
 // this strings throw error
 //    if (stream) {

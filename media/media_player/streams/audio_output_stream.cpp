@@ -15,25 +15,27 @@ AudioOutputStream::~AudioOutputStream() {
 
 void AudioOutputStream::addBuffer(QByteArray & frame) {
     mutex -> lock();
-    audioBuffers.append(frame);
-    buffersLength += frame.size();
+        audioBuffers.append(frame);
+        buffersLength += frame.size();
     mutex -> unlock();
 }
 
 void AudioOutputStream::routine() {
-    if (!audioBuffers.isEmpty() && soundOutput -> bytesFree() > 0) {
-        mutex -> lock();
+    mutex -> lock();
+        if (!audioBuffers.isEmpty() && soundOutput -> bytesFree() > 0) {
 
-        // If we're too slow/accumulating delay, drop audio frames
-        while (buffersLength > MAX_AUDIO_DATA_PENDING) {
-            buffersLength -= audioBuffers.takeFirst().length();
+            // If we're too slow/accumulating delay, drop audio frames
+//            while (buffersLength > MAX_AUDIO_DATA_PENDING) {
+//                buffersLength -= audioBuffers.takeFirst().length();
+//            }
+
+            audioIO -> write(audioBuffers.takeFirst());
+
+            mutex -> unlock();
+//            msleep(1);
+            return;
         }
-
-        audioIO -> write(audioBuffers.takeFirst());
-
-        mutex -> unlock();
-        msleep(1);
-    }
+    mutex -> unlock();
 }
 
 //void AudioOutputStream::playbackAudioThread() {

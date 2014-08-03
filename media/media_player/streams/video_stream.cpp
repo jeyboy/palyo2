@@ -1,7 +1,9 @@
 #include "video_stream.h"
 
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
-    : MediaStream(context, streamIndex, parent, priority) {
+    : MediaStream(context, streamIndex, parent, priority)
+    ,resampleContext(0)
+    ,RGBFrame(0) {
 
     bufferLimit = 50;
     RGBFrame = av_frame_alloc();
@@ -9,6 +11,9 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
 
 VideoStream::~VideoStream() {
     av_frame_free(&RGBFrame);
+    delete [] RGBBuffer;
+    sws_freeContext(resampleContext);
+    qDeleteAll(videoBuffer);
 }
 
 void VideoStream::suspendOutput() {
@@ -19,9 +24,13 @@ void VideoStream::resumeOutput() {
 }
 
 void VideoStream::routine() {
-    if (packets.isEmpty() || videoBuffer.length() >= bufferLimit) return;
-
     mutex -> lock();
+    if (packets.isEmpty() || videoBuffer.length() >= bufferLimit) {
+        mutex -> unlock();
+        return;
+    }
+
+    qDebug() << "VIDEO PROCEED";
     AVPacket * packet = packets.takeFirst();
     mutex -> unlock();
 
@@ -57,6 +66,9 @@ void VideoStream::routine() {
             /*if (width > 1920 || height > 1920)
                 qDebug() << "Unexpected size! " << w << " x " << h;*/
 
+            qDebug() << codec_context -> pix_fmt;
+
+
             resampleContext = sws_getCachedContext(resampleContext, width, height, codec_context -> pix_fmt, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
 
             if(resampleContext == NULL) {
@@ -87,6 +99,5 @@ void VideoStream::routine() {
         packet -> data += len;
     }
 
-    qDebug() << "FREE VIDEO";
     av_free_packet(packet);
 }
