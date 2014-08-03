@@ -14,6 +14,8 @@ public:
     void resumeOutput();
 protected:
     void routine();
+    double calcPts();
+    double syncPts(AVFrame *src_frame, double pts);
 private:
     AVFrame * RGBFrame;
     QList<QImage *> videoBuffer;

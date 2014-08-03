@@ -94,6 +94,7 @@ void VideoStream::routine() {
             }
 
             videoBuffer.append(img);
+            calcPts();
         } else {
             qDebug() << "Could not get a full picture from this frame";
         }
@@ -103,4 +104,33 @@ void VideoStream::routine() {
     }
 
     av_free_packet(packet);
+}
+
+double VideoStream::calcPts() {
+    double pts = frame -> pkt_dts;
+    if (pts == AV_NOPTS_VALUE) { pts = frame -> pkt_pts; }
+    if (pts == AV_NOPTS_VALUE) { pts = 0; }
+    pts *= av_q2d(stream -> time_base);
+    pts = syncPts(frame, pts);
+
+    qDebug() << "VIDEO PTS " << av_q2d(stream -> time_base) << " : " << pts;
+    return pts;
+}
+
+double VideoStream::syncPts(AVFrame *src_frame, double pts) {
+    if(pts != 0) {
+        /* if we have pts, set video clock to it */
+        clock = pts;
+    } else {
+        /* if we aren't given a pts, set it to the clock */
+        pts = clock;
+    }
+
+    /* update the video clock */
+    double frame_delay = av_q2d(codec_context -> time_base);
+    /* if we are repeating a frame, adjust clock accordingly */
+    frame_delay += src_frame -> repeat_pict * (frame_delay * 0.5);
+    clock += frame_delay;
+
+    return clock;
 }

@@ -61,8 +61,6 @@ void AudioStream::routine() {
         }
 
         if (got_frame) {
-//            calcPts(packet);
-
             // Resample to S16
             if (resampleRequire) {
                 qDebug() << "USE RESAMPLE";
@@ -85,6 +83,8 @@ void AudioStream::routine() {
 //                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
                 outputStream -> addBuffer(ar);
             }
+
+            calcPts(packet);
         } else {
             qDebug() << "Could not get audio data from this frame";
         }
@@ -156,26 +156,30 @@ void AudioStream::fillFormat(QAudioFormat & format) {
 double AudioStream::calcPts(AVPacket * packet) {
     //DO: add resample changes correction to the calculation
 
-//    if (packet -> pts != AV_NOPTS_VALUE) {
-//        //context -> audio_clock = av_q2d(stream -> time_base) * packet -> pts;
-//        return av_q2d(stream -> time_base) * packet -> pts;
-//    } else {
-//        int data_size = av_samples_get_buffer_size(
-//                    NULL,
-//                    codec_context -> channels,
-//                    frame -> nb_samples,
-//                    codec_context -> sample_fmt,
-//                    1
-//        );
+    if (packet -> pts != AV_NOPTS_VALUE) {
+        //context -> audio_clock = av_q2d(stream -> time_base) * packet -> pts;
+        clock = av_q2d(stream -> time_base) * packet -> pts;
+    } else {
+        int data_size = av_samples_get_buffer_size(
+                    NULL,
+                    codec_context -> channels,
+                    frame -> nb_samples,
+                    codec_context -> sample_fmt,
+                    1
+        );
 
-//        /* if no pts, then compute it */
-//        context -> audio_clock += (double)data_size /
-//        (
-//            codec_context -> channels *
-//            codec_context -> sample_rate *
-//            av_get_bytes_per_sample(codec_context -> sample_fmt)
-//        );
-//    }
+        /* if no pts, then compute it */
+        clock += (double)data_size /
+        (
+            codec_context -> channels *
+            codec_context -> sample_rate *
+            av_get_bytes_per_sample(codec_context -> sample_fmt)
+        );
+    }
+
+    qDebug() << "AUDIO PTS " << av_q2d(stream -> time_base) << " : " << clock;
+
+    return clock;
 }
 
 //TODO: require to update settings for fillFormat

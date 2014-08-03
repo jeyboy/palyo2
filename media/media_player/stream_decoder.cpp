@@ -11,6 +11,7 @@ StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : 
     currFrame = new AVPacket();
     context = currContext;
     findStreams();
+
     start();
 }
 
