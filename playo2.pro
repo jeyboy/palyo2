@@ -108,7 +108,75 @@ SOURCES += main.cpp\
     media/media_player/streams/video_stream.cpp \
     media/media_player/streams/subtitle_stream.cpp \
     media/media_player/streams/audio_output_stream.cpp \
-    media/media_player/streams/media_stream.cpp
+    media/media_player/streams/media_stream.cpp \
+    media/libAV/utils/GPUMemCopy.cpp \
+    media/libAV/utils/OpenGLHelper.cpp \
+    media/libAV/AudioDecoder.cpp \
+    media/libAV/AudioFormat.cpp \
+    media/libAV/AudioFrame.cpp \
+    media/libAV/AudioOutput.cpp \
+    media/libAV/AudioOutputDSound.cpp \
+    media/libAV/AudioOutputOpenAL.cpp \
+    media/libAV/AudioOutputOpenSL.cpp \
+    media/libAV/AudioOutputPortAudio.cpp \
+    media/libAV/AudioOutputTypes.cpp \
+    media/libAV/AudioResampler.cpp \
+    media/libAV/AudioResamplerFF.cpp \
+    media/libAV/AudioResamplerLibav.cpp \
+    media/libAV/AudioResamplerTypes.cpp \
+    media/libAV/AudioThread.cpp \
+    media/libAV/AVClock.cpp \
+    media/libAV/AVCompat.cpp \
+    media/libAV/AVDecoder.cpp \
+    media/libAV/AVDemuxer.cpp \
+    media/libAV/AVDemuxThread.cpp \
+    media/libAV/AVError.cpp \
+    media/libAV/AVOutput.cpp \
+    media/libAV/AVPlayer.cpp \
+    media/libAV/AVThread.cpp \
+    media/libAV/ColorTransform.cpp \
+    media/libAV/CommonTypes.cpp \
+    media/libAV/Direct2DRenderer.cpp \
+    media/libAV/Filter.cpp \
+    media/libAV/FilterContext.cpp \
+    media/libAV/FilterManager.cpp \
+    media/libAV/Frame.cpp \
+    media/libAV/GDIRenderer.cpp \
+    media/libAV/GLWidgetRenderer.cpp \
+    media/libAV/GLWidgetRenderer2.cpp \
+    media/libAV/GraphicsItemRenderer.cpp \
+    media/libAV/ImageConverter.cpp \
+    media/libAV/ImageConverterFF.cpp \
+    media/libAV/ImageConverterIPP.cpp \
+    media/libAV/LibAVFilter.cpp \
+    media/libAV/OpenGLVideo.cpp \
+    media/libAV/OutputSet.cpp \
+    media/libAV/Packet.cpp \
+    media/libAV/QAVIOContext.cpp \
+    media/libAV/QPainterRenderer.cpp \
+    media/libAV/QtAV_Global.cpp \
+    media/libAV/ShaderManager.cpp \
+    media/libAV/Statistics.cpp \
+    media/libAV/VideoCapture.cpp \
+    media/libAV/VideoDecoder.cpp \
+    media/libAV/VideoDecoderCedarv.cpp \
+    media/libAV/VideoDecoderCUDA.cpp \
+    media/libAV/VideoDecoderDXVA.cpp \
+    media/libAV/VideoDecoderFFmpeg.cpp \
+    media/libAV/VideoDecoderFFmpegHW.cpp \
+    media/libAV/VideoDecoderTypes.cpp \
+    media/libAV/VideoDecoderVAAPI.cpp \
+    media/libAV/VideoDecoderVDA.cpp \
+    media/libAV/VideoFormat.cpp \
+    media/libAV/VideoFrame.cpp \
+    media/libAV/VideoOutput.cpp \
+    media/libAV/VideoOutputEventFilter.cpp \
+    media/libAV/VideoRenderer.cpp \
+    media/libAV/VideoRendererTypes.cpp \
+    media/libAV/VideoShader.cpp \
+    media/libAV/VideoThread.cpp \
+    media/libAV/WidgetRenderer.cpp \
+    media/libAV/XVRenderer.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -200,7 +268,83 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/video_stream.h \
     media/media_player/streams/subtitle_stream.h \
     media/media_player/streams/audio_output_stream.h \
-    media/media_player/streams/media_stream.h
+    media/media_player/streams/media_stream.h \
+    media/libAV/compat/msvc/inttypes.h \
+    media/libAV/compat/msvc/stdint.h \
+    media/libAV/private/AudioOutput_p.h \
+    media/libAV/private/AudioResampler_p.h \
+    media/libAV/private/AVCompat.h \
+    media/libAV/private/AVDecoder_p.h \
+    media/libAV/private/AVOutput_p.h \
+    media/libAV/private/AVThread_p.h \
+    media/libAV/private/factory.h \
+    media/libAV/private/Filter_p.h \
+    media/libAV/private/FilterManager.h \
+    media/libAV/private/Frame_p.h \
+    media/libAV/private/ImageConverter_p.h \
+    media/libAV/private/OutputSet.h \
+    media/libAV/private/QAVIOContext.h \
+    media/libAV/private/QPainterRenderer_p.h \
+    media/libAV/private/ShaderManager.h \
+    media/libAV/private/singleton.h \
+    media/libAV/private/VideoDecoder_p.h \
+    media/libAV/private/VideoDecoderFFmpegHW_p.h \
+    media/libAV/private/VideoOutputEventFilter.h \
+    media/libAV/private/VideoRenderer_p.h \
+    media/libAV/private/VideoShader_p.h \
+    media/libAV/utils/BlockingQueue.h \
+    media/libAV/utils/GPUMemCopy.h \
+    media/libAV/utils/OpenGLHelper.h \
+    media/libAV/AudioDecoder.h \
+    media/libAV/AudioFormat.h \
+    media/libAV/AudioFrame.h \
+    media/libAV/AudioOutput.h \
+    media/libAV/AudioOutputTypes.h \
+    media/libAV/AudioResampler.h \
+    media/libAV/AudioResamplerTypes.h \
+    media/libAV/AudioThread.h \
+    media/libAV/AVClock.h \
+    media/libAV/AVDecoder.h \
+    media/libAV/AVDemuxer.h \
+    media/libAV/AVDemuxThread.h \
+    media/libAV/AVError.h \
+    media/libAV/AVOutput.h \
+    media/libAV/AVPlayer.h \
+    media/libAV/AVThread.h \
+    media/libAV/ColorTransform.h \
+    media/libAV/CommonTypes.h \
+    media/libAV/dptr.h \
+    media/libAV/FactoryDefine.h \
+    media/libAV/Filter.h \
+    media/libAV/FilterContext.h \
+    media/libAV/Frame.h \
+    media/libAV/GLWidgetRenderer.h \
+    media/libAV/GLWidgetRenderer2.h \
+    media/libAV/GraphicsItemRenderer.h \
+    media/libAV/ImageConverter.h \
+    media/libAV/ImageConverterTypes.h \
+    media/libAV/LibAVFilter.h \
+    media/libAV/OpenGLVideo.h \
+    media/libAV/Packet.h \
+    media/libAV/prepost.h \
+    media/libAV/QPainterRenderer.h \
+    media/libAV/QtAV.h \
+    media/libAV/QtAV_Global.h \
+    media/libAV/Statistics.h \
+    media/libAV/SurfaceInterop.h \
+    media/libAV/version.h \
+    media/libAV/VideoCapture.h \
+    media/libAV/VideoDecoder.h \
+    media/libAV/VideoDecoderFFmpegHW.h \
+    media/libAV/VideoDecoderTypes.h \
+    media/libAV/VideoFormat.h \
+    media/libAV/VideoFrame.h \
+    media/libAV/VideoOutput.h \
+    media/libAV/VideoRenderer.h \
+    media/libAV/VideoRendererTypes.h \
+    media/libAV/VideoShader.h \
+    media/libAV/VideoThread.h \
+    media/libAV/WidgetRenderer.h
     model/view_types.h
 
 unix:!mac {
@@ -226,7 +370,7 @@ win32: {
         LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -lswscale-2 -lavcodec -lavcodec-55 -lavdevice -lavdevice-55 -lavfilter -lavfilter-4 -lavformat -lavformat-55 -lavutil -lavutil-52 -lswresample -lswscale
         LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -llibavcodec -llibavdevice -llibavfilter -llibavformat -llibavutil -llibpostproc -llibswresample -llibswscale -lpostproc -lpostproc-52 -lswresample-0
 
-        LIBS += -L"$$_PRO_FILE_PWD_/libs/portable_audio/" -lportaudio_x86.lib
+        LIBS += -L"$$_PRO_FILE_PWD_/libs/portable_audio/" -lportaudio_x86
 }
 mac: {
         SOURCES += globalshortcut/qxtglobalshortcut_mac.cpp
