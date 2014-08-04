@@ -40,7 +40,6 @@ void AudioStream::routine() {
     if (packets.isEmpty()) {
         mutex -> unlock();
         pauseRequired = finishAndPause;
-
         return;
     }
 
@@ -59,6 +58,9 @@ void AudioStream::routine() {
             av_free_packet(packet);
             return;
         }
+
+        packet -> size -= len;
+        packet -> data += len;
 
         if (got_frame) {
             // Resample to S16
@@ -88,9 +90,6 @@ void AudioStream::routine() {
         } else {
             qDebug() << "Could not get audio data from this frame";
         }
-
-        packet -> size -= len;
-        packet -> data += len;
     }
 
     av_free_packet(packet);

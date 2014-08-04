@@ -1,7 +1,7 @@
 #include "audio_output_stream.h"
 
 AudioOutputStream::AudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority) : Stream(parent, priority), buffersLength(0) {
-    soundOutput = new QAudioOutput(format, this);
+    soundOutput = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, this);
     soundOutput -> setVolume(1.0);
     audioIO = soundOutput -> start();
 

@@ -149,6 +149,7 @@ EXPORTS
     av_frame_set_pkt_size
     av_frame_set_qp_table
     av_frame_set_sample_rate
+    av_frame_side_data_name
     av_frame_unref
     av_free
     av_freep
@@ -241,6 +242,7 @@ EXPORTS
     av_lzo1x_decode
     av_malloc
     av_mallocz
+    av_match_name
     av_max_alloc
     av_md5_alloc
     av_md5_final

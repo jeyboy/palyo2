@@ -193,16 +193,16 @@ bool MediaPlayer::openContext(QUrl url) {
         path = url.toString();
     }
 
-    AVDictionary *options = NULL;
-    av_dict_set(&options, "video_size", "640x480", 0);
-    av_dict_set(&options, "pixel_format", "rgb24", 0);
+//    AVDictionary *options = NULL;
+//    av_dict_set(&options, "video_size", "640x480", 0);
+//    av_dict_set(&options, "pixel_format", "rgb24", 0);
 
-    if (avformat_open_input(&context, path.toUtf8().data(), NULL, &options) < 0) {
+    if (avformat_open_input(&context, path.toUtf8().data(), NULL, NULL) < 0) {  //&options) < 0) {
         abort();
-        av_dict_free(&options);
+//        av_dict_free(&options);
         return false;
     }
-    av_dict_free(&options);
+//    av_dict_free(&options);
 
     if (avformat_find_stream_info(context, NULL) < 0)
         return false;

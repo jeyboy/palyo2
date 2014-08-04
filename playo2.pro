@@ -19,6 +19,7 @@ DEFINES += TAGLIB_NO_CONFIG
 INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/taglib/include)
 INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/bass/include)
 INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/ffmpeg/include)
+INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/portable_audio/include)
 
 #INCLUDEPATH += -L"$$_PRO_FILE_PWD_/libs/include"
 #LIBS += -L"$$_PRO_FILE_PWD_/libs/" -lpsapi
@@ -224,6 +225,8 @@ win32: {
 
         LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -lswscale-2 -lavcodec -lavcodec-55 -lavdevice -lavdevice-55 -lavfilter -lavfilter-4 -lavformat -lavformat-55 -lavutil -lavutil-52 -lswresample -lswscale
         LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -llibavcodec -llibavdevice -llibavfilter -llibavformat -llibavutil -llibpostproc -llibswresample -llibswscale -lpostproc -lpostproc-52 -lswresample-0
+
+        LIBS += -L"$$_PRO_FILE_PWD_/libs/portable_audio/" -lportaudio_x86.lib
 }
 mac: {
         SOURCES += globalshortcut/qxtglobalshortcut_mac.cpp
