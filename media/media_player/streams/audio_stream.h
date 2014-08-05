@@ -3,6 +3,7 @@
 
 #include "media_stream.h"
 #include "audio_output_stream.h"
+#include "portaudio_output_stream.h"
 
 #include <QAudioFormat>
 
@@ -40,7 +41,8 @@ private:
     uint8_t * resampleBuffer;
     SwrContext* resampleContext;
 
-    AudioOutputStream * outputStream;
+//    AudioOutputStream * outputStream;
+    PortAudioOutputStream * outputStream;
 };
 
 #endif // AUDIO_STREAM_H

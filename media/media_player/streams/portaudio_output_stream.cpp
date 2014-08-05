@@ -1,14 +1,15 @@
 #include "portaudio_output_stream.h"
 
-PortAudioOutputStream::PortAudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority) : Stream(parent, priority), buffersLength(0)
-    , outputParameters(0)
+PortAudioOutputStream::PortAudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority) : Stream(parent, priority)
+    , initialized(false)
+    , buffersLength(0)
+    , outputParameters(new PaStreamParameters)
     , stream(0)
     , format(0) {
+
     this -> format = &format;
 
-    init();
-
-    if (open())
+    if (init() && open())
         start(priority);
 }
 
@@ -34,6 +35,7 @@ void PortAudioOutputStream::addBuffer(QByteArray & frame) {
 
 void PortAudioOutputStream::routine() {
     mutex -> lock();
+    qDebug() << "PIPIPI";
 
     if (Pa_IsStreamStopped(stream))
         Pa_StartStream(stream);
@@ -74,37 +76,42 @@ int PortAudioOutputStream::paSampleFormat() {
 }
 
 bool PortAudioOutputStream::init() {
-    //        PaError err = paNoError;
-    //        if ((err = Pa_Initialize()) != paNoError) {
-    //            qWarning("Error when init portaudio: %s", Pa_GetErrorText(err));
-    //            available = false;
-    //            return;
-    //        }
-    //        initialized = true;
+    PaError err = paNoError;
+    if ((err = Pa_Initialize()) != paNoError) {
+        qWarning("Error when init portaudio: %s", Pa_GetErrorText(err));
+        return false;
+    }
+//    initialized = true;
 
-    //        int numDevices = Pa_GetDeviceCount();
-    //        for (int i = 0 ; i < numDevices ; ++i) {
-    //            const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(i);
-    //            if (deviceInfo) {
-    //                const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo(deviceInfo->hostApi);
-    //                QString name = QString(hostApiInfo->name) + ": " + QString::fromLocal8Bit(deviceInfo->name);
-    //                qDebug("audio device %d: %s", i, name.toUtf8().constData());
-    //                qDebug("max in/out channels: %d/%d", deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
-    //            }
-    //        }
-    //        memset(outputParameters, 0, sizeof(PaStreamParameters));
-    //        outputParameters->device = Pa_GetDefaultOutputDevice();
-    //        if (outputParameters->device == paNoDevice) {
-    //            qWarning("PortAudio get device error!");
-    //            available = false;
-    //            return;
-    //        }
-    //        const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(outputParameters->device);
-    //        max_channels = deviceInfo->maxOutputChannels;
-    //        qDebug("DEFAULT max in/out channels: %d/%d", deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
-    //        qDebug("audio device: %s", QString::fromLocal8Bit(Pa_GetDeviceInfo(outputParameters->device)->name).toUtf8().constData());
-    //        outputParameters->hostApiSpecificStreamInfo = NULL;
-    //        outputParameters->suggestedLatency = Pa_GetDeviceInfo(outputParameters->device)->defaultHighOutputLatency;
+    int numDevices = Pa_GetDeviceCount();
+    for (int i = 0 ; i < numDevices ; ++i) {
+        const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(i);
+        if (deviceInfo) {
+            const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo(deviceInfo -> hostApi);
+            QString name = QString(hostApiInfo -> name) + ": " + QString::fromLocal8Bit(deviceInfo -> name);
+            qDebug("audio device %d: %s", i, name.toUtf8().constData());
+            qDebug("max in/out channels: %d/%d", deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels);
+        }
+    }
+
+    memset(outputParameters, 0, sizeof(PaStreamParameters));
+    outputParameters -> device = Pa_GetDefaultOutputDevice();
+    if (outputParameters -> device == paNoDevice) {
+        qWarning("PortAudio get device error!");
+        return false;
+    }
+
+    const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(outputParameters -> device);
+//    max_channels = deviceInfo -> maxOutputChannels;
+    qDebug("DEFAULT max in/out channels: %d/%d", deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels);
+    qDebug("audio device: %s", QString::fromLocal8Bit(Pa_GetDeviceInfo(outputParameters -> device) -> name).toUtf8().constData());
+    outputParameters -> hostApiSpecificStreamInfo = NULL;
+    outputParameters -> suggestedLatency = Pa_GetDeviceInfo(outputParameters -> device) -> defaultHighOutputLatency;
+    outputParameters -> channelCount = format -> channelCount();
+    outputParameters -> sampleFormat = paSampleFormat();
+
+    initialized = true;
+    return true;
 }
 
 bool PortAudioOutputStream::open() {
