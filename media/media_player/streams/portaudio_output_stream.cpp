@@ -7,7 +7,7 @@ PortAudioOutputStream::PortAudioOutputStream(QObject * parent, QAudioFormat & fo
     , stream(0)
     , format(0) {
 
-    this -> format = &format;
+    this -> format = new QAudioFormat(format);
 
     if (init() && open())
         start(priority);
@@ -35,31 +35,32 @@ void PortAudioOutputStream::addBuffer(QByteArray & frame) {
 
 void PortAudioOutputStream::routine() {
     mutex -> lock();
-    qDebug() << "PIPIPI";
+    if (audioBuffers.isEmpty()) {
+        mutex -> unlock();
+        return;
+    }
 
     if (Pa_IsStreamStopped(stream))
         Pa_StartStream(stream);
-#if KNOW_WHY
-#ifndef Q_OS_MAC //?
-    int diff = Pa_GetStreamWriteAvailable(stream) - outputLatency * format -> sampleRate();
-    if (diff > 0) {
-        int newsize = diff * format -> channelCount() * sizeof(float);
-        static char *a = new char[newsize];
-        memset(a, 0, newsize);
-        Pa_WriteStream(stream, a, diff);
-    }
-#endif
-#endif //KNOW_WHY
+//#if KNOW_WHY
+//#ifndef Q_OS_MAC //?
+//    int diff = Pa_GetStreamWriteAvailable(stream) - outputLatency * format -> sampleRate();
+//    if (diff > 0) {
+//        int newsize = diff * format -> channelCount() * sizeof(float);
+//        static char *a = new char[newsize];
+//        memset(a, 0, newsize);
+//        Pa_WriteStream(stream, a, diff);
+//    }
+//#endif
+//#endif //KNOW_WHY
     QByteArray ar = audioBuffers.takeFirst();
+    mutex -> unlock();
 
     // try format -> sampleSize() / 8 as equal to bytesPerSample()
-    PaError err = Pa_WriteStream(stream, ar.constData(), ar.size() / format -> channelCount() / format -> sampleSize() / 8);//audioFormat().bytesPerSample());
+    PaError err = Pa_WriteStream(stream, ar.constData(), ar.size() / format -> channelCount() / (format -> sampleSize() / 8));
     if (err == paUnanticipatedHostError) {
         qWarning("Write portaudio stream error: %s", Pa_GetErrorText(err));
     }
-
-    msleep(12);
-    mutex -> unlock();
 }
 
 int PortAudioOutputStream::paSampleFormat() {
