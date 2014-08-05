@@ -14,7 +14,7 @@ AudioOutputStream::~AudioOutputStream() {
    soundOutput -> stop();
 }
 
-void AudioOutputStream::addBuffer(QByteArray & frame) {
+void AudioOutputStream::addBuffer(QByteArray frame) {
     mutex -> lock();
         audioBuffers.append(frame);
         buffersLength += frame.size();
@@ -31,6 +31,7 @@ void AudioOutputStream::routine() {
 //            }
 
             audioIO -> write(audioBuffers.takeFirst());
+
 
             mutex -> unlock();
             msleep(12);

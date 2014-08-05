@@ -19,8 +19,8 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     QAudioFormat format;
     fillFormat(format);
 
-//    outputStream = new AudioOutputStream(this, format, priority);
-    outputStream = new PortAudioOutputStream(this, format, priority);
+    outputStream = new AudioOutputStream(this, format, priority);
+//    outputStream = new PortAudioOutputStream(this, format, priority);
 }
 
 AudioStream::~AudioStream() {
@@ -126,7 +126,7 @@ void AudioStream::routine() {
                     outputStream -> addBuffer(ar);
                 }
             } else {
-                QByteArray ar((const char*)frame -> data[0], data_size);
+                QByteArray ar((const char*)frame -> data[0], frame -> linesize[0]);
 
 
 //                int data_size = av_samples_get_buffer_size(NULL, codec_context -> channels,

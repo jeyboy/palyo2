@@ -43,8 +43,8 @@ private:
     uint8_t * resampleBuffer;
     SwrContext* resampleContext;
 
-//    AudioOutputStream * outputStream;
-    PortAudioOutputStream * outputStream;
+    AudioOutputStream * outputStream;
+//    PortAudioOutputStream * outputStream;
 };
 
 #endif // AUDIO_STREAM_H
