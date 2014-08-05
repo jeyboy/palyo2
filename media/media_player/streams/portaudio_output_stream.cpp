@@ -39,6 +39,8 @@ void PortAudioOutputStream::routine() {
         mutex -> unlock();
         return;
     }
+    QByteArray ar = audioBuffers.takeFirst();
+    mutex -> unlock();
 
     if (Pa_IsStreamStopped(stream))
         Pa_StartStream(stream);
@@ -53,10 +55,7 @@ void PortAudioOutputStream::routine() {
 //    }
 //#endif
 //#endif //KNOW_WHY
-    QByteArray ar = audioBuffers.takeFirst();
-    mutex -> unlock();
 
-    // try format -> sampleSize() / 8 as equal to bytesPerSample()
     PaError err = Pa_WriteStream(stream, ar.constData(), ar.size() / format -> channelCount() / (format -> sampleSize() / 8));
     if (err == paUnanticipatedHostError) {
         qWarning("Write portaudio stream error: %s", Pa_GetErrorText(err));

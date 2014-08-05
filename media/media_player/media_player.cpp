@@ -35,10 +35,10 @@ MediaPlayer::~MediaPlayer() {
 void MediaPlayer::tryHu(QUrl url) {
     av_register_all();
 
-    QBuffer buffer;
+    QByteArray * buffer = new QByteArray();
 
     int audioStream = -1;
-    AVFormatContext * formatContext;
+    AVFormatContext * formatContext = avformat_alloc_context();
     AVCodecContext *codecContext;
     AVCodec *codec;
     AVPacket packet;
@@ -67,14 +67,12 @@ void MediaPlayer::tryHu(QUrl url) {
     avcodec_open2(codecContext,codec, 0);
 
     uint8_t * med_buffer = (uint8_t*)malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE + FF_INPUT_BUFFER_PADDING_SIZE);
-    buffer.open(QBuffer::WriteOnly);
 
     while( av_read_frame(formatContext,&packet) >= 0 )
     {
-    qint64 written=0;
+
     if( packet.stream_index == audioStream )
     {
-    qDebug() << "size= " << packet.size;
     while(packet.size > 0)
     {
     int len, data_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
@@ -83,14 +81,13 @@ void MediaPlayer::tryHu(QUrl url) {
     if( len <= 0 )
     qWarning() << "no data read to buffer";
     if( data_size > 0 )
-    written = buffer.write((const char*)med_buffer, data_size);
+    buffer -> append((const char*)med_buffer, data_size);
 
     packet.size -= len;
     packet.data += len;
 
-    if( buffer.size() > 10000000 )
+    if( buffer -> size() > 10000000 )
     {
-    qDebug() << "buffer.size()=" << buffer.size();
     break;
     }
     }
@@ -118,12 +115,9 @@ void MediaPlayer::tryHu(QUrl url) {
 
     connect(audio,SIGNAL(stateChanged(QAudio::State)),SLOT(stateChanged(QAudio::State)));
 
-    if( !buffer.open(QBuffer::ReadWrite) )
-    qWarning() << "Couldnt open Buffer";
+    qDebug() << "buffer.size()=" << buffer -> size();
 
-    qDebug() << "buffer.size()=" << buffer.size();
-
-    audio->start(&buffer);
+    audio->start() -> write(*buffer);
 }
 
 bool MediaPlayer::play(QUrl url) {
@@ -193,16 +187,18 @@ bool MediaPlayer::openContext(QUrl url) {
         path = url.toString();
     }
 
-//    AVDictionary *options = NULL;
-//    av_dict_set(&options, "video_size", "640x480", 0);
-//    av_dict_set(&options, "pixel_format", "rgb24", 0);
+    AVDictionary *options = NULL;
+    av_dict_set(&options, "video_size", "640x480", 0);
+    av_dict_set(&options, "pixel_format", "rgb24", 0);
 
-    if (avformat_open_input(&context, path.toUtf8().data(), NULL, NULL) < 0) {  //&options) < 0) {
+    if (avformat_open_input(&context, path.toUtf8().data(), NULL, &options) < 0) {
         abort();
-//        av_dict_free(&options);
+        av_dict_free(&options);
         return false;
     }
-//    av_dict_free(&options);
+    av_dict_free(&options);
+
+    av_dump_format(context, 0, path.toUtf8().data(), false);
 
     if (avformat_find_stream_info(context, NULL) < 0)
         return false;

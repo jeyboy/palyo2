@@ -2,8 +2,18 @@
 
 AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : MediaStream(context, streamIndex, parent, priority)
+    , isPlanar(false)
     , resampleRequire(false)
     , resampleContext(0) {
+
+    isPlanar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
+    //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
+    //              << "frame->data. Therefore, to access the audio data, you need to use\n"
+    //              << "frame->extended_data to access the audio data. It's planar, so\n"
+    //              << "each channel is in a different element. That is:\n"
+    //              << "  frame->extended_data[0] has the data for channel 1\n"
+    //              << "  frame->extended_data[1] has the data for channel 2\n"
+    //              << "  etc.\n";
 
     bufferLimit = 500;
     QAudioFormat format;
@@ -36,6 +46,43 @@ void AudioStream::resumeOutput() {
     outputStream -> resume();
 }
 
+//void AudioStream::routine() {
+//    mutex -> lock();
+//    if (packets.isEmpty()) {
+//        mutex -> unlock();
+//        pauseRequired = finishAndPause;
+//        return;
+//    }
+
+//    AVPacket * packet = packets.takeFirst();
+//    mutex -> unlock();
+
+//    int len, out_size;
+//    uint8_t * med_buffer = (uint8_t*)malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE + FF_INPUT_BUFFER_PADDING_SIZE);
+
+//    while (packet -> size > 0) {
+//        out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+//        len = avcodec_decode_audio3(codec_context, (int16_t*)med_buffer, &out_size, packet);
+
+//        if (len < 0) {
+//            qDebug() << "Error while decoding audio frame";
+//            av_free_packet(packet);
+//            return;
+//        }
+
+//        packet -> size -= len;
+//        packet -> data += len;
+
+//        QByteArray ar((const char*)med_buffer, out_size);
+//        outputStream -> addBuffer(ar);
+
+//        calcPts(packet);
+//    }
+
+//    av_free_packet(packet);
+//    delete [] med_buffer;
+//}
+
 void AudioStream::routine() {
     mutex -> lock();
     if (packets.isEmpty()) {
@@ -51,7 +98,7 @@ void AudioStream::routine() {
     int len, got_frame;
 
     while (packet -> size > 0) {
-//        out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+        avcodec_get_frame_defaults(frame);
         len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
 
         if (len < 0) {
@@ -59,9 +106,6 @@ void AudioStream::routine() {
             av_free_packet(packet);
             return;
         }
-
-        packet -> size -= len;
-        packet -> data += len;
 
         if (got_frame) {
             // Resample to S16
@@ -82,7 +126,14 @@ void AudioStream::routine() {
                     outputStream -> addBuffer(ar);
                 }
             } else {
-                QByteArray ar((const char*)frame -> data[0], frame -> linesize[0]);//frame -> nb_samples);
+                QByteArray ar((const char*)frame -> data[0], data_size);
+
+
+//                int data_size = av_samples_get_buffer_size(NULL, codec_context -> channels,
+//                                                           frame -> nb_samples,
+//                                                           codec_context -> sample_fmt, 1);
+
+//                QByteArray ar((const char*)frame -> data[0], data_size);//frame -> linesize[0]);//frame -> nb_samples);
 //                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
                 outputStream -> addBuffer(ar);
             }
@@ -91,6 +142,9 @@ void AudioStream::routine() {
         } else {
             qDebug() << "Could not get audio data from this frame";
         }
+
+        packet -> size -= len;
+        packet -> data += len;
     }
 
     av_free_packet(packet);
@@ -108,7 +162,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
 
 
     format.setCodec("audio/pcm");
-    format.setSampleRate(selectSampleRate(codec));
+    format.setSampleRate(codec_context -> sample_rate);//selectSampleRate(codec));
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setChannelCount(codec_context -> channels);
 
@@ -127,7 +181,6 @@ void AudioStream::fillFormat(QAudioFormat & format) {
         format.setSampleSize(32);
         format.setSampleType(QAudioFormat::Float);
     } else {
-        qDebug() << "RESAMPLE";
         resampleInit(compatibleCodec);
 //        AV_SAMPLE_FMT_DBL,         ///< double
 //        AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar

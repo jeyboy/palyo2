@@ -35,6 +35,8 @@ private:
     int selectSampleRate(AVCodec *codec);
     int selectChannelLayout(AVCodec *codec);
 
+    bool isPlanar;
+
     bool resampleRequire;
     int resample_nb_samples;
 

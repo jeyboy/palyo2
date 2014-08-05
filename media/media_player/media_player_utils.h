@@ -11,6 +11,7 @@
 #include <QAudioOutput>
 #include <QBuffer>
 
+#define __STDC_CONSTANT_MACROS
 extern "C" {
     #include "media_player_libs.h"
 }
