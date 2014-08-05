@@ -52,7 +52,9 @@ void StreamDecoder::resumeOutput() {
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
 
-    if (av_read_frame(context, currFrame) >= 0) {
+    int status = av_read_frame(context, currFrame);
+
+    if (status >= 0) {
         if (currFrame -> stream_index == audioStream -> index()) {
             audioStream -> decode(currFrame);
             ac++;
@@ -68,6 +70,7 @@ void StreamDecoder::routine() {
 
         currFrame = new AVPacket();
     } else {
+//        if (ret == AVERROR_EOF)
         qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
         finished = pauseRequired = true;
         videoStream -> pauseOnComplete();

@@ -61,6 +61,12 @@ MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * p
     //wtf
     if (codec -> capabilities & CODEC_CAP_TRUNCATED)
         codec_context -> flags |= CODEC_FLAG_TRUNCATED;
+
+    codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
+    codec_context -> flags2 |= CODEC_FLAG2_FAST;
+    if(codec -> capabilities & CODEC_CAP_DR1)
+        codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
+
     //////
 
     if (codec == 0) {
@@ -68,7 +74,13 @@ MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * p
         return;
     }
 
-    if (avcodec_open2(codec_context, codec, NULL) < 0) {
+
+    AVDictionary *opts = NULL;
+
+    if (codec_context -> codec_type == AVMEDIA_TYPE_VIDEO || codec_context -> codec_type == AVMEDIA_TYPE_AUDIO)
+        av_dict_set(&opts, "refcounted_frames", "1", 0);
+
+    if (avcodec_open2(codec_context, codec, &opts) < 0) {
         state = false;
         return;
     }
