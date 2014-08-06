@@ -28,10 +28,9 @@ AudioStream::~AudioStream() {
     outputStream -> stop();
     outputStream -> wait();
 
-    delete [] resampleBuffer;
-
     if (resampleContext)
         swr_close(resampleContext);
+    //    delete [] resampleBuffer;
 }
 
 void AudioStream::stop() {
@@ -45,43 +44,6 @@ void AudioStream::suspendOutput() {
 void AudioStream::resumeOutput() {
     outputStream -> resume();
 }
-
-//void AudioStream::routine() {
-//    mutex -> lock();
-//    if (packets.isEmpty()) {
-//        mutex -> unlock();
-//        pauseRequired = finishAndPause;
-//        return;
-//    }
-
-//    AVPacket * packet = packets.takeFirst();
-//    mutex -> unlock();
-
-//    int len, out_size;
-//    uint8_t * med_buffer = (uint8_t*)malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE + FF_INPUT_BUFFER_PADDING_SIZE);
-
-//    while (packet -> size > 0) {
-//        out_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-//        len = avcodec_decode_audio3(codec_context, (int16_t*)med_buffer, &out_size, packet);
-
-//        if (len < 0) {
-//            qDebug() << "Error while decoding audio frame";
-//            av_free_packet(packet);
-//            return;
-//        }
-
-//        packet -> size -= len;
-//        packet -> data += len;
-
-//        QByteArray ar((const char*)med_buffer, out_size);
-//        outputStream -> addBuffer(ar);
-
-//        calcPts(packet);
-//    }
-
-//    av_free_packet(packet);
-//    delete [] med_buffer;
-//}
 
 void AudioStream::routine() {
     mutex -> lock();
@@ -126,20 +88,20 @@ void AudioStream::routine() {
                     outputStream -> addBuffer(ar);
                 }
             } else {
-                manualResample();
+//                manualResample();
 
 
 
-//                QByteArray ar((const char*)frame -> data[0], frame -> linesize[0]);
+                QByteArray ar((const char*)frame -> data[0], frame -> linesize[0]);
 
 
-////                int data_size = av_samples_get_buffer_size(NULL, codec_context -> channels,
-////                                                           frame -> nb_samples,
-////                                                           codec_context -> sample_fmt, 1);
+//                int data_size = av_samples_get_buffer_size(NULL, codec_context -> channels,
+//                                                           frame -> nb_samples,
+//                                                           codec_context -> sample_fmt, 1);
 
-////                QByteArray ar((const char*)frame -> data[0], data_size);//frame -> linesize[0]);//frame -> nb_samples);
-////                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
-//                outputStream -> addBuffer(ar);
+//                QByteArray ar((const char*)frame -> data[0], data_size);//frame -> linesize[0]);//frame -> nb_samples);
+//                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
+                outputStream -> addBuffer(ar);
             }
 
             calcPts(packet);
@@ -267,16 +229,6 @@ void AudioStream::manualResample() {
 }
 
 void AudioStream::fillFormat(QAudioFormat & format) {
-//    format.setSampleRate(codec_context -> sample_rate);
-//    format.setChannelCount(2);
-//    format.setSampleSize(16);
-//    format.setCodec("audio/pcm");
-//    format.setByteOrder(QAudioFormat::LittleEndian);
-//    format.setSampleType(QAudioFormat::SignedInt);
-
-
-
-
     format.setCodec("audio/pcm");
     format.setSampleRate(codec_context -> sample_rate);//selectSampleRate(codec));
     format.setByteOrder(QAudioFormat::LittleEndian);
@@ -317,6 +269,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
     if (!info.isFormatSupported(format)) {
         qWarning() << "raw audio format not supported by backend, cannot play audio.";
         format = info.nearestFormat(format);
+        resampleInit(compatibleCodec);
     }
 
     qDebug() << format;
@@ -355,31 +308,11 @@ double AudioStream::calcPts(AVPacket * packet) {
 void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
     resampleRequire = true;
 
-
-//    mResampleCtx = ffmpeg::swr_alloc();
-//ffmpeg::av_opt_set_int(mResampleCtx, "in_channel_layout", AV_CH_LAYOUT_STEREO, 0);
-//ffmpeg::av_opt_set_int(mResampleCtx, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0);
-//ffmpeg::av_opt_set_int(mResampleCtx, "in_sample_rate", 48000, 0);
-//ffmpeg::av_opt_set_int(mResampleCtx, "out_sample_rate", 48000, 0);
-//ffmpeg::av_opt_set_sample_fmt(mResampleCtx, "in_sample_fmt", ffmpeg::AV_SAMPLE_FMT_FLTP, 0);
-//ffmpeg::av_opt_set_sample_fmt(mResampleCtx, "out_sample_fmt", ffmpeg::AV_SAMPLE_FMT_S16, 0);
-//if (swr_init(mResampleCtx) < 0) {
-//qDebug() << "SWR_INIT ERROR";
-//}
-
-//int dst_linesize;
-//int dst_nb_samples = 4096;
-//ffmpeg::av_samples_alloc(&mResampleBuffer,
-//&dst_linesize,
-//2,
-//dst_nb_samples,
-//ffmpeg::AV_SAMPLE_FMT_S16,
-//0);
-
+    qDebug() << "CHANNEL LAYOUT " << codec_context -> channel_layout;
 
     // AVCodec however decodes audio as float, which we can't use directly
     resampleContext = swr_alloc();
-    av_opt_set_int(resampleContext, "in_channel_layout", codec_context -> channel_layout, 0);
+    av_opt_set_int(resampleContext, "in_channel_layout", selectChannelLayout(codec), 0);
     av_opt_set_int(resampleContext, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0); // 2 channels
     av_opt_set_int(resampleContext, "in_sample_rate", codec_context -> sample_rate, 0);
     av_opt_set_int(resampleContext, "out_sample_rate", 44100, 0);
@@ -399,23 +332,23 @@ void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
     0);
 }
 
-AVSampleFormat AudioStream::compatibleCodecType(AVCodec *codec) {
-    if (!codec -> sample_fmts)
-        return AV_SAMPLE_FMT_S16;
+//AVSampleFormat AudioStream::compatibleCodecType(AVCodec *codec) {
+//    if (!codec -> sample_fmts)
+//        return AV_SAMPLE_FMT_S16;
 
-    const enum AVSampleFormat *sample_fmts;
-    AVSampleFormat best_format = AV_SAMPLE_FMT_U8;
+//    const enum AVSampleFormat *sample_fmts;
+//    AVSampleFormat best_format = AV_SAMPLE_FMT_U8;
 
-    sample_fmts = codec -> sample_fmts;
-    while (*sample_fmts) {
-        if (*sample_fmts == AV_SAMPLE_FMT_S16 || *sample_fmts == AV_SAMPLE_FMT_S32
-                || *sample_fmts == AV_SAMPLE_FMT_FLT || *sample_fmts == AV_SAMPLE_FMT_DBL)
-            best_format = *sample_fmts;
-        sample_fmts++;
-    }
+//    sample_fmts = codec -> sample_fmts;
+//    while (*sample_fmts) {
+//        if (*sample_fmts == AV_SAMPLE_FMT_S16 || *sample_fmts == AV_SAMPLE_FMT_S32
+//                || *sample_fmts == AV_SAMPLE_FMT_FLT || *sample_fmts == AV_SAMPLE_FMT_DBL)
+//            best_format = *sample_fmts;
+//        sample_fmts++;
+//    }
 
-    return best_format;
-}
+//    return best_format;
+//}
 
 /* just pick the highest supported samplerate */
 int AudioStream::selectSampleRate(AVCodec *codec) {
