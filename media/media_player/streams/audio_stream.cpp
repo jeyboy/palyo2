@@ -126,16 +126,20 @@ void AudioStream::routine() {
                     outputStream -> addBuffer(ar);
                 }
             } else {
-                QByteArray ar((const char*)frame -> data[0], frame -> linesize[0]);
+                manualResample();
 
 
-//                int data_size = av_samples_get_buffer_size(NULL, codec_context -> channels,
-//                                                           frame -> nb_samples,
-//                                                           codec_context -> sample_fmt, 1);
 
-//                QByteArray ar((const char*)frame -> data[0], data_size);//frame -> linesize[0]);//frame -> nb_samples);
-//                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
-                outputStream -> addBuffer(ar);
+//                QByteArray ar((const char*)frame -> data[0], frame -> linesize[0]);
+
+
+////                int data_size = av_samples_get_buffer_size(NULL, codec_context -> channels,
+////                                                           frame -> nb_samples,
+////                                                           codec_context -> sample_fmt, 1);
+
+////                QByteArray ar((const char*)frame -> data[0], data_size);//frame -> linesize[0]);//frame -> nb_samples);
+////                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
+//                outputStream -> addBuffer(ar);
             }
 
             calcPts(packet);
@@ -148,6 +152,118 @@ void AudioStream::routine() {
     }
 
     av_free_packet(packet);
+}
+
+void AudioStream::manualResample() {
+    int samples_with_channels = frame -> nb_samples * codec_context -> channels;
+    int samples_with_channels_half = samples_with_channels / 2;
+    QByteArray temp;
+
+
+    temp.resize(samples_with_channels * sizeof(float));
+    float *decoded_data = (float*)temp.data();
+
+    static const float kInt8_inv = 1.0f/128.0f;
+    static const float kInt16_inv = 1.0f/32768.0f;
+    static const float kInt32_inv = 1.0f/2147483648.0f;
+
+    //TODO: hwa
+    //https://code.google.com/p/lavfilters/source/browse/decoder/LAVAudio/LAVAudio.cpp
+
+    switch (codec_context -> sample_fmt) {
+        case AV_SAMPLE_FMT_U8: {
+            uint8_t *data = (uint8_t*)*frame -> data;
+            for (int i = 0; i < samples_with_channels_half; i++) {
+                decoded_data[i] = (data[i] - 0x7F) * kInt8_inv;
+                decoded_data[samples_with_channels - i] = (data[samples_with_channels - i] - 0x7F) * kInt8_inv;
+            }
+        } break;
+        case AV_SAMPLE_FMT_S16: {
+            int16_t *data = (int16_t*)*frame -> data;
+            for (int i = 0; i < samples_with_channels_half; i++) {
+                decoded_data[i] = data[i] * kInt16_inv;
+                decoded_data[samples_with_channels - i] = data[samples_with_channels - i] * kInt16_inv;
+            }
+        }
+            break;
+        case AV_SAMPLE_FMT_S32:
+        {
+            int32_t *data = (int32_t*)*frame -> data;
+            for (int i = 0; i < samples_with_channels_half; i++) {
+                decoded_data[i] = data[i] * kInt32_inv;
+                decoded_data[samples_with_channels - i] = data[samples_with_channels - i] * kInt32_inv;
+            }
+        }
+            break;
+        case AV_SAMPLE_FMT_FLT:
+            memcpy(decoded_data, *frame -> data, temp.size());
+            break;
+        case AV_SAMPLE_FMT_DBL:
+        {
+            double *data = (double*)*frame -> data;
+            for (int i = 0; i < samples_with_channels_half; i++) {
+                decoded_data[i] = data[i];
+                decoded_data[samples_with_channels - i] = data[samples_with_channels - i];
+            }
+        }
+            break;
+        case AV_SAMPLE_FMT_U8P:
+        {
+            uint8_t **data = (uint8_t**)frame -> extended_data;
+            for (int i = 0; i < frame -> nb_samples; ++i) {
+                for (int ch = 0; ch < codec_context -> channels; ++ch) {
+                    *decoded_data++ = (data[ch][i] - 0x7F) * kInt8_inv;
+                }
+            }
+        }
+            break;
+        case AV_SAMPLE_FMT_S16P:
+        {
+            uint16_t **data = (uint16_t**)frame -> extended_data;
+            for (int i = 0; i < frame -> nb_samples; ++i) {
+                for (int ch = 0; ch < codec_context -> channels; ++ch) {
+                    *decoded_data++ = data[ch][i] * kInt16_inv;
+                }
+            }
+        }
+            break;
+        case AV_SAMPLE_FMT_S32P:
+        {
+            uint32_t **data = (uint32_t**)frame -> extended_data;
+            for (int i = 0; i < frame -> nb_samples; ++i) {
+                for (int ch = 0; ch < codec_context -> channels; ++ch) {
+                    *decoded_data++ = data[ch][i] * kInt32_inv;
+                }
+            }
+        }
+            break;
+        case AV_SAMPLE_FMT_FLTP:
+        {
+            float **data = (float**)frame -> extended_data;
+            for (int i = 0; i < frame -> nb_samples; ++i) {
+                for (int ch = 0; ch < codec_context -> channels; ++ch) {
+                    *decoded_data++ = data[ch][i];
+                }
+            }
+        }
+            break;
+        case AV_SAMPLE_FMT_DBLP:
+        {
+            double **data = (double**)frame -> extended_data;
+            for (int i = 0; i < frame -> nb_samples; ++i) {
+                for (int ch = 0; ch < codec_context -> channels; ++ch) {
+                    *decoded_data++ = data[ch][i];
+                }
+            }
+        }
+            break;
+        default: {
+            qWarning("Unsupported audio format: %d", codec_context -> sample_fmt);
+            return;
+        }
+    }
+
+    outputStream -> addBuffer(temp);
 }
 
 void AudioStream::fillFormat(QAudioFormat & format) {
@@ -166,7 +282,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setChannelCount(codec_context -> channels);
 
-    AVSampleFormat compatibleCodec = compatibleCodecType(codec);
+    AVSampleFormat compatibleCodec = codec_context -> sample_fmt; //compatibleCodecType(codec);
 
     if (compatibleCodec == AV_SAMPLE_FMT_U8) { ///< unsigned 8 bits
         format.setSampleSize(8);

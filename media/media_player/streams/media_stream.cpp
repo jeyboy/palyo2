@@ -67,6 +67,13 @@ MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * p
     if(codec -> capabilities & CODEC_CAP_DR1)
         codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
 
+
+//    if(codec -> capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE)
+//        //Audio encoder supports receiving a different number of samples in each call.
+
+//    if(codec -> capabilities & CODEC_CAP_LOSSLESS)
+//        //Codec is lossless.
+
     //////
 
     if (codec == 0) {

@@ -34,6 +34,7 @@ MediaPlayer::~MediaPlayer() {
 
 void MediaPlayer::tryHu(QUrl url) {
     av_register_all();
+    AVFrame * frame = av_frame_alloc();
 
     QByteArray * buffer = new QByteArray();
 
@@ -65,36 +66,38 @@ void MediaPlayer::tryHu(QUrl url) {
 
     codec = avcodec_find_decoder(codecContext->codec_id);
     avcodec_open2(codecContext,codec, 0);
+    int len, data_size;
 
-    uint8_t * med_buffer = (uint8_t*)malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE + FF_INPUT_BUFFER_PADDING_SIZE);
-
-    while( av_read_frame(formatContext,&packet) >= 0 )
+    while( av_read_frame(formatContext, &packet) >= 0 )
     {
 
-    if( packet.stream_index == audioStream )
-    {
-    while(packet.size > 0)
-    {
-    int len, data_size = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-    //decode
-    len = avcodec_decode_audio3(codecContext, (int16_t*)med_buffer, &data_size, &packet);
-    if( len <= 0 )
-    qWarning() << "no data read to buffer";
-    if( data_size > 0 )
-    buffer -> append((const char*)med_buffer, data_size);
+        if( packet.stream_index == audioStream )
+        {
+            while(packet.size > 0)
+            {
 
-    packet.size -= len;
-    packet.data += len;
+                avcodec_get_frame_defaults(frame);
+                len = avcodec_decode_audio4(codecContext, frame, &data_size, &packet);
 
-    if( buffer -> size() > 10000000 )
-    {
-    break;
-    }
-    }
+                if (len < 0) {
+                    qDebug() << "Error while decoding audio frame";
+                    av_free_packet(&packet);
+                    return;
+                }
+
+                if (data_size) {
+                    buffer->append((const char*)frame -> data[0], frame -> linesize[0]);
+                }
+
+                packet.size -= len;
+                packet.data += len;
+            }
+        }
 
     }
 
-    }
+    av_frame_free(&frame);
+
 
     QAudioFormat format;
     format.setSampleRate(codecContext->sample_rate);
@@ -116,8 +119,10 @@ void MediaPlayer::tryHu(QUrl url) {
     connect(audio,SIGNAL(stateChanged(QAudio::State)),SLOT(stateChanged(QAudio::State)));
 
     qDebug() << "buffer.size()=" << buffer -> size();
+    QBuffer * buff = new QBuffer(buffer, this);
+    buff -> open(QBuffer::ReadOnly);
 
-    audio->start() -> write(*buffer);
+    audio -> start(buff);
 }
 
 bool MediaPlayer::play(QUrl url) {

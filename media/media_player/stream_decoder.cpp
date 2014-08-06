@@ -55,6 +55,28 @@ void StreamDecoder::routine() {
     int status = av_read_frame(context, currFrame);
 
     if (status >= 0) {
+
+//        hasKeyFrame = !!(currFrame.flags & AV_PKT_FLAG_KEY);
+//        // what about marking packet as invalid and do not use isCorrupt?
+//        isCorrupt = !!(currFrame.flags & AV_PKT_FLAG_CORRUPT);
+
+
+//        ////////////////////////////////// PADDING_DATA RECALC
+//            /*!
+//              larger than the actual read bytes because some optimized bitstream readers read 32 or 64 bits at once and could read over the end.
+//              The end of the input buffer avpkt->data should be set to 0 to ensure that no overreading happens for damaged MPEG streams
+//             */
+//            QByteArray encoded;
+//            encoded.reserve(currFrame -> size + FF_INPUT_BUFFER_PADDING_SIZE);
+//            encoded.resize(currFrame -> size);
+//            // also copy  padding data(usually 0)
+//            memcpy(encoded.data(), currFrame -> data, encoded.capacity());
+
+//            currFrame -> size = encoded.size();
+//            currFrame -> data = (uint8_t*)encoded.constData();
+//        ////////////////////////////////// PADDING_DATA RECALC
+
+
         if (currFrame -> stream_index == audioStream -> index()) {
             audioStream -> decode(currFrame);
             ac++;
