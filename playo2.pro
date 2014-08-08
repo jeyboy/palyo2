@@ -97,8 +97,7 @@ SOURCES += main.cpp\
     misc/rand.cpp \
     misc/extensions.cpp \
     dialogs/extension_dialog.cpp \
-    override/simple_list_view.cpp \
-    override/qkeysequenceedit/qkeysequenceedit.cpp
+    override/simple_list_view.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -179,9 +178,7 @@ HEADERS  += mainwindow.h \
     misc/rand.h \
     misc/extensions.h \
     dialogs/extension_dialog.h \
-    override/simple_list_view.h \
-    override/qkeysequenceedit/qkeysequenceedit.h \
-    override/qkeysequenceedit/qkeysequenceedit_p.h
+    override/simple_list_view.h
     model/view_types.h
 
 unix:!mac {
@@ -193,7 +190,7 @@ unix:!mac {
         SOURCES += globalshortcut/qxtglobalshortcut_x11.cpp
 #            file_registration/file_registration_x11.cpp
 
-        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.so)
+#        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.so)
 }
 win32: {
         SOURCES += globalshortcut/qxtglobalshortcut_win.cpp
@@ -226,3 +223,10 @@ else:unix:!macx: LIBS += -L$$PWD/libs/taglib/ -ltaglib-project
 
 INCLUDEPATH += $$PWD/libs/taglib
 DEPENDPATH += $$PWD/libs/taglib
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/bass/release/ -lbass
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/bass/debug/ -lbass
+else:unix:!macx: LIBS += -L$$PWD/libs/bass/ -lbass
+
+INCLUDEPATH += $$PWD/libs/bass
+DEPENDPATH += $$PWD/libs/bass
