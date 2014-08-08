@@ -48,7 +48,7 @@ AudioPlayer::AudioPlayer(QObject * parent) : QObject(parent) {
 //    }
 
 
-    if (!BASS_Init(-1, 44100, 0, NULL, NULL))
+    if (!BASS_Init(BASS_DEVICE_DEFAULT, 44100, 0, NULL, NULL))
         qDebug() << "Init error: " << BASS_ErrorGetCode();
 //        throw "Cannot initialize device";
 
