@@ -102,7 +102,7 @@ void ToolBars::load(QMainWindow * window, QJsonArray & bars) {
             curr_bar = linkNameToToolbars(barName);
             curr_bar -> setMovable(obj.value("movable").toBool());
 
-            window -> addToolBar((Qt::ToolBarArea)(int)obj.value("area").toDouble(), curr_bar);
+            window -> addToolBar((Qt::ToolBarArea)obj.value("area").toInt(), curr_bar);
 
             if (obj.contains("actions")) {
                 QJsonArray actions = obj.value("actions").toArray();

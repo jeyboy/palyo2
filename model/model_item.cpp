@@ -24,16 +24,16 @@ ModelItem::ModelItem(int initState) {
 ModelItem::ModelItem(QJsonObject * hash, ModelItem * parent) {
     parentItem = parent;
     titlesCache = 0;
-    state = new ModelItemState(hash -> value("s").toDouble());
+    state = new ModelItemState(hash -> value("s").toInt());
     path = hash -> value("p").toString();
     title = hash -> value("t").toString();
     extension = hash -> value("e").toString();
-    genreID = hash -> value("g").toDouble(-1);
+    genreID = hash -> value("g").toInt(-1);
     duration = hash -> value("d").toString("");
 
-    size = hash -> value("b").toDouble(-1);
+    size = hash -> value("b").toInt(-1);
     info = hash -> value("a").toString("");
-    bpm = hash -> value("m").toDouble(0);
+    bpm = hash -> value("m").toInt(0);
 
     if (parent != 0) {
        parent -> appendChild(this);
