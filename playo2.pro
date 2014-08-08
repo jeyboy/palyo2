@@ -217,15 +217,15 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     picts.qrc
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/taglib/release/ -ltaglib-project
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/taglib/debug/ -ltaglib-project
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/taglib/ -ltaglib-project
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/taglib/ -ltaglib-project
 else:unix:!macx: LIBS += -L$$PWD/libs/taglib/ -ltaglib-project
 
 INCLUDEPATH += $$PWD/libs/taglib
 DEPENDPATH += $$PWD/libs/taglib
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/bass/release/ -lbass
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/bass/debug/ -lbass
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/bass/ -lbass
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/bass/ -lbass
 else:unix:!macx: LIBS += -L$$PWD/libs/bass/ -lbass
 
 INCLUDEPATH += $$PWD/libs/bass
