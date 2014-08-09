@@ -4,7 +4,7 @@
 #include <QHash>
 #include <QFile>
 #include <QTimer>
-#include <Qthread>
+#include <QThread>
 #include <QtConcurrent/QtConcurrent>
 #include <QFutureWatcher>
 #include <QMutex>

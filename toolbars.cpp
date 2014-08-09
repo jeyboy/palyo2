@@ -13,8 +13,8 @@ QMenu * ToolBars::improvePopupMenu(QMainWindow * window, QMenu * menu) {
     connect(menu, SIGNAL(hovered(QAction *)), this, SLOT(panelHighlight(QAction *)));
     connect(menu, SIGNAL(aboutToHide()), this, SLOT(removePanelHighlight()));
 
-//    menu -> insertSeparator(menu->actions().first());
-    menu -> insertSection(menu -> actions().first(), "Panels list");
+    menu -> insertSeparator(menu->actions().first());
+//    menu -> insertSection(menu -> actions().first(), "Panels list");
 
     lastClickPoint = QCursor::pos();
     QWidget * widget = window -> childAt(window -> mapFromGlobal(lastClickPoint));
@@ -39,7 +39,8 @@ QMenu * ToolBars::improvePopupMenu(QMainWindow * window, QMenu * menu) {
     menu -> insertAction(menu->actions().first(), addButtonAct);
     connect(addButtonAct, SIGNAL(triggered(bool)), this, SLOT(addPanelButtonTriggered()));
 
-    menu -> insertSection(menu->actions().first(), QIcon(":drops"),  "Drop points");
+//    menu -> insertSection(menu->actions().first(), QIcon(":drops"),  "Drop points");
+    menu -> insertSeparator(menu->actions().first());
 
     QAction * removePanelAct = new QAction(QIcon(":panel_remove"), "Remove panel", menu);
     removePanelAct -> setEnabled(widgetClassName == "ToolBar");
@@ -50,7 +51,8 @@ QMenu * ToolBars::improvePopupMenu(QMainWindow * window, QMenu * menu) {
     connect(addPanelAct, SIGNAL(triggered(bool)), this, SLOT(addPanelTriggered()));
     menu -> insertAction(menu->actions().first(), addPanelAct);
 
-    menu -> insertSection(menu->actions().first(), QIcon(":panels"), "Panel");
+//    menu -> insertSection(menu->actions().first(), QIcon(":panels"), "Panel");
+    menu -> insertSeparator(menu->actions().first());
 
     //    activeBar
 

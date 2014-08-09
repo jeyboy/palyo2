@@ -33,6 +33,8 @@ void TreeModel::filesRoutine(ModelItem * index, QFileInfo currFile){
 }
 
 void TreeModel::filesRoutine(ModelItem * index, QList<QUrl> list){
+    qDebug() << list;
+
     foreach(QUrl url, list) {
         QFileInfo file = QFileInfo(url.toLocalFile());
         if (file.isDir()) {

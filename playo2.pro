@@ -25,7 +25,7 @@ INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/portable_audio/include)
 #LIBS += -L"$$_PRO_FILE_PWD_/libs/" -lpsapi
 
 #CONFIG += static thread windows x11 sse sse2 x86
-CONFIG += static
+CONFIG += static release
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
 SOURCES += main.cpp\
@@ -214,13 +214,10 @@ unix:!mac {
         SOURCES += globalshortcut/qxtglobalshortcut_x11.cpp
 #            file_registration/file_registration_x11.cpp
 
-        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib/taglib-project.a)
-        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.so)
+#        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.so)
 }
 win32: {
         SOURCES += globalshortcut/qxtglobalshortcut_win.cpp
-#            file_registration/file_registration_win.cpp
-        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/taglib/taglib-project.dll)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass_fx.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bassmix.lib)
@@ -248,3 +245,17 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     picts.qrc
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/taglib/ -ltaglib-project
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/taglib/ -ltaglib-project
+else:unix:!macx: LIBS += -L$$PWD/libs/taglib/ -ltaglib-project
+
+INCLUDEPATH += $$PWD/libs/taglib
+DEPENDPATH += $$PWD/libs/taglib
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/libs/bass/ -lbass
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/libs/bass/ -lbass
+else:unix:!macx: LIBS += -L$$PWD/libs/bass/ -lbass
+
+INCLUDEPATH += $$PWD/libs/bass
+DEPENDPATH += $$PWD/libs/bass

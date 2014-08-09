@@ -1,6 +1,6 @@
 #include "web_dialog.h"
 #include "ui_web_dialog.h"
-#include <qDebug>
+#include <QDebug>
 
 WebDialog::WebDialog(QWidget *parent, WebApi * apiClass, QString title) :
   QDialog(parent), ui(new Ui::WebDialog) {

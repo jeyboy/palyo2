@@ -80,6 +80,12 @@ QString ModelItem::fullPath() const {
         curr = curr -> parentItem;
     }
 
+#ifdef Q_OS_LINUX
+    path_buff = '/' + path_buff;
+//#elif defined(Q_OS_WINDOWS)
+
+#endif
+
     return path_buff;
 //    return path_buff.mid(1);
 }

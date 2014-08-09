@@ -78,7 +78,7 @@ void Spectrum::paintCombo() {
         g.setColorAt(1, Qt::darkGreen);
     }
 
-    for(int loop1 = 0; loop1 < peaks[0].length(); loop1++) {
+    for(int loop1 = 0; loop1 < peaks[0].count(); loop1++) {
         peak = peaks[0][loop1];
         rect.setCoords(accumulate, height() - 6 - peak, (accumulate + bar_width), height() - 6);
         painter.fillRect(rect, g);
@@ -123,7 +123,7 @@ void Spectrum::paintDuo() {
 
     for(int pair = 0; pair < peaks.length(); pair += 2) {
         if (peaks.length() > pair + 1) {
-            for(int loop1 = 0; loop1 < peaks[pair].length(); loop1++) {
+            for(int loop1 = 0; loop1 < peaks[pair].count(); loop1++) {
                 temp_acc = (accumulate + bar_width);
 
                 peak = peaks[pair][loop1];
@@ -144,7 +144,7 @@ void Spectrum::paintDuo() {
                 accumulate = temp_acc + padd;
             }
         } else {
-            for(int loop1 = 0; loop1 < peaks[pair].length(); loop1++) {
+            for(int loop1 = 0; loop1 < peaks[pair].count(); loop1++) {
                 temp_acc = (accumulate + bar_width);
 
                 peak = peaks[pair][loop1];

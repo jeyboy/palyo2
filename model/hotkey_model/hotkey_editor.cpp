@@ -1,5 +1,5 @@
 #include "hotkey_editor.h"
-#include "qDebug"
+#include "QDebug"
 
 HotkeyEditor::HotkeyEditor(int hotkeyType, QWidget *parent) : QKeySequenceEdit(parent) {
     keyType = hotkeyType;

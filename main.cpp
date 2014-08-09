@@ -1,10 +1,12 @@
 #include "mainwindow.h"
 #include "single_application.h"
 #include "misc/stylesheets.h"
-#include <qDebug>
+#include <QDebug>
 
 int main(int argc, char *argv[]) {
     qRegisterMetaType<QVector <int> >("QVector<int>");
+
+    qDebug() << "PATH " << QLibraryInfo::location(QLibraryInfo::PluginsPath);
 
     QCoreApplication::setOrganizationName("BigBug");
     QCoreApplication::setOrganizationDomain("bigbug.sos");
