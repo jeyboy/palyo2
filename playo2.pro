@@ -23,7 +23,7 @@ INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/bass/include)
 #LIBS += -L"$$_PRO_FILE_PWD_/libs/" -lpsapi
 
 #CONFIG += static thread windows x11 sse sse2 x86
-CONFIG += static
+CONFIG += static release
 
 SOURCES += main.cpp\
     mainwindow.cpp \

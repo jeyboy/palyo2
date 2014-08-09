@@ -6,6 +6,8 @@
 int main(int argc, char *argv[]) {
     qRegisterMetaType<QVector <int> >("QVector<int>");
 
+    qDebug() << "PATH " << QLibraryInfo::location(QLibraryInfo::PluginsPath);
+
     QCoreApplication::setOrganizationName("BigBug");
     QCoreApplication::setOrganizationDomain("bigbug.sos");
     QCoreApplication::setApplicationName("Playo");
