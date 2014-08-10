@@ -30,15 +30,6 @@ bool AudioResampler::init(
     }
 
     return true;
-
-//    int dst_linesize;
-//    resample_nb_samples = 4096; // default is 1024
-//    return (ready = av_samples_alloc(&resampleBuffer,
-//        &dst_linesize,
-//        2, // 2 channels
-//        resample_nb_samples,
-//        AV_SAMPLE_FMT_S16,
-//    0) > -1);
 }
 
 bool AudioResampler::proceed(AVFrame * frame, QByteArray & result) {

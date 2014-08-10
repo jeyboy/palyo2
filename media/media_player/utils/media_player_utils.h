@@ -10,6 +10,7 @@
 #include <QAudioInput>
 #include <QAudioOutput>
 #include <QBuffer>
+#include <QDebug>
 
 #define __STDC_CONSTANT_MACROS
 extern "C" {
@@ -83,6 +84,14 @@ public:
 
         return best_ch_layout;
     }
+
+    static int checkChannelLayout(int channel_layout, int channels_count) {
+        if (channel_layout && av_get_channel_layout_nb_channels(channel_layout) == channels_count)
+            return channel_layout;
+        else
+            return 0;
+    }
+
 
 
 

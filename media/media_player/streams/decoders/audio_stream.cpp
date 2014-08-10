@@ -58,7 +58,6 @@ void AudioStream::routine() {
     int len, got_frame;
 
     while (packet -> size > 0) {
-        avcodec_get_frame_defaults(frame);
         len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
 
         if (len < 0) {
@@ -270,7 +269,8 @@ void AudioStream::fillFormat(QAudioFormat & format) {
                         sampleFormatOut,
                         codec_context -> sample_rate,
                         format.sampleRate(),
-                        MediaPlayerUtils::selectChannelLayout(codec),
+                        codec_context -> channel_layout,
+//                        MediaPlayerUtils::checkChannelLayout(MediaPlayerUtils::selectChannelLayout(codec), codec_context -> channels),
                         defaultSampleFormat
                     );
     }

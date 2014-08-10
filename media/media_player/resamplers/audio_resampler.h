@@ -75,8 +75,15 @@ struct ResampleSettings {
 
         if (nb_samples_out > max_nb_samples_out) {
             clearData();
-            int ret = av_samples_alloc_array_and_samples(&data, &linesize, channelCountOut,  nb_samples_out, sampleFormatOut, 1);
-            if (ret < 0)
+            if (av_samples_alloc_array_and_samples(
+                        &data,
+                        &linesize,
+                        channelCountOut,
+                        nb_samples_out,
+                        sampleFormatOut,
+                        1
+                ) < 0
+            )
                return 0;
             max_nb_samples_out = nb_samples_out;
         }

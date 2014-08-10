@@ -82,11 +82,11 @@ void StreamDecoder::routine() {
             audioStream -> decode(currFrame);
             ac++;
         }
-        else if (currFrame -> stream_index == videoStream -> index()) {
-            qDebug() << "VIDEO";
-            videoStream -> decode(currFrame);
-            vc++;
-        }
+//        else if (currFrame -> stream_index == videoStream -> index()) {
+//            qDebug() << "VIDEO";
+//            videoStream -> decode(currFrame);
+//            vc++;
+//        }
 //        else if (currFrame -> stream_index == subtitleStream -> index())
 //            subtitleStream -> decode(currFrame);
         else

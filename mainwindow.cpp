@@ -16,8 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initialization();
 
     m = new MediaPlayer(this);
-//    m -> play(QUrl::fromLocalFile("F:/test.mp4"));
-    m -> play(QUrl::fromLocalFile("F:/test.wav"));
+    m -> play(QUrl::fromLocalFile("F:/test.mp4"));
+//    m -> play(QUrl::fromLocalFile("F:/test.mp3"));
 }
 
 void MainWindow::locationCorrection() {
