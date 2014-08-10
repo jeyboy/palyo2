@@ -107,9 +107,9 @@ SOURCES += main.cpp\
     media/media_player/streams/audio_stream.cpp \
     media/media_player/streams/video_stream.cpp \
     media/media_player/streams/subtitle_stream.cpp \
-    media/media_player/streams/audio_output_stream.cpp \
     media/media_player/streams/media_stream.cpp \
-    media/media_player/streams/portaudio_output_stream.cpp
+    media/media_player/streams/output/audio/audio_output_stream.cpp \
+    media/media_player/streams/output/audio/portaudio_output_stream.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -200,9 +200,9 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/audio_stream.h \
     media/media_player/streams/video_stream.h \
     media/media_player/streams/subtitle_stream.h \
-    media/media_player/streams/audio_output_stream.h \
     media/media_player/streams/media_stream.h \
-    media/media_player/streams/portaudio_output_stream.h
+    media/media_player/streams/output/audio/audio_output_stream.h \
+    media/media_player/streams/output/audio/portaudio_output_stream.h
     model/view_types.h
 
 unix:!mac {

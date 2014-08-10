@@ -1,7 +1,7 @@
 #ifndef PORTAUDIO_OUTPUT_STREAM_H
 #define PORTAUDIO_OUTPUT_STREAM_H
 
-#include "stream.h"
+#include "media/media_player/streams/stream.h"
 #include <portaudio.h>
 
 class PortAudioOutputStream : public Stream {
@@ -25,7 +25,6 @@ private:
     double outputLatency;
 
     QList<QByteArray> audioBuffers;
-    uint buffersLength;
     QAudioFormat * format;
 };
 

@@ -1,7 +1,7 @@
 #ifndef AUDIO_OUTPUT_STREAM_H
 #define AUDIO_OUTPUT_STREAM_H
 
-#include "stream.h"
+#include "media/media_player/streams/stream.h"
 #include <QAudioOutput>
 
 #define AUDIO_BUFFERING 8

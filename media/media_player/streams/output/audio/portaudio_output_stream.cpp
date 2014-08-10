@@ -2,7 +2,6 @@
 
 PortAudioOutputStream::PortAudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority) : Stream(parent, priority)
     , initialized(false)
-    , buffersLength(0)
     , outputParameters(new PaStreamParameters)
     , stream(0)
     , format(0) {

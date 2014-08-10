@@ -2,8 +2,8 @@
 #define AUDIO_STREAM_H
 
 #include "media_stream.h"
-#include "audio_output_stream.h"
-#include "portaudio_output_stream.h"
+#include "output/audio/audio_output_stream.h"
+#include "output/audio/portaudio_output_stream.h"
 
 #include <QAudioFormat>
 
