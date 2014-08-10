@@ -5,7 +5,7 @@
 #include <QUrl>
 #include <QTimer>
 
-#include "stream_decoder.h"
+#include "streams/stream_decoder.h"
 
 class MediaPlayer : public QWidget {
     Q_OBJECT

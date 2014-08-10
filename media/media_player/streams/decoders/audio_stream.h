@@ -1,9 +1,12 @@
 #ifndef AUDIO_STREAM_H
 #define AUDIO_STREAM_H
 
-#include "media_stream.h"
-#include "output/audio/audio_output_stream.h"
-#include "output/audio/portaudio_output_stream.h"
+#include "media/media_player/streams/media_stream.h"
+
+#include "media/media_player/resamplers/audio_resampler.h"
+
+#include "media/media_player/streams/output/audio/audio_output_stream.h"
+#include "media/media_player/streams/output/audio/portaudio_output_stream.h"
 
 #include <QAudioFormat>
 
@@ -31,18 +34,12 @@ protected:
     double calcPts(AVPacket * packet);
 
 private:
-    void resampleInit(AVSampleFormat sampleFormat);
-//    AVSampleFormat compatibleCodecType(AVCodec * codec);
-    int selectSampleRate(AVCodec *codec);
-    int selectChannelLayout(AVCodec *codec);
+//    void resampleInit(AVSampleFormat sampleFormat);
 
     bool isPlanar;
 
     bool resampleRequire;
-    int resample_nb_samples;
-
-    uint8_t * resampleBuffer;
-    SwrContext* resampleContext;
+    AudioResampler * resampler;
 
     AudioOutputStream * outputStream;
 //    PortAudioOutputStream * outputStream;

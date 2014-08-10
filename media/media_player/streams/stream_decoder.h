@@ -1,11 +1,11 @@
 #ifndef STREAM_DECODER_H
 #define STREAM_DECODER_H
 
-#include "media_player_utils.h"
+#include "media/media_player/utils/media_player_utils.h"
 
-#include "streams/audio_stream.h"
-#include "streams/video_stream.h"
-#include "streams/subtitle_stream.h"
+#include "decoders/audio_stream.h"
+#include "decoders/video_stream.h"
+#include "decoders/subtitle_stream.h"
 
 class StreamDecoder : public Stream {
     Q_OBJECT

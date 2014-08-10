@@ -25,7 +25,7 @@ INCLUDEPATH += $$quote($${_PRO_FILE_PWD_}/libs/portable_audio/include)
 #LIBS += -L"$$_PRO_FILE_PWD_/libs/" -lpsapi
 
 #CONFIG += static thread windows x11 sse sse2 x86
-CONFIG += static release
+CONFIG += static #release
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
 SOURCES += main.cpp\
@@ -102,14 +102,15 @@ SOURCES += main.cpp\
     dialogs/extension_dialog.cpp \
     override/simple_list_view.cpp \
     media/media_player/media_player.cpp \
-    media/media_player/stream_decoder.cpp \
+    media/media_player/streams/stream_decoder.cpp \
     media/media_player/streams/stream.cpp \
-    media/media_player/streams/audio_stream.cpp \
-    media/media_player/streams/video_stream.cpp \
-    media/media_player/streams/subtitle_stream.cpp \
     media/media_player/streams/media_stream.cpp \
+    media/media_player/streams/decoders/audio_stream.cpp \
+    media/media_player/streams/decoders/video_stream.cpp \
+    media/media_player/streams/decoders/subtitle_stream.cpp \
     media/media_player/streams/output/audio/audio_output_stream.cpp \
-    media/media_player/streams/output/audio/portaudio_output_stream.cpp
+    media/media_player/streams/output/audio/portaudio_output_stream.cpp \
+    media/media_player/resamplers/audio_resampler.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -131,6 +132,7 @@ HEADERS  += mainwindow.h \
     dialogs/toolbarbuttondialog.h \
     dialogs/web_dialog.h \
     dialogs/settings_dialog.h \
+    model/view_types.h \
     model/hotkey_model/hotkey_model.h \
     model/hotkey_model/hotkey_model_item.h \
     model/view.h \
@@ -192,18 +194,19 @@ HEADERS  += mainwindow.h \
     dialogs/extension_dialog.h \
     override/simple_list_view.h \
     media/media_player/media_player.h \
-    media/media_player/media_player_libs.h \
-    media/media_player/master_clock.h \
-    media/media_player/media_player_utils.h \
-    media/media_player/stream_decoder.h \
+    media/media_player/utils/media_player_libs.h \
+    media/media_player/utils/master_clock.h \
+    media/media_player/utils/media_player_utils.h \
+    media/media_player/streams/stream_decoder.h \
     media/media_player/streams/stream.h \
-    media/media_player/streams/audio_stream.h \
-    media/media_player/streams/video_stream.h \
-    media/media_player/streams/subtitle_stream.h \
     media/media_player/streams/media_stream.h \
+    media/media_player/streams/decoders/audio_stream.h \
+    media/media_player/streams/decoders/video_stream.h \
+    media/media_player/streams/decoders/subtitle_stream.h \
     media/media_player/streams/output/audio/audio_output_stream.h \
-    media/media_player/streams/output/audio/portaudio_output_stream.h
-    model/view_types.h
+    media/media_player/streams/output/audio/portaudio_output_stream.h \
+    media/media_player/resamplers/audio_resampler.h \
+    media/media_player/resamplers/video_resampler.h
 
 unix:!mac {
         QT += gui-private

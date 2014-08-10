@@ -4,7 +4,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     : MediaStream(context, streamIndex, parent, priority)
     , isPlanar(false)
     , resampleRequire(false)
-    , resampleContext(0) {
+    , resampler(0) {
 
     isPlanar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
     //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
@@ -28,9 +28,7 @@ AudioStream::~AudioStream() {
     outputStream -> stop();
     outputStream -> wait();
 
-    if (resampleContext)
-        swr_close(resampleContext);
-    //    delete [] resampleBuffer;
+    delete resampler;
 }
 
 void AudioStream::stop() {
@@ -56,7 +54,6 @@ void AudioStream::routine() {
     AVPacket * packet = packets.takeFirst();
     mutex -> unlock();
 
-    int samples_output;
     int len, got_frame;
 
     while (packet -> size > 0) {
@@ -70,29 +67,14 @@ void AudioStream::routine() {
         }
 
         if (got_frame) {
-            // Resample to S16
+//            manualResample();
+            QByteArray ar;
+
             if (resampleRequire) {
-                qDebug() << "USE RESAMPLE";
-                samples_output = swr_convert(
-                                resampleContext,
-                                &resampleBuffer,
-                                resample_nb_samples,
-                                (const uint8_t**)frame -> extended_data,
-                                frame -> nb_samples
-                            );
-
-                if (samples_output > 0) {
-                    // A frame has been decoded. Queue it to our buffer.
-
-                    QByteArray ar((const char*)resampleBuffer, samples_output * 4);
-                    outputStream -> addBuffer(ar);
-                }
+                if (!resampler -> proceed(frame, ar))
+                    qDebug() << "RESAMPLER FAIL";
             } else {
-//                manualResample();
-
-
-
-                QByteArray ar((const char*)frame -> data[0], frame -> linesize[0]);
+                ar.append((const char*)frame -> data[0], frame -> linesize[0]);
 
 
 //                int data_size = av_samples_get_buffer_size(NULL, codec_context -> channels,
@@ -101,9 +83,9 @@ void AudioStream::routine() {
 
 //                QByteArray ar((const char*)frame -> data[0], data_size);//frame -> linesize[0]);//frame -> nb_samples);
 //                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
-                outputStream -> addBuffer(ar);
             }
 
+            outputStream -> addBuffer(ar);
             calcPts(packet);
         } else {
             qDebug() << "Could not get audio data from this frame";
@@ -229,50 +211,70 @@ void AudioStream::manualResample() {
 }
 
 void AudioStream::fillFormat(QAudioFormat & format) {
+    bool approxSettings = false, notSupport = false;
+    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+
     format.setCodec("audio/pcm");
-    format.setSampleRate(codec_context -> sample_rate);//selectSampleRate(codec));
+    format.setSampleRate(codec_context -> sample_rate);
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setChannelCount(codec_context -> channels);
 
-    AVSampleFormat compatibleCodec = codec_context -> sample_fmt; //compatibleCodecType(codec);
+    switch (codec_context -> sample_fmt) {
+        case AV_SAMPLE_FMT_U8: { ///< unsigned 8 bits
+            format.setSampleSize(8);
+            format.setSampleType(QAudioFormat::UnSignedInt);
+        break;}
 
-    if (compatibleCodec == AV_SAMPLE_FMT_U8) { ///< unsigned 8 bits
-        format.setSampleSize(8);
-        format.setSampleType(QAudioFormat::UnSignedInt);
-    } else if (compatibleCodec == AV_SAMPLE_FMT_S16) { ///< signed 16 bits
-        format.setSampleSize(16);
-        format.setSampleType(QAudioFormat::SignedInt);
-    } else if (compatibleCodec == AV_SAMPLE_FMT_S32) { ///< signed 32 bits
-        format.setSampleSize(32);
-        format.setSampleType(QAudioFormat::SignedInt);
-    } else if (compatibleCodec == AV_SAMPLE_FMT_FLT) { ///< float
-        format.setSampleSize(32);
-        format.setSampleType(QAudioFormat::Float);
-    } else {
-        resampleInit(compatibleCodec);
-//        AV_SAMPLE_FMT_DBL,         ///< double
-//        AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar
-//        AV_SAMPLE_FMT_S16P,        ///< signed 16 bits, planar
-//        AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
-//        AV_SAMPLE_FMT_FLTP,        ///< float, planar
-//        AV_SAMPLE_FMT_DBLP,        ///< double, planar
-        format.setSampleRate(44100);
-        format.setChannelCount(2);
-        format.setSampleSize(16);
-        format.setSampleType(QAudioFormat::UnSignedInt);
+        case AV_SAMPLE_FMT_S16: { ///< signed 16 bits
+            format.setSampleSize(16);
+            format.setSampleType(QAudioFormat::SignedInt);
+        break;}
+
+        case AV_SAMPLE_FMT_S32: { ///< signed 32 bits
+            format.setSampleSize(32);
+            format.setSampleType(QAudioFormat::SignedInt);
+        break;}
+
+        case AV_SAMPLE_FMT_FLT: { ///< float
+            format.setSampleSize(32);
+            format.setSampleType(QAudioFormat::Float);
+        break;}
+
+        default:  {
+            //        AV_SAMPLE_FMT_DBL,         ///< double
+            //        AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar
+            //        AV_SAMPLE_FMT_S16P,        ///< signed 16 bits, planar
+            //        AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
+            //        AV_SAMPLE_FMT_FLTP,        ///< float, planar
+            //        AV_SAMPLE_FMT_DBLP,        ///< double, planar
+
+            format.setSampleSize(32);
+            format.setSampleType(QAudioFormat::Float);
+            notSupport = true;
+        }
     }
 
     qDebug() << format;
-
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-
-    if (!info.isFormatSupported(format)) {
-        qWarning() << "raw audio format not supported by backend, cannot play audio.";
+    if ((approxSettings = !info.isFormatSupported(format))) {
+        qWarning() << format << " format not supported by backend, set approx format.";
         format = info.nearestFormat(format);
-        resampleInit(compatibleCodec);
+        qDebug() << format;
     }
 
-    qDebug() << format;
+    if (approxSettings || notSupport) {
+        resampler = new AudioResampler();
+
+        enum AVSampleFormat sampleFormatOut = MediaPlayerUtils::toSampleFormat(format.sampleSize());
+
+        resampleRequire = resampler -> init(
+                        codec_context -> sample_fmt,
+                        sampleFormatOut,
+                        codec_context -> sample_rate,
+                        format.sampleRate(),
+                        MediaPlayerUtils::selectChannelLayout(codec),
+                        AV_CH_LAYOUT_STEREO
+                    );
+    }
 }
 
 double AudioStream::calcPts(AVPacket * packet) {
@@ -299,92 +301,40 @@ double AudioStream::calcPts(AVPacket * packet) {
         );
     }
 
-    qDebug() << "AUDIO PTS " << av_q2d(stream -> time_base) << " : " << clock;
+//    qDebug() << "AUDIO PTS " << av_q2d(stream -> time_base) << " : " << clock;
 
     return clock;
 }
 
-//TODO: require to update settings for fillFormat
-void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
-    resampleRequire = true;
+////TODO: require to update settings for fillFormat
+//void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
+//    resampleRequire = true;
 
-    qDebug() << "CHANNEL LAYOUT " << codec_context -> channel_layout;
+//    qDebug() << "CHANNEL LAYOUT " << codec_context -> channel_layout;
 
-    // AVCodec however decodes audio as float, which we can't use directly
-    resampleContext = swr_alloc();
-    av_opt_set_int(resampleContext, "in_channel_layout", selectChannelLayout(codec), 0);
-    av_opt_set_int(resampleContext, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0); // 2 channels
-    av_opt_set_int(resampleContext, "in_sample_rate", codec_context -> sample_rate, 0);
-    av_opt_set_int(resampleContext, "out_sample_rate", 44100, 0);
-    av_opt_set_sample_fmt(resampleContext, "in_sample_fmt", sampleFormat, 0);
-    av_opt_set_sample_fmt(resampleContext, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
-    if (swr_init(resampleContext) < 0) {
-        qDebug() << "SWR_INIT ERROR";
-    }
-
-    int dst_linesize;
-    resample_nb_samples = 4096; // default is 1024
-    av_samples_alloc(&resampleBuffer,
-        &dst_linesize,
-        2, // 2 channels
-        resample_nb_samples,
-        AV_SAMPLE_FMT_S16,
-    0);
-}
-
-//AVSampleFormat AudioStream::compatibleCodecType(AVCodec *codec) {
-//    if (!codec -> sample_fmts)
-//        return AV_SAMPLE_FMT_S16;
-
-//    const enum AVSampleFormat *sample_fmts;
-//    AVSampleFormat best_format = AV_SAMPLE_FMT_U8;
-
-//    sample_fmts = codec -> sample_fmts;
-//    while (*sample_fmts) {
-//        if (*sample_fmts == AV_SAMPLE_FMT_S16 || *sample_fmts == AV_SAMPLE_FMT_S32
-//                || *sample_fmts == AV_SAMPLE_FMT_FLT || *sample_fmts == AV_SAMPLE_FMT_DBL)
-//            best_format = *sample_fmts;
-//        sample_fmts++;
+//    // AVCodec however decodes audio as float, which we can't use directly
+//    resampleContext = swr_alloc();
+//    av_opt_set_int(resampleContext, "in_channel_layout", selectChannelLayout(codec), 0);
+//    av_opt_set_int(resampleContext, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0); // 2 channels
+//    av_opt_set_int(resampleContext, "in_sample_rate", codec_context -> sample_rate, 0);
+//    av_opt_set_int(resampleContext, "out_sample_rate", 44100, 0);
+//    av_opt_set_sample_fmt(resampleContext, "in_sample_fmt", sampleFormat, 0);
+//    av_opt_set_sample_fmt(resampleContext, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
+//    if (swr_init(resampleContext) < 0) {
+//        qDebug() << "SWR_INIT ERROR";
 //    }
 
-//    return best_format;
+//    int dst_linesize;
+//    resample_nb_samples = 4096; // default is 1024
+//    int ret = av_samples_alloc(&resampleBuffer,
+//        &dst_linesize,
+//        2, // 2 channels
+//        resample_nb_samples,
+//        AV_SAMPLE_FMT_S16,
+//    0);
+
+//    if (ret < 0) {
+//        resampleRequire = false;
+//        qDebug() << "PIPEC";
+//    }
 //}
-
-/* just pick the highest supported samplerate */
-int AudioStream::selectSampleRate(AVCodec *codec) {
-    if (!codec -> supported_samplerates)
-        return 44100;
-
-    int best_samplerate = 0;
-    const int *p = codec -> supported_samplerates;
-
-    while (*p) {
-        best_samplerate = FFMAX(*p, best_samplerate);
-        p++;
-    }
-
-    return best_samplerate;
-}
-
-/* select layout with the highest channel count */
-int AudioStream::selectChannelLayout(AVCodec *codec) {
-    if (!codec -> channel_layouts)
-        return AV_CH_LAYOUT_STEREO;
-
-    const uint64_t *p;
-    uint64_t best_ch_layout = 0;
-    int best_nb_channels = 0;
-
-    p = codec -> channel_layouts;
-    while (*p) {
-        int nb_channels = av_get_channel_layout_nb_channels(*p);
-
-        if (nb_channels > best_nb_channels) {
-            best_ch_layout = *p;
-            best_nb_channels = nb_channels;
-        }
-        p++;
-    }
-
-    return best_ch_layout;
-}

@@ -28,7 +28,6 @@ PortAudioOutputStream::~PortAudioOutputStream() {
 void PortAudioOutputStream::addBuffer(QByteArray & frame) {
     mutex -> lock();
         audioBuffers.append(frame);
-        buffersLength += frame.size();
     mutex -> unlock();
 }
 

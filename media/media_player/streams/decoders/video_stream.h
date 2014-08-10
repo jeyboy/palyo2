@@ -1,7 +1,7 @@
 #ifndef VIDEO_STREAM_H
 #define VIDEO_STREAM_H
 
-#include "media_stream.h"
+#include "media/media_player/streams/media_stream.h"
 
 #include <QImage>
 

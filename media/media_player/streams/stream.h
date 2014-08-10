@@ -1,7 +1,7 @@
 #ifndef STREAM_H
 #define STREAM_H
 
-#include "../media_player_utils.h"
+#include "media/media_player/utils/media_player_utils.h"
 #include <QThread>
 #include <QMutex>
 #include <qDebug>

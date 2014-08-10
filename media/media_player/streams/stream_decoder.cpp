@@ -78,10 +78,12 @@ void StreamDecoder::routine() {
 
 
         if (currFrame -> stream_index == audioStream -> index()) {
+            qDebug() << "AUDIO";
             audioStream -> decode(currFrame);
             ac++;
         }
         else if (currFrame -> stream_index == videoStream -> index()) {
+            qDebug() << "VIDEO";
             videoStream -> decode(currFrame);
             vc++;
         }

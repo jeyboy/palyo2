@@ -17,6 +17,82 @@ extern "C" {
 }
 
 class MediaPlayerUtils {
+public:
+    static AVSampleFormat toSampleFormat(int fmt) {
+        switch(fmt) {
+            case 8: return AV_SAMPLE_FMT_U8;
+            case 16: return AV_SAMPLE_FMT_S16;
+            case 32: return AV_SAMPLE_FMT_S32;
+            default: return AV_SAMPLE_FMT_S16;
+        }
+    }
+
+    //    static AVSampleFormat compatibleCodecType(AVCodec *codec) {
+    //        if (!codec -> sample_fmts)
+    //            return AV_SAMPLE_FMT_S16;
+
+    //        const enum AVSampleFormat *sample_fmts;
+    //        AVSampleFormat best_format = AV_SAMPLE_FMT_U8;
+
+    //        sample_fmts = codec -> sample_fmts;
+    //        while (*sample_fmts) {
+    //            if (*sample_fmts == AV_SAMPLE_FMT_S16 || *sample_fmts == AV_SAMPLE_FMT_S32
+    //                    || *sample_fmts == AV_SAMPLE_FMT_FLT || *sample_fmts == AV_SAMPLE_FMT_DBL)
+    //                best_format = *sample_fmts;
+    //            sample_fmts++;
+    //        }
+
+    //        return best_format;
+    //    }
+
+    /* just pick the highest supported samplerate */
+    static int selectSampleRate(AVCodec *codec) {
+        if (!codec -> supported_samplerates)
+            return 44100;
+
+        int best_samplerate = 0;
+        const int *p = codec -> supported_samplerates;
+
+        while (*p) {
+            best_samplerate = FFMAX(*p, best_samplerate);
+            p++;
+        }
+
+        return best_samplerate;
+    }
+
+    /* select layout with the highest channel count */
+    static int selectChannelLayout(AVCodec *codec) {
+        if (!codec -> channel_layouts)
+            return AV_CH_LAYOUT_STEREO;
+
+        const uint64_t *p;
+        uint64_t best_ch_layout = 0;
+        int best_nb_channels = 0;
+
+        p = codec -> channel_layouts;
+        while (*p) {
+            int nb_channels = av_get_channel_layout_nb_channels(*p);
+
+            if (nb_channels > best_nb_channels) {
+                best_ch_layout = *p;
+                best_nb_channels = nb_channels;
+            }
+            p++;
+        }
+
+        return best_ch_layout;
+    }
+
+
+
+
+
+
+
+
+
+
 //    // Setup QAudioInput and QAudioOutput, not shown for brevity. See the Spectrum example for details
 //    QAudioInput input;
 //    QAudioOutput output;
