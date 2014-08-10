@@ -76,7 +76,7 @@ struct ResampleSettings {
 
         if (nb_samples_out > max_nb_samples_out) {
             clearData();
-            int ret = av_samples_alloc_array_and_samples(&data, &linesize, channelCountOut,  nb_samples_out, sampleFormatOut, 0);//1);
+            int ret = av_samples_alloc_array_and_samples(&data, &linesize, channelCountOut,  nb_samples_out, sampleFormatOut, 1);
             if (ret < 0)
                return 0;
             max_nb_samples_out = nb_samples_out;
@@ -85,14 +85,14 @@ struct ResampleSettings {
         return data;
     }
 
-    int calcSamplesNumber(SwrContext * swr_ctx) {
-        return av_rescale_rnd(
-            swr_get_delay(swr_ctx, sampleRateIn) + sampleNumberIn,
-            sampleRateOut,
-            sampleRateIn,
-            AV_ROUND_UP
-        );
-    }
+//    int calcSamplesNumber() {
+//        return av_rescale_rnd(
+//            sampleNumberIn,
+//            sampleRateOut,
+//            sampleRateIn,
+//            AV_ROUND_UP
+//        );
+//    }
 
     int calcSamplesNumber(SwrContext * swr_ctx, AVFrame * frame) {
         return av_rescale_rnd(
@@ -104,7 +104,8 @@ struct ResampleSettings {
     }
 
     int calcBufferSize(int convertResult) {
-        return av_samples_get_buffer_size(&linesize, channelCountOut, convertResult, sampleFormatOut, 0);//1);
+//        return convertResult * 4;
+        return av_samples_get_buffer_size(&linesize, channelCountOut, convertResult, sampleFormatOut, 1);
     }
 };
 

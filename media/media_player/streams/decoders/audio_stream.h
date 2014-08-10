@@ -34,8 +34,6 @@ protected:
     double calcPts(AVPacket * packet);
 
 private:
-//    void resampleInit(AVSampleFormat sampleFormat);
-
     bool isPlanar;
 
     bool resampleRequire;
@@ -43,6 +41,8 @@ private:
 
     AudioOutputStream * outputStream;
 //    PortAudioOutputStream * outputStream;
+
+    AVSampleFormat defaultSampleFormat;
 };
 
 #endif // AUDIO_STREAM_H

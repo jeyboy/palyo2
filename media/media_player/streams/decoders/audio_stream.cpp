@@ -4,7 +4,8 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     : MediaStream(context, streamIndex, parent, priority)
     , isPlanar(false)
     , resampleRequire(false)
-    , resampler(0) {
+    , resampler(0)
+    , defaultSampleFormat((AVSampleFormat)AV_CH_LAYOUT_STEREO) {
 
     isPlanar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
     //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
@@ -218,25 +219,22 @@ void AudioStream::fillFormat(QAudioFormat & format) {
     format.setSampleRate(codec_context -> sample_rate);
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setChannelCount(codec_context -> channels);
+    format.setSampleSize(av_get_bytes_per_sample(codec_context -> sample_fmt) * 8);
 
     switch (codec_context -> sample_fmt) {
         case AV_SAMPLE_FMT_U8: { ///< unsigned 8 bits
-            format.setSampleSize(8);
             format.setSampleType(QAudioFormat::UnSignedInt);
         break;}
 
         case AV_SAMPLE_FMT_S16: { ///< signed 16 bits
-            format.setSampleSize(16);
             format.setSampleType(QAudioFormat::SignedInt);
         break;}
 
         case AV_SAMPLE_FMT_S32: { ///< signed 32 bits
-            format.setSampleSize(32);
             format.setSampleType(QAudioFormat::SignedInt);
         break;}
 
         case AV_SAMPLE_FMT_FLT: { ///< float
-            format.setSampleSize(32);
             format.setSampleType(QAudioFormat::Float);
         break;}
 
@@ -272,7 +270,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
                         codec_context -> sample_rate,
                         format.sampleRate(),
                         MediaPlayerUtils::selectChannelLayout(codec),
-                        AV_CH_LAYOUT_STEREO
+                        defaultSampleFormat
                     );
     }
 }
@@ -305,36 +303,3 @@ double AudioStream::calcPts(AVPacket * packet) {
 
     return clock;
 }
-
-////TODO: require to update settings for fillFormat
-//void AudioStream::resampleInit(AVSampleFormat sampleFormat) {
-//    resampleRequire = true;
-
-//    qDebug() << "CHANNEL LAYOUT " << codec_context -> channel_layout;
-
-//    // AVCodec however decodes audio as float, which we can't use directly
-//    resampleContext = swr_alloc();
-//    av_opt_set_int(resampleContext, "in_channel_layout", selectChannelLayout(codec), 0);
-//    av_opt_set_int(resampleContext, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0); // 2 channels
-//    av_opt_set_int(resampleContext, "in_sample_rate", codec_context -> sample_rate, 0);
-//    av_opt_set_int(resampleContext, "out_sample_rate", 44100, 0);
-//    av_opt_set_sample_fmt(resampleContext, "in_sample_fmt", sampleFormat, 0);
-//    av_opt_set_sample_fmt(resampleContext, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
-//    if (swr_init(resampleContext) < 0) {
-//        qDebug() << "SWR_INIT ERROR";
-//    }
-
-//    int dst_linesize;
-//    resample_nb_samples = 4096; // default is 1024
-//    int ret = av_samples_alloc(&resampleBuffer,
-//        &dst_linesize,
-//        2, // 2 channels
-//        resample_nb_samples,
-//        AV_SAMPLE_FMT_S16,
-//    0);
-
-//    if (ret < 0) {
-//        resampleRequire = false;
-//        qDebug() << "PIPEC";
-//    }
-//}
