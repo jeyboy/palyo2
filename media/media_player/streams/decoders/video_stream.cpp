@@ -95,6 +95,7 @@ void VideoStream::routine() {
 
             videoBuffer.append(img);
             calcPts();
+            av_frame_unref(frame);
         } else {
             qDebug() << "Could not get a full picture from this frame";
         }

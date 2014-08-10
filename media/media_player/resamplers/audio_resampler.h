@@ -67,10 +67,9 @@ struct ResampleSettings {
 
     void initBuffer() {
         max_nb_samples_out = 0;
-
-//        ret = av_samples_alloc_array_and_samples(&data, &linesize, channelCountOut, max_nb_samples_out, sampleFormatOut, 0);
     }
 
+    //maybe once init is enough
     uint8_t ** outputBuffer(SwrContext * ctx, AVFrame * frame) {
         int nb_samples_out = calcSamplesNumber(ctx, frame);
 
@@ -84,15 +83,6 @@ struct ResampleSettings {
 
         return data;
     }
-
-//    int calcSamplesNumber() {
-//        return av_rescale_rnd(
-//            sampleNumberIn,
-//            sampleRateOut,
-//            sampleRateIn,
-//            AV_ROUND_UP
-//        );
-//    }
 
     int calcSamplesNumber(SwrContext * swr_ctx, AVFrame * frame) {
         return av_rescale_rnd(

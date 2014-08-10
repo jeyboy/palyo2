@@ -88,6 +88,7 @@ void AudioStream::routine() {
 
             outputStream -> addBuffer(ar);
             calcPts(packet);
+            av_frame_unref(frame);
         } else {
             qDebug() << "Could not get audio data from this frame";
         }
