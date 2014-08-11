@@ -2,16 +2,11 @@
 
 MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
   , decoder(0)
-  , screen(0)
   , isRemote(false)
   , context(0) {
 
     av_register_all();
     avcodec_register_all();
-
-    masterClock = new QTimer(this);
-    masterClock -> setInterval(1000 / 25);
-    connect(masterClock, SIGNAL(timeout()), this, SLOT(newIteration()));
 }
 
 MediaPlayer::~MediaPlayer() {
@@ -25,110 +20,10 @@ MediaPlayer::~MediaPlayer() {
     qDebug() << "player";
     stop();
 
-    delete masterClock;
-
     delete context;
-
-    delete screen; // ?
-}
-
-void MediaPlayer::tryHu(QUrl url) {
-    av_register_all();
-    AVFrame * frame = av_frame_alloc();
-
-    QByteArray * buffer = new QByteArray();
-
-    int audioStream = -1;
-    AVFormatContext * formatContext = avformat_alloc_context();
-    AVCodecContext *codecContext;
-    AVCodec *codec;
-    AVPacket packet;
-
-    avformat_open_input(&formatContext, url.toLocalFile().toUtf8().data(), NULL, NULL);
-    av_find_stream_info(formatContext);
-//    av_dump_format(formatContext, 0, WMV,0);
-
-    for( unsigned int i=0; i < formatContext->nb_streams; i++ )
-    {
-    if( formatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO )
-    {
-    audioStream = i;
-    break;
-    }
-    }
-    if( audioStream == -1 )
-    {
-    qWarning() << "Didnt find audio stream";
-    return;
-    }
-
-    codecContext = formatContext->streams[audioStream]->codec;
-
-    codec = avcodec_find_decoder(codecContext->codec_id);
-    avcodec_open2(codecContext,codec, 0);
-    int len, data_size;
-
-    while( av_read_frame(formatContext, &packet) >= 0 )
-    {
-
-        if( packet.stream_index == audioStream )
-        {
-            while(packet.size > 0)
-            {
-
-                avcodec_get_frame_defaults(frame);
-                len = avcodec_decode_audio4(codecContext, frame, &data_size, &packet);
-
-                if (len < 0) {
-                    qDebug() << "Error while decoding audio frame";
-                    av_free_packet(&packet);
-                    return;
-                }
-
-                if (data_size) {
-                    buffer->append((const char*)frame -> data[0], frame -> linesize[0]);
-                }
-
-                packet.size -= len;
-                packet.data += len;
-            }
-        }
-
-    }
-
-    av_frame_free(&frame);
-
-
-    QAudioFormat format;
-    format.setSampleRate(codecContext->sample_rate);
-    format.setChannelCount(2);
-    format.setSampleSize(16);
-    format.setCodec("audio/pcm");
-    format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setSampleType(QAudioFormat::SignedInt);
-
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-
-    if (!info.isFormatSupported(format)) {
-    qWarning()<<"raw audio format not supported by backend, cannot play audio.";
-    format = info.nearestFormat(format);
-    }
-
-    QAudioOutput * audio = new QAudioOutput(format, this);
-
-    connect(audio,SIGNAL(stateChanged(QAudio::State)),SLOT(stateChanged(QAudio::State)));
-
-    qDebug() << "buffer.size()=" << buffer -> size();
-    QBuffer * buff = new QBuffer(buffer, this);
-    buff -> open(QBuffer::ReadOnly);
-
-    audio -> start(buff);
 }
 
 bool MediaPlayer::play(QUrl url) {
-//    tryHu(url);
-
-
     stop();
 
     bool res = openContext(url);
@@ -144,20 +39,15 @@ bool MediaPlayer::play(QUrl url) {
 
 void MediaPlayer::resume() {
     decoder -> resumeOutput();
-    masterClock -> start();
 }
 
 void MediaPlayer::pause() {
     decoder -> suspendOutput();
-    masterClock -> stop();
 }
 
 void MediaPlayer::stop() {
     if (decoder)
         decoder -> suspendOutput();
-
-    if (masterClock -> isActive())
-        masterClock -> stop();
 
     closeContext();
 }
@@ -173,12 +63,6 @@ bool MediaPlayer::tags(QHash<QString, QString> & ret) {
     }
 
     return false;
-}
-
-/////////////// SLOTS ////////////////////////////////
-
-void MediaPlayer::newIteration() {
-
 }
 
 ////////////// PROTECTED //////////////////////////////////

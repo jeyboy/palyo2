@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QUrl>
-#include <QTimer>
 
 #include "streams/stream_decoder.h"
 
@@ -14,16 +13,12 @@ public:
     MediaPlayer(QWidget * parent = 0);
     ~MediaPlayer();
 
-    void tryHu(QUrl url);
     bool play(QUrl url);
     void resume();
     void pause();
     void stop();
 
     bool tags(QHash<QString, QString> &);
-
-protected slots:
-    void newIteration();
 
 protected:
     bool openContext(QUrl url);
@@ -32,9 +27,6 @@ protected:
 private:
     StreamDecoder * decoder;
 
-    QTimer * masterClock;
-
-    QWidget * screen;
     bool isRemote;
 
     AVFormatContext *context;

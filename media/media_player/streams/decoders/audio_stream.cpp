@@ -16,7 +16,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     //              << "  frame->extended_data[1] has the data for channel 2\n"
     //              << "  etc.\n";
 
-    bufferLimit = 500;
+//    bufferLimit = 500;
     QAudioFormat format;
     fillFormat(format);
 
@@ -75,13 +75,6 @@ void AudioStream::routine() {
                     qDebug() << "RESAMPLER FAIL";
             } else {
                 ar.append((const char*)frame -> data[0], frame -> linesize[0]);
-
-
-//                int data_size = av_samples_get_buffer_size(NULL, codec_context -> channels,
-//                                                           frame -> nb_samples,
-//                                                           codec_context -> sample_fmt, 1);
-
-//                QByteArray ar((const char*)frame -> data[0], data_size);//frame -> linesize[0]);//frame -> nb_samples);
 //                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
             }
 

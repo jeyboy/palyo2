@@ -2,6 +2,7 @@
 #define VIDEO_STREAM_H
 
 #include "media/media_player/streams/media_stream.h"
+#include "media/media_player/streams/output/video/gl_output.h"
 
 #include <QImage>
 
@@ -18,10 +19,11 @@ protected:
     double syncPts(AVFrame *src_frame, double pts);
 private:
     AVFrame * RGBFrame;
-    QList<QImage *> videoBuffer;
 
     unsigned char * RGBBuffer;
     SwsContext* resampleContext;
+
+    GLOutput * output;
 };
 
 #endif // VIDEO_STREAM_H

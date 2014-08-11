@@ -10,13 +10,6 @@
 
 #include <QAudioFormat>
 
-//struct AudioInfo {
-//    int channels;
-//    int sample_rate;
-//    int sample_size;
-//    int nb_samples;
-//};
-
 class AudioStream : public MediaStream {
 public:
     AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);

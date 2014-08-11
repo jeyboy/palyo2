@@ -33,7 +33,6 @@ protected:
     bool state, finishAndPause;
     AVStream * stream;
     int uindex;
-    int bufferLimit;
     AVCodecContext * codec_context;
     AVCodec * codec; // this var is possible to get through stream -> codec()
     AVFrame * frame;

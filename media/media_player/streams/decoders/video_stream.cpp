@@ -1,19 +1,22 @@
 #include "video_stream.h"
+#include <QApplication>
 
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : MediaStream(context, streamIndex, parent, priority)
-    ,resampleContext(0)
-    ,RGBFrame(0) {
+    , resampleContext(0)
+    , RGBFrame(0)
+    , output(0) {
 
-    bufferLimit = 50;
     RGBFrame = av_frame_alloc();
+    output = new GLOutput();
 }
 
 VideoStream::~VideoStream() {
+    delete output;
+
     av_frame_free(&RGBFrame);
     delete [] RGBBuffer;
     sws_freeContext(resampleContext);
-    qDeleteAll(videoBuffer);
 }
 
 void VideoStream::suspendOutput() {
@@ -25,15 +28,13 @@ void VideoStream::resumeOutput() {
 
 void VideoStream::routine() {
     mutex -> lock();
-    if (packets.isEmpty() || videoBuffer.length() >= bufferLimit) {
-        if (packets.isEmpty())
-            pauseRequired = finishAndPause;
+    if (packets.isEmpty()) {
+        pauseRequired = finishAndPause;
 
         mutex -> unlock();
         return;
     }
 
-    qDebug() << "VIDEO PROCEED";
     AVPacket * packet = packets.takeFirst();
     mutex -> unlock();
 
@@ -93,7 +94,7 @@ void VideoStream::routine() {
                 memcpy(img -> scanLine(y), RGBFrame -> data[0] + y * RGBFrame -> linesize[0], width * 3);
             }
 
-            videoBuffer.append(img);
+            output -> setImage(img);
             calcPts();
             av_frame_unref(frame);
         } else {
@@ -114,7 +115,7 @@ double VideoStream::calcPts() {
     pts *= av_q2d(stream -> time_base);
     pts = syncPts(frame, pts);
 
-    qDebug() << "VIDEO PTS " << av_q2d(stream -> time_base) << " : " << pts;
+//    qDebug() << "VIDEO PTS " << av_q2d(stream -> time_base) << " : " << pts;
     return pts;
 }
 
