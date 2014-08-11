@@ -3,8 +3,8 @@
 
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : MediaStream(context, streamIndex, parent, priority)
-    , resampleContext(0)
     , RGBFrame(0)
+    , resampleContext(0)
     , output(0) {
 
     RGBFrame = av_frame_alloc();
@@ -24,6 +24,10 @@ void VideoStream::suspendOutput() {
 }
 void VideoStream::resumeOutput() {
 
+}
+
+double VideoStream::millisPreloaded() {
+    return output -> millisPreloaded();
 }
 
 void VideoStream::routine() {
@@ -70,7 +74,7 @@ void VideoStream::routine() {
             /*if (width > 1920 || height > 1920)
                 qDebug() << "Unexpected size! " << w << " x " << h;*/
 
-            qDebug() << codec_context -> pix_fmt;
+//            qDebug() << codec_context -> pix_fmt;
 
 
             resampleContext = sws_getCachedContext(resampleContext, width, height, codec_context -> pix_fmt, width, height, AV_PIX_FMT_RGB24, SWS_BICUBIC, NULL, NULL, NULL);
@@ -94,8 +98,8 @@ void VideoStream::routine() {
                 memcpy(img -> scanLine(y), RGBFrame -> data[0] + y * RGBFrame -> linesize[0], width * 3);
             }
 
-            output -> setImage(img);
-            calcPts();
+            int ref = clock;
+            output -> setFrame(new VideoFrame(img, calcPts() - ref));
             av_frame_unref(frame);
         } else {
             qDebug() << "Could not get a full picture from this frame";

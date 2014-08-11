@@ -52,6 +52,12 @@ void StreamDecoder::resumeOutput() {
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
 
+//    qDebug() << "LALKA " << videoStream -> millisPreloaded();
+    if (videoStream -> isValid() && videoStream -> millisPreloaded() > 4) {
+        sleep(1);
+        return;
+    }
+
     int status = av_read_frame(context, currFrame);
 
     if (status >= 0) {

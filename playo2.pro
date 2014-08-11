@@ -208,7 +208,8 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/output/audio/portaudio_output_stream.h \
     media/media_player/resamplers/audio_resampler.h \
     media/media_player/resamplers/video_resampler.h \
-    media/media_player/streams/output/video/gl_output.h
+    media/media_player/streams/output/video/gl_output.h \
+    media/media_player/utils/video_frame.h
 
 unix:!mac {
         QT += gui-private

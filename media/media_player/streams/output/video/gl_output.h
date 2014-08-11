@@ -1,8 +1,8 @@
 #ifndef GL_OUTPUT_H
 #define GL_OUTPUT_H
 
+#include "media/media_player/utils/video_frame.h"
 #include <QGLWidget>
-#include <QImage>
 #include <QMutex>
 
 #include <QTimer>
@@ -12,17 +12,18 @@ public:
     GLOutput(QWidget* parent = NULL);
     ~GLOutput();
 
-    void setImage(QImage * image);
+    void setFrame(VideoFrame * frame);
+    double millisPreloaded();
 protected:
     void paintEvent(QPaintEvent *);
 private:
-    QList<QImage *> videoBuffer;
+    double preloadedMillis;
 
+    VideoFrame * frame;
     QMutex mutex;
     QTimer timer;
 
-    QImage * img;
-    int interval;
+    QList<VideoFrame *> videoBuffer;
 };
 
 #endif // GL_OUTPUT_H

@@ -1,10 +1,9 @@
 #ifndef VIDEO_STREAM_H
 #define VIDEO_STREAM_H
 
+#include "media/media_player/utils/video_frame.h"
 #include "media/media_player/streams/media_stream.h"
 #include "media/media_player/streams/output/video/gl_output.h"
-
-#include <QImage>
 
 class VideoStream : public MediaStream {
 public:
@@ -13,6 +12,8 @@ public:
 
     void suspendOutput();
     void resumeOutput();
+
+    double millisPreloaded();
 protected:
     void routine();
     double calcPts();

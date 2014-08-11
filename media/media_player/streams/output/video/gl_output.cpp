@@ -1,36 +1,45 @@
 #include "gl_output.h"
 #include <QDebug>
 
+#include "gl_output.h"
+#include <QDebug>
+
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
- , img(0)
- , interval(1000/25) {
+  , preloadedMillis(0)
+  , frame(new VideoFrame) {
     show();
 }
 
 GLOutput::~GLOutput() {
+    delete frame;
     qDeleteAll(videoBuffer);
 }
 
-void GLOutput::setImage(QImage * image) {
+void GLOutput::setFrame(VideoFrame * frame) {
     mutex.lock();
-    videoBuffer.append(image);
+    videoBuffer.append(frame);
+    preloadedMillis += frame -> interval;
     mutex.unlock();
 }
 
-void GLOutput::paintEvent(QPaintEvent*) {
-    qDebug() << "DRAW";
+double GLOutput::millisPreloaded() {
+    return preloadedMillis;
+}
 
+void GLOutput::paintEvent(QPaintEvent*) {
     if (!videoBuffer.isEmpty()) {
         QPainter p(this);
 
         //Set the painter to use a smooth scaling algorithm.
         p.setRenderHint(QPainter::SmoothPixmapTransform, 1);
-        delete img;
+        delete frame;
         mutex.lock();
-        img = videoBuffer.takeFirst();
+        frame = videoBuffer.takeFirst();
         mutex.unlock();
-        p.drawImage(this -> rect(), *img);
+        p.drawImage(this -> rect(), *frame -> image);
+        preloadedMillis -= frame -> interval;
     }
 
-    timer.singleShot(interval, this, SLOT(repaint()));
+    if (!timer.isActive())
+        timer.singleShot(frame -> interval * 1000, this, SLOT(repaint()));
 }
