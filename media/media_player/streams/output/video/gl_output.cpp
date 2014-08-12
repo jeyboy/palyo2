@@ -8,6 +8,7 @@ GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
   , preloadedMillis(0)
   , frame(new VideoFrame) {
     show();
+    drawNext();
 }
 
 GLOutput::~GLOutput() {
@@ -26,20 +27,27 @@ double GLOutput::millisPreloaded() {
     return preloadedMillis;
 }
 
-void GLOutput::paintEvent(QPaintEvent*) {
+void GLOutput::drawNext() {
+    qDebug() << "NEXT";
     if (!videoBuffer.isEmpty()) {
-        QPainter p(this);
-
-        //Set the painter to use a smooth scaling algorithm.
-        p.setRenderHint(QPainter::SmoothPixmapTransform, 1);
-        delete frame;
         mutex.lock();
+        delete frame;
         frame = videoBuffer.takeFirst();
         mutex.unlock();
-        p.drawImage(this -> rect(), *frame -> image);
         preloadedMillis -= frame -> interval;
     }
 
-    if (!timer.isActive())
-        timer.singleShot(frame -> interval * 1000, this, SLOT(repaint()));
+    timer.singleShot(frame -> interval * 100, (GLOutput *)this, SLOT(drawNext()));
+    repaint();
+}
+
+void GLOutput::paintEvent(QPaintEvent*) {
+    qDebug() << "DRAW";
+    QPainter p(this);
+
+    //Set the painter to use a smooth scaling algorithm.
+    p.setRenderHint(QPainter::SmoothPixmapTransform, 1);
+    mutex.lock();
+    p.drawImage(this -> rect(), *frame -> image);
+    mutex.unlock();
 }
