@@ -98,8 +98,9 @@ void VideoStream::routine() {
                 memcpy(img -> scanLine(y), RGBFrame -> data[0] + y * RGBFrame -> linesize[0], width * 3);
             }
 
-            int ref = clock;
-            output -> setFrame(new VideoFrame(img, calcPts() - ref));
+//            qDebug() << frame -> pkt_duration;
+//            int ref = clock;
+            output -> setFrame(new VideoFrame(img, frame -> pkt_duration * av_q2d(stream -> time_base)));//calcPts() - ref));
             av_frame_unref(frame);
         } else {
             qDebug() << "Could not get a full picture from this frame";

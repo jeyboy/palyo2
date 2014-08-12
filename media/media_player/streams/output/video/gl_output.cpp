@@ -28,7 +28,6 @@ double GLOutput::millisPreloaded() {
 }
 
 void GLOutput::drawNext() {
-    qDebug() << "NEXT";
     if (!videoBuffer.isEmpty()) {
         mutex.lock();
         delete frame;
@@ -42,7 +41,6 @@ void GLOutput::drawNext() {
 }
 
 void GLOutput::paintEvent(QPaintEvent*) {
-    qDebug() << "DRAW";
     QPainter p(this);
 
     //Set the painter to use a smooth scaling algorithm.
