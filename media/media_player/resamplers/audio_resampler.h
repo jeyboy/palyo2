@@ -69,7 +69,7 @@ struct ResampleSettings {
         max_nb_samples_out = 0;
     }
 
-    //maybe once init is enough
+    //TODO: maybe once init is enough
     uint8_t ** outputBuffer(SwrContext * ctx, AVFrame * frame) {
         int nb_samples_out = calcSamplesNumber(ctx, frame);
 
@@ -83,8 +83,8 @@ struct ResampleSettings {
                         sampleFormatOut,
                         1
                 ) < 0
-            )
-               return 0;
+            ) { return 0; }
+
             max_nb_samples_out = nb_samples_out;
         }
 

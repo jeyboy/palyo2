@@ -4,6 +4,7 @@
 #include "media/media_player/utils/video_frame.h"
 #include "media/media_player/streams/media_stream.h"
 #include "media/media_player/streams/output/video/gl_output.h"
+#include "media/media_player/resamplers/video_resampler.h"
 
 class VideoStream : public MediaStream {
 public:
@@ -19,12 +20,8 @@ protected:
     double calcPts();
     double syncPts(AVFrame *src_frame, double pts);
 private:
-    AVFrame * RGBFrame;
-
-    unsigned char * RGBBuffer;
-    SwsContext* resampleContext;
-
     GLOutput * output;
+    VideoResampler * resampler;
 };
 
 #endif // VIDEO_STREAM_H
