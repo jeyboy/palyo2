@@ -20,16 +20,12 @@ void VideoStream::resumeOutput() {
 
 }
 
-double VideoStream::millisPreloaded() {
-    return output -> millisPreloaded();
-}
-
 void VideoStream::routine() {
     mutex -> lock();
     if (packets.isEmpty()) {
         pauseRequired = finishAndPause;
-
         mutex -> unlock();
+        msleep(waitMillis);
         return;
     }
 
@@ -52,13 +48,14 @@ void VideoStream::routine() {
             img = resampler -> proceed(frame, width, height, width, height);
             MasterClock::instance() -> setVideoNext(calcPts());
 
-            av_frame_unref(frame);
+//            av_frame_unref(frame);
         } else {
             qDebug() << "Could not get a full picture from this frame";
         }
 
         packet -> size -= len;
         packet -> data += len;
+        av_frame_unref(frame);
     }
 
     av_free_packet(packet);

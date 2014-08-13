@@ -1,10 +1,12 @@
 #include "portaudio_output_stream.h"
 
-PortAudioOutputStream::PortAudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority) : Stream(parent, priority)
+PortAudioOutputStream::PortAudioOutputStream(QObject * parent, int bytesPerSecond, QAudioFormat & format, Priority priority) : Stream(parent, priority)
     , initialized(false)
     , outputParameters(new PaStreamParameters)
     , stream(0)
     , format(0) {
+
+    bytes_per_sec = bytesPerSecond;
 
     this -> format = new QAudioFormat(format);
 
@@ -54,10 +56,15 @@ void PortAudioOutputStream::routine() {
 //#endif
 //#endif //KNOW_WHY
 
+    double last_buff_delay = ((double)ar.size()) / bytes_per_sec;
+    MasterClock::instance() -> iterateAudioOutput(last_buff_delay);
+
     PaError err = Pa_WriteStream(stream, ar.constData(), ar.size() / format -> channelCount() / (format -> sampleSize() / 8));
     if (err == paUnanticipatedHostError) {
         qWarning("Write portaudio stream error: %s", Pa_GetErrorText(err));
     }
+
+    msleep(last_buff_delay * 100);
 }
 
 int PortAudioOutputStream::paSampleFormat() {

@@ -32,7 +32,6 @@ void MasterClock::reset(uint clock) {
 double MasterClock::computeDelay() {
     qDebug() << "-----------------------------------------";
     double delay = videoClock - mainLastPtsVal;
-    qDebug() << "delay " << delay << " last delay " << mainLastDelayVal;
     if (delay <= 0.0 || delay >= 1.0) {
             // Delay incorrect - use previous one
             delay = mainLastDelayVal;
@@ -40,8 +39,6 @@ double MasterClock::computeDelay() {
     // Save for next time
     mainLastPtsVal = videoClockNext;
     mainLastDelayVal = delay;
-    qDebug() << "next video " << videoClockNext;
-    qDebug() << "audio output " << audioOClock;
 
     double diff = videoClockNext - audioOClock;
     qDebug() << "diff " << diff;
@@ -50,20 +47,17 @@ double MasterClock::computeDelay() {
             if (diff <= -sync_threshold) {
                     delay = 0;
             } else if (diff >= sync_threshold) {
-                    delay = 4 * delay;
+                    delay = diff; //4 * delay;
             }
     }
     qDebug() << "total delay " << delay;
 
     mainClock += delay;
-    qDebug() << "main " << mainClock;
 
-    double actual_delay = (mainClock - (av_gettime() / 1000000.0));// + (audioOClock - videoClock);
-    qDebug() << "actual " << actual_delay;
+    double actual_delay = (mainClock - (av_gettime() / 1000000.0));
     if(actual_delay < 0.010) {
             /* Really it should skip the picture instead */
             actual_delay = 0.010;
     }
-    qDebug() << "actual2 " << actual_delay;
     return actual_delay;
 }

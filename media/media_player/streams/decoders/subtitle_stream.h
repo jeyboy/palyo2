@@ -7,6 +7,7 @@ class SubtitleStream : public MediaStream {
 public:
     SubtitleStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
 
+    inline bool isBlocked() { return false; }
     void suspendOutput();
     void resumeOutput();
 protected:

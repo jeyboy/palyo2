@@ -49,6 +49,7 @@ void AudioStream::routine() {
     if (packets.isEmpty()) {
         mutex -> unlock();
         pauseRequired = finishAndPause;
+        msleep(waitMillis);
         return;
     }
 
@@ -68,23 +69,24 @@ void AudioStream::routine() {
 
         if (got_frame) {
 //            manualResample();
-            QByteArray ar;
+            QByteArray * ar = new QByteArray();
 
             if (resampleRequire) {
                 if (!resampler -> proceed(frame, ar))
                     qDebug() << "RESAMPLER FAIL";
             } else {
-                ar.append((const char*)frame -> data[0], frame -> linesize[0]);
+                ar -> append((const char*)frame -> data[0], frame -> linesize[0]);
 //                QByteArray ar((const char*)*frame -> extended_data, frame -> nb_samples);
             }
 
             outputStream -> addBuffer(ar);
             MasterClock::instance() -> setAudio(calcPts(packet));
-            av_frame_unref(frame);
+//            av_frame_unref(frame);
         } else {
             qDebug() << "Could not get audio data from this frame";
         }
 
+        av_frame_unref(frame);
         packet -> size -= len;
         packet -> data += len;
     }
@@ -202,7 +204,7 @@ void AudioStream::manualResample() {
         }
     }
 
-    outputStream -> addBuffer(temp);
+    outputStream -> addBuffer(&temp);
 }
 
 void AudioStream::fillFormat(QAudioFormat & format) {

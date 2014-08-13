@@ -1,8 +1,7 @@
 #include "audio_output_stream.h"
 
 AudioOutputStream::AudioOutputStream(QObject * parent, int bytesPerSecond, QAudioFormat & format, Priority priority) : Stream(parent, priority)
-  , buffersLength(0)
-  , last_buff_delay(0) {
+  , preloadedMillis(0) {
 
     bytes_per_sec = bytesPerSecond;
 
@@ -16,34 +15,36 @@ AudioOutputStream::AudioOutputStream(QObject * parent, int bytesPerSecond, QAudi
 AudioOutputStream::~AudioOutputStream() {
    qDebug() << "a o STream";
    soundOutput -> stop();
+
+   qDeleteAll(audioBuffers);
 }
 
-void AudioOutputStream::addBuffer(QByteArray frame) {
+double AudioOutputStream::millisPreloaded() {
+    return preloadedMillis;
+}
+
+void AudioOutputStream::addBuffer(QByteArray * frame) {
     mutex -> lock();
         audioBuffers.append(frame);
-        buffersLength += frame.size();
+        preloadedMillis += ((double)frame -> size()) / bytes_per_sec;
     mutex -> unlock();
 }
 
 void AudioOutputStream::routine() {
     mutex -> lock();
         if (!audioBuffers.isEmpty() && soundOutput -> bytesFree() > 0) {
-
-            // If we're too slow/accumulating delay, drop audio frames
-//            while (buffersLength > MAX_AUDIO_DATA_PENDING) {
-//                buffersLength -= audioBuffers.takeFirst().length();
-//            }
-
-            QByteArray ar = audioBuffers.takeFirst();
-//            MasterClock::instance() -> iterateAudioOutput(last_buff_delay - ((double)audioIO -> bytesToWrite() / bytes_per_sec));
-            last_buff_delay = ((double)ar.size()) / bytes_per_sec;
-            MasterClock::instance() -> iterateAudioOutput(last_buff_delay);
-            audioIO -> write(ar);
-
+            QByteArray * ar = audioBuffers.takeFirst();
+            audioIO -> write(*ar);
             mutex -> unlock();
+
+//            MasterClock::instance() -> iterateAudioOutput(last_buff_delay - ((double)audioIO -> bytesToWrite() / bytes_per_sec));
+            double last_buff_delay = ((double)ar -> size()) / bytes_per_sec;
+            MasterClock::instance() -> iterateAudioOutput(last_buff_delay);
+
+            delete ar;
             msleep(last_buff_delay * 100);
             return;
-        }
+        } else { msleep(20); }
     mutex -> unlock();
 }
 

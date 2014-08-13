@@ -11,10 +11,9 @@ public:
     VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     ~VideoStream();
 
+    inline bool isBlocked() { return isValid() && output -> millisPreloaded() > 1; }
     void suspendOutput();
     void resumeOutput();
-
-    double millisPreloaded();
 protected:
     void routine();
     double calcPts();

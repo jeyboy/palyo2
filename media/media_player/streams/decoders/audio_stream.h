@@ -17,6 +17,7 @@ public:
 
     void stop();
 
+    inline bool isBlocked() { return isValid() && outputStream -> millisPreloaded() > 1; }
     void suspendOutput();
     void resumeOutput();
 

@@ -19,10 +19,13 @@ public:
     inline bool isValid() const { return state; }
     inline int index() const { return uindex; }
 
+    virtual bool isBlocked() = 0;
     virtual void suspendOutput() = 0;
     virtual void resumeOutput() = 0;
 protected:
     virtual void routine() {} // stub
+
+    uint waitMillis;
 
     bool state, finishAndPause;
     AVStream * stream;

@@ -6,7 +6,7 @@
 
 class PortAudioOutputStream : public Stream {
 public:
-    PortAudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority = InheritPriority);
+    PortAudioOutputStream(QObject * parent, int bytesPerSecond, QAudioFormat & format, Priority priority = InheritPriority);
     ~PortAudioOutputStream();
 
     void addBuffer(QByteArray & frame);
@@ -18,6 +18,8 @@ protected:
     int paSampleFormat();
     void routine();
 private:
+    int bytes_per_sec;
+
     bool initialized;
 
     PaStreamParameters *outputParameters;

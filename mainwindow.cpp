@@ -16,6 +16,15 @@ MainWindow::MainWindow(QWidget *parent) :
     initialization();
 
     m = new MediaPlayer(this);
+
+//    Play media from Internet services using the quvi project.
+//    The demuxer accepts a ‘format’ option to request a specific quality. It is by default set to best.
+//    See http://quvi.sourceforge.net/ for more information.
+//    FFmpeg needs to be built with --enable-libquvi for this demuxer to be enabled.
+//    http://quvi.sourceforge.net/r/howto/install/
+//    To play/convert videos directly from Youtube, using FFmpeg, you need to compile your ffmpeg with ​libquvi support.
+//    m -> play(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
+//    m -> play(QUrl::fromLocalFile("F:/Белоснежка и брачный сезон.mp4"));
     m -> play(QUrl::fromLocalFile("F:/test.mp4"));
 //    m -> play(QUrl::fromLocalFile("F:/test.mp3"));
 }

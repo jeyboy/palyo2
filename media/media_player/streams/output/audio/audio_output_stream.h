@@ -13,18 +13,18 @@ public:
     AudioOutputStream(QObject * parent, int bytesPerSecond, QAudioFormat & format, Priority priority = InheritPriority);
     ~AudioOutputStream();
 
-    void addBuffer(QByteArray frame);
+    double millisPreloaded();
+    void addBuffer(QByteArray * frame);
 protected:
     void routine();
 private:
     int bytes_per_sec;
-    double last_buff_delay;
+    int preloadedMillis;
 
     QAudioOutput * soundOutput;
     QIODevice * audioIO;
 
-    QList<QByteArray> audioBuffers;
-    uint buffersLength;
+    QList<QByteArray *> audioBuffers;
 };
 
 #endif // AUDIO_OUTPUT_STREAM_H
