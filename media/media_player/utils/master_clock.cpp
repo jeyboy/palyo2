@@ -5,12 +5,12 @@ MasterClock *MasterClock::self = 0;
 
 void MasterClock::create() {
     if(!self)
-        self = new Extensions();
+        self = new MasterClock();
 }
 
 MasterClock *MasterClock::instance() {
 //    if(!self)
-//        self = new Extensions();
+//        self = new MasterClock();
     return self;
 }
 

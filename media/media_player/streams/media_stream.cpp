@@ -1,15 +1,12 @@
 #include "media_stream.h"
 
-MediaStream::MediaStream(MasterClock * masterClock, AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : Stream(parent, priority)
-  , clock(0)
+MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : Stream(parent, priority)
   , state(true)
   , finishAndPause(false)
   , stream(0)
   , codec_context(0)
   , codec(0)
   , frame(0) {
-
-    clock = masterClock;
 
     if (streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND) {
         state = false;

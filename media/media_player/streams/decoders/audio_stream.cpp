@@ -20,7 +20,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     QAudioFormat format;
     fillFormat(format);
 
-    outputStream = new AudioOutputStream(this, format, priority);
+    outputStream = new AudioOutputStream(this, codec_context, format, priority);
 //    outputStream = new PortAudioOutputStream(this, format, priority);
 }
 

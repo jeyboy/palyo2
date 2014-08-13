@@ -2,6 +2,7 @@
 #define MASTER_CLOCK_H
 
 #include <QMutex>
+#include "media_player_utils.h"
 
 /* no AV sync correction is done if below the AV sync threshold */
 #define AV_SYNC_THRESHOLD 0.01
@@ -23,31 +24,31 @@ public:
     double computeDelay();
 
     inline double main() { return mainClock; }
-    inline double setMain(double newClock) { mainClock = newClock; }
-    inline double iterateMain(double offset) { mainClock += offset; }
+    inline void setMain(double newClock) { mainClock = newClock; }
+    inline void iterateMain(double offset) { mainClock += offset; }
 
     inline double mainLastPts() { return mainLastPtsVal; }
-    inline double setMainLastPts(double newClock) { mainLastPtsVal = newClock; }
+    inline void setMainLastPts(double newClock) { mainLastPtsVal = newClock; }
 
     inline double mainLastDelay() { return mainLastDelayVal; }
-    inline double setMainLastDelay(double newClock) { mainLastDelayVal = newClock; }
+    inline void setMainLastDelay(double newClock) { mainLastDelayVal = newClock; }
 
     inline double audio() { return audioClock; }
-    inline double setAudio(double newClock) { audioClock = newClock; }
-    inline double iterateAudio(double offset) { audioClock += offset; }
+    inline void setAudio(double newClock) { audioClock = newClock; }
+    inline void iterateAudio(double offset) { audioClock += offset; }
 
     inline double audioOutput() { return audioOClock; }
-    inline double iterateAudioOutput(double offset) { audioOClock += offset; }
+    inline void iterateAudioOutput(double offset) { audioOClock += offset; }
 
     inline double video() { return videoClock; }
-    inline double setVideo(double newClock) { videoClock = newClock; }
-    inline double iterateVideo(double offset) { videoClock += offset; }
+    inline void setVideo(double newClock) { videoClock = newClock; }
+    inline void iterateVideo(double offset) { videoClock += offset; }
 
-    inline double setVideoNext(double newClock) { videoClockNext = newClock; }
+    inline void setVideoNext(double newClock) { videoClockNext = newClock; }
 
     inline double subtitle() { return subtitlesClock; }
-    inline double setSubtitle(double newClock) { subtitlesClock = newClock; }
-    inline double iterateSubtitle(double offset) { subtitlesClock += offset; }
+    inline void setSubtitle(double newClock) { subtitlesClock = newClock; }
+    inline void iterateSubtitle(double offset) { subtitlesClock += offset; }
 private:
 
     MasterClock() {

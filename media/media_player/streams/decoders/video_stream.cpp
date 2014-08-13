@@ -52,7 +52,7 @@ void VideoStream::routine() {
             MasterClock::instance() -> setVideoNext(calcPts());
 
             if (img)
-                output -> setFrame(new VideoFrame(img, MasterClock::computeDelay()));
+                output -> setFrame(new VideoFrame(img, MasterClock::instance() -> computeDelay()));
             av_frame_unref(frame);
         } else {
             qDebug() << "Could not get a full picture from this frame";
