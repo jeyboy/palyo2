@@ -38,6 +38,7 @@ void VideoStream::routine() {
 
     int len, got_picture;
     int width = codec_context -> width, height = codec_context -> height;
+    QImage * img = 0;
 
     while (packet -> size > 0) {
         len = avcodec_decode_video2(codec_context, frame, &got_picture, packet);
@@ -48,11 +49,9 @@ void VideoStream::routine() {
         }
 
         if (got_picture) {
-            QImage * img = resampler -> proceed(frame, width, height, width, height);
+            img = resampler -> proceed(frame, width, height, width, height);
             MasterClock::instance() -> setVideoNext(calcPts());
 
-            if (img)
-                output -> setFrame(new VideoFrame(img, MasterClock::instance() -> computeDelay()));
             av_frame_unref(frame);
         } else {
             qDebug() << "Could not get a full picture from this frame";
@@ -63,6 +62,13 @@ void VideoStream::routine() {
     }
 
     av_free_packet(packet);
+
+    if (img) {
+        double delay = MasterClock::instance() -> computeDelay();
+        output -> setFrame(new VideoFrame(img, delay));
+//        qDebug() << "DELAY " << (delay * 100) - 5;
+        msleep(delay * 100);
+    }
 }
 
 double VideoStream::calcPts() {

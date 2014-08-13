@@ -421,6 +421,7 @@ void View::openLocation() {
 }
 
 void View::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const {
+    // TODO: add initiated items to hash for update later on the same name state change
     ModelItem * item = model -> getItem(index);
 
     if (!item -> getState() -> isProceed()) {

@@ -45,6 +45,10 @@ struct ResampleSettings {
     int linesize;
     uint8_t ** data;
 
+    int bytesPerSecond() {
+        return sampleRateOut * channelCountOut * av_get_bytes_per_sample(sampleFormatOut);
+    }
+
     SwrContext * createContext() {
         SwrContext * resampleContext = swr_alloc();
         av_opt_set_int(resampleContext, "in_channel_layout", channelLayoutIn, 0);
@@ -121,6 +125,7 @@ public:
     );
 
     bool proceed(AVFrame * frame, QByteArray & result);
+    inline int bytesPerSecond() { return settings -> bytesPerSecond(); }
 private:
     void close();
 

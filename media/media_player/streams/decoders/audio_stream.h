@@ -25,6 +25,7 @@ protected:
     void manualResample();
     void fillFormat(QAudioFormat & format);
     double calcPts(AVPacket * packet);
+    int bytesPerSecond();
 
 private:
     bool isPlanar;

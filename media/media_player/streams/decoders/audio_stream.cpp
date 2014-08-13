@@ -20,7 +20,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     QAudioFormat format;
     fillFormat(format);
 
-    outputStream = new AudioOutputStream(this, codec_context, format, priority);
+    outputStream = new AudioOutputStream(this, bytesPerSecond(), format, priority);
 //    outputStream = new PortAudioOutputStream(this, format, priority);
 }
 
@@ -297,4 +297,11 @@ double AudioStream::calcPts(AVPacket * packet) {
 //    qDebug() << "AUDIO PTS " << av_q2d(stream -> time_base) << " : " << clock;
 
     return clock;
+}
+
+int AudioStream::bytesPerSecond() {
+    if (resampleRequire)
+        return resampler -> bytesPerSecond();
+    else
+        return codec_context -> sample_rate * codec_context -> channels * av_get_bytes_per_sample(codec_context -> sample_fmt);
 }

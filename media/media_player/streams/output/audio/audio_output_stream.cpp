@@ -1,10 +1,10 @@
 #include "audio_output_stream.h"
 
-AudioOutputStream::AudioOutputStream(QObject * parent, AVCodecContext* codec_context, QAudioFormat & format, Priority priority) : Stream(parent, priority)
+AudioOutputStream::AudioOutputStream(QObject * parent, int bytesPerSecond, QAudioFormat & format, Priority priority) : Stream(parent, priority)
   , buffersLength(0)
   , last_buff_delay(0) {
 
-    bytes_per_sec = codec_context -> sample_rate * codec_context -> channels * av_get_bytes_per_sample(codec_context -> sample_fmt);
+    bytes_per_sec = bytesPerSecond;
 
     soundOutput = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, this);
     soundOutput -> setVolume(1.0);
@@ -35,8 +35,9 @@ void AudioOutputStream::routine() {
 //            }
 
             QByteArray ar = audioBuffers.takeFirst();
-            MasterClock::instance() -> iterateAudioOutput(last_buff_delay - ((double)audioIO -> bytesToWrite() / bytes_per_sec));
+//            MasterClock::instance() -> iterateAudioOutput(last_buff_delay - ((double)audioIO -> bytesToWrite() / bytes_per_sec));
             last_buff_delay = ((double)ar.size()) / bytes_per_sec;
+            MasterClock::instance() -> iterateAudioOutput(last_buff_delay);
             audioIO -> write(ar);
 
             mutex -> unlock();
