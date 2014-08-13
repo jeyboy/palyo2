@@ -17,10 +17,13 @@ void SubtitleStream::routine() {
     if (packets.isEmpty()) {
         mutex -> unlock();
         pauseRequired = finishAndPause;
-
+        if (finishAndExit) stop();
+        msleep(waitMillis);
         return;
     }
-    AVPacket * packet = packets.takeFirst();
 
+    AVPacket * packet = packets.takeFirst();
     mutex -> unlock();
+
+
 }

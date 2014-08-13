@@ -53,8 +53,8 @@ void StreamDecoder::resumeOutput() {
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
 
-    if (videoStream -> isBlocked() || audioStream -> isBlocked()) {
-        msleep(10);
+    if (videoStream -> isBlocked() || audioStream -> isBlocked() || subtitleStream -> isBlocked()) {
+        msleep(12);
         return;
     }
 
@@ -83,11 +83,11 @@ void StreamDecoder::routine() {
 //        ////////////////////////////////// PADDING_DATA RECALC
 
 
-        if (currFrame -> stream_index == audioStream -> index()) {
+        if (currFrame -> stream_index == audioStream -> index() && !audioStream -> isFinished()) {
             audioStream -> decode(currFrame);
             ac++;
         }
-        else if (currFrame -> stream_index == videoStream -> index()) {
+        else if (currFrame -> stream_index == videoStream -> index() && !videoStream -> isFinished()) {
             videoStream -> decode(currFrame);
             vc++;
         }
@@ -97,13 +97,22 @@ void StreamDecoder::routine() {
             av_free_packet(currFrame);
 
         currFrame = new AVPacket();
-    } else {
-//        if (ret == AVERROR_EOF)
+    } else {       
         qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
-        finished = pauseRequired = true;
-        videoStream -> pauseOnComplete();
-        audioStream -> pauseOnComplete();
-        subtitleStream -> pauseOnComplete();
+
+        if (status == AVERROR_EOF) {
+            qDebug() << "DECODER EOF";
+            finished = exitRequired = true;
+            videoStream -> exitOnComplete();
+            audioStream -> exitOnComplete();
+            subtitleStream -> exitOnComplete();
+        } else {
+            qDebug() << "DECODER STOP";
+            pauseRequired = true;
+            videoStream -> pauseOnComplete();
+            audioStream -> pauseOnComplete();
+            subtitleStream -> pauseOnComplete();
+        }
     }
 }
 

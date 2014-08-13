@@ -12,7 +12,8 @@ public:
     void decode(AVPacket * newPacket);
 //    void decode(unsigned char* bytes, int size);
 
-    void pauseOnComplete();
+    inline void pauseOnComplete() { finishAndPause = true; }
+    inline void exitOnComplete() { finishAndExit = true; }
 
     void resume();
 
@@ -26,8 +27,9 @@ protected:
     virtual void routine() {} // stub
 
     uint waitMillis;
+    uint packetsLimit;
 
-    bool state, finishAndPause;
+    bool state, finishAndPause, finishAndExit;
     AVStream * stream;
     int uindex;
     AVCodecContext * codec_context;

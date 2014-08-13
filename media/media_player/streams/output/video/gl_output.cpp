@@ -12,8 +12,10 @@ GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
 }
 
 GLOutput::~GLOutput() {
-    delete frame;
+    mutex.lock();
     qDeleteAll(videoBuffer);
+    delete frame;
+    mutex.unlock();
 }
 
 void GLOutput::setFrame(VideoFrame * frame) {
@@ -34,6 +36,7 @@ void GLOutput::drawNext() {
         frame = videoBuffer.takeFirst();
         mutex.unlock();
         preloadedMillis -= frame -> interval;
+        setWindowTitle(QString::number(videoBuffer.size()));
     }
 
     timer.singleShot(frame -> interval * 100, (GLOutput *)this, SLOT(drawNext()));

@@ -10,7 +10,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
 
 VideoStream::~VideoStream() {
     delete output;
-    delete resampler;
+    delete resampler;  
 }
 
 void VideoStream::suspendOutput() {
@@ -20,11 +20,18 @@ void VideoStream::resumeOutput() {
 
 }
 
+void VideoStream::stop() {
+    qDebug() << "VIDEO STOP";
+    output -> close();
+    MediaStream::stop();
+}
+
 void VideoStream::routine() {
     mutex -> lock();
     if (packets.isEmpty()) {
-        pauseRequired = finishAndPause;
         mutex -> unlock();
+        pauseRequired = finishAndPause;
+        if (finishAndExit) stop();
         msleep(waitMillis);
         return;
     }
@@ -63,7 +70,6 @@ void VideoStream::routine() {
     if (img) {
         double delay = MasterClock::instance() -> computeDelay();
         output -> setFrame(new VideoFrame(img, delay));
-//        qDebug() << "DELAY " << (delay * 100) - 5;
         msleep(delay * 100);
     }
 }

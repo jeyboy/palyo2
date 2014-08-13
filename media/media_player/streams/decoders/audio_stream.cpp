@@ -33,6 +33,7 @@ AudioStream::~AudioStream() {
 }
 
 void AudioStream::stop() {
+    qDebug() << "AUDIO STOP";
     outputStream -> stop();
     MediaStream::stop();
 }
@@ -49,6 +50,7 @@ void AudioStream::routine() {
     if (packets.isEmpty()) {
         mutex -> unlock();
         pauseRequired = finishAndPause;
+        if (finishAndExit) stop();
         msleep(waitMillis);
         return;
     }

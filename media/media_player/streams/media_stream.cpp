@@ -2,8 +2,10 @@
 
 MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : Stream(parent, priority)
   , waitMillis(12)
+  , packetsLimit(3)
   , state(true)
   , finishAndPause(false)
+  , finishAndExit(false)
   , stream(0)
   , codec_context(0)
   , codec(0)
@@ -89,20 +91,6 @@ void MediaStream::decode(AVPacket * newPacket) {
     mutex -> lock();
     packets.append(newPacket);
     mutex -> unlock();
-}
-
-//void MediaStream::decode(unsigned char* bytes, int size) {
-//    if (size <= 0) return;
-
-//    AVPacket * packet = new AVPacket();
-//    av_init_packet(packet);
-//    packet -> size = size;
-//    packet -> data = bytes;
-//    packets.append(packet);
-//}
-
-void MediaStream::pauseOnComplete() {
-    finishAndPause = true;
 }
 
 void MediaStream::resume() {
