@@ -24,6 +24,7 @@ void MasterClock::reset(uint clock) {
     setVideo(clock);
     setSubtitle(clock);
 
+    audioOClock = 0;
     videoClockNext = 0;
     mainLastPtsVal = 0;
     mainLastDelayVal = 0.20;
@@ -41,7 +42,7 @@ double MasterClock::computeDelay() {
     mainLastDelayVal = delay;
 
     double diff = videoClockNext - audioOClock;
-    qDebug() << "diff " << diff;
+    qDebug() << "diff " << diff << " " << videoClockNext << " " << audioOClock;
     double sync_threshold = FFMAX(AV_SYNC_THRESHOLD, delay);
     if (fabs(diff) < AV_NOSYNC_THRESHOLD) {
             if (diff <= -sync_threshold) {

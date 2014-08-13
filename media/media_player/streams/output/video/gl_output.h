@@ -14,20 +14,15 @@ public:
     ~GLOutput();
 
     void setFrame(VideoFrame * frame);
-    double millisPreloaded();
 
 public slots:
     void drawNext();
 protected:
     void paintEvent(QPaintEvent *);
 private:
-    double preloadedMillis;
-
     VideoFrame * frame;
     QMutex mutex;
     QTimer timer;
-
-    QList<VideoFrame *> videoBuffer;
 };
 
 #endif // GL_OUTPUT_H

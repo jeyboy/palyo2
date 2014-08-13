@@ -1,8 +1,7 @@
 #include "audio_output_stream.h"
 
-AudioOutputStream::AudioOutputStream(QObject * parent, int bytesPerSecond, QAudioFormat & format, Priority priority) : Stream(parent, priority)
-  , preloadedMillis(0) {
-
+AudioOutputStream::AudioOutputStream(QObject * parent, int bytesPerSecond, QAudioFormat & format, Priority priority)
+    : Stream(parent, priority) {
     bytes_per_sec = bytesPerSecond;
 
     soundOutput = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, this);
@@ -19,14 +18,9 @@ AudioOutputStream::~AudioOutputStream() {
    qDeleteAll(audioBuffers);
 }
 
-double AudioOutputStream::millisPreloaded() {
-    return preloadedMillis;
-}
-
 void AudioOutputStream::addBuffer(QByteArray * frame) {
     mutex -> lock();
         audioBuffers.append(frame);
-        preloadedMillis += ((double)frame -> size()) / bytes_per_sec;
     mutex -> unlock();
 }
 

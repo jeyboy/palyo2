@@ -5,7 +5,6 @@
 #include <QDebug>
 
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
-  , preloadedMillis(0)
   , frame(new VideoFrame) {
     show();
     drawNext();
@@ -13,40 +12,25 @@ GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
 
 GLOutput::~GLOutput() {
     mutex.lock();
-    qDeleteAll(videoBuffer);
     delete frame;
     mutex.unlock();
 }
 
 void GLOutput::setFrame(VideoFrame * frame) {
     mutex.lock();
-    videoBuffer.append(frame);
-    preloadedMillis += frame -> interval;
+    delete this -> frame;
+    this -> frame = frame;
     mutex.unlock();
 }
 
-double GLOutput::millisPreloaded() {
-    return preloadedMillis;
-}
-
 void GLOutput::drawNext() {
-    if (!videoBuffer.isEmpty()) {
-        mutex.lock();
-        delete frame;
-        frame = videoBuffer.takeFirst();
-        mutex.unlock();
-
-        if (frame -> image == 0) {
-            close();
-            return;
-        }
-
-        preloadedMillis -= frame -> interval;
-        setWindowTitle(QString::number(videoBuffer.size()));
+    if (frame -> image == 0) {
+        close();
+        return;
     }
 
-    timer.singleShot(frame -> interval * 100, (GLOutput *)this, SLOT(drawNext()));
     repaint();
+    timer.singleShot(frame -> interval * 100, (GLOutput *)this, SLOT(drawNext()));
 }
 
 void GLOutput::paintEvent(QPaintEvent*) {

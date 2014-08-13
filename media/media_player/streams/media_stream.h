@@ -27,7 +27,7 @@ protected:
     virtual void routine() {} // stub
 
     uint waitMillis;
-    uint packetsLimit;
+    int packetsLimit;
 
     bool state, finishAndPause, finishAndExit;
     AVStream * stream;
