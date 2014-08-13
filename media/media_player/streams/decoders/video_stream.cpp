@@ -22,7 +22,8 @@ void VideoStream::resumeOutput() {
 
 void VideoStream::stop() {
     qDebug() << "VIDEO STOP";
-    output -> close();
+    output -> setFrame(new VideoFrame(0, 0));
+//    output -> close();
     MediaStream::stop();
 }
 

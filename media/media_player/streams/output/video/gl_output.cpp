@@ -35,6 +35,12 @@ void GLOutput::drawNext() {
         delete frame;
         frame = videoBuffer.takeFirst();
         mutex.unlock();
+
+        if (frame -> image == 0) {
+            close();
+            return;
+        }
+
         preloadedMillis -= frame -> interval;
         setWindowTitle(QString::number(videoBuffer.size()));
     }
