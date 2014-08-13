@@ -2,6 +2,8 @@
 #define STREAM_H
 
 #include "media/media_player/utils/media_player_utils.h"
+#include "media/media_player/utils/master_clock.h"
+
 #include <QThread>
 #include <QMutex>
 #include <qDebug>

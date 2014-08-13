@@ -7,6 +7,7 @@ MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
 
     av_register_all();
     avcodec_register_all();
+    MasterClock::create();
 }
 
 MediaPlayer::~MediaPlayer() {
@@ -21,6 +22,7 @@ MediaPlayer::~MediaPlayer() {
     stop();
 
     delete context;
+    MasterClock::close();
 }
 
 bool MediaPlayer::play(QUrl url) {

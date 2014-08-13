@@ -66,6 +66,12 @@ QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int
     return img;
 }
 
+
+
+
+
+
+
 //            if (!RGBFrame || RGBFrame -> width != width
 //                    || RGBFrame -> height != height) {
 //                // Determine required buffer size and allocate buffer

@@ -5,6 +5,7 @@
 #include <QUrl>
 
 #include "streams/stream_decoder.h"
+#include "utils/master_clock.h"
 
 class MediaPlayer : public QWidget {
     Q_OBJECT

@@ -20,6 +20,7 @@ void GLOutput::setFrame(VideoFrame * frame) {
     mutex.lock();
     videoBuffer.append(frame);
     preloadedMillis += frame -> interval;
+    qDebug() << frame -> interval << " " << preloadedMillis;
     mutex.unlock();
 }
 

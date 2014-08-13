@@ -79,7 +79,7 @@ void AudioStream::routine() {
             }
 
             outputStream -> addBuffer(ar);
-            calcPts(packet);
+            MasterClock::instance() -> setAudio(calcPts(packet));
             av_frame_unref(frame);
         } else {
             qDebug() << "Could not get audio data from this frame";
@@ -92,6 +92,7 @@ void AudioStream::routine() {
     av_free_packet(packet);
 }
 
+//wtf
 void AudioStream::manualResample() {
     int samples_with_channels = frame -> nb_samples * codec_context -> channels;
     int samples_with_channels_half = samples_with_channels / 2;
@@ -270,7 +271,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
 }
 
 double AudioStream::calcPts(AVPacket * packet) {
-    //DO: add resample changes correction to the calculation
+    double clock;
 
     if (packet -> pts != AV_NOPTS_VALUE) {
         //context -> audio_clock = av_q2d(stream -> time_base) * packet -> pts;

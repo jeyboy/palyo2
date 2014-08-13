@@ -10,13 +10,16 @@
 
 class AudioOutputStream : public Stream {
 public:
-    AudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority = InheritPriority);
+    AudioOutputStream(QObject * parent, AVCodecContext* codec_context, QAudioFormat & format, Priority priority = InheritPriority);
     ~AudioOutputStream();
 
     void addBuffer(QByteArray frame);
 protected:
     void routine();
 private:
+    int bytes_per_sec;
+    double last_buff_delay;
+
     QAudioOutput * soundOutput;
     QIODevice * audioIO;
 

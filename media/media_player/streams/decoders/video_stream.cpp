@@ -49,11 +49,10 @@ void VideoStream::routine() {
 
         if (got_picture) {
             QImage * img = resampler -> proceed(frame, width, height, width, height);
+            MasterClock::instance() -> setVideoNext(calcPts());
 
-            qDebug() << frame -> pkt_duration;
-            int ref = clock;
             if (img)
-                output -> setFrame(new VideoFrame(img, calcPts() - ref));
+                output -> setFrame(new VideoFrame(img, MasterClock::computeDelay()));
             av_frame_unref(frame);
         } else {
             qDebug() << "Could not get a full picture from this frame";
@@ -78,19 +77,21 @@ double VideoStream::calcPts() {
 }
 
 double VideoStream::syncPts(AVFrame *src_frame, double pts) {
+    double clock;
+
     if(pts != 0) {
         /* if we have pts, set video clock to it */
         clock = pts;
     } else {
         /* if we aren't given a pts, set it to the clock */
-        pts = clock;
+        pts = MasterClock::instance() -> video();
     }
 
     /* update the video clock */
     double frame_delay = av_q2d(codec_context -> time_base);
     /* if we are repeating a frame, adjust clock accordingly */
     frame_delay += src_frame -> repeat_pict * (frame_delay * 0.5);
-    clock += frame_delay;
+    MasterClock::instance() -> iterateVideo(frame_delay);
 
-    return clock;
+    return pts;
 }

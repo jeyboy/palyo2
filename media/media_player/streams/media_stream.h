@@ -19,16 +19,10 @@ public:
     inline bool isValid() const { return state; }
     inline int index() const { return uindex; }
 
-    inline double getClock() { return clock; }
-    inline void setClock(double newClock) { clock = newClock; }
-    inline void iterateClock(double offset) { clock += offset; }
-
     virtual void suspendOutput() = 0;
     virtual void resumeOutput() = 0;
 protected:
     virtual void routine() {} // stub
-
-    double clock;
 
     bool state, finishAndPause;
     AVStream * stream;
