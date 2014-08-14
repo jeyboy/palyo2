@@ -2,6 +2,7 @@
 #include <qDebug>
 
 StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : Stream(parent, QThread::TimeCriticalPriority)
+, defaultLang("rus")
 , state(true)
 , finished(false)
 , videoStream(0)
@@ -118,6 +119,24 @@ void StreamDecoder::routine() {
 
 ///////////////////////// Private //////////////////////////////////
 
+int StreamDecoder::langStream() {
+    AVDictionaryEntry * tag = 0;
+    AVDictionary * dict;
+
+    for(uint i = 0; i < context -> nb_streams; i++) {
+        qDebug() << "-----------------------------";
+        dict = context -> streams[i] -> metadata;
+        while ((tag = av_dict_get(dict, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+            qDebug() << tag -> key << " " << tag -> value;
+            if (QString(tag -> key) == "language" && QString(tag -> value) == defaultLang)
+                return i;
+//            delete tag;
+        }
+    }
+
+    return -1;
+}
+
 uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {
     if (audio != 0 && audio -> index() > -1)
         return audio -> index();
@@ -125,10 +144,11 @@ uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {
 }
 
 void StreamDecoder::findStreams() {
+    uint speakStream = langStream();
     videoStream = new VideoStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
 //    connect(search, SIGNAL(finished()), searchThread, SLOT(deleteLater()));
-    audioStream = new AudioStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, -1, bestStream(audioStream, videoStream), NULL, 0));
-    subtitleStream = new SubtitleStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
+    audioStream = new AudioStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, speakStream, bestStream(audioStream, videoStream), NULL, 0));
+    subtitleStream = new SubtitleStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, speakStream, bestStream(audioStream, videoStream), NULL, 0));
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
         emit errorOccurred("No one audio or video streams founds");

@@ -31,6 +31,8 @@ protected:
     void routine();
 
 private:
+    QString defaultLang;
+    int langStream();
     uint bestStream(AudioStream * audio, VideoStream * video);
     void findStreams();
 

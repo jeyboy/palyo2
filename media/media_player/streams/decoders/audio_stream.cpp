@@ -268,7 +268,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
                         sampleFormatOut,
                         codec_context -> sample_rate,
                         format.sampleRate(),
-                        codec_context -> channel_layout,
+                        MediaPlayerUtils::checkChannelLayout(codec_context -> channel_layout, codec_context -> channels),
 //                        MediaPlayerUtils::checkChannelLayout(MediaPlayerUtils::selectChannelLayout(codec), codec_context -> channels),
                         MediaPlayerUtils::checkChannelLayout(defaultChannelLayout, format.channelCount())
                     );
