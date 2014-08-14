@@ -7,21 +7,23 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     , resampler(0)
     , defaultChannelLayout(AV_CH_LAYOUT_STEREO) {
 
-    isPlanar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
-    //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
-    //              << "frame->data. Therefore, to access the audio data, you need to use\n"
-    //              << "frame->extended_data to access the audio data. It's planar, so\n"
-    //              << "each channel is in a different element. That is:\n"
-    //              << "  frame->extended_data[0] has the data for channel 1\n"
-    //              << "  frame->extended_data[1] has the data for channel 2\n"
-    //              << "  etc.\n";
+    if (state) {
+        isPlanar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
+        //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
+        //              << "frame->data. Therefore, to access the audio data, you need to use\n"
+        //              << "frame->extended_data to access the audio data. It's planar, so\n"
+        //              << "each channel is in a different element. That is:\n"
+        //              << "  frame->extended_data[0] has the data for channel 1\n"
+        //              << "  frame->extended_data[1] has the data for channel 2\n"
+        //              << "  etc.\n";
 
-//    bufferLimit = 500;
-    QAudioFormat format;
-    fillFormat(format);
+    //    bufferLimit = 500;
+        QAudioFormat format;
+        fillFormat(format);
 
-    outputStream = new AudioOutputStream(this, bytesPerSecond(), format, priority);
-//    outputStream = new PortAudioOutputStream(this, format, priority);
+        outputStream = new AudioOutputStream(this, bytesPerSecond(), format, priority);
+    //    outputStream = new PortAudioOutputStream(this, format, priority);
+    }
 }
 
 AudioStream::~AudioStream() {

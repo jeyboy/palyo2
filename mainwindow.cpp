@@ -27,7 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //      m -> play(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"));
 //    m -> play(QUrl::fromLocalFile("F:/New Year, New Tricks - Happy 2014!.mkv"));
-    m -> play(QUrl("http://www.ex.ua/get/120481371"));
+//    m -> play(QUrl("http://www.ex.ua/get/120481371"));
+    m -> play(QUrl("http://www.ex.ua/get/120031676"));
+
 
 //    m -> play(QUrl::fromLocalFile("F:/test.mp4"));
 //    m -> play(QUrl::fromLocalFile("F:/test.mp3"));

@@ -124,6 +124,7 @@ int StreamDecoder::langStream() {
     AVDictionary * dict;
 
     for(uint i = 0; i < context -> nb_streams; i++) {
+        if (context -> streams[i] -> codec -> codec_type != AVMEDIA_TYPE_AUDIO) continue;
         qDebug() << "-----------------------------";
         dict = context -> streams[i] -> metadata;
         while ((tag = av_dict_get(dict, "", tag, AV_DICT_IGNORE_SUFFIX))) {
@@ -144,11 +145,10 @@ uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {
 }
 
 void StreamDecoder::findStreams() {
-    uint speakStream = langStream();
     videoStream = new VideoStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
 //    connect(search, SIGNAL(finished()), searchThread, SLOT(deleteLater()));
-    audioStream = new AudioStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, speakStream, bestStream(audioStream, videoStream), NULL, 0));
-    subtitleStream = new SubtitleStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, speakStream, bestStream(audioStream, videoStream), NULL, 0));
+    audioStream = new AudioStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, langStream(), bestStream(audioStream, videoStream), NULL, 0));
+    subtitleStream = new SubtitleStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
         emit errorOccurred("No one audio or video streams founds");
