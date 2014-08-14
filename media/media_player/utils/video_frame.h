@@ -6,10 +6,10 @@
 struct VideoFrame {
     VideoFrame() {
         image = new QImage(":play");
-        interval = 0.4;
+        interval = 40; //millis
     }
 
-    VideoFrame(QImage * img, double frameInterval) {
+    VideoFrame(QImage * img, uint frameInterval) {
         image = img;
         interval = frameInterval;
     }
@@ -19,7 +19,7 @@ struct VideoFrame {
     }
 
     QImage * image;
-    double interval;
+    uint interval;
 };
 
 #endif // VIDEO_FRAME_H

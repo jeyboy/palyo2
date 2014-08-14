@@ -30,15 +30,15 @@ void MasterClock::reset(uint clock) {
     mainLastDelayVal = 0.20;
 }
 
-double MasterClock::computeAudioDelay() {
+uint MasterClock::computeAudioDelay() {
     double diff = videoClockNext - audioOClock;
     if (diff < 0)
-        return fabs(diff) * 4;
+        return fabs(diff) * 100;
 
     return 0;
 }
 
-double MasterClock::computeVideoDelay() {
+uint MasterClock::computeVideoDelay() {
     qDebug() << "-----------------------------------------";
     double delay = videoClock - mainLastPtsVal;
     if (delay <= 0.0 || delay >= 1.0) {
@@ -68,5 +68,5 @@ double MasterClock::computeVideoDelay() {
             /* Really it should skip the picture instead */
             actual_delay = 0.010;
     }
-    return actual_delay;
+    return actual_delay * 100;
 }

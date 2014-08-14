@@ -82,6 +82,7 @@ void AudioStream::routine() {
             }
 
             outputStream -> addBuffer(ar);
+
             MasterClock::instance() -> setAudio(calcPts(packet));
 //            av_frame_unref(frame);
         } else {

@@ -24,12 +24,13 @@ void AudioOutputStream::addBuffer(QByteArray * frame) {
     mutex -> unlock();
 }
 
+//TODO: move delays on decoder level and remove buffer (maybe this class not should be a thread)
 void AudioOutputStream::routine() {
 
-    double delay = MasterClock::instance() -> computeAudioDelay();
+    uint delay = MasterClock::instance() -> computeAudioDelay();
     if (delay > 0) {
         qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << delay;
-        msleep(delay * 100);
+        msleep(delay);
     }
 
     mutex -> lock();

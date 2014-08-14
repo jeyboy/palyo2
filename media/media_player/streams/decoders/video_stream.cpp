@@ -69,9 +69,9 @@ void VideoStream::routine() {
     av_free_packet(packet);
 
     if (img) {
-        double delay = MasterClock::instance() -> computeVideoDelay();
+        uint delay = MasterClock::instance() -> computeVideoDelay();
         output -> setFrame(new VideoFrame(img, delay));
-        msleep(delay * 100);
+        msleep(delay);
     }
 }
 

@@ -30,7 +30,7 @@ void GLOutput::drawNext() {
     }
 
     repaint();
-    timer.singleShot(frame -> interval * 100, (GLOutput *)this, SLOT(drawNext()));
+    timer.singleShot(frame -> interval, this, SLOT(drawNext()));
 }
 
 void GLOutput::paintEvent(QPaintEvent*) {
