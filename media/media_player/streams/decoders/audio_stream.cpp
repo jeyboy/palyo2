@@ -5,7 +5,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     , isPlanar(false)
     , resampleRequire(false)
     , resampler(0)
-    , defaultSampleFormat((AVSampleFormat)AV_CH_LAYOUT_STEREO) {
+    , defaultChannelLayout(AV_CH_LAYOUT_STEREO) {
 
     isPlanar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
     //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
@@ -269,7 +269,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
                         format.sampleRate(),
                         codec_context -> channel_layout,
 //                        MediaPlayerUtils::checkChannelLayout(MediaPlayerUtils::selectChannelLayout(codec), codec_context -> channels),
-                        defaultSampleFormat
+                        MediaPlayerUtils::checkChannelLayout(defaultChannelLayout, format.channelCount())
                     );
     }
 }

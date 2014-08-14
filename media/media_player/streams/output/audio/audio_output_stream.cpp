@@ -25,6 +25,13 @@ void AudioOutputStream::addBuffer(QByteArray * frame) {
 }
 
 void AudioOutputStream::routine() {
+
+    double delay = MasterClock::instance() -> computeAudioDelay();
+    if (delay > 0) {
+        qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << delay;
+        msleep(delay * 100);
+    }
+
     mutex -> lock();
         if (!audioBuffers.isEmpty() && soundOutput -> bytesFree() > 0) {
             QByteArray * ar = audioBuffers.takeFirst();

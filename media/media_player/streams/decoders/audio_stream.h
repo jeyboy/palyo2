@@ -37,7 +37,7 @@ private:
     AudioOutputStream * outputStream;
 //    PortAudioOutputStream * outputStream;
 
-    AVSampleFormat defaultSampleFormat;
+    int defaultChannelLayout;
 };
 
 #endif // AUDIO_STREAM_H

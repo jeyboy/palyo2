@@ -89,7 +89,8 @@ public:
         if (channel_layout && av_get_channel_layout_nb_channels(channel_layout) == channels_count)
             return channel_layout;
         else
-            return 0;
+            return av_get_default_channel_layout(channels_count);
+//            return 0;
     }
 
 

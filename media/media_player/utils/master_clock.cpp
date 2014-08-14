@@ -30,7 +30,15 @@ void MasterClock::reset(uint clock) {
     mainLastDelayVal = 0.20;
 }
 
-double MasterClock::computeDelay() {
+double MasterClock::computeAudioDelay() {
+    double diff = videoClockNext - audioOClock;
+    if (diff < 0)
+        return fabs(diff) * 4;
+
+    return 0;
+}
+
+double MasterClock::computeVideoDelay() {
     qDebug() << "-----------------------------------------";
     double delay = videoClock - mainLastPtsVal;
     if (delay <= 0.0 || delay >= 1.0) {

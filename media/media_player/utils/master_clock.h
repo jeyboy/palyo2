@@ -21,7 +21,8 @@ public:
     }
 
     void reset(uint clock);
-    double computeDelay();
+    double computeAudioDelay();
+    double computeVideoDelay();
 
     inline double main() { return mainClock; }
     inline void setMain(double newClock) { mainClock = newClock; }
