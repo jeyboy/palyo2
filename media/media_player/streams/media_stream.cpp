@@ -2,7 +2,7 @@
 
 MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : Stream(parent, priority)
   , waitMillis(12)
-  , packetsLimit(3)
+  , packetsLimit(2)
   , state(true)
   , finishAndPause(false)
   , finishAndExit(false)
@@ -91,6 +91,19 @@ void MediaStream::decode(AVPacket * newPacket) {
     mutex -> lock();
     packets.append(newPacket);
     mutex -> unlock();
+}
+
+bool MediaStream::seek(AVFormatContext * context, int64_t target) {
+    if (state) {
+        target = av_rescale_q(target, AV_TIME_BASE_Q, context -> streams[uindex] -> time_base);
+
+        if(av_seek_frame(context, uindex, target, target < MasterClock::instance() -> main() * 100 ? AVSEEK_FLAG_BACKWARD : 0) < 0)
+            return false;
+
+        return true;
+    }
+
+    return false;
 }
 
 void MediaStream::resume() {

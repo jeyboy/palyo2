@@ -11,10 +11,17 @@ public:
 
     void decode(AVPacket * newPacket);
 //    void decode(unsigned char* bytes, int size);
+    inline void dropPackets() {
+        mutex -> lock();
+        while(packets.size() > 0)
+            av_free_packet(packets.takeFirst());
+        mutex -> unlock();
+    }
 
     inline void pauseOnComplete() { finishAndPause = true; }
     inline void exitOnComplete() { finishAndExit = true; }
 
+    bool seek(AVFormatContext * context, int64_t target);
     void resume();
 
     inline bool isValid() const { return state; }

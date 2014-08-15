@@ -33,17 +33,12 @@ void MasterClock::reset(uint clock) {
 
 uint MasterClock::computeAudioDelay() {
     double diff = videoClockNext - audioOClock;
-    if (diff < 0) {
+    if (diff < -0.08) {
         qDebug() << "!!!!!!!!!!!!!!! " << diff;
-        return fabs(diff) * 200;
+        return fabs(diff) * 100;
     }
 
     return 0;
-}
-
-bool MasterClock::dropVideoPacket() {
-    double diff = videoClockNext - audioOClock;
-    return diff < 0.4;
 }
 
 uint MasterClock::computeVideoDelay() {
@@ -72,7 +67,7 @@ uint MasterClock::computeVideoDelay() {
     qDebug() << "total delay " << delay;
 
     mainClock += delay;
-
+    //    av_gettime() / 1000000.0) is a internal clock
     double actual_delay = (mainClock - (av_gettime() / 1000000.0));
     if(actual_delay < 0.010 || half) {
         return 0;

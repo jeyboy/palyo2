@@ -86,8 +86,9 @@ void AudioStream::routine() {
             }
 
             outputStream -> addBuffer(ar);
-
+//            msleep(((double)ar -> size()) / bytesPerSecond() * 100);
             MasterClock::instance() -> setAudio(calcPts(packet));
+
 //            av_frame_unref(frame);
         } else {
             qDebug() << "Could not get audio data from this frame";

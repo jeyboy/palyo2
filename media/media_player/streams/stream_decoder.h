@@ -20,6 +20,8 @@ public:
     inline bool hasVideo() const { return videoStream -> isValid(); }
     inline bool hasSubtitles() const { return subtitleStream -> isValid(); }
 
+    void seek(int64_t target);
+
     void suspendOutput();
     void resumeOutput();
 signals:

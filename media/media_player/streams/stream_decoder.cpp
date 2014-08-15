@@ -33,6 +33,27 @@ StreamDecoder::~StreamDecoder() {
     delete currFrame;
 }
 
+void StreamDecoder::seek(int64_t target) {
+    pauseRequired = true;
+
+//    incr = -60.0;
+//    pos = get_master_clock(global_video_state);
+//	pos += incr;
+//	stream_seek(global_video_state,
+//                      (int64_t)(pos * AV_TIME_BASE), incr);
+
+    if (audioStream -> seek(context, target)
+            || videoStream -> seek(context, target)
+            || subtitleStream -> seek(context, target)) {
+
+        videoStream -> dropPackets();
+        audioStream -> dropPackets();
+        subtitleStream -> dropPackets();
+    }
+
+    pauseRequired = false;
+}
+
 void StreamDecoder::suspendOutput() {
     videoStream -> suspendOutput();
     audioStream -> suspendOutput();
@@ -69,22 +90,7 @@ void StreamDecoder::routine() {
 //        isCorrupt = !!(currFrame.flags & AV_PKT_FLAG_CORRUPT);
 
 
-//        ////////////////////////////////// PADDING_DATA RECALC
-//            /*!
-//              larger than the actual read bytes because some optimized bitstream readers read 32 or 64 bits at once and could read over the end.
-//              The end of the input buffer avpkt->data should be set to 0 to ensure that no overreading happens for damaged MPEG streams
-//             */
-//            QByteArray encoded;
-//            encoded.reserve(currFrame -> size + FF_INPUT_BUFFER_PADDING_SIZE);
-//            encoded.resize(currFrame -> size);
-//            // also copy  padding data(usually 0)
-//            memcpy(encoded.data(), currFrame -> data, encoded.capacity());
-
-//            currFrame -> size = encoded.size();
-//            currFrame -> data = (uint8_t*)encoded.constData();
-//        ////////////////////////////////// PADDING_DATA RECALC
-
-
+        //TODO: maybe need preload for each stream type before start to play
         if (currFrame -> stream_index == audioStream -> index() && !audioStream -> isFinished()) {
             audioStream -> decode(currFrame);
             ac++;
