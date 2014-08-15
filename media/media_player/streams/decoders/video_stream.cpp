@@ -16,16 +16,16 @@ VideoStream::~VideoStream() {
 }
 
 void VideoStream::suspendOutput() {
-
+    pauseRequired = true;
 }
 void VideoStream::resumeOutput() {
-
+    qDebug() << "RESUME";
+    pauseRequired = false;
 }
 
 void VideoStream::stop() {
     qDebug() << "VIDEO STOP";
     output -> setFrame(new VideoFrame(0, 0));
-//    output -> close();
     MediaStream::stop();
 }
 
@@ -72,8 +72,12 @@ void VideoStream::routine() {
 
     if (img) {
         uint delay = MasterClock::instance() -> computeVideoDelay();
-        output -> setFrame(new VideoFrame(img, delay));
-        if (delay > 0) msleep(delay);
+        if (delay <= 0) {
+            delete img;
+        } else {
+            output -> setFrame(new VideoFrame(img, delay));
+            msleep(delay);
+        }
     }
 }
 
@@ -89,12 +93,7 @@ double VideoStream::calcPts() {
 }
 
 double VideoStream::syncPts(AVFrame *src_frame, double pts) {
-    double clock;
-
-    if(pts != 0) {
-        /* if we have pts, set video clock to it */
-        clock = pts;
-    } else {
+    if(pts == 0) {
         /* if we aren't given a pts, set it to the clock */
         pts = MasterClock::instance() -> video();
     }

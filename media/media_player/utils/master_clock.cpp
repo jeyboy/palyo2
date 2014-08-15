@@ -41,6 +41,11 @@ uint MasterClock::computeAudioDelay() {
     return 0;
 }
 
+bool MasterClock::dropVideoPacket() {
+    double diff = videoClockNext - audioOClock;
+    return diff < 0.4;
+}
+
 uint MasterClock::computeVideoDelay() {
     half = false;
     qDebug() << "-----------------------------------------";
@@ -69,14 +74,15 @@ uint MasterClock::computeVideoDelay() {
     mainClock += delay;
 
     double actual_delay = (mainClock - (av_gettime() / 1000000.0));
-    if(actual_delay < 0.010) {
-            /* Really it should skip the picture instead */
-            actual_delay = 0.010;
+    if(actual_delay < 0.010 || half) {
+        return 0;
+//            /* Really it should skip the picture instead */
+//            actual_delay = 0.010;
     }
 
-    if (half)
-        return 0;//actual_delay * 50;
-    else
-        return actual_delay * 100;
+//    if (half)
+//        return 0;//actual_delay * 50;
+//    else
+    return actual_delay * 100;
 
 }

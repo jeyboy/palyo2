@@ -41,9 +41,11 @@ void AudioStream::stop() {
 }
 
 void AudioStream::suspendOutput() {
+    pauseRequired = true;
     outputStream -> suspend();
 }
 void AudioStream::resumeOutput() {
+    pauseRequired = false;
     outputStream -> resume();
 }
 

@@ -22,6 +22,7 @@ public:
 
     void reset(uint clock);
     uint computeAudioDelay();
+    bool dropVideoPacket();
     uint computeVideoDelay();
 
     inline double main() { return mainClock; }
