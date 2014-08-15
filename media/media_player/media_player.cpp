@@ -1,13 +1,12 @@
 #include "media_player.h"
 
-MediaPlayer::MediaPlayer(QWidget * parent) : QWidget(parent)
-  , decoder(0)
-  , isRemote(false)
-  , context(0) {
+MediaPlayer * MediaPlayer::self = 0;
 
-    av_register_all();
-    avcodec_register_all();
-    MasterClock::create();
+MediaPlayer * MediaPlayer::instance(QObject * parent) {
+    if(!self)
+        self = new MediaPlayer(parent);
+
+    return self;
 }
 
 MediaPlayer::~MediaPlayer() {
@@ -25,7 +24,7 @@ MediaPlayer::~MediaPlayer() {
     MasterClock::close();
 }
 
-bool MediaPlayer::play(QUrl url) {
+bool MediaPlayer::open(QUrl url) {
     stop();
 
     bool res = openContext(url);
@@ -37,6 +36,26 @@ bool MediaPlayer::play(QUrl url) {
     }
 
     return res;
+}
+
+bool MediaPlayer::tags(QHash<QString, QString> & ret) {
+    if (context) {
+        AVDictionaryEntry * tag = 0;
+        while ((tag = av_dict_get(context -> metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+            ret.insert(tag -> key, tag -> value);
+            delete tag;
+        }
+        return true;
+    }
+
+    return false;
+}
+
+
+////////////// SLOTS  ///////////////////////////////////////
+
+void MediaPlayer::play() {
+    decoder -> resumeOutput();
 }
 
 void MediaPlayer::resume() {
@@ -52,19 +71,6 @@ void MediaPlayer::stop() {
         decoder -> suspendOutput();
 
     closeContext();
-}
-
-bool MediaPlayer::tags(QHash<QString, QString> & ret) {
-    if (context) {
-        AVDictionaryEntry * tag = 0;
-        while ((tag = av_dict_get(context -> metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-            ret.insert(tag -> key, tag -> value);
-            delete tag;
-        }
-        return true;
-    }
-
-    return false;
 }
 
 ////////////// PROTECTED //////////////////////////////////
@@ -114,7 +120,15 @@ void MediaPlayer::closeContext() {
 
 ////////////////////// PRIVATE //////////////////////////////
 
+MediaPlayer::MediaPlayer(QObject * parent) : QObject(parent)
+  , decoder(0)
+  , isRemote(false)
+  , context(0) {
 
+    av_register_all();
+    avcodec_register_all();
+    MasterClock::create();
+}
 
 //static int opt_width(void *optctx, const char *opt, const char *arg)
 //{

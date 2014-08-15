@@ -1,12 +1,28 @@
 #include "gl_output.h"
-#include <QDebug>
+#include "media/media_player/media_player.h"
 
-#include "gl_output.h"
 #include <QDebug>
 
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
   , frame(new VideoFrame) {
+
+    bottomPanel = new QWidget(this, Qt::Popup);
+    bottomPanel -> setMaximumHeight(100);
+
+    QPushButton * play = new QPushButton(QIcon(":play"), "", this);
+    connect(play, SIGNAL(clicked()), MediaPlayer::instance(), SLOT(play()));
+
+    bottomPanel -> layout() -> addWidget(play);
+
+    QVBoxLayout * newLayout = new QVBoxLayout(this);
+    newLayout -> addWidget(bottomPanel, 0, Qt::AlignBottom);
+    setLayout(newLayout);
+
+//    setWindowFlags(Qt::WindowStaysOnTopHint);
     show();
+    setFocus();
+//    setWindowFlags((windowFlags() & ~Qt::WindowStaysOnTopHint));
+
     drawNext();
 }
 

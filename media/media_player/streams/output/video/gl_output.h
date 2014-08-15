@@ -6,6 +6,9 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 
+#include <QLayout>
+#include <QPushButton>
+
 #include <QGLWidget>
 #include <QMutex>
 #include <QTimer>
@@ -24,6 +27,8 @@ protected:
     void paintEvent(QPaintEvent *);
     bool event(QEvent *);
 private:
+    QWidget * bottomPanel;
+
     VideoFrame * frame;
     QMutex mutex;
     QTimer timer;

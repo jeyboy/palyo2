@@ -14,6 +14,7 @@ StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : 
     findStreams();
     MasterClock::instance() -> setMain((double)av_gettime() / 1000000.0);
 
+    suspendOutput();
     start();
 }
 

@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initialization();
 
-    m = new MediaPlayer(this);
+    MediaPlayer::instance(this);
 
 //    Play media from Internet services using the quvi project.
 //    The demuxer accepts a ‘format’ option to request a specific quality. It is by default set to best.
@@ -23,16 +23,18 @@ MainWindow::MainWindow(QWidget *parent) :
 //    FFmpeg needs to be built with --enable-libquvi for this demuxer to be enabled.
 //    http://quvi.sourceforge.net/r/howto/install/
 //    To play/convert videos directly from Youtube, using FFmpeg, you need to compile your ffmpeg with ​libquvi support.
-//    m -> play(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
+//    MediaPlayer::instance() -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
-//      m -> play(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"));
-//    m -> play(QUrl::fromLocalFile("F:/New Year, New Tricks - Happy 2014!.mkv"));
-    m -> play(QUrl("http://www.ex.ua/get/111412158"));
-//    m -> play(QUrl("http://www.ex.ua/get/120031676"));
+//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"));
+//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/New Year, New Tricks - Happy 2014!.mkv"));
+    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/111412158"));
+//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/120031676"));
 
 
-//    m -> play(QUrl::fromLocalFile("F:/test.mp4"));
-//    m -> play(QUrl::fromLocalFile("F:/test.mp3"));
+//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp4"));
+//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp3"));
+
+    MediaPlayer::instance() -> play();
 }
 
 void MainWindow::locationCorrection() {
@@ -179,8 +181,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 MainWindow::~MainWindow() {
-    m -> stop();
-    delete m;
+    MediaPlayer::instance() -> stop();
+    MediaPlayer::instance() -> close();
 
     delete ui;
 

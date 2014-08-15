@@ -7,30 +7,40 @@
 #include "streams/stream_decoder.h"
 #include "utils/master_clock.h"
 
-class MediaPlayer : public QWidget {
+class MediaPlayer : public QObject {
     Q_OBJECT
 public:
 
-    MediaPlayer(QWidget * parent = 0);
+    static MediaPlayer * instance(QObject * parent = 0);
+    static void close() {
+        delete self;
+    }
+
     ~MediaPlayer();
 
-    bool play(QUrl url);
+    bool open(QUrl url);
+    bool tags(QHash<QString, QString> &);
+
+public slots:
+    void play();
     void resume();
     void pause();
     void stop();
-
-    bool tags(QHash<QString, QString> &);
 
 protected:
     bool openContext(QUrl url);
     void closeContext();
 
 private:
+    MediaPlayer(QObject * parent);
+
     StreamDecoder * decoder;
 
     bool isRemote;
 
     AVFormatContext *context;
+
+    static MediaPlayer * self;
 };
 
 #endif // MEDIA_PLAYER_H
