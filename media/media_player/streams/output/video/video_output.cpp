@@ -1,7 +1,7 @@
 #include "video_output.h"
 #include "media/media_player/media_player.h"
 
-VideoOutput::VideoOutput(int width, int height, QWidget* parent) : QWidget(parent) {
+VideoOutput::VideoOutput(int width, int height, QWidget* parent) : OutputContainer(parent) {
     resize(width, height);
 
     screen = new GLOutput(this);
@@ -43,5 +43,10 @@ VideoOutput::~VideoOutput() {
 }
 
 void VideoOutput::setFrame(VideoFrame * frame) {
+    if (frame -> image == 0) {
+        close();
+        return;
+    }
+
     screen -> setFrame(frame);
 }

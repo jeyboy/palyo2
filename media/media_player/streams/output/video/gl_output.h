@@ -3,9 +3,6 @@
 
 #include "media/media_player/utils/video_frame.h"
 
-#include <QMouseEvent>
-#include <QKeyEvent>
-
 #include <QGLWidget>
 #include <QMutex>
 #include <QTimer>
@@ -22,7 +19,6 @@ public slots:
     void drawNext();
 protected:
     void paintEvent(QPaintEvent *);
-    bool event(QEvent *);
 private:
     QWidget * bottomPanel;
 

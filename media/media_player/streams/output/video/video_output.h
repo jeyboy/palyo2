@@ -2,13 +2,14 @@
 #define VIDEO_OUTPUT_H
 
 #include "media/media_player/utils/video_frame.h"
+#include "output_container.h"
 #include "gl_output.h"
 
 #include <QLayout>
 #include <QPushButton>
 #include <QWidget>
 
-class VideoOutput : public QWidget {
+class VideoOutput : public OutputContainer {
      Q_OBJECT
 public:
     VideoOutput(int width, int height, QWidget* parent = 0);

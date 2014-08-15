@@ -114,7 +114,8 @@ SOURCES += main.cpp\
     media/media_player/streams/output/video/gl_output.cpp \
     media/media_player/resamplers/video_resampler.cpp \
     media/media_player/utils/master_clock.cpp \
-    media/media_player/streams/output/video/video_output.cpp
+    media/media_player/streams/output/video/video_output.cpp \
+    media/media_player/streams/output/video/output_container.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -213,7 +214,8 @@ HEADERS  += mainwindow.h \
     media/media_player/resamplers/video_resampler.h \
     media/media_player/streams/output/video/gl_output.h \
     media/media_player/utils/video_frame.h \
-    media/media_player/streams/output/video/video_output.h
+    media/media_player/streams/output/video/video_output.h \
+    media/media_player/streams/output/video/output_container.h
 
 unix:!mac {
         QT += gui-private

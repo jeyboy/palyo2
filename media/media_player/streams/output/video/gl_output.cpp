@@ -28,7 +28,6 @@ void GLOutput::setFrame(VideoFrame * frame) {
 
 void GLOutput::drawNext() {
     if (frame -> image == 0) {
-        close();
         return;
     }
 
@@ -46,27 +45,4 @@ void GLOutput::paintEvent(QPaintEvent *) {
     mutex.unlock();
 
     //    QGLWidget::paintEvent(event);
-}
-
-bool GLOutput::event(QEvent * event) {
-    if (event -> type() == QEvent::MouseButtonDblClick) {
-        QMouseEvent * mouseEvent = static_cast <QMouseEvent *> (event);
-
-        if (mouseEvent -> button() == Qt::LeftButton) {
-           if (isFullScreen())
-              showNormal();
-           else
-              showFullScreen();
-        }
-    }
-
-    if (event -> type() == QEvent::KeyPress) {
-        QKeyEvent * keyEvent = static_cast <QKeyEvent *> (event);
-
-        if (keyEvent -> key() == Qt::Key_Escape && isFullScreen()) {
-           showNormal();
-        }
-    }
-
-    return QGLWidget::event(event);
 }
