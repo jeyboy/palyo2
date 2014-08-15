@@ -1,26 +1,13 @@
 #include "gl_output.h"
-#include "media/media_player/media_player.h"
 
 #include <QDebug>
 
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
   , frame(new VideoFrame) {
 
-    bottomPanel = new QWidget(this, Qt::Popup);
-    bottomPanel -> setMaximumHeight(100);
-
-    QPushButton * play = new QPushButton(QIcon(":play"), "", this);
-    connect(play, SIGNAL(clicked()), MediaPlayer::instance(), SLOT(play()));
-
-    bottomPanel -> layout() -> addWidget(play);
-
-    QVBoxLayout * newLayout = new QVBoxLayout(this);
-    newLayout -> addWidget(bottomPanel, 0, Qt::AlignBottom);
-    setLayout(newLayout);
-
 //    setWindowFlags(Qt::WindowStaysOnTopHint);
-    show();
-    setFocus();
+//    show();
+//    setFocus();
 //    setWindowFlags((windowFlags() & ~Qt::WindowStaysOnTopHint));
 
     drawNext();
@@ -49,7 +36,7 @@ void GLOutput::drawNext() {
     timer.singleShot(frame -> interval, this, SLOT(drawNext()));
 }
 
-void GLOutput::paintEvent(QPaintEvent*) {
+void GLOutput::paintEvent(QPaintEvent *) {
     QPainter p(this);
 
     //Set the painter to use a smooth scaling algorithm.
@@ -57,6 +44,8 @@ void GLOutput::paintEvent(QPaintEvent*) {
     mutex.lock();
     p.drawImage(this -> rect(), *frame -> image);
     mutex.unlock();
+
+    //    QGLWidget::paintEvent(event);
 }
 
 bool GLOutput::event(QEvent * event) {

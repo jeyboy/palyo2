@@ -4,8 +4,10 @@
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : MediaStream(context, streamIndex, parent, priority) {
 
-    output = new GLOutput();
-    resampler = new VideoResampler(codec_context -> pix_fmt);
+    if (state) {
+        output = new VideoOutput(codec_context -> width, codec_context -> height);
+        resampler = new VideoResampler(codec_context -> pix_fmt);
+    }
 }
 
 VideoStream::~VideoStream() {

@@ -1,0 +1,22 @@
+#ifndef VIDEO_OUTPUT_H
+#define VIDEO_OUTPUT_H
+
+#include "media/media_player/utils/video_frame.h"
+#include "gl_output.h"
+
+#include <QLayout>
+#include <QPushButton>
+#include <QWidget>
+
+class VideoOutput : public QWidget {
+     Q_OBJECT
+public:
+    VideoOutput(int width, int height, QWidget* parent = 0);
+    ~VideoOutput();
+
+    void setFrame(VideoFrame * frame);
+private:
+    GLOutput * screen;
+};
+
+#endif // VIDEO_OUTPUT_H

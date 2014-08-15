@@ -6,9 +6,6 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 
-#include <QLayout>
-#include <QPushButton>
-
 #include <QGLWidget>
 #include <QMutex>
 #include <QTimer>
