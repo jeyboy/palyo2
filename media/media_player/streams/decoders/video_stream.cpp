@@ -71,7 +71,7 @@ void VideoStream::routine() {
     if (img) {
         uint delay = MasterClock::instance() -> computeVideoDelay();
         output -> setFrame(new VideoFrame(img, delay));
-        msleep(delay);
+        if (delay > 0) msleep(delay);
     }
 }
 

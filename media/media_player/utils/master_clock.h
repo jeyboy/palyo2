@@ -1,7 +1,7 @@
 #ifndef MASTER_CLOCK_H
 #define MASTER_CLOCK_H
 
-#include <QMutex>
+//#include <QMutex>
 #include "media_player_utils.h"
 
 /* no AV sync correction is done if below the AV sync threshold */
@@ -58,6 +58,8 @@ private:
 
     static MasterClock * self;
 
+    bool half;
+
     double mainClock;
     double mainLastPtsVal;
     double mainLastDelayVal;
@@ -69,20 +71,6 @@ private:
     volatile double videoClockNext;
 
     volatile double subtitlesClock;
-
-//    uint audioOClock;
-//    uint videoOClock;
-//    uint subtitlesOClock;
-
-    QMutex * audioMutex;
-    QMutex * videoMutex;
-    QMutex * subtitlesMutex;
-
-//    QMutex * audioOMutex;
-//    QMutex * videoOMutex;
-//    QMutex * subtitlesOMutex;
-
-
 };
 
 #endif // MASTER_CLOCK_H

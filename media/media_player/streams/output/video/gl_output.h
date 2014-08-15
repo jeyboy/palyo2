@@ -2,9 +2,12 @@
 #define GL_OUTPUT_H
 
 #include "media/media_player/utils/video_frame.h"
+
+#include <QMouseEvent>
+#include <QKeyEvent>
+
 #include <QGLWidget>
 #include <QMutex>
-
 #include <QTimer>
 
 class GLOutput : public QGLWidget {
@@ -19,6 +22,7 @@ public slots:
     void drawNext();
 protected:
     void paintEvent(QPaintEvent *);
+    bool event(QEvent *);
 private:
     VideoFrame * frame;
     QMutex mutex;

@@ -28,6 +28,7 @@ void MasterClock::reset(uint clock) {
     videoClockNext = 0;
     mainLastPtsVal = 0;
     mainLastDelayVal = 0.20;
+    half = false;
 }
 
 uint MasterClock::computeAudioDelay() {
@@ -41,6 +42,7 @@ uint MasterClock::computeAudioDelay() {
 }
 
 uint MasterClock::computeVideoDelay() {
+    half = false;
     qDebug() << "-----------------------------------------";
     double delay = videoClock - mainLastPtsVal;
     if (delay <= 0.0 || delay >= 1.0) {
@@ -57,6 +59,7 @@ uint MasterClock::computeVideoDelay() {
     if (fabs(diff) < AV_NOSYNC_THRESHOLD) {
             if (diff <= -sync_threshold) {
                     delay = 0;
+                    half = true;
             } else if (diff >= sync_threshold) {
                     delay = diff; //4 * delay;
             }
@@ -70,5 +73,10 @@ uint MasterClock::computeVideoDelay() {
             /* Really it should skip the picture instead */
             actual_delay = 0.010;
     }
-    return actual_delay * 100;
+
+    if (half)
+        return 0;//actual_delay * 50;
+    else
+        return actual_delay * 100;
+
 }
