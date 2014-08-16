@@ -93,46 +93,56 @@ void StreamDecoder::routine() {
         }
     }
 
-    int status = av_read_frame(context, currFrame);
+    int status;
+    bool preload = audioStream -> requirePreload() && videoStream -> requirePreload();
 
-    if (status >= 0) {
+    while (true) {
+        status = av_read_frame(context, currFrame);
 
-//        hasKeyFrame = !!(currFrame.flags & AV_PKT_FLAG_KEY);
-//        // what about marking packet as invalid and do not use isCorrupt?
-//        isCorrupt = !!(currFrame.flags & AV_PKT_FLAG_CORRUPT);
+        if (status >= 0) {
+
+    //        hasKeyFrame = !!(currFrame.flags & AV_PKT_FLAG_KEY);
+    //        // what about marking packet as invalid and do not use isCorrupt?
+    //        isCorrupt = !!(currFrame.flags & AV_PKT_FLAG_CORRUPT);
 
 
-        //TODO: maybe need preload for each stream type before start to play
-        if (currFrame -> stream_index == audioStream -> index() && !audioStream -> isFinished()) {
-            audioStream -> decode(currFrame);
-            ac++;
-        }
-        else if (currFrame -> stream_index == videoStream -> index() && !videoStream -> isFinished()) {
-            videoStream -> decode(currFrame);
-            vc++;
-        }
-//        else if (currFrame -> stream_index == subtitleStream -> index())
-//            subtitleStream -> decode(currFrame);
-        else
-            av_free_packet(currFrame);
+            //TODO: maybe need preload for each stream type before start to play
+            if (currFrame -> stream_index == audioStream -> index() && !audioStream -> isFinished()) {
+                audioStream -> decode(currFrame);
+                ac++;
+            }
+            else if (currFrame -> stream_index == videoStream -> index() && !videoStream -> isFinished()) {
+                videoStream -> decode(currFrame);
+                vc++;
+            }
+    //        else if (currFrame -> stream_index == subtitleStream -> index())
+    //            subtitleStream -> decode(currFrame);
+            else
+                av_free_packet(currFrame);
 
-        currFrame = new AVPacket();
-    } else {       
-        qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
-
-        if (status == AVERROR_EOF) {
-            qDebug() << "DECODER EOF";
-            finished = exitRequired = true;
-            videoStream -> exitOnComplete();
-            audioStream -> exitOnComplete();
-            subtitleStream -> exitOnComplete();
+            currFrame = new AVPacket();
         } else {
-            qDebug() << "DECODER STOP";
-            pauseRequired = true;
-            videoStream -> pauseOnComplete();
-            audioStream -> pauseOnComplete();
-            subtitleStream -> pauseOnComplete();
+            qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
+
+            if (status == AVERROR_EOF) {
+                qDebug() << "DECODER EOF";
+                finished = exitRequired = true;
+                videoStream -> exitOnComplete();
+                audioStream -> exitOnComplete();
+                subtitleStream -> exitOnComplete();
+            } else {
+                qDebug() << "DECODER STOP";
+                pauseRequired = true;
+                videoStream -> pauseOnComplete();
+                audioStream -> pauseOnComplete();
+                subtitleStream -> pauseOnComplete();
+            }
+
+            break;
         }
+
+        if (!preload || (videoStream -> packets.size() >= 8 && audioStream -> packets.size() >= 8))
+            break;
     }
 }
 

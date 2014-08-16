@@ -17,6 +17,7 @@ public:
         mutex -> unlock();
     }
 
+    inline bool requirePreload() { return !isValid() || (isValid() && packets.isEmpty()); }
     inline bool hasPackets() { return !packets.isEmpty(); }
     inline void pauseOnComplete() { finishAndPause = true; }
     inline void exitOnComplete() { finishAndExit = true; }

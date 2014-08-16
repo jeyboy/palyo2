@@ -27,12 +27,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"));
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/New Year, New Tricks - Happy 2014!.mkv"));
-//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/111412158"));
-//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/120031676"));
+//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/111412158")); //short
+//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
+
+    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47933391"));
 
 
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp4"));
-    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp3"));
+//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp3"));
 
     MediaPlayer::instance() -> play();
 }

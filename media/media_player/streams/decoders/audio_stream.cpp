@@ -58,12 +58,6 @@ void AudioStream::routine() {
         return;
     }
 
-    if (!outputStream -> requireNext()) {
-        msleep(waitMillis / 2);
-        return;
-    }
-
-
     AVPacket * packet = packets.takeFirst();
     mutex -> unlock();
 

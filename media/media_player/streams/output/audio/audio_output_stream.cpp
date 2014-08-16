@@ -24,11 +24,6 @@ void AudioOutputStream::addBuffer(QByteArray * frame) {
     mutex -> unlock();
 }
 
-bool AudioOutputStream::requireNext() {
-    qDebug() << audioIO -> bytesAvailable();
-    return audioIO -> atEnd();
-}
-
 //TODO: move delays on decoder level and remove buffer (maybe this class not should be a thread)
 void AudioOutputStream::routine() {
 
