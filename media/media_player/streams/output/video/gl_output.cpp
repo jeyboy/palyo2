@@ -28,11 +28,16 @@ void GLOutput::setFrame(VideoFrame * frame) {
 
 void GLOutput::drawNext() {
     if (frame -> image == 0) {
+        close();
         return;
     }
 
     repaint();
     timer.singleShot(frame -> interval, this, SLOT(drawNext()));
+}
+
+void GLOutput::closeEvent(QCloseEvent *) {
+    emit closed();
 }
 
 void GLOutput::paintEvent(QPaintEvent *) {

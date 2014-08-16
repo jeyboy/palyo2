@@ -5,6 +5,7 @@ VideoOutput::VideoOutput(int width, int height, QWidget* parent) : OutputContain
     resize(width, height);
 
     screen = new GLOutput(this);
+    connect(screen, SIGNAL(closed()), this, SLOT(close()));
 
     QWidget * bottomPanel = new QWidget(this);
     bottomPanel -> setMaximumHeight(60);
@@ -43,10 +44,5 @@ VideoOutput::~VideoOutput() {
 }
 
 void VideoOutput::setFrame(VideoFrame * frame) {
-    if (frame -> image == 0) {
-        close();
-        return;
-    }
-
     screen -> setFrame(frame);
 }

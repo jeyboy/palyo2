@@ -15,9 +15,13 @@ public:
 
     void setFrame(VideoFrame * frame);
 
+signals:
+    void closed();
+
 public slots:
     void drawNext();
 protected:
+    void closeEvent(QCloseEvent *);
     void paintEvent(QPaintEvent *);
 private:
     QWidget * bottomPanel;
