@@ -76,7 +76,7 @@ void StreamDecoder::resumeOutput() {
 }
 
 void StreamDecoder::routine() {
-    qDebug() << "PACKETS " << videoStream -> packets.size() << " a " << audioStream -> packets.size();
+//    qDebug() << "PACKETS " << videoStream -> packets.size() << " a " << audioStream -> packets.size();
 
 //    av_init_packet(currFrame);
 

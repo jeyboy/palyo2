@@ -72,7 +72,8 @@ void VideoStream::routine() {
 
     if (img) {
         uint delay = MasterClock::instance() -> computeVideoDelay();
-        if (delay <= 0) {
+//        if (delay <= 0) {
+        if (delay < 0) { // there is always will be greater or equal to the zero
             delete img;
         } else {
             output -> setFrame(new VideoFrame(img, delay));

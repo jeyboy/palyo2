@@ -20,7 +20,7 @@ MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * p
 
     stream = context -> streams[uindex];
 
-    if (stream == 0) {
+    if (stream == 0 || stream -> disposition & AV_DISPOSITION_ATTACHED_PIC) { // block attachments picts
         state = false;
         return;
     }
