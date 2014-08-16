@@ -47,6 +47,6 @@ void AudioOutputStream::routine() {
 
             delete ar;
             return;
-        } else { msleep(20); }
+        } else { msleep(2); }
     mutex -> unlock();
 }

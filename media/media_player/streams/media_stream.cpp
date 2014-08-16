@@ -1,7 +1,7 @@
 #include "media_stream.h"
 
 MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority) : Stream(parent, priority)
-  , waitMillis(12)
+  , waitMillis(2)
   , packetsLimit(2)
   , state(true)
   , finishAndPause(false)

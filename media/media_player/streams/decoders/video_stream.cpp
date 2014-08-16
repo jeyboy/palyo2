@@ -2,7 +2,9 @@
 #include <QApplication>
 
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
-    : MediaStream(context, streamIndex, parent, priority) {
+    : MediaStream(context, streamIndex, parent, priority)
+    , output(0)
+    , resampler(0){
 
     if (state) {
         output = new VideoOutput(codec_context -> width, codec_context -> height);

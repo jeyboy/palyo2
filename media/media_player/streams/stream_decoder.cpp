@@ -20,14 +20,20 @@ StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : 
 
 StreamDecoder::~StreamDecoder() {
     qDebug() << "decoder";
-    videoStream -> stop();
-    videoStream -> wait();
+    if (videoStream -> isValid()) {
+        videoStream -> stop();
+        videoStream -> wait();
+    }
 
-    audioStream -> stop();
-    audioStream -> wait();
+    if (audioStream -> isValid()) {
+        audioStream -> stop();
+        audioStream -> wait();
+    }
 
-    subtitleStream -> stop();
-    subtitleStream -> wait();
+    if (subtitleStream -> isValid()) {
+        subtitleStream -> stop();
+        subtitleStream -> wait();
+    }
 
 //    av_free_packet(currFrame); // maybe not?
     delete currFrame;
