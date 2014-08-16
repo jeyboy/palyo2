@@ -33,18 +33,20 @@ StreamDecoder::~StreamDecoder() {
     delete currFrame;
 }
 
+double StreamDecoder::position() {
+    if (audioStream -> isValid())
+        return MasterClock::instance() -> audio(); // orient on the audio stream position
+    else
+        return MasterClock::instance() -> video();
+}
+
 void StreamDecoder::seek(int64_t target) {
     pauseRequired = true;
+    int flags = target < position() * AV_TIME_BASE ? AVSEEK_FLAG_BACKWARD : 0;
 
-//    incr = -60.0;
-//    pos = get_master_clock(global_video_state);
-//	pos += incr;
-//	stream_seek(global_video_state,
-//                      (int64_t)(pos * AV_TIME_BASE), incr);
-
-    if (audioStream -> seek(context, target)
-            || videoStream -> seek(context, target)
-            || subtitleStream -> seek(context, target)) {
+    if (audioStream -> seek(context, target, flags)
+            || videoStream -> seek(context, target, flags)
+            || subtitleStream -> seek(context, target, flags)) {
 
         videoStream -> dropPackets();
         audioStream -> dropPackets();

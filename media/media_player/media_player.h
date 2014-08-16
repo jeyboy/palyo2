@@ -31,6 +31,8 @@ public slots:
     void resume();
     void pause();
     void stop();
+    void seek(int64_t);
+    void seekMillis(int);
 
 protected:
     bool openContext(QUrl url);

@@ -21,7 +21,7 @@ public:
     inline void pauseOnComplete() { finishAndPause = true; }
     inline void exitOnComplete() { finishAndExit = true; }
 
-    bool seek(AVFormatContext * context, int64_t target);
+    bool seek(AVFormatContext * context, int64_t target, int flags);
     void resume();
 
     inline bool isValid() const { return state; }

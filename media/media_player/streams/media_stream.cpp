@@ -93,11 +93,11 @@ void MediaStream::decode(AVPacket * newPacket) {
     mutex -> unlock();
 }
 
-bool MediaStream::seek(AVFormatContext * context, int64_t target) {
+bool MediaStream::seek(AVFormatContext * context, int64_t target, int flags) {
     if (state) {
         target = av_rescale_q(target, AV_TIME_BASE_Q, context -> streams[uindex] -> time_base);
 
-        if(av_seek_frame(context, uindex, target, target < MasterClock::instance() -> main() * 100 ? AVSEEK_FLAG_BACKWARD : 0) < 0)
+        if(av_seek_frame(context, uindex, target, flags) < 0)
             return false;
 
         return true;

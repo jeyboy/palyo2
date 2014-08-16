@@ -43,14 +43,14 @@ int64_t MediaPlayer::duration() {
    return context -> duration;
 }
 double MediaPlayer::_duration() {
-   return context -> duration / AV_TIME_BASE;
+   return duration() / AV_TIME_BASE;
 }
 
 int64_t MediaPlayer::position() {
-    return MasterClock::instance() -> audio() * AV_TIME_BASE;
+    return _position() * AV_TIME_BASE;
 }
 double MediaPlayer::_position() {
-    return MasterClock::instance() -> audio();
+    return decoder -> position();
 }
 
 QString MediaPlayer::info() {
@@ -74,14 +74,17 @@ bool MediaPlayer::tags(QHash<QString, QString> & ret) {
 ////////////// SLOTS  ///////////////////////////////////////
 
 void MediaPlayer::play() {
+    if (decoder == 0) return;
     decoder -> resumeOutput();
 }
 
 void MediaPlayer::resume() {
+    if (decoder == 0) return;
     decoder -> resumeOutput();
 }
 
 void MediaPlayer::pause() {
+    if (decoder == 0) return;
     decoder -> suspendOutput();
 }
 
@@ -90,6 +93,16 @@ void MediaPlayer::stop() {
         decoder -> suspendOutput();
 
     closeContext();
+}
+
+void MediaPlayer::seek(int64_t target) {
+    if (decoder == 0) return;
+    decoder -> seek(target);
+}
+
+void MediaPlayer::seekMillis(int target) {
+    if (decoder == 0) return;
+    decoder -> seek((int64_t)target * 1000);
 }
 
 ////////////// PROTECTED //////////////////////////////////
