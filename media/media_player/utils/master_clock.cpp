@@ -32,11 +32,11 @@ void MasterClock::reset(uint clock) {
 }
 
 uint MasterClock::computeAudioDelay() {
-    double diff = videoClockNext - audioOClock;
-    if (diff < -0.08) {
-        qDebug() << "!!!!!!!!!!!!!!! " << diff;
-        return fabs(diff) * 100;
-    }
+//    double diff = videoClockNext - audioOClock;
+//    if (diff < -0.08) {
+//        qDebug() << "!!!!!!!!!!!!!!! " << diff;
+//        return fabs(diff) * 100;
+//    }
 
     return 0;
 }

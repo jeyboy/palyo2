@@ -5,15 +5,20 @@
 #include <QAudioOutput>
 
 class AudioOutputStream : public Stream {
+    Q_OBJECT
 public:
-    AudioOutputStream(QObject * parent, int bytesPerSecond, QAudioFormat & format, Priority priority = InheritPriority);
+    AudioOutputStream(QObject * parent, QAudioFormat & format, Priority priority = InheritPriority);
     ~AudioOutputStream();
 
     void addBuffer(QByteArray * frame);
+    inline bool isFinished() { return audioBuffers.isEmpty(); }
+protected slots:
+    void iteration();
+
 protected:
     void routine();
 private:
-    int bytes_per_sec;
+    double millisPeriod;
 
     QAudioOutput * soundOutput;
     QIODevice * audioIO;

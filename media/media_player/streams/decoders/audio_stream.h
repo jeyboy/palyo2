@@ -17,7 +17,7 @@ public:
 
     void stop();
 
-    inline bool isBlocked() { return isValid() && packets.size() > packetsLimit; }
+    inline bool isBlocked() { return state && packets.size() >= packetsLimit; }
     void suspendOutput();
     void resumeOutput();
 

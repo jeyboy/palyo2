@@ -21,7 +21,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
         QAudioFormat format;
         fillFormat(format);
 
-        outputStream = new AudioOutputStream(this, bytesPerSecond(), format, priority);
+        outputStream = new AudioOutputStream(this, format, priority);
     //    outputStream = new PortAudioOutputStream(this, format, priority);
     }
 }
@@ -53,8 +53,8 @@ void AudioStream::routine() {
     mutex -> lock();
     if (packets.isEmpty()) {
         mutex -> unlock();
-        pauseRequired = finishAndPause;
-        if (finishAndExit) stop();
+        pauseRequired = finishAndPause && outputStream -> isFinished();
+        if (finishAndExit && outputStream -> isFinished()) stop();
         msleep(waitMillis);
         return;
     }
@@ -86,8 +86,8 @@ void AudioStream::routine() {
             }
 
             outputStream -> addBuffer(ar);
-//            msleep(((double)ar -> size()) / bytesPerSecond() * 100);
             MasterClock::instance() -> setAudio(calcPts(packet));
+            msleep(((double)ar -> size()) / bytesPerSecond() * 100);
 
 //            av_frame_unref(frame);
         } else {
