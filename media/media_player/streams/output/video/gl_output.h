@@ -17,6 +17,7 @@ public:
 
 signals:
     void closed();
+    void updated();
 
 public slots:
     void drawNext();

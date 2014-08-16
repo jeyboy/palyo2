@@ -1,4 +1,5 @@
 #include "media_player.h"
+#include "media/duration.h"
 
 MediaPlayer * MediaPlayer::self = 0;
 
@@ -36,6 +37,24 @@ bool MediaPlayer::open(QUrl url) {
     }
 
     return res;
+}
+
+int64_t MediaPlayer::duration() {
+   return context -> duration;
+}
+double MediaPlayer::_duration() {
+   return context -> duration / AV_TIME_BASE;
+}
+
+int64_t MediaPlayer::position() {
+    return MasterClock::instance() -> audio() * AV_TIME_BASE;
+}
+double MediaPlayer::_position() {
+    return MasterClock::instance() -> audio();
+}
+
+QString MediaPlayer::info() {
+    return Duration::fromMillis(position() / 1000) + " / " + Duration::fromMillis(duration() / 1000);
 }
 
 bool MediaPlayer::tags(QHash<QString, QString> & ret) {

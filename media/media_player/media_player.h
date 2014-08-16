@@ -19,6 +19,11 @@ public:
     ~MediaPlayer();
 
     bool open(QUrl url);
+    int64_t duration();
+    int64_t position();
+    double _duration();
+    double _position();
+    QString info();
     bool tags(QHash<QString, QString> &);
 
 public slots:

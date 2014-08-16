@@ -5,11 +5,6 @@
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
   , frame(new VideoFrame) {
 
-//    setWindowFlags(Qt::WindowStaysOnTopHint);
-//    show();
-//    setFocus();
-//    setWindowFlags((windowFlags() & ~Qt::WindowStaysOnTopHint));
-
     drawNext();
 }
 
@@ -32,6 +27,7 @@ void GLOutput::drawNext() {
         return;
     }
 
+    emit updated();
     repaint();
     timer.singleShot(frame -> interval, this, SLOT(drawNext()));
 }

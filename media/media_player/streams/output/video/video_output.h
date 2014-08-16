@@ -16,6 +16,8 @@ public:
     ~VideoOutput();
 
     void setFrame(VideoFrame * frame);
+public slots:
+    void titleUpdate();
 private:
     GLOutput * screen;
 };

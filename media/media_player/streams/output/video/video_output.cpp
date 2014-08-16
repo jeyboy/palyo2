@@ -6,6 +6,7 @@ VideoOutput::VideoOutput(int width, int height, QWidget* parent) : OutputContain
 
     screen = new GLOutput(this);
     connect(screen, SIGNAL(closed()), this, SLOT(close()));
+    connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
 
     QWidget * bottomPanel = new QWidget(this);
     bottomPanel -> setMaximumHeight(60);
@@ -46,3 +47,8 @@ VideoOutput::~VideoOutput() {
 void VideoOutput::setFrame(VideoFrame * frame) {
     screen -> setFrame(frame);
 }
+
+void VideoOutput::titleUpdate() {
+    setWindowTitle(MediaPlayer::instance() -> info());
+}
+
