@@ -23,7 +23,6 @@ public:
 
 protected:
     void routine();
-    void manualResample();
     void fillFormat(QAudioFormat & format);
     double calcPts(AVPacket * packet);
     int bytesPerSecond();

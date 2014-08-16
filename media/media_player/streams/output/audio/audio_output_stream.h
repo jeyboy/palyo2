@@ -10,6 +10,7 @@ public:
     ~AudioOutputStream();
 
     void addBuffer(QByteArray * frame);
+    bool requireNext();
 protected:
     void routine();
 private:

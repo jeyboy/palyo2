@@ -10,7 +10,6 @@ public:
     virtual ~MediaStream();
 
     void decode(AVPacket * newPacket);
-//    void decode(unsigned char* bytes, int size);
     inline void dropPackets() {
         mutex -> lock();
         while(packets.size() > 0)
@@ -18,6 +17,7 @@ public:
         mutex -> unlock();
     }
 
+    inline bool hasPackets() { return !packets.isEmpty(); }
     inline void pauseOnComplete() { finishAndPause = true; }
     inline void exitOnComplete() { finishAndExit = true; }
 
@@ -30,6 +30,8 @@ public:
     virtual bool isBlocked() = 0;
     virtual void suspendOutput() = 0;
     virtual void resumeOutput() = 0;
+
+    QList<AVPacket*> packets;
 protected:
     virtual void routine() {} // stub
 
@@ -42,7 +44,7 @@ protected:
     AVCodecContext * codec_context;
     AVCodec * codec; // this var is possible to get through stream -> codec()
     AVFrame * frame;
-    QList<AVPacket*> packets;
+//    QList<AVPacket*> packets;
 };
 
 

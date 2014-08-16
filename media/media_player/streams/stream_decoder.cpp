@@ -76,11 +76,15 @@ void StreamDecoder::resumeOutput() {
 }
 
 void StreamDecoder::routine() {
+    qDebug() << "PACKETS " << videoStream -> packets.size() << " a " << audioStream -> packets.size();
+
 //    av_init_packet(currFrame);
 
-    if (videoStream -> isBlocked() || audioStream -> isBlocked() || subtitleStream -> isBlocked()) {
-        msleep(12);
-        return;
+    if (videoStream -> isBlocked() || audioStream -> isBlocked()) {
+        if (videoStream -> hasPackets() && audioStream -> hasPackets() || !MasterClock::instance() -> demuxeRequired()) {
+            msleep(12);
+            return;
+        }
     }
 
     int status = av_read_frame(context, currFrame);
