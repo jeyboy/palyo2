@@ -1,6 +1,9 @@
 #include "video_output.h"
 #include "media/media_player/media_player.h"
 
+#include "override/slider.h"
+#include "override/slider_style.h"
+
 VideoOutput::VideoOutput(int width, int height, QWidget* parent) : OutputContainer(parent) {
     setMouseTracking(true);
     resize(width, height);
@@ -11,6 +14,8 @@ VideoOutput::VideoOutput(int width, int height, QWidget* parent) : OutputContain
     connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
 
     bottomPanel = new QWidget(this);
+    bottomPanel -> setBackgroundRole(QPalette::Shadow);
+    bottomPanel -> setAutoFillBackground(true);
     bottomPanel -> setMaximumHeight(60);
     bottomPanel -> setMinimumHeight(60);
 
@@ -20,18 +25,29 @@ VideoOutput::VideoOutput(int width, int height, QWidget* parent) : OutputContain
 
     QPushButton * play = new QPushButton(QIcon(":play"), "", this);
     play -> setMaximumSize(40, 50);
+    play -> setMinimumWidth(40);
     connect(play, SIGNAL(clicked()), MediaPlayer::instance(), SLOT(play()));
     bottomPanel -> layout() -> addWidget(play);
 
     QPushButton * pause = new QPushButton(QIcon(":pause"), "", this);
     pause -> setMaximumSize(40, 50);
+    pause -> setMinimumWidth(40);
     connect(pause, SIGNAL(clicked()), MediaPlayer::instance(), SLOT(pause()));
     bottomPanel -> layout() -> addWidget(pause);
 
     QPushButton * stop = new QPushButton(QIcon(":stop"), "", this);
     stop -> setMaximumSize(40, 50);
+    stop -> setMinimumWidth(40);
     connect(stop, SIGNAL(clicked()), MediaPlayer::instance(), SLOT(stop()));
     bottomPanel -> layout() -> addWidget(stop);
+
+    Slider * slider = new Slider(bottomPanel, true);
+    slider -> setStyle(new SliderStyle());
+    slider -> setTickInterval(60000);
+    slider -> setOrientation(Qt::Horizontal);
+    slider -> setMinimumSize(100, 30);
+    bottomPanel -> layout() -> addWidget(slider);
+
 
     QVBoxLayout * newLayout = new QVBoxLayout(this);
     newLayout -> addWidget(screen);
