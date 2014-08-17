@@ -18,8 +18,11 @@ public:
     void setFrame(VideoFrame * frame);
 public slots:
     void titleUpdate();
+protected:
+    void mouseMoveEvent(QMouseEvent * event);
 private:
     GLOutput * screen;
+    QWidget * bottomPanel;
 };
 
 #endif // VIDEO_OUTPUT_H

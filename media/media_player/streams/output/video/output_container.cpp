@@ -1,5 +1,5 @@
 #include "output_container.h"
-
+#include <QDebug>
 
 OutputContainer::OutputContainer(QWidget* parent) : QWidget(parent) {
 }

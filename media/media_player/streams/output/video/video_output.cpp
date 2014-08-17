@@ -2,18 +2,21 @@
 #include "media/media_player/media_player.h"
 
 VideoOutput::VideoOutput(int width, int height, QWidget* parent) : OutputContainer(parent) {
+    setMouseTracking(true);
     resize(width, height);
 
     screen = new GLOutput(this);
+    screen -> setMouseTracking(true);
     connect(screen, SIGNAL(closed()), this, SLOT(close()));
     connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
 
-    QWidget * bottomPanel = new QWidget(this);
+    bottomPanel = new QWidget(this);
     bottomPanel -> setMaximumHeight(60);
     bottomPanel -> setMinimumHeight(60);
 
     QHBoxLayout * panelLayout = new QHBoxLayout(this);
     bottomPanel -> setLayout(panelLayout);
+    bottomPanel -> setVisible(false); // remove later
 
     QPushButton * play = new QPushButton(QIcon(":play"), "", this);
     play -> setMaximumSize(40, 50);
@@ -52,3 +55,12 @@ void VideoOutput::titleUpdate() {
     setWindowTitle(MediaPlayer::instance() -> info());
 }
 
+void VideoOutput::mouseMoveEvent(QMouseEvent * event) {
+    QRect windRect = rect();
+    windRect.setTop(windRect.bottom() - (windRect.height() / 10));
+    if (windRect.contains(event -> x(), event -> y())) {
+        bottomPanel -> setVisible(true);
+    } else {
+        bottomPanel -> setVisible(false);
+    }
+}
