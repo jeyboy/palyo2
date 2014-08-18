@@ -14,7 +14,8 @@ public:
         codec_context = 0;
         codec = 0;
         frame = 0;
-        packetsLimit = 2;
+        mutex = 0;
+        packetsLimit = 8;
 
         if (streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND) {
             valid = false;
@@ -82,7 +83,7 @@ public:
             av_free_packet(pack);
 
         avcodec_close(codec_context);
-        delete codec_context;
+//        delete codec_context;
 
         delete codec; // hz
     }

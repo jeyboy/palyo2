@@ -54,12 +54,17 @@ void AudioStream::resumeOutput() {
 //TODO: add check on maxlen overflow
 //TODO: check situation when one packet contain more than one frame
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
+    if (maxlen == 0) return 0;
+
     int reslen = 0;
     int len, got_frame;
     AVPacket * packet;
 
     while(true) {
-        if (packets.isEmpty()) return reslen;
+        if (packets.isEmpty()) {
+            qDebug() << "IS EMPTY";
+            return reslen;
+        }
 
         mutex -> lock();
         packet = packets.takeFirst();
@@ -75,17 +80,13 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
             }
 
             if (got_frame) {
-    //            QByteArray * ar = new QByteArray();
-
                 if (resampleRequire) {
                     if (!resampler -> proceed(frame, data, reslen))
                         qDebug() << "RESAMPLER FAIL";
                 } else {
                     memcpy(data, (const char*)frame -> data[0], (reslen = frame -> linesize[0]));
-    //                ar -> append((const char*)frame -> data[0], frame -> linesize[0]);
                 }
 
-    //            outputStream -> addBuffer(ar);
     //            msleep((((double)ar -> size()) / bytesPerSecond()) * 1000);
                 MasterClock::instance() -> setAudio(calcPts(packet));
             } else {
@@ -102,6 +103,8 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
         av_free_packet(packet);
         if (reslen > 0) break;
     }
+
+    qDebug() << "11111111111111    " << reslen;
     return reslen;
 //            return -1; // return -1 if no data available anymore
 }
