@@ -108,14 +108,14 @@ SOURCES += main.cpp\
     media/media_player/streams/decoders/audio_stream.cpp \
     media/media_player/streams/decoders/video_stream.cpp \
     media/media_player/streams/decoders/subtitle_stream.cpp \
-    media/media_player/streams/output/audio/audio_output_stream.cpp \
     media/media_player/streams/output/audio/portaudio_output_stream.cpp \
     media/media_player/resamplers/audio_resampler.cpp \
-    media/media_player/streams/output/video/gl_output.cpp \
     media/media_player/resamplers/video_resampler.cpp \
     media/media_player/utils/master_clock.cpp \
     media/media_player/streams/output/video/video_output.cpp \
-    media/media_player/streams/output/video/output_container.cpp
+    media/media_player/streams/output/video/controls/gl_output.cpp \
+    media/media_player/streams/output/video/controls/output_container.cpp \
+    media/media_player/streams/output/audio/audio_output.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -208,14 +208,14 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/decoders/audio_stream.h \
     media/media_player/streams/decoders/video_stream.h \
     media/media_player/streams/decoders/subtitle_stream.h \
-    media/media_player/streams/output/audio/audio_output_stream.h \
     media/media_player/streams/output/audio/portaudio_output_stream.h \
     media/media_player/resamplers/audio_resampler.h \
     media/media_player/resamplers/video_resampler.h \
-    media/media_player/streams/output/video/gl_output.h \
     media/media_player/utils/video_frame.h \
+    media/media_player/streams/output/video/controls/gl_output.h \
     media/media_player/streams/output/video/video_output.h \
-    media/media_player/streams/output/video/output_container.h
+    media/media_player/streams/output/video/controls/output_container.h \
+    media/media_player/streams/output/audio/audio_output.h
 
 unix:!mac {
         QT += gui-private

@@ -2,8 +2,8 @@
 #define VIDEO_OUTPUT_H
 
 #include "media/media_player/utils/video_frame.h"
-#include "output_container.h"
-#include "gl_output.h"
+#include "controls/output_container.h"
+#include "controls/gl_output.h"
 
 #include <QLayout>
 #include <QPushButton>
