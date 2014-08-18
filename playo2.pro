@@ -115,7 +115,7 @@ SOURCES += main.cpp\
     media/media_player/streams/output/video/video_output.cpp \
     media/media_player/streams/output/video/controls/gl_output.cpp \
     media/media_player/streams/output/video/controls/output_container.cpp \
-    media/media_player/streams/output/audio/audio_output.cpp
+    media/media_player/streams/output/audio/audio_output_stream.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -215,7 +215,7 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/output/video/controls/gl_output.h \
     media/media_player/streams/output/video/video_output.h \
     media/media_player/streams/output/video/controls/output_container.h \
-    media/media_player/streams/output/audio/audio_output.h
+    media/media_player/streams/output/audio/audio_output_stream.h
 
 unix:!mac {
         QT += gui-private
