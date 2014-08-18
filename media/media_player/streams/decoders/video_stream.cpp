@@ -6,7 +6,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
     , output(0)
     , resampler(0){
 
-    if (state) {
+    if (valid) {
         output = new VideoOutput(codec_context -> width, codec_context -> height);
         resampler = new VideoResampler(codec_context -> pix_fmt);
     }

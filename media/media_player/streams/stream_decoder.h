@@ -10,7 +10,7 @@
 class StreamDecoder : public Stream {
     Q_OBJECT
 public:
-    StreamDecoder(AVFormatContext * currContext, QObject * parent = 0);
+    StreamDecoder(QObject * parent, AVFormatContext * currContext);
     ~StreamDecoder();
 
     inline bool isValid() const { return state; }

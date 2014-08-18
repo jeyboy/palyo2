@@ -1,7 +1,7 @@
 #ifndef SUBTITLE_STREAM_H
 #define SUBTITLE_STREAM_H
 
-#include "media/media_player/streams/media_stream.h"
+#include "media/media_player/streams/base/media_stream.h"
 
 class SubtitleStream : public MediaStream {
 public:

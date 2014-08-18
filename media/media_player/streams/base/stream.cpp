@@ -5,15 +5,12 @@ Stream::Stream(QObject * parent, Priority priority) : QThread(parent)
   , exitRequired(false)
   , pauseRequired(false) {
 
-    mutex = new QMutex();
 //    setPriority(priority);
 }
 
 Stream::~Stream() {
     qDebug() << "STream";
     stop();
-
-    delete mutex;
 }
 
 void Stream::run() {

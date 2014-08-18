@@ -1,42 +1,34 @@
 #ifndef AUDIO_STREAM_H
 #define AUDIO_STREAM_H
 
-#include "media/media_player/streams/media_stream.h"
-
 #include "media/media_player/resamplers/audio_resampler.h"
-
-#include "media/media_player/streams/output/audio/audio_output_stream.h"
-#include "media/media_player/streams/output/audio/portaudio_output_stream.h"
+#include "media/media_player/streams/base/i_media_stream.h"
 
 #include <QAudioFormat>
 
-class AudioStream : public MediaStream {
+class AudioStream : public QIODevice, public IMediaStream {
 public:
-    AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
+    AudioStream(QObject * parent, AVFormatContext * context, int streamIndex);
     ~AudioStream();
 
-    void stop();
-
-    inline bool isBlocked() { return isValid() && packets.size() > packetsLimit; }
     void suspendOutput();
     void resumeOutput();
 
 protected:
-    void routine();
+    virtual qint64 readData(char *data, qint64 maxlen);
+    virtual qint64 writeData(const char *data, qint64 len);
+
     void fillFormat(QAudioFormat & format);
     double calcPts(AVPacket * packet);
     int bytesPerSecond();
 
 private:
-    bool isPlanar;
+    int defaultChannelLayout;
 
     bool resampleRequire;
     AudioResampler * resampler;
 
-    AudioOutputStream * outputStream;
-//    PortAudioOutputStream * outputStream;
-
-    int defaultChannelLayout;
+    QAudioOutput * output;
 };
 
 #endif // AUDIO_STREAM_H

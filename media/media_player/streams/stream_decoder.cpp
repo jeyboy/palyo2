@@ -1,7 +1,7 @@
 #include "stream_decoder.h"
 #include <qDebug>
 
-StreamDecoder::StreamDecoder(AVFormatContext * currContext, QObject * parent) : Stream(parent, QThread::TimeCriticalPriority)
+StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : Stream(parent, QThread::TimeCriticalPriority)
 , defaultLang("rus")
 , state(true)
 , finished(false)
@@ -25,10 +25,7 @@ StreamDecoder::~StreamDecoder() {
         videoStream -> wait();
     }
 
-    if (audioStream -> isValid()) {
-        audioStream -> stop();
-        audioStream -> wait();
-    }
+    delete audioStream;
 
     if (subtitleStream -> isValid()) {
         subtitleStream -> stop();
@@ -50,9 +47,9 @@ void StreamDecoder::seek(int64_t target) {
     pauseRequired = true;
     int flags = target < position() * AV_TIME_BASE ? AVSEEK_FLAG_BACKWARD : 0;
 
-    if (audioStream -> seek(context, target, flags)
-            || videoStream -> seek(context, target, flags)
-            || subtitleStream -> seek(context, target, flags)) {
+    if (audioStream -> seeking(context, target, flags)
+            || videoStream -> seeking(context, target, flags)
+            || subtitleStream -> seeking(context, target, flags)) {
 
         videoStream -> dropPackets();
         audioStream -> dropPackets();
@@ -68,7 +65,6 @@ void StreamDecoder::suspendOutput() {
     subtitleStream -> suspendOutput();
 
     videoStream -> suspend();
-    audioStream -> suspend();
     subtitleStream -> suspend();
 }
 void StreamDecoder::resumeOutput() {
@@ -77,7 +73,6 @@ void StreamDecoder::resumeOutput() {
     subtitleStream -> resumeOutput();
 
     videoStream -> resume();
-    audioStream -> resume();
     subtitleStream -> resume();
 }
 
@@ -107,7 +102,7 @@ void StreamDecoder::routine() {
 
 
             //TODO: maybe need preload for each stream type before start to play
-            if (currFrame -> stream_index == audioStream -> index() && !audioStream -> isFinished()) {
+            if (currFrame -> stream_index == audioStream -> index() && audioStream -> isValid()) {
                 audioStream -> decode(currFrame);
                 ac++;
             }
@@ -128,20 +123,20 @@ void StreamDecoder::routine() {
                 qDebug() << "DECODER EOF";
                 finished = exitRequired = true;
                 videoStream -> exitOnComplete();
-                audioStream -> exitOnComplete();
+//                audioStream -> exitOnComplete();
                 subtitleStream -> exitOnComplete();
             } else {
                 qDebug() << "DECODER STOP";
                 pauseRequired = true;
                 videoStream -> pauseOnComplete();
-                audioStream -> pauseOnComplete();
+                audioStream -> suspendOutput();
                 subtitleStream -> pauseOnComplete();
             }
 
             break;
         }
 
-        if (!preload || (videoStream -> packets.size() >= 8 && audioStream -> packets.size() >= 8))
+        if (!preload || (videoStream -> preloaded() && audioStream -> preloaded()))
             break;
     }
 }

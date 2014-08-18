@@ -103,8 +103,8 @@ SOURCES += main.cpp\
     override/simple_list_view.cpp \
     media/media_player/media_player.cpp \
     media/media_player/streams/stream_decoder.cpp \
-    media/media_player/streams/stream.cpp \
-    media/media_player/streams/media_stream.cpp \
+    media/media_player/streams/base/stream.cpp \
+    media/media_player/streams/base/media_stream.cpp \
     media/media_player/streams/decoders/audio_stream.cpp \
     media/media_player/streams/decoders/video_stream.cpp \
     media/media_player/streams/decoders/subtitle_stream.cpp \
@@ -203,8 +203,8 @@ HEADERS  += mainwindow.h \
     media/media_player/utils/master_clock.h \
     media/media_player/utils/media_player_utils.h \
     media/media_player/streams/stream_decoder.h \
-    media/media_player/streams/stream.h \
-    media/media_player/streams/media_stream.h \
+    media/media_player/streams/base/stream.h \
+    media/media_player/streams/base/media_stream.h \
     media/media_player/streams/decoders/audio_stream.h \
     media/media_player/streams/decoders/video_stream.h \
     media/media_player/streams/decoders/subtitle_stream.h \
@@ -215,7 +215,8 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/output/video/controls/gl_output.h \
     media/media_player/streams/output/video/video_output.h \
     media/media_player/streams/output/video/controls/output_container.h \
-    media/media_player/streams/output/audio/audio_output_stream.h
+    media/media_player/streams/output/audio/audio_output_stream.h \
+    media/media_player/streams/base/i_media_stream.h
 
 unix:!mac {
         QT += gui-private

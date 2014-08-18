@@ -29,7 +29,7 @@ bool MediaPlayer::open(QUrl url) {
     stop();
 
     bool res = openContext(url);
-    decoder = new StreamDecoder(context, this);
+    decoder = new StreamDecoder(this, context);
     res &= decoder -> isValid();
 
     if (res) {

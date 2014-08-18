@@ -5,8 +5,6 @@
 #include "media/media_player/utils/master_clock.h"
 
 #include <QThread>
-#include <QMutex>
-#include <qDebug>
 
 class Stream : public QThread {
     Q_OBJECT
@@ -23,7 +21,6 @@ protected:
 
     volatile bool exitRequired;
     bool pauseRequired;
-    QMutex * mutex;
 };
 
 #endif // STREAM_H

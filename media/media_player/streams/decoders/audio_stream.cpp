@@ -1,12 +1,15 @@
 #include "audio_stream.h"
 
-AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
-    : MediaStream(context, streamIndex, parent, priority)
+AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex)
+    : IMediaStream(context, streamIndex), QIODevice(parent)
     , resampleRequire(false)
     , resampler(0)
     , defaultChannelLayout(AV_CH_LAYOUT_STEREO) {
 
-    if (state) {
+    if (valid) {
+        open(QIODevice::ReadWrite);
+
+
 //        isPlanar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
         //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
         //              << "frame->data. Therefore, to access the audio data, you need to use\n"
@@ -16,87 +19,95 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
         //              << "  frame->extended_data[1] has the data for channel 2\n"
         //              << "  etc.\n";
 
-    //    bufferLimit = 500;
         QAudioFormat format;
         fillFormat(format);
 
-        outputStream = new AudioOutputStream(this, bytesPerSecond(), format, priority);
+        output = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, this);
+        output -> setVolume(1.0);
+        output -> start(this);
+
+//        outputStream = new AudioOutputStream(this, bytesPerSecond(), format, priority);
     //    outputStream = new PortAudioOutputStream(this, format, priority);
     }
 }
 
 AudioStream::~AudioStream() {
     qDebug() << "Audion stream";
-    outputStream -> stop();
-    outputStream -> wait();
+    output -> stop();
 
     delete resampler;
 }
 
-void AudioStream::stop() {
-    qDebug() << "AUDIO STOP";
-    outputStream -> stop();
-    MediaStream::stop();
-}
+//void AudioStream::stop() {
+//    qDebug() << "AUDIO STOP";
+//    output -> stop();
+//    MediaStream::stop();
+//}
 
 void AudioStream::suspendOutput() {
-    pauseRequired = true;
-    outputStream -> suspend();
+    output -> suspend();
 }
 void AudioStream::resumeOutput() {
-    pauseRequired = false;
-    outputStream -> resume();
+    output -> resume();
 }
 
-void AudioStream::routine() {
-    mutex -> lock();
-    if (packets.isEmpty()) {
-        mutex -> unlock();
-        pauseRequired = finishAndPause;
-        if (finishAndExit) stop();
-        msleep(waitMillis);
-        return;
-    }
-
-    AVPacket * packet = packets.takeFirst();
-    mutex -> unlock();
-
+//TODO: add check on maxlen overflow
+//TODO: check situation when one packet contain more than one frame
+qint64 AudioStream::readData(char *data, qint64 maxlen) {
+    int reslen = 0;
     int len, got_frame;
+    AVPacket * packet;
 
-    while (packet -> size > 0) {
-        len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
+    while(true) {
+        if (packets.isEmpty()) return reslen;
 
-        if (len < 0) {
-            qDebug() << "Error while decoding audio frame";
-            av_free_packet(packet);
-            return;
-        }
+        mutex -> lock();
+        packet = packets.takeFirst();
+        mutex -> unlock();
 
-        if (got_frame) {
-            QByteArray * ar = new QByteArray();
+        while (packet -> size > 0) {
+            len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
 
-            if (resampleRequire) {
-                if (!resampler -> proceed(frame, ar))
-                    qDebug() << "RESAMPLER FAIL";
-            } else {
-                ar -> append((const char*)frame -> data[0], frame -> linesize[0]);
+            if (len < 0) {
+                qDebug() << "Error while decoding audio frame";
+                av_free_packet(packet);
+                return reslen;
             }
 
-            outputStream -> addBuffer(ar);
-//            msleep((((double)ar -> size()) / bytesPerSecond()) * 1000);
-            MasterClock::instance() -> setAudio(calcPts(packet));
-        } else {
-            qDebug() << "Could not get audio data from this frame";
+            if (got_frame) {
+    //            QByteArray * ar = new QByteArray();
+
+                if (resampleRequire) {
+                    if (!resampler -> proceed(frame, data, reslen))
+                        qDebug() << "RESAMPLER FAIL";
+                } else {
+                    memcpy(data, (const char*)frame -> data[0], (reslen = frame -> linesize[0]));
+    //                ar -> append((const char*)frame -> data[0], frame -> linesize[0]);
+                }
+
+    //            outputStream -> addBuffer(ar);
+    //            msleep((((double)ar -> size()) / bytesPerSecond()) * 1000);
+                MasterClock::instance() -> setAudio(calcPts(packet));
+            } else {
+                qDebug() << "Could not get audio data from this frame";
+            }
+
+            av_frame_unref(frame);
+            av_freep(frame);
+
+            packet -> size -= len;
+            packet -> data += len;
         }
 
-        av_frame_unref(frame);
-        av_freep(frame);
-
-        packet -> size -= len;
-        packet -> data += len;
+        av_free_packet(packet);
+        if (reslen > 0) break;
     }
+    return reslen;
+//            return -1; // return -1 if no data available anymore
+}
 
-    av_free_packet(packet);
+qint64 AudioStream::writeData(const char *data, qint64 len) {
+    return 0;
 }
 
 void AudioStream::fillFormat(QAudioFormat & format) {
@@ -180,12 +191,11 @@ double AudioStream::calcPts(AVPacket * packet) {
         );
 
         /* if no pts, then compute it */
-        clock += (double)data_size /
-        (
-            codec_context -> channels *
-            codec_context -> sample_rate *
-            av_get_bytes_per_sample(codec_context -> sample_fmt)
-        );
+        clock += (double)data_size / (
+                codec_context -> channels *
+                codec_context -> sample_rate *
+                av_get_bytes_per_sample(codec_context -> sample_fmt)
+            );
     }
 
 //    qDebug() << "AUDIO PTS " << av_q2d(stream -> time_base) << " : " << clock;
