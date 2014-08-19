@@ -89,6 +89,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
 
     //            msleep((((double)ar -> size()) / bytesPerSecond()) * 1000);
                 MasterClock::instance() -> setAudio(calcPts(packet));
+                MasterClock::instance() -> iterateAudioOutput((double)reslen/bytesPerSecond());
             } else {
                 qDebug() << "Could not get audio data from this frame";
             }

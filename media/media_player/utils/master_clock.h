@@ -41,6 +41,7 @@ public:
     inline void iterateAudio(double offset) { audioClock += offset; }
 
     inline double audioOutput() { return audioOClock; }
+    inline void setAudioOutput(double newClock) { audioOClock = newClock; }
     inline void iterateAudioOutput(double offset) { audioOClock += offset; }
 
     inline double video() { return videoClock; }
