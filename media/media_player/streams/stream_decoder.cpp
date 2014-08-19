@@ -81,12 +81,12 @@ void StreamDecoder::routine() {
 
 //    av_init_packet(currFrame);
 
-//    if (videoStream -> isBlocked() || audioStream -> isBlocked()) {
-//        if (/*videoStream -> hasPackets() && */audioStream -> hasPackets() || !MasterClock::instance() -> demuxeRequired()) {
-//            msleep(12);
-//            return;
-//        }
-//    }
+    if (videoStream -> isBlocked() || audioStream -> isBlocked()) {
+        if (/*videoStream -> hasPackets() && */audioStream -> hasPackets() || !MasterClock::instance() -> demuxeRequired()) {
+            msleep(12);
+            return;
+        }
+    }
 
     int status;
     bool preload = audioStream -> requirePreload() && videoStream -> requirePreload();
