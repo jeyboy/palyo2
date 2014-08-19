@@ -106,7 +106,7 @@ void StreamDecoder::routine() {
                 audioStream -> decode(currFrame);
                 ac++;
             }
-            else if (currFrame -> stream_index == videoStream -> index() && !videoStream -> isFinished()) {
+            else if (currFrame -> stream_index == videoStream -> index() && videoStream -> isValid()) {
                 videoStream -> decode(currFrame);
                 vc++;
             }
@@ -119,19 +119,10 @@ void StreamDecoder::routine() {
         } else {
             qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
 
-            if (status == AVERROR_EOF) {
-                qDebug() << "DECODER EOF";
-                finished = exitRequired = true;
-                videoStream -> exitOnComplete();
-//                audioStream -> exitOnComplete();
-                subtitleStream -> exitOnComplete();
-            } else {
-                qDebug() << "DECODER STOP";
-                pauseRequired = true;
-                videoStream -> pauseOnComplete();
-                audioStream -> suspendOutput();
-                subtitleStream -> pauseOnComplete();
-            }
+            pauseRequired = true;
+            videoStream -> pauseOnComplete();
+//            audioStream -> suspendOutput();
+            subtitleStream -> pauseOnComplete();
 
             break;
         }

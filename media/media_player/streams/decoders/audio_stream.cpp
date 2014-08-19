@@ -105,7 +105,6 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
         if (reslen > 0) break;
     }
 
-    qDebug() << "11111111111111    " << reslen;
     return reslen;
 //            return -1; // return -1 if no data available anymore
 }

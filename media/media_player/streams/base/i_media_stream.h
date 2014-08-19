@@ -26,7 +26,7 @@ public:
 
         stream = context -> streams[uindex];
 
-        if (stream == 0 || stream -> disposition & AV_DISPOSITION_ATTACHED_PIC) { // block attachments picts
+        if (stream == 0) {// || stream -> disposition & AV_DISPOSITION_ATTACHED_PIC) { // block attachments picts
             valid = false;
             return;
         }
@@ -93,7 +93,7 @@ public:
     inline int index() const { return uindex; }
     inline bool hasPackets() { return !packets.isEmpty(); }
     inline bool requirePreload() { return packets.isEmpty(); }
-    inline bool preloaded() { return packets.size() >= 8; }
+    inline bool preloaded() { return packets.size() >= 24; }
 
     void decode(AVPacket * newPacket) {
         mutex -> lock();
