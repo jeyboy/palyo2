@@ -4,7 +4,7 @@
 #include "override/slider.h"
 #include "override/slider_style.h"
 
-VideoOutput::VideoOutput(int width, int height, QWidget* parent) : OutputContainer(parent) {
+VideoOutput::VideoOutput(QObject * parent, int width, int height) : OutputContainer() {
     setMouseTracking(true);
     resize(width, height);
 
@@ -12,6 +12,7 @@ VideoOutput::VideoOutput(int width, int height, QWidget* parent) : OutputContain
     screen -> setMouseTracking(true);
     connect(screen, SIGNAL(closed()), this, SLOT(close()));
     connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
+    connect(screen, SIGNAL(updated()), parent, SLOT(nextPict()));
 
     bottomPanel = new QWidget(this);
     bottomPanel -> setBackgroundRole(QPalette::Shadow);

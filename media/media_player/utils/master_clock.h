@@ -23,7 +23,8 @@ public:
     void reset(uint clock);
 //    uint computeAudioDelay();
     double computeAudioDelay();
-    int computeVideoDelay();
+//    int computeVideoDelay();
+    int computeVideoDelay(double compClock, double compClockNext);
 
     inline bool demuxeRequired() { return fabs(audioClock - videoClock) > 0.1; } //1 sec
 
@@ -49,6 +50,7 @@ public:
     inline void setVideo(double newClock) { videoClock = newClock; }
     inline void iterateVideo(double offset) { videoClock += offset; }
 
+    inline void setVideoSync(double newClock) { videoSyncClock = newClock; }
     inline void setVideoNext(double newClock) { videoClockNext = newClock; }
 
     inline double subtitle() { return subtitlesClock; }
@@ -71,6 +73,7 @@ private:
 
     volatile double videoClock;
     volatile double videoClockNext;
+    volatile double videoSyncClock;
 
     volatile double subtitlesClock;
 };

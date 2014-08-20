@@ -2,24 +2,23 @@
 #define VIDEO_STREAM_H
 
 #include "media/media_player/utils/video_frame.h"
-#include "media/media_player/streams/base/media_stream.h"
+#include "media/media_player/streams/base/i_media_stream.h"
 #include "media/media_player/streams/output/video/video_output.h"
 #include "media/media_player/resamplers/video_resampler.h"
 
-class VideoStream : public MediaStream {
+class VideoStream : public QObject, public IMediaStream {
+    Q_OBJECT
 public:
-    VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
+    VideoStream(QObject * parent, AVFormatContext * context, int streamIndex);
     ~VideoStream();
 
-    inline bool isBlocked() { return isValid() && packets.size() > packetsLimit; }
     void suspendOutput();
     void resumeOutput();
-
-    void stop();
+public slots:
+    void nextPict();
 protected:
-    void routine();
-    double calcPts();
-    double syncPts(AVFrame *src_frame, double pts);
+    VideoFrame * calcPts(VideoFrame * videoFrame);
+    double syncPts(AVFrame *src_frame);
 private:
     VideoOutput * output;
     VideoResampler * resampler;

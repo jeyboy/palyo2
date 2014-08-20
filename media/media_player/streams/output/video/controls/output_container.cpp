@@ -1,7 +1,7 @@
 #include "output_container.h"
 #include <QDebug>
 
-OutputContainer::OutputContainer(QWidget* parent) : QWidget(parent) {
+OutputContainer::OutputContainer(QWidget * parent) : QWidget(parent) {
 }
 
 bool OutputContainer::event(QEvent * event) {

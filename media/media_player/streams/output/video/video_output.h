@@ -12,7 +12,7 @@
 class VideoOutput : public OutputContainer {
      Q_OBJECT
 public:
-    VideoOutput(int width, int height, QWidget* parent = 0);
+    VideoOutput( QObject * parent, int width, int height);
     ~VideoOutput();
 
     void setFrame(VideoFrame * frame);

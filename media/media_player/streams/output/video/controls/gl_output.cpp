@@ -29,7 +29,8 @@ void GLOutput::drawNext() {
 
     emit updated();
     repaint();
-    timer.singleShot(frame -> interval, this, SLOT(drawNext()));
+    // TODO: pict skip logic maybe need
+    timer.singleShot(frame -> calcDelay(), this, SLOT(drawNext()));
 }
 
 void GLOutput::closeEvent(QCloseEvent *) {
