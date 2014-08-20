@@ -9,8 +9,8 @@
 /* no AV correction is done if too big error */
 #define AV_NOSYNC_THRESHOLD 10.0
 
-class MasterClock {
-//    Q_OBJECT
+class MasterClock : public QObject {
+    Q_OBJECT
 public:
     ~MasterClock();
 
@@ -28,7 +28,7 @@ public:
 
     inline bool demuxeRequired() { return fabs(audioClock - videoClock) > 0.1; } //1 sec
 
-    inline double main() { return mainClock; }
+    inline double main_clock() { return mainClock; }
     inline void setMain(double newClock) { mainClock = newClock; }
     inline void iterateMain(double offset) { mainClock += offset; }
 
@@ -56,11 +56,13 @@ public:
     inline double subtitle() { return subtitlesClock; }
     inline void setSubtitle(double newClock) { subtitlesClock = newClock; }
     inline void iterateSubtitle(double offset) { subtitlesClock += offset; }
+signals:
+    void positionUpdated(double);
+    void __positionUpdated(int);
+
 private:
 
-    MasterClock() {
-        reset(0);
-    }
+    MasterClock();
 
     static MasterClock * self;
 

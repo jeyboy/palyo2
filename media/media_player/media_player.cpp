@@ -46,6 +46,10 @@ double MediaPlayer::_duration() {
    return duration() / AV_TIME_BASE;
 }
 
+int MediaPlayer::__duration() {
+   return duration() / 1000;
+}
+
 int64_t MediaPlayer::position() {
     return _position() * AV_TIME_BASE;
 }

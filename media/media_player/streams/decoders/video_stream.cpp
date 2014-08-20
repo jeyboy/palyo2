@@ -19,14 +19,16 @@ VideoStream::~VideoStream() {
 }
 
 void VideoStream::suspendOutput() {
+    pause = true;
     qDebug() << "SUSPEND";
 }
 void VideoStream::resumeOutput() {
+    pause = false;
     qDebug() << "RESUME";
 }
 
 void VideoStream::nextPict() {
-    if (packets.isEmpty())
+    if (packets.isEmpty() || pause)
         return;
 
     int len, got_picture;
@@ -34,7 +36,6 @@ void VideoStream::nextPict() {
     QImage * img = 0;
     AVPacket * packet;
     bool exit = false;
-
 
     while(true) {
         mutex -> lock();

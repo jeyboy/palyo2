@@ -22,6 +22,7 @@ public:
     int64_t duration();
     int64_t position();
     double _duration();
+    int __duration();
     double _position();
     QString info();
     bool tags(QHash<QString, QString> &);

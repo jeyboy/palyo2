@@ -46,8 +46,10 @@ AudioStream::~AudioStream() {
 
 void AudioStream::suspendOutput() {
     output -> suspend();
+    pause = true;
 }
 void AudioStream::resumeOutput() {
+    pause = false;
     output -> resume();
 }
 
@@ -55,6 +57,11 @@ void AudioStream::resumeOutput() {
 //TODO: check situation when one packet contain more than one frame
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
     if (maxlen == 0) return 0;
+
+//    if (pause) {
+//        memset(data, 0, maxlen);
+//        return maxlen;
+//    }
 
     int reslen = 0;
     int len, got_frame;
@@ -87,11 +94,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
                     memcpy(data, (const char*)frame -> data[0], (reslen = frame -> linesize[0]));
                 }
 
-    //            msleep((((double)ar -> size()) / bytesPerSecond()) * 1000);
                 MasterClock::instance() -> setAudio(calcPts(packet));
-//                MasterClock::instance() -> iterateAudioOutput((double)reslen / bytesPerSecond());
-
-//                sync(MasterClock::instance() -> computeAudioDelay() / 3, data, reslen, maxlen);
             } else {
                 qDebug() << "Could not get audio data from this frame";
             }

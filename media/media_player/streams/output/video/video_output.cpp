@@ -1,9 +1,6 @@
 #include "video_output.h"
 #include "media/media_player/media_player.h"
 
-#include "override/slider.h"
-#include "override/slider_style.h"
-
 VideoOutput::VideoOutput(QObject * parent, int width, int height) : OutputContainer() {
     setMouseTracking(true);
     resize(width, height);
@@ -42,11 +39,19 @@ VideoOutput::VideoOutput(QObject * parent, int width, int height) : OutputContai
     connect(stop, SIGNAL(clicked()), MediaPlayer::instance(), SLOT(stop()));
     bottomPanel -> layout() -> addWidget(stop);
 
-    Slider * slider = new Slider(bottomPanel, true);
+    timer = new QLabel(this);
+    bottomPanel -> layout() -> addWidget(timer);
+
+    slider = new Slider(bottomPanel, true);
     slider -> setStyle(new SliderStyle());
     slider -> setTickInterval(60000);
     slider -> setOrientation(Qt::Horizontal);
     slider -> setMinimumSize(100, 30);
+
+    slider -> setMaximum(MediaPlayer::instance() -> __duration());
+    connect(MasterClock::instance(), SIGNAL(__positionUpdated(int)), this, SLOT(sliderUpdate(int)));
+    connect(slider, SIGNAL(valueChanged(int)), MediaPlayer::instance(), SLOT(seekMillis(int)));
+
     bottomPanel -> layout() -> addWidget(slider);
 
 
@@ -69,7 +74,15 @@ void VideoOutput::setFrame(VideoFrame * frame) {
 }
 
 void VideoOutput::titleUpdate() {
-    setWindowTitle(MediaPlayer::instance() -> info());
+    QString temp = MediaPlayer::instance() -> info();
+    setWindowTitle(temp);
+    timer -> setText(temp);
+}
+
+void VideoOutput::sliderUpdate(int pos) {
+    slider -> blockSignals(true);
+    slider -> setValue(pos);
+    slider -> blockSignals(false);
 }
 
 void VideoOutput::mouseMoveEvent(QMouseEvent * event) {

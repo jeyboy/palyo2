@@ -34,10 +34,12 @@ StreamDecoder::~StreamDecoder() {
 }
 
 double StreamDecoder::position() {
-    if (audioStream -> isValid())
-        return MasterClock::instance() -> audio(); // orient on the audio stream position
-    else
-        return MasterClock::instance() -> video();
+    return MasterClock::instance() -> audio();
+
+//    if (audioStream -> isValid())
+//        return MasterClock::instance() -> audio(); // orient on the audio stream position
+//    else
+//        return MasterClock::instance() -> video();
 }
 
 void StreamDecoder::seek(int64_t target) {

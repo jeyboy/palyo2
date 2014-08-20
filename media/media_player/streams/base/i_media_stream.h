@@ -9,13 +9,14 @@ class IMediaStream {
 
 public:
     IMediaStream(AVFormatContext * context, int streamIndex) {
+        pause = false;
         valid = true;
         stream = 0;
         codec_context = 0;
         codec = 0;
         frame = 0;
         mutex = 0;
-        packetsLimit = 64;
+        packetsLimit = 32; //64
 
         if (streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND) {
             valid = false;
@@ -101,6 +102,7 @@ public:
     }
 
     void dropPackets() {
+        if (!valid) return;
         mutex -> lock();
             while(packets.size() > 0)
                 av_free_packet(packets.takeFirst());
@@ -118,7 +120,7 @@ public:
     virtual void resumeOutput() = 0;
 
 protected:
-    bool valid;
+    bool valid, pause;
 
     int packetsLimit;
 
