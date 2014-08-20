@@ -21,10 +21,11 @@ public:
     }
 
     void reset(uint clock);
-    uint computeAudioDelay();
-    uint computeVideoDelay();
+//    uint computeAudioDelay();
+    double computeAudioDelay();
+    int computeVideoDelay();
 
-    inline bool demuxeRequired() { return audioClock - videoClock < 0.1; } //1 sec
+    inline bool demuxeRequired() { return fabs(audioClock - videoClock) > 0.1; } //1 sec
 
     inline double main() { return mainClock; }
     inline void setMain(double newClock) { mainClock = newClock; }
@@ -60,8 +61,6 @@ private:
     }
 
     static MasterClock * self;
-
-    bool half;
 
     double mainClock;
     double mainLastPtsVal;

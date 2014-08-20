@@ -89,7 +89,9 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
 
     //            msleep((((double)ar -> size()) / bytesPerSecond()) * 1000);
                 MasterClock::instance() -> setAudio(calcPts(packet));
-                MasterClock::instance() -> iterateAudioOutput((double)reslen/bytesPerSecond());
+//                MasterClock::instance() -> iterateAudioOutput((double)reslen / bytesPerSecond());
+
+//                sync(MasterClock::instance() -> computeAudioDelay() / 3, data, reslen, maxlen);
             } else {
                 qDebug() << "Could not get audio data from this frame";
             }
@@ -111,6 +113,37 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
 
 qint64 AudioStream::writeData(const char *data, qint64 len) {
     return 0;
+}
+
+void AudioStream::sync(double delay, char *data, int & len, qint64 maxlen) {
+    int n = output -> format().channelCount();
+    int wanted_size = len + output -> format().bytesForDuration(delay * 1000);//(delay * output -> format().sampleRate() * n);
+    qDebug() << "DELAY " << delay << " " << len << " NEW " << wanted_size;
+    if (wanted_size > maxlen)
+        wanted_size = maxlen;
+
+    if(wanted_size < len) {
+        /* remove samples */
+        len = wanted_size;
+    } else if(wanted_size > len) {
+        int copyNum = wanted_size - len;
+        memcpy((uint8_t *)data + len, (uint8_t *)data + len - copyNum , copyNum);
+
+
+//        uint8_t *samples_end, *q;
+//        int nb;
+
+//        /* add samples by copying final samples */
+//        nb = (len - wanted_size);
+//        samples_end = (uint8_t *)data + len;
+//        q = samples_end + n;
+//        while(nb > 0) {
+//            memcpy(q, samples_end, n);
+//            q += n;
+//            nb -= n;
+//        }
+        len = wanted_size;
+    }
 }
 
 void AudioStream::fillFormat(QAudioFormat & format) {

@@ -44,6 +44,15 @@ void VideoStream::routine() {
     AVPacket * packet = packets.takeFirst();
     mutex -> unlock();
 
+//    ///////// packet length correction
+//    QByteArray encoded;
+//    encoded.reserve(packet -> size * 2 + FF_INPUT_BUFFER_PADDING_SIZE);
+//    encoded.resize(packet -> size * 2);
+//    // also copy  padding data(usually 0)
+//    memcpy(encoded.data(), packet -> data, packet -> size);
+//    packet -> data = (uint8_t *)encoded.data();
+//    ////////
+
     int len, got_picture;
     int width = codec_context -> width, height = codec_context -> height;
     QImage * img = 0;
@@ -60,28 +69,32 @@ void VideoStream::routine() {
             img = resampler -> proceed(frame, width, height, width, height);
             MasterClock::instance() -> setVideoNext(calcPts());
 
-//            av_frame_unref(frame);
+            av_frame_unref(frame);
+
+            if (img) {
+                int delay = MasterClock::instance() -> computeVideoDelay();
+        //        if (delay <= 0) {
+                if (delay < 0) { // there is always will be greater or equal to the zero
+                    qDebug() << "-----SKIP";
+                    delete img;
+                } else {
+                    qDebug() << "+++++PROC";
+                    output -> setFrame(new VideoFrame(img, delay));
+                    msleep(delay);
+                }
+            }
         } else {
-            qDebug() << "Could not get a full picture from this frame";
+            qWarning("Could not get a full picture from this frame");
+//            char bla[AV_ERROR_MAX_STRING_SIZE];
+//            qWarning("Could not get a full picture from this frame %s", av_make_error_string(bla, AV_ERROR_MAX_STRING_SIZE, len));
+//            delete [] bla;
         }
 
         packet -> size -= len;
         packet -> data += len;
-        av_frame_unref(frame);
     }
 
     av_free_packet(packet);
-
-    if (img) {
-        uint delay = MasterClock::instance() -> computeVideoDelay();
-//        if (delay <= 0) {
-        if (delay < 0) { // there is always will be greater or equal to the zero
-            delete img;
-        } else {
-            output -> setFrame(new VideoFrame(img, delay));
-            msleep(delay);
-        }
-    }
 }
 
 double VideoStream::calcPts() {

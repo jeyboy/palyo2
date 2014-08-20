@@ -18,6 +18,7 @@ protected:
     virtual qint64 readData(char *data, qint64 maxlen);
     virtual qint64 writeData(const char *data, qint64 len);
 
+    void sync(double delay, char *data, int & len, qint64 maxlen);
     void fillFormat(QAudioFormat & format);
     double calcPts(AVPacket * packet);
     int bytesPerSecond();

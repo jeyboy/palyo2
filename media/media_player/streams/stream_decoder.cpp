@@ -60,20 +60,22 @@ void StreamDecoder::seek(int64_t target) {
 }
 
 void StreamDecoder::suspendOutput() {
-    videoStream -> suspendOutput();
     audioStream -> suspendOutput();
-    subtitleStream -> suspendOutput();
 
+    videoStream -> suspendOutput();
     videoStream -> suspend();
+
+    subtitleStream -> suspendOutput();
     subtitleStream -> suspend();
 }
 void StreamDecoder::resumeOutput() {
     videoStream -> resumeOutput();
-    audioStream -> resumeOutput();
-    subtitleStream -> resumeOutput();
-
     videoStream -> resume();
+
+    subtitleStream -> resumeOutput();
     subtitleStream -> resume();
+
+    audioStream -> resumeOutput();
 }
 
 void StreamDecoder::routine() {
@@ -82,7 +84,7 @@ void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
 
     if (videoStream -> isBlocked() || audioStream -> isBlocked()) {
-        if (/*videoStream -> hasPackets() && */audioStream -> hasPackets() || !MasterClock::instance() -> demuxeRequired()) {
+        if ((videoStream -> hasPackets() && audioStream -> hasPackets()) || !MasterClock::instance() -> demuxeRequired()) {
             msleep(12);
             return;
         }
@@ -127,7 +129,7 @@ void StreamDecoder::routine() {
             break;
         }
 
-        if (!preload || (videoStream -> preloaded() && audioStream -> preloaded()))
+        if (!preload || (videoStream -> isBlocked() && audioStream -> isBlocked()))
             break;
     }
 }

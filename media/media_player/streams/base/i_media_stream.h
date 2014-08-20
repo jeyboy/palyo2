@@ -15,7 +15,7 @@ public:
         codec = 0;
         frame = 0;
         mutex = 0;
-        packetsLimit = 8;
+        packetsLimit = 64;
 
         if (streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND) {
             valid = false;
@@ -26,7 +26,7 @@ public:
 
         stream = context -> streams[uindex];
 
-        if (stream == 0) {// || stream -> disposition & AV_DISPOSITION_ATTACHED_PIC) { // block attachments picts
+        if (stream == 0 || stream -> disposition & AV_DISPOSITION_ATTACHED_PIC) { // block attachments picts
             valid = false;
             return;
         }
@@ -34,14 +34,14 @@ public:
         codec_context = stream -> codec;
         codec = avcodec_find_decoder(codec_context -> codec_id);
 
-        //wtf
-        if (codec -> capabilities & CODEC_CAP_TRUNCATED)
-            codec_context -> flags |= CODEC_FLAG_TRUNCATED;
+//        //wtf
+//        if (codec -> capabilities & CODEC_CAP_TRUNCATED)
+//            codec_context -> flags |= CODEC_FLAG_TRUNCATED;
 
-        codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
-        codec_context -> flags2 |= CODEC_FLAG2_FAST;
-        if(codec -> capabilities & CODEC_CAP_DR1)
-            codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
+//        codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
+//        codec_context -> flags2 |= CODEC_FLAG2_FAST;
+//        if(codec -> capabilities & CODEC_CAP_DR1)
+//            codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
 
 
     //    if(codec -> capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE)
@@ -93,7 +93,6 @@ public:
     inline int index() const { return uindex; }
     inline bool hasPackets() { return !packets.isEmpty(); }
     inline bool requirePreload() { return packets.isEmpty(); }
-    inline bool preloaded() { return packets.size() >= 24; }
 
     void decode(AVPacket * newPacket) {
         mutex -> lock();

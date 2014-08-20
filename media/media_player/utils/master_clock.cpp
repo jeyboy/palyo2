@@ -28,21 +28,23 @@ void MasterClock::reset(uint clock) {
     videoClockNext = 0;
     mainLastPtsVal = 0;
     mainLastDelayVal = 0.20;
-    half = false;
 }
 
-uint MasterClock::computeAudioDelay() {
-    double diff = videoClockNext - audioOClock;
-    if (diff < -0.08) {
-        qDebug() << "!!!!!!!!!!!!!!! " << diff;
-        return fabs(diff) * 100;
-    }
-
-    return 0;
+double MasterClock::computeAudioDelay() {
+    return audioOClock - videoClockNext;
 }
 
-uint MasterClock::computeVideoDelay() {
-    half = false;
+//uint MasterClock::computeAudioDelay() {
+//    double diff = videoClockNext - audioOClock;
+//    if (diff < -0.08) {
+//        qDebug() << "!!!!!!!!!!!!!!! " << diff;
+//        return fabs(diff) * 100;
+//    }
+
+//    return 0;
+//}
+
+int MasterClock::computeVideoDelay() {
     qDebug() << "-----------------------------------------";
     double delay = videoClock - mainLastPtsVal;
     if (delay <= 0.0 || delay >= 1.0) {
@@ -53,13 +55,12 @@ uint MasterClock::computeVideoDelay() {
     mainLastPtsVal = videoClockNext;
     mainLastDelayVal = delay;
 
-    double diff = videoClockNext - audioOClock;
-    qDebug() << "diff " << diff << " " << videoClockNext << " " << audioOClock;
+    double diff = videoClockNext - audioClock;//audioOClock;
+    qDebug() << "diff " << diff << " " << videoClockNext << " " << audioClock;//audioOClock;
     double sync_threshold = FFMAX(AV_SYNC_THRESHOLD, delay);
     if (fabs(diff) < AV_NOSYNC_THRESHOLD) {
             if (diff <= -sync_threshold) {
                     delay = 0;
-                    half = true;
             } else if (diff >= sync_threshold) {
                     delay = diff; //4 * delay;
             }
@@ -69,8 +70,8 @@ uint MasterClock::computeVideoDelay() {
     mainClock += delay;
     //    av_gettime() / 1000000.0) is a internal clock
     double actual_delay = (mainClock - (av_gettime() / 1000000.0));
-    if(actual_delay < 0.010 || half) {
-        return 0;
+    if (actual_delay < 0.010) {
+        return -1;
 //            /* Really it should skip the picture instead */
 //            actual_delay = 0.010;
     }
