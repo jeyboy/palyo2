@@ -40,7 +40,7 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
     videoClock = compClock;
     videoClockNext = compClockNext;
 
-    qDebug() << "-----------------------------------------";
+//    qDebug() << "-----------------------------------------";
     double delay = videoClock - mainLastPtsVal;
     if (delay <= 0.0 || delay >= 1.0) {
         delay = mainLastDelayVal;
@@ -50,7 +50,7 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
     mainLastDelayVal = delay;
 
     double diff = videoClockNext - audioClock;
-    qDebug() << "diff " << diff << " " << videoClockNext << " " << audioClock;
+//    qDebug() << "diff " << diff << " " << videoClockNext << " " << audioClock;
     double sync_threshold = FFMAX(AV_SYNC_THRESHOLD, delay);
     if (fabs(diff) < AV_NOSYNC_THRESHOLD) {
             if (diff <= -sync_threshold) {
@@ -59,7 +59,7 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
                     delay = diff; //4 * delay;
             }
     }
-    qDebug() << "total delay " << delay;
+//    qDebug() << "total delay " << delay;
 
     mainClock += delay;
     emit positionUpdated(audioClock);

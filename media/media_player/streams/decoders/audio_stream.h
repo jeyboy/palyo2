@@ -11,6 +11,7 @@ public:
     AudioStream(QObject * parent, AVFormatContext * context, int streamIndex);
     ~AudioStream();
 
+    void decode(AVPacket * newPacket);
     void suspendOutput();
     void resumeOutput();
 

@@ -44,65 +44,76 @@ AudioStream::~AudioStream() {
 //    MediaStream::stop();
 //}
 
+void AudioStream::decode(AVPacket * newPacket) {
+    IMediaStream::decode(newPacket);
+    qDebug() << "NEW PACKET " << output -> state();
+}
+
 void AudioStream::suspendOutput() {
     pause = true;
-//    output -> suspend();
+    if (output -> state() != QAudio::SuspendedState)
+        output -> suspend();
 }
 void AudioStream::resumeOutput() {
     pause = false;
-//    output -> resume();
+    if (output -> state() == QAudio::SuspendedState)
+        output -> resume();
 }
 
+// TODO: add eof check
 //TODO: add check on maxlen overflow
 //TODO: check situation when one packet contain more than one frame
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
     if (maxlen == 0) return 0;
 
-//    if (pause) {
-//    memset(data, 0, maxlen);
-//        return 0;
-//    }
-
     int reslen = 0;
     int len, got_frame;
-    AVPacket * packet;
+    AVPacket * packet = 0;
 
     while(true) {
-        if (packets.isEmpty()) {
-            qDebug() << "IS EMPTY";
-            memset(data, 0, maxlen / 2);
-            return maxlen / 2;
-//            return reslen;
+        while(true) {
+            mutex -> lock();
+            if (!packets.isEmpty())
+                packet = packets.takeFirst();
+            mutex -> unlock();
+
+            if (packet)
+                break;
         }
 
-        mutex -> lock();
-        packet = packets.takeFirst();
-        mutex -> unlock();
+//        if (packet == 0) {
+//            qDebug() << "IS EMPTY";
+////            return readData(data, maxlen);
+//            reslen = 32;
+//            memset(data, 0, reslen); //silence
+//            return reslen;
+////            return 0;
+//        }
 
         while (packet -> size > 0) {
             len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
 
             if (len < 0) {
                 qDebug() << "Error while decoding audio frame";
-                av_free_packet(packet);
-                return reslen;
-            }
+//                av_free_packet(packet);
+                break;
+            } else {
+                if (got_frame) {
+                    if (resampleRequire) {
+                        if (!resampler -> proceed(frame, data, reslen))
+                            qDebug() << "RESAMPLER FAIL";
+                    } else {
+                        memcpy(data, (const char*)frame -> data[0], (reslen = frame -> linesize[0]));
+                    }
 
-            if (got_frame) {
-                if (resampleRequire) {
-                    if (!resampler -> proceed(frame, data, reslen))
-                        qDebug() << "RESAMPLER FAIL";
+                    MasterClock::instance() -> setAudio(calcPts(packet));
                 } else {
-                    memcpy(data, (const char*)frame -> data[0], (reslen = frame -> linesize[0]));
+                    qDebug() << "Could not get audio data from this frame";
                 }
 
-                MasterClock::instance() -> setAudio(calcPts(packet));
-            } else {
-                qDebug() << "Could not get audio data from this frame";
+                packet -> size -= len;
+                packet -> data += len;
             }
-
-            packet -> size -= len;
-            packet -> data += len;
         }
 
         av_frame_unref(frame);

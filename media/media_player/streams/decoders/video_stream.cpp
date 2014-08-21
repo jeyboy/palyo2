@@ -108,7 +108,7 @@ VideoFrame * VideoStream::calcPts(VideoFrame * videoFrame) {
     videoFrame -> pts = pts;
     videoFrame -> next_pts = syncPts(frame);
 
-    qDebug() << "FRAME " << videoFrame -> pts << " " << videoFrame -> next_pts;
+//    qDebug() << "FRAME " << videoFrame -> pts << " " << videoFrame -> next_pts;
     return videoFrame;
 }
 
