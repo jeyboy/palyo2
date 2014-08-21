@@ -43,22 +43,22 @@ double StreamDecoder::position() {
 }
 
 void StreamDecoder::seek(int64_t target) {
-    pauseRequired = true;
+    suspendOutput();
     int flags = target < position() * AV_TIME_BASE ? AVSEEK_FLAG_BACKWARD : 0;
 
-    if (audioStream -> seeking(context, target, flags)
-            || videoStream -> seeking(context, target, flags)
-            || subtitleStream -> seeking(context, target, flags)) {
+    audioStream -> seeking(context, target, flags);
+    videoStream -> seeking(context, target, flags);
+    subtitleStream -> seeking(context, target, flags);
 
-        videoStream -> dropPackets();
-        audioStream -> dropPackets();
-        subtitleStream -> dropPackets();
-    }
+    videoStream -> dropPackets();
+    audioStream -> dropPackets();
+    subtitleStream -> dropPackets();
 
-    pauseRequired = false;
+    resumeOutput();
 }
 
 void StreamDecoder::suspendOutput() {
+    pauseRequired = true;
     audioStream -> suspendOutput();
 
     videoStream -> suspendOutput();
@@ -67,6 +67,7 @@ void StreamDecoder::suspendOutput() {
     subtitleStream -> suspend();
 }
 void StreamDecoder::resumeOutput() {
+    pauseRequired = false;
     videoStream -> resumeOutput();
 
     subtitleStream -> resumeOutput();
@@ -126,7 +127,7 @@ void StreamDecoder::routine() {
             break;
         }
 
-        if (!preload || (videoStream -> isBlocked() && audioStream -> isBlocked()))
+        if (pauseRequired || !preload || (videoStream -> isBlocked() && audioStream -> isBlocked()))
             break;
     }
 }

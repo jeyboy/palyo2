@@ -77,8 +77,6 @@ void VideoStream::nextPict() {
     //                    msleep(delay);
     //                }
                 }
-
-                av_frame_unref(frame);
             } else {
                 qWarning("Could not get a full picture from this frame");
     //            char bla[AV_ERROR_MAX_STRING_SIZE];
@@ -89,6 +87,9 @@ void VideoStream::nextPict() {
             packet -> size -= len;
             packet -> data += len;
         }
+
+        av_frame_unref(frame);
+        av_freep(frame);
 
         av_free_packet(packet);
         if (exit || packets.isEmpty()) break;

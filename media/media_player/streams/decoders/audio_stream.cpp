@@ -45,8 +45,8 @@ AudioStream::~AudioStream() {
 //}
 
 void AudioStream::suspendOutput() {
-    output -> suspend();
     pause = true;
+    output -> suspend();
 }
 void AudioStream::resumeOutput() {
     pause = false;
@@ -59,8 +59,8 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
     if (maxlen == 0) return 0;
 
 //    if (pause) {
-//        memset(data, 0, maxlen);
-//        return maxlen;
+////        memset(data, 0, maxlen);
+//        return 0;
 //    }
 
     int reslen = 0;
@@ -70,7 +70,9 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
     while(true) {
         if (packets.isEmpty()) {
             qDebug() << "IS EMPTY";
-            return reslen;
+            memset(data, 0, maxlen / 2);
+            return maxlen / 2;
+//            return reslen;
         }
 
         mutex -> lock();
@@ -99,12 +101,12 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
                 qDebug() << "Could not get audio data from this frame";
             }
 
-            av_frame_unref(frame);
-            av_freep(frame);
-
             packet -> size -= len;
             packet -> data += len;
         }
+
+        av_frame_unref(frame);
+        av_freep(frame);
 
         av_free_packet(packet);
         if (reslen > 0) break;
