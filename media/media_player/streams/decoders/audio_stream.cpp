@@ -46,11 +46,11 @@ AudioStream::~AudioStream() {
 
 void AudioStream::suspendOutput() {
     pause = true;
-    output -> suspend();
+//    output -> suspend();
 }
 void AudioStream::resumeOutput() {
     pause = false;
-    output -> resume();
+//    output -> resume();
 }
 
 //TODO: add check on maxlen overflow
@@ -59,7 +59,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
     if (maxlen == 0) return 0;
 
 //    if (pause) {
-////        memset(data, 0, maxlen);
+//    memset(data, 0, maxlen);
 //        return 0;
 //    }
 

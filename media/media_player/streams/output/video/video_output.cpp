@@ -80,6 +80,7 @@ void VideoOutput::titleUpdate() {
 }
 
 void VideoOutput::sliderUpdate(int pos) {
+    qDebug() << "POS " << pos;
     slider -> blockSignals(true);
     slider -> setValue(pos);
     slider -> blockSignals(false);

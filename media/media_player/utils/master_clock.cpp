@@ -63,7 +63,7 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
 
     mainClock += delay;
     emit positionUpdated(audioClock);
-    emit __positionUpdated((int)(audioClock / 1000));
+    emit __positionUpdated(audioClock * 1000);
 
     //    av_gettime() / 1000000.0) is a internal clock
     double actual_delay = (mainClock - (av_gettime() / 1000000.0));
