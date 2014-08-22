@@ -81,11 +81,11 @@ void StreamDecoder::routine() {
 
 //    av_init_packet(currFrame);
 
-    if (videoStream -> isBlocked() || audioStream -> isBlocked()) {
-        if ((videoStream -> hasPackets() && audioStream -> hasPackets()) || !MasterClock::instance() -> demuxeRequired()) {
-            msleep(12);
+    if (videoStream -> isBlocked() && audioStream -> isBlocked()) {
+//        if ((videoStream -> hasPackets() && audioStream -> hasPackets()) || !MasterClock::instance() -> demuxeRequired()) {
+            msleep(2); // 12
             return;
-        }
+//        }
     }
 
     int status;
@@ -127,7 +127,7 @@ void StreamDecoder::routine() {
             break;
         }
 
-        if (pauseRequired || !preload || (videoStream -> isBlocked() && audioStream -> isBlocked()))
+        if (!preload || (videoStream -> isBlocked() && audioStream -> isBlocked()))
             break;
     }
 }

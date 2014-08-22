@@ -39,8 +39,16 @@ public:
     inline void setMainLastDelay(double newClock) { mainLastDelayVal = newClock; }
 
     inline double audio() { return audioClock; }
-    inline void setAudio(double newClock) { audioClock = newClock; }
-    inline void iterateAudio(double offset) { audioClock += offset; }
+    inline void setAudio(double newClock) {
+        audioClock = newClock;
+        emit positionUpdated(audioClock);
+        emit __positionUpdated(audioClock * 1000);
+    }
+    inline void iterateAudio(double offset) {
+        audioClock += offset;
+        emit positionUpdated(audioClock);
+        emit __positionUpdated(audioClock * 1000);
+    }
 
     inline double audioOutput() { return audioOClock; }
     inline void setAudioOutput(double newClock) { audioOClock = newClock; }
@@ -69,6 +77,7 @@ private:
     double mainClock;
     double mainLastPtsVal;
     double mainLastDelayVal;
+    double prevDelay;
 
     volatile double audioClock;
     volatile double audioOClock;

@@ -46,18 +46,16 @@ AudioStream::~AudioStream() {
 
 void AudioStream::decode(AVPacket * newPacket) {
     IMediaStream::decode(newPacket);
-    qDebug() << "NEW PACKET " << output -> state();
+//    qDebug() << "NEW PACKET " << output -> state();
 }
 
 void AudioStream::suspendOutput() {
     pause = true;
-    if (output -> state() != QAudio::SuspendedState)
-        output -> suspend();
+    output -> suspend();
 }
 void AudioStream::resumeOutput() {
     pause = false;
-    if (output -> state() == QAudio::SuspendedState)
-        output -> resume();
+    output -> resume();
 }
 
 // TODO: add eof check
@@ -71,24 +69,19 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
     AVPacket * packet = 0;
 
     while(true) {
-        while(true) {
-            mutex -> lock();
-            if (!packets.isEmpty())
-                packet = packets.takeFirst();
-            mutex -> unlock();
+        mutex -> lock();
+        if (!packets.isEmpty())
+            packet = packets.takeFirst();
+        mutex -> unlock();
 
-            if (packet)
-                break;
+        if (packet == 0) {
+            qDebug() << "IS EMPTY";
+//            return readData(data, maxlen);
+            reslen = 4096;
+            memset(data, 0, reslen); //silence
+            return reslen;
+//            return 0;
         }
-
-//        if (packet == 0) {
-//            qDebug() << "IS EMPTY";
-////            return readData(data, maxlen);
-//            reslen = 32;
-//            memset(data, 0, reslen); //silence
-//            return reslen;
-////            return 0;
-//        }
 
         while (packet -> size > 0) {
             len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
