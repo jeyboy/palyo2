@@ -20,46 +20,34 @@ public:
         delete self;
     }
 
-    void reset(uint clock);
-//    uint computeAudioDelay();
-    double computeAudioDelay();
-//    int computeVideoDelay();
+    void reset(uint clock, bool has_video);
     int computeVideoDelay(double compClock, double compClockNext);
 
     inline bool demuxeRequired() { return fabs(audioClock - videoClock) > 0.1; } //1 sec
 
     inline double main_clock() { return mainClock; }
-    inline void setMain(double newClock) { mainClock = newClock; }
-    inline void iterateMain(double offset) { mainClock += offset; }
-
-    inline double mainLastPts() { return mainLastPtsVal; }
-    inline void setMainLastPts(double newClock) { mainLastPtsVal = newClock; }
-
-    inline double mainLastDelay() { return mainLastDelayVal; }
-    inline void setMainLastDelay(double newClock) { mainLastDelayVal = newClock; }
 
     inline double audio() { return audioClock; }
     inline void setAudio(double newClock) {
         audioClock = newClock;
-        emit positionUpdated(audioClock);
-        emit __positionUpdated(audioClock * 1000);
+        setMain(newClock);
     }
     inline void iterateAudio(double offset) {
         audioClock += offset;
-        emit positionUpdated(audioClock);
-        emit __positionUpdated(audioClock * 1000);
+        setMain(audioClock);
     }
 
-    inline double audioOutput() { return audioOClock; }
-    inline void setAudioOutput(double newClock) { audioOClock = newClock; }
-    inline void iterateAudioOutput(double offset) { audioOClock += offset; }
-
     inline double video() { return videoClock; }
-    inline void setVideo(double newClock) { videoClock = newClock; }
-    inline void iterateVideo(double offset) { videoClock += offset; }
-
-    inline void setVideoSync(double newClock) { videoSyncClock = newClock; }
-    inline void setVideoNext(double newClock) { videoClockNext = newClock; }
+    inline void setVideo(double newClock) {
+        videoClock = newClock;
+        if (hasVideo)
+            setMain(newClock);
+    }
+    inline void iterateVideo(double offset) {
+        videoClock += offset;
+        if (hasVideo)
+            setMain(videoClock);
+    }
 
     inline double subtitle() { return subtitlesClock; }
     inline void setSubtitle(double newClock) { subtitlesClock = newClock; }
@@ -69,24 +57,28 @@ signals:
     void __positionUpdated(int);
 
 private:
+    void setMain(double newClock) {
+        mainClock = newClock;
+        emit positionUpdated(mainClock);
+        emit __positionUpdated(mainClock * 1000);
+    }
 
     MasterClock();
 
     static MasterClock * self;
 
-    double mainClock;
-    double mainLastPtsVal;
-    double mainLastDelayVal;
+    bool hasVideo;
+
     double prevDelay;
 
-    volatile double audioClock;
-    volatile double audioOClock;
+    double mainClock;
 
-    volatile double videoClock;
-    volatile double videoClockNext;
-    volatile double videoSyncClock;
+    double audioClock;
 
-    volatile double subtitlesClock;
+    double videoClock;
+    double videoClockNext;
+
+    double subtitlesClock;
 };
 
 #endif // MASTER_CLOCK_H

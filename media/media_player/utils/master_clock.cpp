@@ -13,71 +13,40 @@ MasterClock *MasterClock::instance() {
 }
 
 MasterClock::MasterClock() : QObject() {
-    reset(0);
+    reset(0, false);
 }
 
 MasterClock::~MasterClock() {
 
 }
 
-void MasterClock::reset(uint clock) {
-    setMain(clock);
+void MasterClock::reset(uint clock, bool has_video) {
     setAudio(clock);
     setVideo(clock);
     setSubtitle(clock);
 
     videoClockNext = 0;
-    mainLastPtsVal = 0;
-    mainLastDelayVal = 0.20;
-}
-
-double MasterClock::computeAudioDelay() {
-    return audioClock - videoClockNext;
+    hasVideo = has_video;
 }
 
 int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
-    videoClock = compClock;
+    setVideo(compClock);
     videoClockNext = compClockNext;
-
-    qDebug() << "-----------------------------------------";
-    double delay = videoClock - mainLastPtsVal;
-    if (delay <= 0.0 || delay >= 1.0) {
-        delay = mainLastDelayVal;
-    }
-    // Save for next time
-    mainLastPtsVal = videoClockNext;
-    mainLastDelayVal = delay;
 
     double diff = videoClockNext - audioClock;
     qDebug() << "v - a  " << diff << " " << videoClockNext << " " << audioClock;
-    double sync_threshold = FFMAX(AV_SYNC_THRESHOLD, delay);
+    double sync_threshold = FFMAX(AV_SYNC_THRESHOLD, diff);
     if (fabs(diff) < AV_NOSYNC_THRESHOLD) {
             if (diff <= -sync_threshold) {
-                    delay = 0;
+                    diff = 0;
             } else if (diff >= sync_threshold) {
                 double temp = diff - (diff - prevDelay);
                 if (temp > 0)
-                    delay = diff + temp * 1.2;
-                else
-                    delay = diff;
+                    diff += temp * 1.2;
 //                    delay = diff + temp * 1.5; //4 * delay;
             }
     }
 
-    prevDelay = delay;
-    return delay * 100;
-
-//    qDebug() << "total delay " << delay;
-
-    mainClock += delay;
-
-    //    av_gettime() / 1000000.0) is a internal clock
-    double actual_delay = (mainClock - (av_gettime() / 1000000.0));
-    if (actual_delay < 0.010) {
-        return 0;
-//            /* Really it should skip the picture instead */
-//            actual_delay = 0.010;
-    }
-
-    return actual_delay * 99; // 100
+    prevDelay = diff;
+    return diff * 100;
 }
