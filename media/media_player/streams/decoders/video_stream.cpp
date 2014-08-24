@@ -28,7 +28,7 @@ void VideoStream::resumeOutput() {
 }
 
 void VideoStream::nextPict() {
-    if (packets.isEmpty() || pause)
+    if (pause || packets.isEmpty())
         return;
 
     int len, got_picture;

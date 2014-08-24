@@ -46,7 +46,7 @@ AudioStream::~AudioStream() {
 
 void AudioStream::decode(AVPacket * newPacket) {
     IMediaStream::decode(newPacket);
-//    qDebug() << "NEW PACKET " << output -> state();
+    qDebug() << "NEW PACKET " << output -> state();
 }
 
 void AudioStream::suspendOutput() {
@@ -76,11 +76,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
 
         if (packet == 0) {
             qDebug() << "IS EMPTY";
-//            return readData(data, maxlen);
-            reslen = 4096;
-            memset(data, 0, reslen); //silence
-            return reslen;
-//            return 0;
+            return 4096;
         }
 
         while (packet -> size > 0) {
