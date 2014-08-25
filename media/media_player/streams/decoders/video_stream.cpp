@@ -2,13 +2,14 @@
 #include <QApplication>
 
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex)
-    : IMediaStream(context, streamIndex), QObject(parent)
+    : MediaStream(context, streamIndex, parent)
     , output(0)
     , resampler(0){
 
     if (valid) {
         output = new VideoOutput(this, codec_context -> width, codec_context -> height);
         resampler = new VideoResampler(codec_context -> pix_fmt);
+        start(QThread::HighestPriority);
     }
 }
 
@@ -16,84 +17,84 @@ VideoStream::~VideoStream() {
     output -> setFrame(new VideoFrame(0, 0, 0));
     delete output;
     delete resampler;  
+
+    qDeleteAll(frames);
 }
 
 void VideoStream::suspendOutput() {
-    pause = true;
+    pauseRequired = true;
     qDebug() << "SUSPEND";
 }
 void VideoStream::resumeOutput() {
-    pause = false;
+    pauseRequired = false;
     qDebug() << "RESUME";
 }
 
-void VideoStream::nextPict() {
-    if (pause || packets.isEmpty())
+void VideoStream::dropPackets() {
+    IMediaStream::dropPackets();
+    qDeleteAll(frames);
+    frames.clear();
+}
+
+void VideoStream::routine() {
+    if (pauseRequired || packets.isEmpty())
         return;
 
     int len, got_picture;
     int width = codec_context -> width, height = codec_context -> height;
     QImage * img = 0;
     AVPacket * packet;
-    bool exit = false;
 
-    while(true) {
-        mutex -> lock();
-        packet = packets.takeFirst();
-        mutex -> unlock();
+    mutex -> lock();
+    packet = packets.takeFirst();
+    mutex -> unlock();
 
-    //    ///////// packet length correction
-    //    QByteArray encoded;
-    //    encoded.reserve(packet -> size * 2 + FF_INPUT_BUFFER_PADDING_SIZE);
-    //    encoded.resize(packet -> size * 2);
-    //    // also copy  padding data(usually 0)
-    //    memcpy(encoded.data(), packet -> data, packet -> size);
-    //    packet -> data = (uint8_t *)encoded.data();
-    //    ////////
+//    ///////// packet length correction
+//    QByteArray encoded;
+//    encoded.reserve(packet -> size * 2 + FF_INPUT_BUFFER_PADDING_SIZE);
+//    encoded.resize(packet -> size * 2);
+//    // also copy  padding data(usually 0)
+//    memcpy(encoded.data(), packet -> data, packet -> size);
+//    packet -> data = (uint8_t *)encoded.data();
+//    ////////
 
-        while (packet -> size > 0) {
-            len = avcodec_decode_video2(codec_context, frame, &got_picture, packet);
+    while (packet -> size > 0) {
+        len = avcodec_decode_video2(codec_context, frame, &got_picture, packet);
 
-            if (len < 0) {
-                qDebug() << "Error while decoding video frame";
-                return;
-            }
-
-            if (got_picture) {
-                img = resampler -> proceed(frame, width, height, width, height);
-    //            MasterClock::instance() -> setVideoNext(calcPts());
-
-                if (img) {
-                    exit = true;
-                    output -> setFrame(calcPts(new VideoFrame(img, -1, -1)));
-
-
-    //                int delay = MasterClock::instance() -> computeVideoDelay();
-    //        //        if (delay <= 0) {
-    //                if (delay < 0) { // there is always will be greater or equal to the zero
-    //                    delete img;
-    //                } else {
-    //                    output -> setFrame(new VideoFrame(img, delay));
-    //                    msleep(delay);
-    //                }
-                }
-            } else {
-                qWarning("Could not get a full picture from this frame");
-    //            char bla[AV_ERROR_MAX_STRING_SIZE];
-    //            qWarning("Could not get a full picture from this frame %s", av_make_error_string(bla, AV_ERROR_MAX_STRING_SIZE, len));
-    //            delete [] bla;
-            }
-
-            packet -> size -= len;
-            packet -> data += len;
+        if (len < 0) {
+            qDebug() << "Error while decoding video frame";
+            return;
         }
 
-        av_frame_unref(frame);
-        av_freep(frame);
+        if (got_picture) {
+            img = resampler -> proceed(frame, width, height, width, height);
+//            MasterClock::instance() -> setVideoNext(calcPts());
 
-        av_free_packet(packet);
-        if (exit || packets.isEmpty()) break;
+            if (img) {
+                output -> setFrame(calcPts(new VideoFrame(img, -1, -1)));
+            }
+        } else {
+            qWarning("Could not get a full picture from this frame");
+//            char bla[AV_ERROR_MAX_STRING_SIZE];
+//            qWarning("Could not get a full picture from this frame %s", av_make_error_string(bla, AV_ERROR_MAX_STRING_SIZE, len));
+//            delete [] bla;
+        }
+
+        packet -> size -= len;
+        packet -> data += len;
     }
+
+    av_frame_unref(frame);
+    av_freep(frame);
+
+    av_free_packet(packet);
+}
+
+void VideoStream::nextPict() {
+    if (pauseRequired || frames.isEmpty())
+        return;
+
+    output -> setFrame(frames.takeFirst());
 }
 
 VideoFrame * VideoStream::calcPts(VideoFrame * videoFrame) {

@@ -21,13 +21,16 @@ struct VideoFrame {
     }
 
     uint calcDelay() {
-        if (pts == -1)
-            return 40;
-        else
-            MasterClock::instance() -> computeVideoDelay(
+        uint res = 40;
+
+        if (pts != -1)
+            res = MasterClock::instance() -> computeVideoDelay(
                 pts == 0 ? MasterClock::instance() -> video() : pts,
                 MasterClock::instance() -> video() + next_pts
             );
+
+        qDebug() << "RES " << res;
+        return res;
     }
 
     QImage * image;

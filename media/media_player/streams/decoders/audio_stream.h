@@ -15,6 +15,7 @@ public:
     void decode(AVPacket * newPacket);
     void suspendOutput();
     void resumeOutput();
+    void dropPackets();
 
 protected:
     virtual qint64 readData(char *data, qint64 maxlen);

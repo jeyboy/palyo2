@@ -47,7 +47,7 @@ AudioStream::~AudioStream() {
 
 void AudioStream::decode(AVPacket * newPacket) {
     IMediaStream::decode(newPacket);
-    qDebug() << "NEW PACKET " << output -> state();
+//    qDebug() << "NEW PACKET " << output -> state();
 }
 
 void AudioStream::suspendOutput() {
@@ -57,6 +57,12 @@ void AudioStream::suspendOutput() {
 void AudioStream::resumeOutput() {
     pause = false;
     output -> resume();
+}
+
+void AudioStream::dropPackets() {
+    IMediaStream::dropPackets();
+    qDeleteAll(frames);
+    frames.clear();
 }
 
 // TODO: add eof check

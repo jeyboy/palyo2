@@ -55,17 +55,11 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
             if (diff <= -sync_threshold) {
                     delay = 0;
             } else if (diff >= sync_threshold) {
-                double temp = diff - (diff - prevDelay);
-                if (temp > 0)
-                    delay = diff + temp * 1.2;
-                else
-                    delay = diff;
+                delay = diff;
 //                    delay = diff + temp * 1.5; //4 * delay;
             }
     }
 
-    prevDelay = delay;
-    return delay * 100;
 
 //    qDebug() << "total delay " << delay;
 
@@ -79,5 +73,5 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
 //            actual_delay = 0.010;
     }
 
-    return actual_delay * 99; // 100
+    return actual_delay * 999; // 100
 }
