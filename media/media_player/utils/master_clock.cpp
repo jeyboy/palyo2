@@ -36,7 +36,7 @@ double MasterClock::computeAudioDelay() {
 }
 
 int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
-    videoClock = compClock;
+    setVideo(compClock);
     videoClockNext = compClockNext;
 
     qDebug() << "-----------------------------------------";

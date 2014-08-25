@@ -15,6 +15,8 @@ public:
     void suspendOutput();
     void resumeOutput();
     void dropPackets();
+
+    bool isBlocked();
 public slots:
     void nextPict();
 protected:

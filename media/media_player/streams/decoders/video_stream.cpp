@@ -36,6 +36,10 @@ void VideoStream::dropPackets() {
     frames.clear();
 }
 
+bool VideoStream::isBlocked() {
+    return MediaStream::isBlocked() || frames.size() >= FRAMES_LIMIT;
+}
+
 void VideoStream::routine() {
     if (pauseRequired || packets.isEmpty())
         return;
@@ -71,7 +75,7 @@ void VideoStream::routine() {
 //            MasterClock::instance() -> setVideoNext(calcPts());
 
             if (img) {
-                output -> setFrame(calcPts(new VideoFrame(img, -1, -1)));
+                frames.append(calcPts(new VideoFrame(img, -1, -1)));
             }
         } else {
             qWarning("Could not get a full picture from this frame");

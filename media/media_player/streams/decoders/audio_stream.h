@@ -17,6 +17,8 @@ public:
     void resumeOutput();
     void dropPackets();
 
+    bool isBlocked();
+
 protected:
     virtual qint64 readData(char *data, qint64 maxlen);
     virtual qint64 writeData(const char *data, qint64 len);

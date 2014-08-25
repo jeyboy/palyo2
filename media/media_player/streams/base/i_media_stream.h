@@ -5,6 +5,10 @@
 #include "media/media_player/utils/master_clock.h"
 #include <QMutex>
 
+#define FRAMES_LIMIT 32;
+#define PACKETS_LIMIT 8;
+
+
 class IMediaStream {
 
 public:
@@ -16,7 +20,6 @@ public:
         codec = 0;
         frame = 0;
         mutex = 0;
-        packetsLimit = 32; //64
 
         if (streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND) {
             valid = false;
@@ -89,7 +92,7 @@ public:
         delete codec; // hz
     }
 
-    inline bool isBlocked() { return valid && packets.size() > packetsLimit; }
+    inline bool isBlocked() { return valid && packets.size() > PACKETS_LIMIT; }
     inline bool isValid() const { return valid; }
     inline int index() const { return uindex; }
     inline bool hasPackets() { return !packets.isEmpty(); }
@@ -121,8 +124,6 @@ public:
 
 protected:
     bool valid, pause;
-
-    int packetsLimit;
 
     QMutex * mutex;
     AVStream * stream;

@@ -65,6 +65,10 @@ void AudioStream::dropPackets() {
     frames.clear();
 }
 
+bool AudioStream::isBlocked() {
+    return IMediaStream::isBlocked() || frames.size() >= FRAMES_LIMIT;
+}
+
 // TODO: add eof check
 //TODO: add check on maxlen overflow
 //TODO: check situation when one packet contain more than one frame
