@@ -32,6 +32,23 @@ bool AudioResampler::init(
     return true;
 }
 
+bool AudioResampler::proceed(AVFrame * frame, QByteArray * data) {
+    uint8_t ** buffer = settings -> outputBuffer(resampleContext, frame);
+    int samples_output = swr_convert(
+                    resampleContext,
+                    buffer,
+                    settings -> max_nb_samples_out,
+                    (const uint8_t**)frame -> extended_data,
+                    frame -> nb_samples
+                );
+
+    if (samples_output > -1) {
+        data -> append((const char*)*buffer, settings -> calcBufferSize(samples_output));
+        return true;
+    } else qDebug() << "RESAMPLE ERROR";
+    return false;
+}
+
 bool AudioResampler::proceed(AVFrame * frame, char * data, int & len) {
     uint8_t ** buffer = settings -> outputBuffer(resampleContext, frame);
     int samples_output = swr_convert(

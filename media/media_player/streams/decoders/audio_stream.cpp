@@ -36,6 +36,7 @@ AudioStream::~AudioStream() {
     output -> stop();
 
     delete resampler;
+    qDeleteAll(frames);
 }
 
 //void AudioStream::stop() {
@@ -62,9 +63,19 @@ void AudioStream::resumeOutput() {
 //TODO: add check on maxlen overflow
 //TODO: check situation when one packet contain more than one frame
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
-    if (maxlen == 0) return 0;
+//    if (maxlen == 0) return 0;
 
     int reslen = 0;
+
+    if (maxlen != 0 && !frames.isEmpty()) {
+        AudioFrame * currFrame = frames.takeFirst();
+        reslen = currFrame -> buffer -> size();
+        memcpy(data, currFrame -> buffer -> data(), reslen);
+        MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+        delete currFrame;
+        return reslen;
+    }
+
     int len, got_frame;
     AVPacket * packet = 0;
 
@@ -88,14 +99,26 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
                 break;
             } else {
                 if (got_frame) {
-                    if (resampleRequire) {
-                        if (!resampler -> proceed(frame, data, reslen))
-                            qDebug() << "RESAMPLER FAIL";
-                    } else {
-                        memcpy(data, (const char*)frame -> data[0], (reslen = frame -> linesize[0]));
-                    }
+                    if (maxlen == 0) {
+                        QByteArray * ar = new QByteArray();
+                        if (resampleRequire) {
+                            if (!resampler -> proceed(frame, ar))
+                                qDebug() << "RESAMPLER FAIL";
+                        } else {
+                            memcpy(ar -> data(), (const char*)frame -> data[0], frame -> linesize[0]);
+                        }
 
-                    MasterClock::instance() -> setAudio(calcPts(packet));
+                        frames.append(new AudioFrame(ar, calcPts(packet)));
+                    } else {
+                        if (resampleRequire) {
+                            if (!resampler -> proceed(frame, data, reslen))
+                                qDebug() << "RESAMPLER FAIL";
+                        } else {
+                            memcpy(data, (const char*)frame -> data[0], (reslen = frame -> linesize[0]));
+                        }
+
+                        MasterClock::instance() -> setAudio(calcPts(packet));
+                    }
                 } else {
                     qDebug() << "Could not get audio data from this frame";
                 }
@@ -109,7 +132,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
         av_freep(frame);
 
         av_free_packet(packet);
-        if (reslen > 0) break;
+        if (reslen > 0 || maxlen == 0) break;
     }
 
     return reslen;

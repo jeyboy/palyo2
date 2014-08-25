@@ -216,7 +216,8 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/output/video/video_output.h \
     media/media_player/streams/output/video/controls/output_container.h \
     media/media_player/streams/output/audio/audio_output_stream.h \
-    media/media_player/streams/base/i_media_stream.h
+    media/media_player/streams/base/i_media_stream.h \
+    media/media_player/utils/audio_frame.h
 
 unix:!mac {
         QT += gui-private

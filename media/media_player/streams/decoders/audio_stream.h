@@ -3,6 +3,7 @@
 
 #include "media/media_player/resamplers/audio_resampler.h"
 #include "media/media_player/streams/base/i_media_stream.h"
+#include "media/media_player/utils/audio_frame.h"
 
 #include <QAudioFormat>
 
@@ -31,6 +32,7 @@ private:
     AudioResampler * resampler;
 
     QAudioOutput * output;
+    QList<AudioFrame *> frames;
 };
 
 #endif // AUDIO_STREAM_H

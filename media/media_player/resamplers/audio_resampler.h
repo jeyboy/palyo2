@@ -124,6 +124,7 @@ public:
         int channelLayoutOut
     );
 
+    bool proceed(AVFrame * frame, QByteArray * data);
     bool proceed(AVFrame * frame, char *data, int & len);
     inline int bytesPerSecond() { return settings -> bytesPerSecond(); }
 private:
