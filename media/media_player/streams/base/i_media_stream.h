@@ -5,8 +5,8 @@
 #include "media/media_player/utils/master_clock.h"
 #include <QMutex>
 
-#define FRAMES_LIMIT 32;
-#define PACKETS_LIMIT 8;
+#define FRAMES_LIMIT 16
+#define PACKETS_LIMIT 8
 
 
 class IMediaStream {

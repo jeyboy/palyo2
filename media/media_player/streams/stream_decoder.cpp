@@ -20,7 +20,13 @@ StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : 
 
 StreamDecoder::~StreamDecoder() {
     qDebug() << "decoder";
-    delete videoStream;
+
+    if (subtitleStream -> isValid()) {
+        videoStream -> stop();
+        videoStream -> wait();
+    }
+
+//    delete videoStream;
 
     delete audioStream;
 
@@ -120,7 +126,7 @@ void StreamDecoder::routine() {
             qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
 
             pauseRequired = true;
-//            videoStream -> pauseOnComplete();
+            videoStream -> pauseOnComplete();
 //            audioStream -> suspendOutput();
             subtitleStream -> pauseOnComplete();
 

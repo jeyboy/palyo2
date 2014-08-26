@@ -41,7 +41,7 @@ bool VideoStream::isBlocked() {
 }
 
 void VideoStream::routine() {
-    if (pauseRequired || packets.isEmpty())
+    if (pauseRequired || packets.isEmpty() || frames.size() >= FRAMES_LIMIT)
         return;
 
     int len, got_picture;
@@ -67,7 +67,7 @@ void VideoStream::routine() {
 
         if (len < 0) {
             qDebug() << "Error while decoding video frame";
-            return;
+            break;
         }
 
         if (got_picture) {

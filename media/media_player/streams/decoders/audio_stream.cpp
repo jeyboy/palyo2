@@ -73,6 +73,10 @@ bool AudioStream::isBlocked() {
 //TODO: add check on maxlen overflow
 //TODO: check situation when one packet contain more than one frame
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
+    if (pause) {
+        memset(data, 0, 4096);
+        return 4096;
+    }
 //    if (maxlen == 0) return 0;
 
     int reslen = 0;
