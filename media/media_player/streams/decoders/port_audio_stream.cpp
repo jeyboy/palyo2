@@ -74,10 +74,8 @@ bool AudioStream::isBlocked() {
 //TODO: check situation when one packet contain more than one frame
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
     if (pause) {
-        if (maxlen != 0) {
-            memset(data, 0, maxlen);
-            return 4096;
-        } else return 0;
+        memset(data, 0, 4096);
+        return 4096;
     }
 //    if (maxlen == 0) return 0;
 
@@ -101,9 +99,8 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
             packet = packets.takeFirst();
         mutex -> unlock();
 
-        if (packet == 0 || pause) {
+        if (packet == 0) {
             qDebug() << "IS EMPTY";
-            memset(data, 0, maxlen);
             return 4096;
         }
 
