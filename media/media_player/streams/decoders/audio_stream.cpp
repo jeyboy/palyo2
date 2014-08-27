@@ -122,10 +122,11 @@ void AudioStream::routine() {
     av_free_packet(packet);
 }
 
-// TODO: add eof check
-//TODO: add check on maxlen overflow
-//TODO: check situation when one packet contain more than one frame
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
+    while (pauseRequired) {
+        msleep(5);
+    }
+
     int reslen = 0;
 
     if (maxlen != 0 && !frames.isEmpty()) {

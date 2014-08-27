@@ -20,7 +20,7 @@ protected:
     virtual void routine() = 0;
 
     volatile bool exitRequired;
-    bool pauseRequired;
+    volatile bool pauseRequired;
 };
 
 #endif // STREAM_H
