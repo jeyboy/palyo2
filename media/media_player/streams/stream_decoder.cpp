@@ -26,7 +26,7 @@ StreamDecoder::~StreamDecoder() {
         videoStream -> wait();
     }
 
-//    delete videoStream;
+    delete videoStream;
 
     delete audioStream;
 
@@ -88,9 +88,9 @@ void StreamDecoder::routine() {
 
 //    av_init_packet(currFrame);
 
-    if (videoStream -> isBlocked() && audioStream -> isBlocked()) {
+    if ((videoStream -> isBlocked() && audioStream -> isBlocked()) || pauseRequired) {
 //        if ((videoStream -> hasPackets() && audioStream -> hasPackets()) || !MasterClock::instance() -> demuxeRequired()) {
-            msleep(2); // 12
+            msleep(12);
             return;
 //        }
     }
@@ -99,6 +99,8 @@ void StreamDecoder::routine() {
     bool preload = audioStream -> requirePreload() && videoStream -> requirePreload();
 
     while (true) {
+        if (pauseRequired) return;
+
         status = av_read_frame(context, currFrame);
 
         if (status >= 0) {

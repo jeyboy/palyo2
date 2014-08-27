@@ -52,11 +52,11 @@ void AudioStream::decode(AVPacket * newPacket) {
 
 void AudioStream::suspendOutput() {
     pause = true;
-//    output -> suspend();
+    output -> suspend();
 }
 void AudioStream::resumeOutput() {
     pause = false;
-//    output -> resume();
+    output -> resume();
 }
 
 void AudioStream::dropPackets() {

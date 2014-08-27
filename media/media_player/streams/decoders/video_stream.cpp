@@ -49,7 +49,6 @@ void VideoStream::routine() {
         return;
     }
 
-
     int len, got_picture;
     int width = codec_context -> width, height = codec_context -> height;
     QImage * img = 0;
