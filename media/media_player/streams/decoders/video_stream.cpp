@@ -41,8 +41,14 @@ bool VideoStream::isBlocked() {
 }
 
 void VideoStream::routine() {
-    if (pauseRequired || packets.isEmpty() || frames.size() >= FRAMES_LIMIT)
+    if (pauseRequired || packets.isEmpty())
         return;
+
+    if (frames.size() >= FRAMES_LIMIT) {
+        msleep(50);
+        return;
+    }
+
 
     int len, got_picture;
     int width = codec_context -> width, height = codec_context -> height;
@@ -72,11 +78,9 @@ void VideoStream::routine() {
 
         if (got_picture) {
             img = resampler -> proceed(frame, width, height, width, height);
-//            MasterClock::instance() -> setVideoNext(calcPts());
 
-            if (img) {
-                frames.append(calcPts(new VideoFrame(img, -1, -1)));
-            }
+            if (img)
+              frames.append(calcPts(new VideoFrame(img, -1, -1)));
         } else {
             qWarning("Could not get a full picture from this frame");
 //            char bla[AV_ERROR_MAX_STRING_SIZE];

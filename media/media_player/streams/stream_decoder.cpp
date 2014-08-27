@@ -21,7 +21,7 @@ StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : 
 StreamDecoder::~StreamDecoder() {
     qDebug() << "decoder";
 
-    if (subtitleStream -> isValid()) {
+    if (videoStream -> isValid()) {
         videoStream -> stop();
         videoStream -> wait();
     }
@@ -50,15 +50,16 @@ double StreamDecoder::position() {
 
 void StreamDecoder::seek(int64_t target) {
     suspendOutput();
+
+    videoStream -> dropPackets();
+    audioStream -> dropPackets();
+    subtitleStream -> dropPackets();
+
     int flags = target < position() * AV_TIME_BASE ? AVSEEK_FLAG_BACKWARD : 0;
 
     audioStream -> seeking(context, target, flags);
     videoStream -> seeking(context, target, flags);
     subtitleStream -> seeking(context, target, flags);
-
-    videoStream -> dropPackets();
-    audioStream -> dropPackets();
-    subtitleStream -> dropPackets();
 
     resumeOutput();
 }
