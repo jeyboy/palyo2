@@ -28,6 +28,11 @@ StreamDecoder::~StreamDecoder() {
 
     delete videoStream;
 
+    if (audioStream -> isValid()) {
+        audioStream -> stop();
+        audioStream -> wait();
+    }
+
     delete audioStream;
 
     if (subtitleStream -> isValid()) {

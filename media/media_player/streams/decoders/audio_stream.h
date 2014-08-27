@@ -2,12 +2,14 @@
 #define AUDIO_STREAM_H
 
 #include "media/media_player/resamplers/audio_resampler.h"
-#include "media/media_player/streams/base/i_media_stream.h"
+#include "media/media_player/streams/base/media_stream.h"
 #include "media/media_player/utils/audio_frame.h"
 
 #include <QAudioFormat>
 
-class AudioStream : public QIODevice, public IMediaStream {
+#define FRAMES_LIMIT 32
+
+class AudioStream : public QIODevice, public MediaStream {
 public:
     AudioStream(QObject * parent, AVFormatContext * context, int streamIndex);
     ~AudioStream();
@@ -20,10 +22,11 @@ public:
     bool isBlocked();
 
 protected:
+    void routine();
     qint64 readData(char *data, qint64 maxlen);
     virtual qint64 writeData(const char *data, qint64 len);
 
-    void sync(double delay, char *data, int & len, qint64 maxlen);
+//    void sync(double delay, char *data, int & len, qint64 maxlen);
     void fillFormat(QAudioFormat & format);
     double calcPts(AVPacket * packet);
     int bytesPerSecond();
