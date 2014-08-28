@@ -39,7 +39,7 @@ AudioFrame * AudioStream::decoded() {
     if (pauseRequired || frames.isEmpty()) {
         return new AudioFrame();
     } else {
-//        MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+        MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
         AudioFrame * currFrame = frames.takeFirst();
         return currFrame;
     }
