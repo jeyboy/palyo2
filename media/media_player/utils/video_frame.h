@@ -28,8 +28,6 @@ struct VideoFrame {
                 pts == 0 ? MasterClock::instance() -> video() : pts,
                 MasterClock::instance() -> video() + next_pts
             );
-
-        qDebug() << "RES " << res;
         return res;
     }
 

@@ -4,16 +4,17 @@
 #include "media/media_player/resamplers/audio_resampler.h"
 #include "media/media_player/streams/base/media_stream.h"
 #include "media/media_player/utils/audio_frame.h"
-#include "media/media_player/streams/output/audio/portaudio_output_stream.h"
 
 #include <QAudioFormat>
+
+#define FRAMES_LIMIT 32
 
 class AudioStream : public MediaStream {
 public:
     AudioStream(QObject * parent, AVFormatContext * context, int streamIndex);
     ~AudioStream();
 
-    AudioFrame * decoded();
+    void decode(AVPacket * newPacket);
     void suspendOutput();
     void resumeOutput();
     void dropPackets();
@@ -22,6 +23,8 @@ public:
 
 protected:
     void routine();
+    qint64 readData(char *data, qint64 maxlen);
+    qint64 writeData(const char *data, qint64 len);
 
 //    void sync(double delay, char *data, int & len, qint64 maxlen);
     void fillFormat(QAudioFormat & format);
@@ -31,12 +34,12 @@ protected:
 private:
     int defaultChannelLayout;
 
-    bool resampleRequire, initialized;
+    bool resampleRequire;
     AudioResampler * resampler;
 
+    QAudioOutput * output;
+    QIODevice * buffer;
     QList<AudioFrame *> frames;
-    PortAudioOutputStream * output;
-    QAudioFormat * format;
 };
 
 #endif // AUDIO_STREAM_H

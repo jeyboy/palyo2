@@ -2,10 +2,11 @@
 #define AUDIO_FRAME_H
 
 #include <QByteArray>
+#include <QAudioFormat>
 
 struct AudioFrame {
     AudioFrame() {
-        buffer = 0;
+        buffer = new QByteArray(4096, 0);
         bufferPTS = 0;
     }
     AudioFrame(QByteArray * data, double pts) {
