@@ -3,11 +3,12 @@
 
 static int callback( const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData) {
     AudioStream * stream  = (AudioStream *)userData;
+    int16_t *out = (int16_t *)outputBuffer;
 
     AudioFrame * frame = stream -> decoded();
-    memcpy(outputBuffer, frame -> buffer -> data(), frame -> buffer -> size());
+    memcpy(out, frame -> buffer -> data(), frame -> buffer -> size());
     delete frame;
-    return 0;
+    return paContinue;
 }
 
 PortAudioOutputStream::PortAudioOutputStream(void * stream, int bytesPerSecond, QAudioFormat & streamFormat) :

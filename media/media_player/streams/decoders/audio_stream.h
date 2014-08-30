@@ -34,7 +34,7 @@ private:
     bool resampleRequire, initialized;
     AudioResampler * resampler;
 
-    QList<AudioFrame *> frames;
+    QVector<AudioFrame *> frames;
     PortAudioOutputStream * output;
     QAudioFormat * format;
 };
