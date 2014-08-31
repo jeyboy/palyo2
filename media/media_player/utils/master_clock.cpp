@@ -26,13 +26,17 @@ void MasterClock::reset(uint clock) {
     setVideo(clock);
     setSubtitle(clock);
 
+    audioOClock = 0;
     videoClockNext = 0;
     mainLastPtsVal = 0;
     mainLastDelayVal = 0.20;
 }
 
-double MasterClock::computeAudioDelay() {
-    return audioClock - videoClockNext;
+int MasterClock::computeAudioDelay() {
+    int res = (audioOClock - av_gettime());
+//    res -= 1000;
+    if (res < 0 || res > 100000) res = 0;
+    return res;
 }
 
 int MasterClock::computeVideoDelay(double compClock, double compClockNext) {

@@ -21,9 +21,7 @@ public:
     }
 
     void reset(uint clock);
-//    uint computeAudioDelay();
-    double computeAudioDelay();
-//    int computeVideoDelay();
+    int computeAudioDelay();
     int computeVideoDelay(double compClock, double compClockNext);
 
     inline bool demuxeRequired() { return fabs(audioClock - videoClock) > 0.1; } //1 sec
@@ -40,19 +38,17 @@ public:
 
     inline double audio() { return audioClock; }
     inline void setAudio(double newClock) {
+        audioOClock = av_gettime() + (newClock - audioClock) * 1000000;
         audioClock = newClock;
         emit positionUpdated(audioClock);
         emit __positionUpdated(audioClock * 1000);
     }
     inline void iterateAudio(double offset) {
+        audioOClock = av_gettime() + (offset * 1000000);
         audioClock += offset;
         emit positionUpdated(audioClock);
         emit __positionUpdated(audioClock * 1000);
     }
-
-    inline double audioOutput() { return audioOClock; }
-    inline void setAudioOutput(double newClock) { audioOClock = newClock; }
-    inline void iterateAudioOutput(double offset) { audioOClock += offset; }
 
     inline double video() { return videoClock; }
     inline void setVideo(double newClock) { videoClock = newClock; }
@@ -80,7 +76,7 @@ private:
     double prevDelay;
 
     volatile double audioClock;
-    volatile double audioOClock;
+    int64_t audioOClock;
 
     volatile double videoClock;
     volatile double videoClockNext;

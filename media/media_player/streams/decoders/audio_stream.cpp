@@ -1,7 +1,7 @@
 #include "audio_stream.h"
 
 AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex)
-    : MediaStream(context, streamIndex, parent)
+    : MediaStream(context, streamIndex, parent, QThread::HighestPriority)
     , defaultChannelLayout(AV_CH_LAYOUT_STEREO)
     , resampleRequire(false)
     , initialized(false)
@@ -21,14 +21,16 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
         QAudioFormat format;
         fillFormat(format);
 
-//        outputStream = new AudioOutputStream(this, bytesPerSecond(), format, priority);
-        output = new PortAudioOutputStream(this, bytesPerSecond(), format);
+        output = new AudioOutputStream(this, format);
+//        output = new PortAudioOutputStream(this, bytesPerSecond(), format);
     }
 }
 
 AudioStream::~AudioStream() {
     qDebug() << "Audion stream";
 
+    output -> stop();
+    output -> wait();
     delete output;
 
     delete resampler;
@@ -100,6 +102,18 @@ void AudioStream::routine() {
                 } else
                     memcpy(ar -> data(), (const char*)frame -> data[0], frame -> linesize[0]);
 
+
+//                AudioFrame * currFrame = new AudioFrame(ar, calcPts(packet));
+//                if (MasterClock::instance() -> audio() != 0) {
+//                    int lo = MasterClock::instance() -> computeAudioDelay();
+//                    usleep(lo);
+//                }
+
+//                output -> playBuffer(currFrame -> buffer);
+//                MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+
+//                delete currFrame;
+
                 frames.append(new AudioFrame(ar, calcPts(packet)));
             } else {
                 qDebug() << "Could not get audio data from this frame";
@@ -115,6 +129,58 @@ void AudioStream::routine() {
 
     av_free_packet(packet);
 }
+
+//void AudioStream::routine() {
+//    if (pauseRequired) return;
+
+//    if (frames.size() >= FRAMES_LIMIT) {
+//        msleep(12);
+//        return;
+//    }
+
+//    if (packets.isEmpty()) {
+//        msleep(2);
+//        return;
+//    }
+
+//    int len, got_frame;
+//    AVPacket * packet = 0;
+
+//    mutex -> lock();
+//    packet = packets.takeFirst();
+//    mutex -> unlock();
+
+//    while (packet -> size > 0) {
+//        len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
+
+//        if (len < 0) {
+//            qDebug() << "Error while decoding audio frame";
+////                av_free_packet(packet);
+//            break;
+//        } else {
+//            if (got_frame) {
+//                QByteArray * ar = new QByteArray();
+//                if (resampleRequire) {
+//                    if (!resampler -> proceed(frame, ar))
+//                        qDebug() << "RESAMPLER FAIL";
+//                } else
+//                    memcpy(ar -> data(), (const char*)frame -> data[0], frame -> linesize[0]);
+
+//                frames.append(new AudioFrame(ar, calcPts(packet)));
+//            } else {
+//                qDebug() << "Could not get audio data from this frame";
+//            }
+
+//            packet -> size -= len;
+//            packet -> data += len;
+//        }
+//    }
+
+//    av_frame_unref(frame);
+//    av_freep(frame);
+
+//    av_free_packet(packet);
+//}
 
 void AudioStream::fillFormat(QAudioFormat & format) {
     bool approxSettings = false, notSupport = false;

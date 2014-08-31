@@ -4,7 +4,9 @@
 #include "media/media_player/resamplers/audio_resampler.h"
 #include "media/media_player/streams/base/media_stream.h"
 #include "media/media_player/utils/audio_frame.h"
+
 #include "media/media_player/streams/output/audio/portaudio_output_stream.h"
+#include "media/media_player/streams/output/audio/audio_output_stream.h"
 
 #include <QAudioFormat>
 
@@ -35,7 +37,8 @@ private:
     AudioResampler * resampler;
 
     QVector<AudioFrame *> frames;
-    PortAudioOutputStream * output;
+//    PortAudioOutputStream * output;
+    AudioOutputStream * output;
     QAudioFormat * format;
 };
 

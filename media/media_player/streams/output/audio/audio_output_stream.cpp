@@ -1,51 +1,38 @@
-//#include "audio_output_stream.h"
+#include "audio_output_stream.h"
+#include "media/media_player/streams/decoders/audio_stream.h"
+#include <QDebug>
 
-//AudioOutputStream::AudioOutputStream(QObject * parent, int bytesPerSecond, QAudioFormat & format, Priority priority)
-//    : Stream(parent, priority) {
-//    bytes_per_sec = bytesPerSecond;
+AudioOutputStream::AudioOutputStream(void * decoderStream, QAudioFormat & format) : Stream((QObject *)decoderStream) {
+    stream = decoderStream;
+    soundOutput = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format);
+    soundOutput -> setVolume(1.0);
+    audioIO = soundOutput -> start();
 
-//    audioIO = new AudioIO();
-//    audioIO -> open(QIODevice::ReadWrite);
+    start();
+}
 
-//    soundOutput = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, this);
-//    soundOutput -> setVolume(1.0);
-////    audioIO = soundOutput -> start();
-//    soundOutput -> start(audioIO);
+AudioOutputStream::~AudioOutputStream() {
+   qDebug() << "a o STream";
+   soundOutput -> stop();
 
-//    start(priority);
-//}
+   delete soundOutput;
+}
 
-//AudioOutputStream::~AudioOutputStream() {
-//   qDebug() << "a o STream";
-//   soundOutput -> stop();
+void AudioOutputStream::playBuffer(QByteArray * frame) {
+    audioIO -> write(*frame);
+}
 
-//   qDeleteAll(audioBuffers);
-//}
+void AudioOutputStream::routine() {
+    AudioStream * dStream = (AudioStream *) stream;
 
-//void AudioOutputStream::addBuffer(QByteArray * frame) {
-//    mutex -> lock();
-//        audioBuffers.append(frame);
-//    mutex -> unlock();
-//}
+    AudioFrame * currFrame = dStream -> decoded();
+    if (MasterClock::instance() -> audio() != 0) {
+        int lo = MasterClock::instance() -> computeAudioDelay();
+        usleep(lo);
+    }
 
-////TODO: move delays on decoder level and remove buffer (maybe this class not should be a thread)
-//void AudioOutputStream::routine() {
+    audioIO -> write(*currFrame -> buffer);
+    MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
 
-////    uint delay = MasterClock::instance() -> computeAudioDelay();
-////    if (delay > 0) { msleep(delay); }
-
-//    mutex -> lock();
-//        if (!audioBuffers.isEmpty() && soundOutput -> bytesFree() > 0) {
-//            QByteArray * ar = audioBuffers.takeFirst();
-//            audioIO -> write(*ar);
-//            mutex -> unlock();
-
-////            MasterClock::instance() -> iterateAudioOutput(last_buff_delay - ((double)audioIO -> bytesToWrite() / bytes_per_sec));
-//            double last_buff_delay = ((double)ar -> size()) / bytes_per_sec;
-//            MasterClock::instance() -> iterateAudioOutput(last_buff_delay);
-
-//            delete ar;
-//            return;
-//        } else { msleep(2); }
-//    mutex -> unlock();
-//}
+    delete currFrame;
+}
