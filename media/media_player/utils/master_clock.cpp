@@ -34,7 +34,7 @@ void MasterClock::reset(uint clock) {
 
 int MasterClock::computeAudioDelay() {
     int res = (audioOClock - av_gettime());
-//    res -= 1000;
+    res -= 500;
     if (res < 0 || res > 100000) res = 0;
     return res;
 }

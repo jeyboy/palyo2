@@ -14,7 +14,8 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
 }
 
 VideoStream::~VideoStream() {
-    output -> setFrame(new VideoFrame(0, 0, 0));
+    if (output)
+        output -> setFrame(new VideoFrame(0, 0, 0));
     delete output;
     delete resampler;  
 

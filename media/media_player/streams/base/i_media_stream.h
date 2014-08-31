@@ -30,7 +30,7 @@ public:
 
         stream = context -> streams[uindex];
 
-        if (stream == 0 || stream -> disposition & AV_DISPOSITION_ATTACHED_PIC) { // block attachments picts
+        if (stream == 0/* || stream -> disposition & AV_DISPOSITION_ATTACHED_PIC*/) { // block attachments picts
             valid = false;
             return;
         }

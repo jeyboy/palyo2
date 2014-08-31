@@ -1,10 +1,12 @@
 #include "audio_stream.h"
 
 AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex)
-    : MediaStream(context, streamIndex, parent)
+    : MediaStream(context, streamIndex, parent, QThread::HighestPriority)
+    , defaultChannelLayout(AV_CH_LAYOUT_STEREO)
     , resampleRequire(false)
+    , initialized(false)
     , resampler(0)
-    , defaultChannelLayout(AV_CH_LAYOUT_STEREO) {
+    , output(0) {
 
     if (valid) {
 //        isPlanar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
@@ -19,41 +21,39 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
         QAudioFormat format;
         fillFormat(format);
 
-        output = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, parent);
-        output -> setVolume(1.0);
-        buffer = output -> start();
-
-//        outputStream = new AudioOutputStream(this, bytesPerSecond(), format, priority);
-    //    outputStream = new PortAudioOutputStream(this, format, priority);
+        output = new AudioOutputStream(this, format);
+//        output = new PortAudioOutputStream(this, bytesPerSecond(), format);
     }
 }
 
 AudioStream::~AudioStream() {
     qDebug() << "Audion stream";
+
     output -> stop();
+    output -> wait();
+    delete output;
 
     delete resampler;
     qDeleteAll(frames);
 }
 
-//void AudioStream::stop() {
-//    qDebug() << "AUDIO STOP";
-//    output -> stop();
-//    MediaStream::stop();
-//}
-
-void AudioStream::decode(AVPacket * newPacket) {
-    IMediaStream::decode(newPacket);
-//    qDebug() << "NEW PACKET " << output -> state();
+AudioFrame * AudioStream::decoded() {
+    if (pauseRequired || frames.isEmpty()) {
+        return new AudioFrame();
+    } else {
+        AudioFrame * currFrame = frames.takeFirst();
+        MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+        return currFrame;
+    }
 }
 
 void AudioStream::suspendOutput() {
     pauseRequired = true;
-    output -> suspend();
+//    output -> suspend();
 }
 void AudioStream::resumeOutput() {
     pauseRequired = false;
-    output -> resume();
+//    output -> resume();
 }
 
 void AudioStream::dropPackets() {
@@ -99,17 +99,22 @@ void AudioStream::routine() {
                 if (resampleRequire) {
                     if (!resampler -> proceed(frame, ar))
                         qDebug() << "RESAMPLER FAIL";
-                } else {
+                } else
                     memcpy(ar -> data(), (const char*)frame -> data[0], frame -> linesize[0]);
-                }
 
-                qint64 tdelay = output -> format().durationForBytes(ar -> size() - 25);
-                buffer -> write(*ar);
-                MasterClock::instance() -> setAudio(calcPts(packet));
-                qDebug() << "BLA " << tdelay;
-                usleep(tdelay);
-                delete ar;
-//                frames.append(new AudioFrame(ar, calcPts(packet)));
+
+//                AudioFrame * currFrame = new AudioFrame(ar, calcPts(packet));
+//                if (MasterClock::instance() -> audio() != 0) {
+//                    int lo = MasterClock::instance() -> computeAudioDelay();
+//                    usleep(lo);
+//                }
+
+//                output -> playBuffer(currFrame -> buffer);
+//                MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+
+//                delete currFrame;
+
+                frames.append(new AudioFrame(ar, calcPts(packet)));
             } else {
                 qDebug() << "Could not get audio data from this frame";
             }
@@ -125,60 +130,56 @@ void AudioStream::routine() {
     av_free_packet(packet);
 }
 
-qint64 AudioStream::readData(char *data, qint64 maxlen) {
-    while (pauseRequired) {
-        msleep(5);
-    }
+//void AudioStream::routine() {
+//    if (pauseRequired) return;
 
-    int reslen = 0;
-
-    if (maxlen != 0 && !frames.isEmpty()) {
-        AudioFrame * currFrame = frames.takeFirst();
-        reslen = currFrame -> buffer -> size();
-        memcpy(data, currFrame -> buffer -> data(), reslen);
-        MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
-        delete currFrame;
-        return reslen;
-    } else {
-        qDebug() << "IS EMPTY";
-        memset(data, 0, maxlen);
-        return 4096;
-    }
-}
-
-qint64 AudioStream::writeData(const char *data, qint64 len) {
-    return 0;
-}
-
-//void AudioStream::sync(double delay, char *data, int & len, qint64 maxlen) {
-//    int n = output -> format().channelCount();
-//    int wanted_size = len + output -> format().bytesForDuration(delay * 1000);//(delay * output -> format().sampleRate() * n);
-//    qDebug() << "DELAY " << delay << " " << len << " NEW " << wanted_size;
-//    if (wanted_size > maxlen)
-//        wanted_size = maxlen;
-
-//    if(wanted_size < len) {
-//        /* remove samples */
-//        len = wanted_size;
-//    } else if(wanted_size > len) {
-//        int copyNum = wanted_size - len;
-//        memcpy((uint8_t *)data + len, (uint8_t *)data + len - copyNum , copyNum);
-
-
-////        uint8_t *samples_end, *q;
-////        int nb;
-
-////        /* add samples by copying final samples */
-////        nb = (len - wanted_size);
-////        samples_end = (uint8_t *)data + len;
-////        q = samples_end + n;
-////        while(nb > 0) {
-////            memcpy(q, samples_end, n);
-////            q += n;
-////            nb -= n;
-////        }
-//        len = wanted_size;
+//    if (frames.size() >= FRAMES_LIMIT) {
+//        msleep(12);
+//        return;
 //    }
+
+//    if (packets.isEmpty()) {
+//        msleep(2);
+//        return;
+//    }
+
+//    int len, got_frame;
+//    AVPacket * packet = 0;
+
+//    mutex -> lock();
+//    packet = packets.takeFirst();
+//    mutex -> unlock();
+
+//    while (packet -> size > 0) {
+//        len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
+
+//        if (len < 0) {
+//            qDebug() << "Error while decoding audio frame";
+////                av_free_packet(packet);
+//            break;
+//        } else {
+//            if (got_frame) {
+//                QByteArray * ar = new QByteArray();
+//                if (resampleRequire) {
+//                    if (!resampler -> proceed(frame, ar))
+//                        qDebug() << "RESAMPLER FAIL";
+//                } else
+//                    memcpy(ar -> data(), (const char*)frame -> data[0], frame -> linesize[0]);
+
+//                frames.append(new AudioFrame(ar, calcPts(packet)));
+//            } else {
+//                qDebug() << "Could not get audio data from this frame";
+//            }
+
+//            packet -> size -= len;
+//            packet -> data += len;
+//        }
+//    }
+
+//    av_frame_unref(frame);
+//    av_freep(frame);
+
+//    av_free_packet(packet);
 //}
 
 void AudioStream::fillFormat(QAudioFormat & format) {
