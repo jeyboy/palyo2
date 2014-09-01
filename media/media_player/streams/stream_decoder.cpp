@@ -137,7 +137,7 @@ void StreamDecoder::routine() {
 
             pauseRequired = true;
             videoStream -> pauseOnComplete();
-            audioStream -> pauseOnComplete();
+//            audioStream -> pauseOnComplete();
             subtitleStream -> pauseOnComplete();
 
             break;

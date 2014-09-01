@@ -136,26 +136,55 @@ void AudioStream::routine() {
 
 // need to fully fill buffer
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
-    if (maxlen < 4096 /*maxlen == 0*/) return 0;
-//    qDebug() << "OOOOOO " << maxlen << " " << output -> bufferSize()
-//             << " " << output -> bytesFree() << " " << output -> periodSize()
-//             << " " << output -> periodSize();
-
     int reslen = 0;
+    AudioFrame * currFrame;
+    memset(data, 0, maxlen);
 
     if (!pauseRequired && !frames.isEmpty()) {
-        AudioFrame * currFrame = frames.takeFirst();
-        reslen = currFrame -> buffer -> size();
+        char * out = data;
+        while(!frames.isEmpty()) {
+            currFrame = frames.takeFirst();
 
-        memcpy(data, currFrame -> buffer -> data(), reslen);
-        MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
-        delete currFrame;
+            if (reslen + currFrame -> buffer -> size() > maxlen) {
+                frames.push_front(currFrame);
+                break;
+            }
+
+            memcpy(out, currFrame -> buffer -> data(), currFrame -> buffer -> size());
+            reslen += currFrame -> buffer -> size();
+            out += currFrame -> buffer -> size();
+            MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+            delete currFrame;
+        }
+
         return reslen;
     }
 
     qDebug() << "IS EMPTY";
-    memset(data, 0, maxlen);
-    return qMin(4096LL, maxlen);
+    return maxlen;
+
+
+
+//    if (maxlen < 4096 /*maxlen == 0*/) return 0;
+////    qDebug() << "OOOOOO " << maxlen << " " << output -> bufferSize()
+////             << " " << output -> bytesFree() << " " << output -> periodSize()
+////             << " " << output -> periodSize();
+
+//    int reslen = 0;
+
+//    if (!pauseRequired && !frames.isEmpty()) {
+//        AudioFrame * currFrame = frames.takeFirst();
+//        reslen = currFrame -> buffer -> size();
+
+//        memcpy(data, currFrame -> buffer -> data(), reslen);
+//        MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+//        delete currFrame;
+//        return reslen;
+//    }
+
+//    qDebug() << "IS EMPTY";
+//    memset(data, 0, maxlen);
+//    return qMin(4096LL, maxlen);
 }
 
 qint64 AudioStream::writeData(const char *data, qint64 len) {

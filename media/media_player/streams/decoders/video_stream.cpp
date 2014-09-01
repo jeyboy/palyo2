@@ -32,7 +32,6 @@ void VideoStream::resumeOutput() {
 }
 
 void VideoStream::dropPackets() {
-    qDebug() << "VIDEO DROP";
     IMediaStream::dropPackets();
     qDeleteAll(frames);
     frames.clear();
