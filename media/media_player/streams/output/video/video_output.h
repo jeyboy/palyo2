@@ -4,13 +4,9 @@
 #include "media/media_player/utils/video_frame.h"
 #include "controls/output_container.h"
 #include "controls/gl_output.h"
-
-#include "override/slider.h"
-#include "override/slider_style.h"
+#include "controls/control_panel.h"
 
 #include <QLayout>
-#include <QPushButton>
-#include <QLabel>
 #include <QWidget>
 
 class VideoOutput : public OutputContainer {
@@ -22,14 +18,13 @@ public:
     void setFrame(VideoFrame * frame);
 public slots:
     void titleUpdate();
-    void sliderUpdate(int);
 protected:
     void mouseMoveEvent(QMouseEvent * event);
+    void resizeEvent(QResizeEvent * event);
+//    void paintEvent(QPaintEvent *);
 private:
     GLOutput * screen;
-    QWidget * bottomPanel;
-    QLabel * timer;
-    Slider * slider;
+    ControlPanel * panel;
 };
 
 #endif // VIDEO_OUTPUT_H

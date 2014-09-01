@@ -115,7 +115,8 @@ SOURCES += main.cpp\
     media/media_player/streams/output/video/video_output.cpp \
     media/media_player/streams/output/video/controls/gl_output.cpp \
     media/media_player/streams/output/video/controls/output_container.cpp \
-    media/media_player/streams/output/audio/audio_output_stream.cpp
+    media/media_player/streams/output/audio/audio_output_stream.cpp \
+    media/media_player/streams/output/video/controls/control_panel.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -217,7 +218,8 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/output/video/controls/output_container.h \
     media/media_player/streams/output/audio/audio_output_stream.h \
     media/media_player/streams/base/i_media_stream.h \
-    media/media_player/utils/audio_frame.h
+    media/media_player/utils/audio_frame.h \
+    media/media_player/streams/output/video/controls/control_panel.h
 
 unix:!mac {
         QT += gui-private

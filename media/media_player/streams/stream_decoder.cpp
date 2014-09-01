@@ -54,7 +54,8 @@ double StreamDecoder::position() {
 }
 
 void StreamDecoder::seek(int64_t target) {
-    suspendOutput();
+    qDebug() << "!!! SEEK START";
+    suspend();
 
     videoStream -> dropPackets();
     audioStream -> dropPackets();
@@ -62,42 +63,44 @@ void StreamDecoder::seek(int64_t target) {
 
     int flags = target < position() * AV_TIME_BASE ? AVSEEK_FLAG_BACKWARD : 0;
 
-    audioStream -> seeking(context, target, flags);
     videoStream -> seeking(context, target, flags);
+    audioStream -> seeking(context, target, flags);
     subtitleStream -> seeking(context, target, flags);
 
+    resume();
+    qDebug() << "!!! SEEK END";
+}
+
+void StreamDecoder::suspend() {
+    pauseRequired = true;
+    suspendOutput();
+}
+void StreamDecoder::resume() {
+    pauseRequired = false;
     resumeOutput();
 }
 
 void StreamDecoder::suspendOutput() {
-    pauseRequired = true;
+    qDebug() << "!!! PAUSE";
     audioStream -> suspendOutput();
-
     videoStream -> suspendOutput();
-
     subtitleStream -> suspendOutput();
-    subtitleStream -> suspend();
 }
 void StreamDecoder::resumeOutput() {
-    pauseRequired = false;
+    qDebug() << "!!! RESUME";
     videoStream -> resumeOutput();
-
     subtitleStream -> resumeOutput();
-    subtitleStream -> resume();
-
     audioStream -> resumeOutput();
 }
 
 void StreamDecoder::routine() {
-//    qDebug() << "PACKETS " << videoStream -> packets.size() << " a " << audioStream -> packets.size();
-
 //    av_init_packet(currFrame);
+    qDebug() << "!!! ROUTINE";
 
     if ((videoStream -> isBlocked() && audioStream -> isBlocked()) || pauseRequired) {
-//        if ((videoStream -> hasPackets() && audioStream -> hasPackets()) || !MasterClock::instance() -> demuxeRequired()) {
-            msleep(12);
-            return;
-//        }
+        msleep(12);
+        qDebug() << "!!! ROUTINE SKIP";
+        return;
     }
 
     int status;
@@ -105,6 +108,7 @@ void StreamDecoder::routine() {
 
     while (true) {
         if (pauseRequired) return;
+        qDebug() << "!!! ROUTINE STEP";
 
         status = av_read_frame(context, currFrame);
 
@@ -114,8 +118,6 @@ void StreamDecoder::routine() {
     //        // what about marking packet as invalid and do not use isCorrupt?
     //        isCorrupt = !!(currFrame.flags & AV_PKT_FLAG_CORRUPT);
 
-
-            //TODO: maybe need preload for each stream type before start to play
             if (currFrame -> stream_index == audioStream -> index() && audioStream -> isValid()) {
                 audioStream -> decode(currFrame);
                 ac++;
@@ -135,14 +137,17 @@ void StreamDecoder::routine() {
 
             pauseRequired = true;
             videoStream -> pauseOnComplete();
-//            audioStream -> suspendOutput();
+            audioStream -> pauseOnComplete();
             subtitleStream -> pauseOnComplete();
 
             break;
         }
 
-        if (!preload || (videoStream -> isBlocked() && audioStream -> isBlocked()))
+        if (!preload || (videoStream -> isBlocked() && audioStream -> isBlocked())) {
+//            if (preload) resumeOutput();
+            qDebug() << "ROUTINE PRELOAD";
             break;
+        }
     }
 }
 

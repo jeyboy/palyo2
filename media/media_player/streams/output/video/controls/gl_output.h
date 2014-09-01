@@ -25,8 +25,6 @@ protected:
     void closeEvent(QCloseEvent *);
     void paintEvent(QPaintEvent *);
 private:
-    QWidget * bottomPanel;
-
     VideoFrame * frame;
     QMutex mutex;
     QTimer timer;

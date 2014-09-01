@@ -133,11 +133,13 @@ void AudioStream::routine() {
     av_free_packet(packet);
 }
 
+
+// need to fully fill buffer
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
     if (maxlen < 4096 /*maxlen == 0*/) return 0;
-    qDebug() << "OOOOOO " << maxlen << " " << output -> bufferSize()
-             << " " << output -> bytesFree() << " " << output -> periodSize()
-             << " " << output -> periodSize();
+//    qDebug() << "OOOOOO " << maxlen << " " << output -> bufferSize()
+//             << " " << output -> bytesFree() << " " << output -> periodSize()
+//             << " " << output -> periodSize();
 
     int reslen = 0;
 
@@ -145,12 +147,10 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
         AudioFrame * currFrame = frames.takeFirst();
         reslen = currFrame -> buffer -> size();
 
-        if (reslen <= maxlen) {
-            memcpy(data, currFrame -> buffer -> data(), reslen);
-            MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
-            delete currFrame;
-            return reslen;
-        }
+        memcpy(data, currFrame -> buffer -> data(), reslen);
+        MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+        delete currFrame;
+        return reslen;
     }
 
     qDebug() << "IS EMPTY";

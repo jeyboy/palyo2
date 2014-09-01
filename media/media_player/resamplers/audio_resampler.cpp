@@ -43,7 +43,16 @@ bool AudioResampler::proceed(AVFrame * frame, QByteArray * data) {
                 );
 
     if (samples_output > -1) {
-        data -> append((const char*)*buffer, settings -> calcBufferSize(samples_output));
+        int length = settings -> calcBufferSize(samples_output);
+        data -> append((const char*)buffer[0], length);
+
+//        if (settings -> channelCountOut > 2) {
+//            data -> append((const char*)buffer[1], length);
+//            data -> append((const char*)buffer[2], length);
+
+////            for(int chanNum = 1; chanNum < settings -> channelCountOut / 2; chanNum++)
+////                data -> append((const char*)*(buffer++), length);
+//        }
         return true;
     } else qDebug() << "RESAMPLE ERROR";
     return false;
@@ -61,7 +70,6 @@ bool AudioResampler::proceed(AVFrame * frame, char * data, int & len) {
 
     if (samples_output > -1) {
         memcpy(data, (char*)*buffer, (len = settings -> calcBufferSize(samples_output)));
-//        result -> append((const char*)*buffer, settings -> calcBufferSize(samples_output));
         return true;
     } else qDebug() << "RESAMPLE ERROR";
 

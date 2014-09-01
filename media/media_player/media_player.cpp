@@ -79,22 +79,22 @@ bool MediaPlayer::tags(QHash<QString, QString> & ret) {
 
 void MediaPlayer::play() {
     if (decoder == 0) return;
-    decoder -> resumeOutput();
+    decoder -> resume();
 }
 
 void MediaPlayer::resume() {
     if (decoder == 0) return;
-    decoder -> resumeOutput();
+    decoder -> resume();
 }
 
 void MediaPlayer::pause() {
     if (decoder == 0) return;
-    decoder -> suspendOutput();
+    decoder -> suspend();
 }
 
 void MediaPlayer::stop() {
     if (decoder)
-        decoder -> suspendOutput();
+        decoder -> suspend();
 
     closeContext();
 }

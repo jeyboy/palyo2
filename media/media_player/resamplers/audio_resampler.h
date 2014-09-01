@@ -4,6 +4,17 @@
 #include "media/media_player/utils/media_player_utils.h"
 #include <QDebug>
 
+//faad has "downmixing"... you might want to use their algorithm for
+//consistency at least.
+//Which is roughly L = (C*.707 + L + Ls*.707) / 3
+
+//Keep in mind there are a number of channel layouts, depending on the file
+//format.
+
+//        0   =  WAVE      mapping FL,FR,FC,LFE,SL,SR
+//        1   =  AC-3, OGG mapping FL,FC,FR,SL,SR,LFE
+//        2   =  MPEG, DTS mapping FC,FL,FR,SL,SR,LFE
+
 struct ResampleSettings {
     ResampleSettings(
             AVSampleFormat & sampleFormatIn,

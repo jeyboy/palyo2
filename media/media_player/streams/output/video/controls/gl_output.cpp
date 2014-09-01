@@ -5,6 +5,9 @@
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
   , frame(new VideoFrame) {
 
+//    setAutoBufferSwap(false);
+//    setAutoFillBackground(false);
+
     drawNext();
 }
 

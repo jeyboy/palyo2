@@ -24,8 +24,6 @@ public:
     int computeAudioDelay();
     int computeVideoDelay(double compClock, double compClockNext);
 
-    inline bool demuxeRequired() { return fabs(audioClock - videoClock) > 0.1; } //1 sec
-
     inline double main_clock() { return mainClock; }
     inline void setMain(double newClock) { mainClock = newClock; }
     inline void iterateMain(double offset) { mainClock += offset; }

@@ -23,14 +23,16 @@ public:
     double position();
     void seek(int64_t target);
 
-    void suspendOutput();
-    void resumeOutput();
+    void suspend();
+    void resume();
 signals:
     void errorOccurred(QString message);
     void stopped();
     void complete();
 
 protected:
+    void suspendOutput();
+    void resumeOutput();
     void routine();
 
 private:
