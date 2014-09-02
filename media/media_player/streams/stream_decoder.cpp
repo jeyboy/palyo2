@@ -61,11 +61,13 @@ void StreamDecoder::seek(int64_t target) {
     audioStream -> dropPackets();
     subtitleStream -> dropPackets();
 
-    int flags = target < position() * AV_TIME_BASE ? AVSEEK_FLAG_BACKWARD : 0;
+//    int flags = target < position() * AV_TIME_BASE ? AVSEEK_FLAG_BACKWARD : 0;
 
-    videoStream -> seeking(context, target, flags);
-    audioStream -> seeking(context, target, flags);
-    subtitleStream -> seeking(context, target, flags);
+    avformat_seek_file(context, -1, INT64_MIN, target, INT64_MAX, 0);
+
+//    videoStream -> seeking(context, target, flags);
+//    audioStream -> seeking(context, target, flags);
+//    subtitleStream -> seeking(context, target, flags);
 
     resume();
     qDebug() << "!!! SEEK END";
