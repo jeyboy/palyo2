@@ -9,18 +9,24 @@
 class Stream : public QThread {
     Q_OBJECT
 public:
-    Stream(QObject * parent, Priority priority = InheritPriority);
+    Stream(QObject * parent);
     virtual ~Stream();
 
     void run();
     void stop();
     void suspend();
     void resume();
+
+public slots:
+    void rejectEof();
+    void eofDetected();
+
 protected:
     virtual void routine() = 0;
 
-    volatile bool exitRequired;
-    volatile bool pauseRequired;
+    bool exitRequired;
+    bool pauseRequired;
+    bool eof;
 };
 
 #endif // STREAM_H

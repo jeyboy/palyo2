@@ -13,7 +13,6 @@ class IMediaStream {
 
 public:
     IMediaStream(AVFormatContext * context, int streamIndex) {
-        pause = false;
         valid = true;
         stream = 0;
         codec_context = 0;
@@ -87,9 +86,9 @@ public:
             av_free_packet(pack);
 
         avcodec_close(codec_context);
-//        delete codec_context;
+        av_free(codec_context);
 
-        delete codec; // hz
+        delete codec;
     }
 
     inline bool isBlocked() { return valid && packets.size() > PACKETS_LIMIT; }
@@ -123,7 +122,7 @@ public:
     virtual void resumeOutput() = 0;
 
 protected:
-    bool valid, pause;
+    bool valid;
 
     QMutex * mutex;
     AVStream * stream;

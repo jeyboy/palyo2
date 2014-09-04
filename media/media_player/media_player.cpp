@@ -32,9 +32,7 @@ bool MediaPlayer::open(QUrl url) {
     decoder = new StreamDecoder(this, context);
     res &= decoder -> isValid();
 
-    if (res) {
-        resume();
-    }
+    if (res) resume();
 
     return res;
 }
@@ -55,6 +53,16 @@ int64_t MediaPlayer::position() {
 }
 double MediaPlayer::_position() {
     return decoder -> position();
+}
+
+int MediaPlayer::bitrate() {
+    if (context == 0) return -1;
+    return context -> bit_rate;
+}
+
+QString MediaPlayer::filename() {
+    if (context == 0) return QString();
+    return QString(context -> filename);
 }
 
 QString MediaPlayer::info() {

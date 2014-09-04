@@ -25,22 +25,21 @@ StreamDecoder::~StreamDecoder() {
         videoStream -> stop();
         videoStream -> wait();
     }
-
     delete videoStream;
 
     if (audioStream -> isValid()) {
         audioStream -> stop();
         audioStream -> wait();
     }
-
     delete audioStream;
 
     if (subtitleStream -> isValid()) {
         subtitleStream -> stop();
         subtitleStream -> wait();
     }
+    delete subtitleStream;
 
-//    av_free_packet(currFrame); // maybe not?
+    av_free_packet(currFrame);
     delete currFrame;
 }
 
@@ -69,6 +68,7 @@ void StreamDecoder::seek(int64_t target) {
 //    audioStream -> seeking(context, target, flags);
 //    subtitleStream -> seeking(context, target, flags);
 
+    emit rejectEof();
     resume();
     qDebug() << "!!! SEEK END";
 }
@@ -100,8 +100,7 @@ void StreamDecoder::routine() {
     qDebug() << "!!! ROUTINE";
 
     if ((videoStream -> isBlocked() && audioStream -> isBlocked()) || pauseRequired) {
-        msleep(12);
-        qDebug() << "!!! ROUTINE SKIP";
+        msleep(10);
         return;
     }
 
@@ -138,9 +137,10 @@ void StreamDecoder::routine() {
             qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
 
             pauseRequired = true;
-            videoStream -> pauseOnComplete();
-//            audioStream -> pauseOnComplete();
-            subtitleStream -> pauseOnComplete();
+
+//            videoStream -> pauseOnComplete();
+////            audioStream -> pauseOnComplete();
+//            subtitleStream -> pauseOnComplete();
 
             break;
         }
@@ -187,7 +187,7 @@ void StreamDecoder::findStreams() {
     subtitleStream = new SubtitleStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
-        emit errorOccurred("No one audio or video streams founds");
+//        emit errorOccurred("No one audio or video streams founds");
         state = false;
     }
 }

@@ -8,11 +8,11 @@
 #include "decoders/subtitle_stream.h"
 
 #ifndef INT64_MAX
-#define INT64_MAX 9223372036854775807LL
+    #define INT64_MAX 9223372036854775807LL
 #endif
 
 #ifndef INT64_MIN
-#define INT64_MIN -9223372036854775807LL
+    #define INT64_MIN -INT64_MAX
 #endif
 
 class StreamDecoder : public Stream {
@@ -29,14 +29,18 @@ public:
     inline bool hasSubtitles() const { return subtitleStream -> isValid(); }
 
     double position();
+
     void seek(int64_t target);
 
     void suspend();
     void resume();
 signals:
-    void errorOccurred(QString message);
-    void stopped();
-    void complete();
+    void eofDetected();
+    void rejectEof();
+
+//    void errorOccurred(QString message);
+//    void stopped();
+//    void complete();
 
 protected:
     void suspendOutput();
@@ -44,10 +48,11 @@ protected:
     void routine();
 
 private:
-    QString defaultLang;
     int langStream();
     uint bestStream(AudioStream * audio, VideoStream * video);
     void findStreams();
+
+    QString defaultLang;
 
     bool state, finished;
 
