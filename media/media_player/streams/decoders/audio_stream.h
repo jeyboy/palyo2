@@ -8,20 +8,16 @@
 #include <QIODevice>
 #include <QAudioFormat>
 
-#define FRAMES_LIMIT 32
-
 class AudioStream : public QIODevice, public MediaStream {
 public:
-    AudioStream(QObject * parent, AVFormatContext * context, int streamIndex);
+    AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     ~AudioStream();
 
-    AudioFrame * decoded();
-    void decode(AVPacket * newPacket);
-    void suspendOutput();
-    void resumeOutput();
-    void dropPackets();
-
     bool isBlocked();
+
+    void suspend();
+    void resume();
+    void flushData();
 
 protected:
     void routine();

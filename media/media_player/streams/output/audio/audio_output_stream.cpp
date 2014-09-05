@@ -25,7 +25,7 @@ void AudioOutputStream::playBuffer(QByteArray * frame) {
 void AudioOutputStream::routine() {
     AudioStream * dStream = (AudioStream *) stream;
 
-    AudioFrame * currFrame = dStream -> decoded();
+    AudioFrame * currFrame = 0; /*dStream -> decoded();*/
     if (MasterClock::instance() -> audio() != 0) {
         int lo = MasterClock::instance() -> computeAudioDelay();
         usleep(lo);

@@ -14,12 +14,14 @@ public:
 
     void run();
     void stop();
-    void suspend();
-    void resume();
 
 public slots:
     void rejectEof();
     void eofDetected();
+
+    virtual void suspend();
+    virtual void resume();
+    virtual void flushData() = 0;
 
 protected:
     virtual void routine() = 0;

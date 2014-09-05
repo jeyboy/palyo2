@@ -22,7 +22,6 @@ public:
     ~StreamDecoder();
 
     inline bool isValid() const { return state; }
-    inline bool isFinished() const { return finished; }
 
     inline bool hasAudio() const { return audioStream -> isValid(); }
     inline bool hasVideo() const { return videoStream -> isValid(); }
@@ -35,16 +34,17 @@ public:
     void suspend();
     void resume();
 signals:
+    void flushData();
     void eofDetected();
     void rejectEof();
+    void suspendRequired();
+    void resumeRequired();
 
 //    void errorOccurred(QString message);
 //    void stopped();
 //    void complete();
 
 protected:
-    void suspendOutput();
-    void resumeOutput();
     void routine();
 
 private:
@@ -54,7 +54,7 @@ private:
 
     QString defaultLang;
 
-    bool state, finished;
+    bool state;
 
     int ac = 0;
     int vc = 0;

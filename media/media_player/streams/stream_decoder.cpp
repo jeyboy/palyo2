@@ -1,20 +1,19 @@
 #include "stream_decoder.h"
 #include <qDebug>
 
-StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : Stream(parent, QThread::TimeCriticalPriority)
-, defaultLang("rus")
-, state(true)
-, finished(false)
-, videoStream(0)
-, audioStream(0)
-, subtitleStream(0) {
+StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : Stream(parent)
+    , defaultLang("rus")
+    , state(true)
+    , videoStream(0)
+    , audioStream(0)
+    , subtitleStream(0) {
 
     currFrame = new AVPacket();
     context = currContext;
     findStreams();
     MasterClock::instance() -> setMain((double)av_gettime() / 1000000.0);
 
-    suspendOutput();
+    suspend();
     start();
 }
 
@@ -53,48 +52,25 @@ double StreamDecoder::position() {
 }
 
 void StreamDecoder::seek(int64_t target) {
-    qDebug() << "!!! SEEK START";
     suspend();
-
-    videoStream -> dropPackets();
-    audioStream -> dropPackets();
-    subtitleStream -> dropPackets();
-
-//    int flags = target < position() * AV_TIME_BASE ? AVSEEK_FLAG_BACKWARD : 0;
-
+    emit flushData();
     avformat_seek_file(context, -1, INT64_MIN, target, INT64_MAX, 0);
-
-//    videoStream -> seeking(context, target, flags);
-//    audioStream -> seeking(context, target, flags);
-//    subtitleStream -> seeking(context, target, flags);
-
     emit rejectEof();
     resume();
-    qDebug() << "!!! SEEK END";
 }
 
 void StreamDecoder::suspend() {
-    pauseRequired = true;
-    suspendOutput();
+    qDebug() << "!!! PAUSE";
+    Stream::suspend();
+    emit suspendRequired();
 }
 void StreamDecoder::resume() {
-    pauseRequired = false;
-    resumeOutput();
-}
-
-void StreamDecoder::suspendOutput() {
-    qDebug() << "!!! PAUSE";
-    audioStream -> suspendOutput();
-    videoStream -> suspendOutput();
-    subtitleStream -> suspendOutput();
-}
-void StreamDecoder::resumeOutput() {
     qDebug() << "!!! RESUME";
-    videoStream -> resumeOutput();
-    subtitleStream -> resumeOutput();
-    audioStream -> resumeOutput();
+    Stream::resume();
+    emit resumeRequired();
 }
 
+//TODO: maybe one currFrame init enough
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
     qDebug() << "!!! ROUTINE";
@@ -137,16 +113,12 @@ void StreamDecoder::routine() {
             qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
 
             pauseRequired = true;
-
-//            videoStream -> pauseOnComplete();
-////            audioStream -> pauseOnComplete();
-//            subtitleStream -> pauseOnComplete();
+            emit eofDetected();
 
             break;
         }
 
-        if (!preload || (videoStream -> isBlocked() && audioStream -> isBlocked())) {
-//            if (preload) resumeOutput();
+        if (!preload || (videoStream -> isBlocked() || audioStream -> isBlocked())) {
             qDebug() << "ROUTINE PRELOAD";
             break;
         }

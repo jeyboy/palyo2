@@ -5,7 +5,7 @@ static int callback( const void *inputBuffer, void *outputBuffer, unsigned long 
     AudioStream * stream  = (AudioStream *)userData;
     int16_t *out = (int16_t *)outputBuffer;
 
-    AudioFrame * frame = stream -> decoded();
+    AudioFrame * frame = 0; /*stream -> decoded();*/
     memcpy(out, frame -> buffer -> data(), frame -> buffer -> size());
     delete frame;
     return paContinue;

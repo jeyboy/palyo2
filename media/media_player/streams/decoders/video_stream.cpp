@@ -1,15 +1,18 @@
 #include "video_stream.h"
 #include <QApplication>
 
-VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex)
-    : MediaStream(context, streamIndex, parent)
+VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
+    : MediaStream(context, streamIndex, parent, priority)
     , output(0)
     , resampler(0){
 
     if (valid) {
+        connect(parent, SIGNAL(flushData()), this, SLOT(flushData()), Qt::BlockingQueuedConnection); // DirectConnection
+        connect(parent, SIGNAL(suspendRequired()), this, SLOT(suspend()));
+        connect(parent, SIGNAL(resumeRequired()), this, SLOT(resume()));
+
         output = new VideoOutput(this, codec_context -> width, codec_context -> height);
         resampler = new VideoResampler(codec_context -> pix_fmt);
-        start(QThread::HighestPriority);
     }
 }
 
@@ -20,21 +23,6 @@ VideoStream::~VideoStream() {
     delete resampler;  
 
     qDeleteAll(frames);
-}
-
-void VideoStream::suspendOutput() {
-    pauseRequired = true;
-    qDebug() << "SUSPEND";
-}
-void VideoStream::resumeOutput() {
-    pauseRequired = false;
-    qDebug() << "RESUME";
-}
-
-void VideoStream::dropPackets() {
-    IMediaStream::dropPackets();
-    qDeleteAll(frames);
-    frames.clear();
 }
 
 bool VideoStream::isBlocked() {
@@ -103,6 +91,19 @@ void VideoStream::nextPict() {
         return;
 
     output -> setFrame(frames.takeFirst());
+}
+
+void VideoStream::suspend() {
+    MediaStream::suspend();
+}
+void VideoStream::resume() {
+    MediaStream::resume();
+}
+
+void VideoStream::flushData() {
+    MediaStream::dropPackets();
+    qDeleteAll(frames);
+    frames.clear();
 }
 
 VideoFrame * VideoStream::calcPts(VideoFrame * videoFrame) {

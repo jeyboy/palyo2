@@ -9,21 +9,20 @@
 class VideoStream : public MediaStream {
     Q_OBJECT
 public:
-    VideoStream(QObject * parent, AVFormatContext * context, int streamIndex);
+    VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     ~VideoStream();
 
-    void suspendOutput();
-    void resumeOutput();
-    void dropPackets();
-
     bool isBlocked();
+    void suspend();
+    void resume();
+    void flushData();
 public slots:
     void nextPict();
 protected:
     void routine();
     VideoFrame * calcPts(VideoFrame * videoFrame);
     double syncPts(AVFrame *src_frame);
-private:
+private:   
     VideoOutput * output;
     VideoResampler * resampler;
     QList<VideoFrame *> frames;

@@ -6,6 +6,11 @@ Stream::Stream(QObject * parent) : QThread(parent)
   , pauseRequired(false)
   , eof(false) {
 
+    connect(parent, SIGNAL(rejectEof()), this, SLOT(rejectEof()));
+    connect(parent, SIGNAL(eofDetected()), this, SLOT(eofDetected()));
+    connect(parent, SIGNAL(flushData()), this, SLOT(flushData()), Qt::BlockingQueuedConnection);
+    connect(parent, SIGNAL(suspendRequired()), this, SLOT(suspend()));
+    connect(parent, SIGNAL(resumeRequired()), this, SLOT(resume()));
 }
 
 Stream::~Stream() {
