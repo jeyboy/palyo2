@@ -21,7 +21,7 @@ public slots:
 
     virtual void suspend();
     virtual void resume();
-    virtual void flushData() = 0;
+    virtual void flushData() {}
 
 protected:
     virtual void routine() = 0;

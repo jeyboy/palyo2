@@ -7,10 +7,6 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
     , resampler(0){
 
     if (valid) {
-        connect(parent, SIGNAL(flushData()), this, SLOT(flushData()), Qt::BlockingQueuedConnection); // DirectConnection
-        connect(parent, SIGNAL(suspendRequired()), this, SLOT(suspend()));
-        connect(parent, SIGNAL(resumeRequired()), this, SLOT(resume()));
-
         output = new VideoOutput(this, codec_context -> width, codec_context -> height);
         resampler = new VideoResampler(codec_context -> pix_fmt);
     }
@@ -23,6 +19,7 @@ VideoStream::~VideoStream() {
     delete resampler;  
 
     qDeleteAll(frames);
+    frames.clear();
 }
 
 bool VideoStream::isBlocked() {

@@ -34,9 +34,9 @@ public:
     void suspend();
     void resume();
 signals:
-    void flushData();
-    void eofDetected();
-    void rejectEof();
+    void flushDataRequired();
+    void eofDetectedRequired();
+    void rejectEofRequired();
     void suspendRequired();
     void resumeRequired();
 

@@ -14,7 +14,6 @@ AudioOutputStream::AudioOutputStream(void * decoderStream, QAudioFormat & format
 AudioOutputStream::~AudioOutputStream() {
    qDebug() << "a o STream";
    soundOutput -> stop();
-
    delete soundOutput;
 }
 
