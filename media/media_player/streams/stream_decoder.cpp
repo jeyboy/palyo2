@@ -64,6 +64,7 @@ void StreamDecoder::suspend() {
     emit suspendRequired();
 }
 void StreamDecoder::resume() {
+    qDebug() << "RESUME";
     Stream::resume();
     emit resumeRequired();
 }

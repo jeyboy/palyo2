@@ -27,13 +27,13 @@ MediaPlayer::~MediaPlayer() {
 
 bool MediaPlayer::open(QUrl url) {
     stop();
-
     bool res = openContext(url);
-    decoder = new StreamDecoder(this, context);
-    res &= decoder -> isValid();
+    if (res) {
+        decoder = new StreamDecoder(this, context);
+        res &= decoder -> isValid();
+    }
 
     if (res) resume();
-
     return res;
 }
 
@@ -124,6 +124,8 @@ bool MediaPlayer::openContext(QUrl url) {
     QString path;
     if ((isRemote = url.isLocalFile())) {
         path = url.toLocalFile();
+        if (!QFile(path).exists())
+            return false;
     } else {
         avformat_network_init();
         path = url.toString();
