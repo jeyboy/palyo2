@@ -75,8 +75,10 @@ public:
 
         packets.clear();
 
-        avcodec_close(codec_context);
-        av_freep(codec_context);
+        if (codec_context) {
+            avcodec_close(codec_context);
+            av_freep(codec_context);
+        }
 
         delete codec;
     }

@@ -70,6 +70,7 @@ void AudioStream::resume() {
 }
 
 void AudioStream::flushData() {
+    qDebug() << "AUDIO FLUSH";
     MediaStream::dropPackets();
     qDeleteAll(frames);
     frames.clear();

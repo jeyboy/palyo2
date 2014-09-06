@@ -53,9 +53,9 @@ double StreamDecoder::position() {
 
 void StreamDecoder::seek(int64_t target) {
     suspend();
-    emit flushData();
+    emit flushDataRequired();
     avformat_seek_file(context, -1, INT64_MIN, target, INT64_MAX, 0);
-    emit rejectEof();
+    emit eofRejectRequired();
     resume();
 }
 
@@ -113,7 +113,7 @@ void StreamDecoder::routine() {
             qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
 
             pauseRequired = true;
-            emit eofDetected();
+            emit eofDetectRequired();
 
             break;
         }

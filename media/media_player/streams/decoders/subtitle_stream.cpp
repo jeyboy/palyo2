@@ -18,6 +18,7 @@ void SubtitleStream::resume() {
 }
 
 void SubtitleStream::flushData() {
+    qDebug() << "SUBTITLE FLUSH";
     MediaStream::dropPackets();
 //    qDeleteAll(frames);
 //    frames.clear();

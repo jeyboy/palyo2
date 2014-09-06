@@ -98,6 +98,7 @@ void VideoStream::resume() {
 }
 
 void VideoStream::flushData() {
+    qDebug() << "VIDEO FLUSH";
     MediaStream::dropPackets();
     qDeleteAll(frames);
     frames.clear();
