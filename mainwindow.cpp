@@ -33,12 +33,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47935441"));
 
-    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47933391"));
+//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47933391"));
 
 
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp4"));
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp3"));
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/not played.mp3"));
+      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/not played.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 
     MediaPlayer::instance() -> play();

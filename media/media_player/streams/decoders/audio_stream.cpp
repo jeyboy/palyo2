@@ -69,6 +69,7 @@ void AudioStream::flushData() {
     MediaStream::dropPackets();
     qDeleteAll(frames);
     frames.clear();
+    avcodec_flush_buffers(codec_context);
 }
 
 void AudioStream::routine() {

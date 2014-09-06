@@ -99,6 +99,7 @@ void VideoStream::flushData() {
     MediaStream::dropPackets();
     qDeleteAll(frames);
     frames.clear();
+    avcodec_flush_buffers(codec_context);
 }
 
 VideoFrame * VideoStream::calcPts(VideoFrame * videoFrame) {

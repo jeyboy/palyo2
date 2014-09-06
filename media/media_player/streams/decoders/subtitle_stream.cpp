@@ -22,6 +22,7 @@ void SubtitleStream::flushData() {
     MediaStream::dropPackets();
 //    qDeleteAll(frames);
 //    frames.clear();
+    avcodec_flush_buffers(codec_context);
 }
 
 void SubtitleStream::routine() {

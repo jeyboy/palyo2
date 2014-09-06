@@ -60,12 +60,10 @@ void StreamDecoder::seek(int64_t target) {
 }
 
 void StreamDecoder::suspend() {
-    qDebug() << "!!! PAUSE";
     Stream::suspend();
     emit suspendRequired();
 }
 void StreamDecoder::resume() {
-    qDebug() << "!!! RESUME";
     Stream::resume();
     emit resumeRequired();
 }
