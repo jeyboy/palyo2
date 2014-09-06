@@ -31,6 +31,9 @@ public:
 
         is_attachment = stream -> disposition & AV_DISPOSITION_ATTACHED_PIC;
 
+//        stream -> attached_pic
+//            For streams with AV_DISPOSITION_ATTACHED_PIC disposition, this packet will contain the attached picture.
+
         codec_context = stream -> codec;
         codec = avcodec_find_decoder(codec_context -> codec_id);
 

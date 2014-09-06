@@ -37,8 +37,9 @@ bool MediaPlayer::open(QUrl url) {
     return res;
 }
 
+//TODO: get correct duration through seek to last frame
 int64_t MediaPlayer::duration() {
-   return context -> duration;
+   return context -> duration; // return wrong duration sometimes
 }
 double MediaPlayer::_duration() {
    return duration() / AV_TIME_BASE;
