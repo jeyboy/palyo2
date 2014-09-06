@@ -2,9 +2,9 @@
 
 AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : QIODevice(parent), MediaStream(context, streamIndex, parent, priority)
+    , defaultChannelLayout(AV_CH_LAYOUT_STEREO)
     , resampleRequire(false)
-    , resampler(0)
-    , defaultChannelLayout(AV_CH_LAYOUT_STEREO) {
+    , resampler(0) {
 
     if (valid) {
         //TODO: planar flag need for build of correct visualisation

@@ -73,8 +73,6 @@ void StreamDecoder::resume() {
 //TODO: maybe one currFrame init enough
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
-    qDebug() << "!!! ROUTINE";
-
     if ((videoStream -> isBlocked() && audioStream -> isBlocked()) || pauseRequired) {
         msleep(10);
         return;

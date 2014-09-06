@@ -21,7 +21,6 @@ public slots:
 protected:
     virtual void routine() {} // stub
 
-    uint waitMillis;
     bool eof;
 };
 

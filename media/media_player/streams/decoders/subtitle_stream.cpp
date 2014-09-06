@@ -28,7 +28,7 @@ void SubtitleStream::routine() {
     mutex -> lock();
     if (packets.isEmpty()) {
         mutex -> unlock();
-        msleep(waitMillis);
+        msleep(2);
         return;
     }
 
