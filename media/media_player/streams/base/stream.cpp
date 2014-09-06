@@ -15,7 +15,7 @@ void Stream::run() {
     while(!exitRequired) {
         if (!pauseRequired)
             routine();
-        else sleep(1);
+        else msleep(100);
     }
 }
 

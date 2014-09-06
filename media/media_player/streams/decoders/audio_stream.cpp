@@ -77,10 +77,16 @@ void AudioStream::flushData() {
 }
 
 void AudioStream::routine() {
+    bool isEmpty = packets.isEmpty();
+
+    if (!pauseRequired && isEmpty && eof) {
+        suspend();
+    }
+
     if (pauseRequired) return;
 
     // TODO: mutex required for frames
-    if (packets.isEmpty() || frames.size() >= FRAMES_LIMIT) {
+    if (isEmpty || frames.size() >= FRAMES_LIMIT) {
         msleep(2);
         return;
     }
