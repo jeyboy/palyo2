@@ -15,9 +15,9 @@ public:
 
     bool isBlocked();
 
-    void suspend();
-    void resume();
     void flushData();
+    void suspendStream();
+    void resumeStream();
 
 protected:
     void routine();

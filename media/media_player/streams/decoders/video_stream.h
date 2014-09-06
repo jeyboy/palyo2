@@ -13,8 +13,6 @@ public:
     ~VideoStream();
 
     bool isBlocked();
-    void suspend();
-    void resume();
     void flushData();
 public slots:
     void nextPict();

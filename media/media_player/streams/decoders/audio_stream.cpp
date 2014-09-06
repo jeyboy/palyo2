@@ -40,12 +40,6 @@ AudioStream::~AudioStream() {
     frames.clear();
 }
 
-//void AudioStream::stop() {
-//    qDebug() << "AUDIO STOP";
-//    output -> stop();
-//    MediaStream::stop();
-//}
-
 //AudioFrame * AudioStream::decoded() {
 //    if (pauseRequired || frames.isEmpty()) {
 //        return new AudioFrame();
@@ -60,17 +54,18 @@ bool AudioStream::isBlocked() {
     return MediaStream::isBlocked() || frames.size() >= FRAMES_LIMIT;
 }
 
-void AudioStream::suspend() {
+void AudioStream::suspendStream() {
+    qDebug() << "!!!!!!!!!!!!!!! AUDIO SUSPEND";
     output -> suspend();
     MediaStream::suspend();
 }
-void AudioStream::resume() {
+void AudioStream::resumeStream() {
+    qDebug() << "!!!!!!!!!!!!!!! AUDIO RESUME";
     MediaStream::resume();
     output -> resume();
 }
 
 void AudioStream::flushData() {
-    qDebug() << "AUDIO FLUSH";
     MediaStream::dropPackets();
     qDeleteAll(frames);
     frames.clear();
@@ -79,10 +74,7 @@ void AudioStream::flushData() {
 void AudioStream::routine() {
     bool isEmpty = packets.isEmpty();
 
-    if (!pauseRequired && isEmpty && eof) {
-        suspend();
-    }
-
+    if (!pauseRequired && isEmpty && eof) suspend();
     if (pauseRequired) return;
 
     // TODO: mutex required for frames
@@ -130,8 +122,6 @@ void AudioStream::routine() {
     av_free_packet(packet);
 }
 
-
-// need to fully fill buffer
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
     int reslen = 0;
     AudioFrame * currFrame;
@@ -157,6 +147,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
         return reslen;
     }
 
+    if (pauseRequired) suspend();
     qDebug() << "IS EMPTY";
     return maxlen;
 }

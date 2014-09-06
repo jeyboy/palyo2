@@ -16,6 +16,7 @@ public:
     ~VideoOutput();
 
     void setFrame(VideoFrame * frame);
+    void setPause();
 public slots:
     void titleUpdate();
 protected:

@@ -15,6 +15,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
 VideoStream::~VideoStream() {
     if (output)
         output -> setFrame(new VideoFrame(0, 0, 0));
+
     delete output;
     delete resampler;  
 
@@ -27,11 +28,13 @@ bool VideoStream::isBlocked() {
 }
 
 void VideoStream::routine() {
-    if (pauseRequired || packets.isEmpty())
-        return;
+    bool isEmpty = packets.isEmpty();
 
-    if (frames.size() >= FRAMES_LIMIT) {
-        msleep(50);
+    if (!pauseRequired && isEmpty && eof) suspend();
+    if (pauseRequired) return;
+
+    if (isEmpty || frames.size() >= FRAMES_LIMIT) {
+        msleep(2);
         return;
     }
 
@@ -84,21 +87,15 @@ void VideoStream::routine() {
 }
 
 void VideoStream::nextPict() {
-    if (pauseRequired || frames.isEmpty())
+    if (pauseRequired || frames.isEmpty()) {
+        output -> setPause();
         return;
+    }
 
     output -> setFrame(frames.takeFirst());
 }
 
-void VideoStream::suspend() {
-    MediaStream::suspend();
-}
-void VideoStream::resume() {
-    MediaStream::resume();
-}
-
 void VideoStream::flushData() {
-    qDebug() << "VIDEO FLUSH";
     MediaStream::dropPackets();
     qDeleteAll(frames);
     frames.clear();

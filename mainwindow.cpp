@@ -31,9 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/116023228")); //asterix 2
 
-    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47935441"));
+//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47935441"));
 
-//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47933391"));
+    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47933391"));
 
 
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp4"));

@@ -13,6 +13,7 @@ public:
     GLOutput(QWidget* parent = NULL);
     ~GLOutput();
 
+    void setPauseDelay();
     void setFrame(VideoFrame * frame);
 
 signals:

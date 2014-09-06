@@ -33,6 +33,10 @@ void VideoOutput::setFrame(VideoFrame * frame) {
     screen -> setFrame(frame);
 }
 
+void VideoOutput::setPause() {
+    screen -> setPauseDelay();
+}
+
 void VideoOutput::titleUpdate() {
     QString temp = MediaPlayer::instance() -> info();
     setWindowTitle(temp);

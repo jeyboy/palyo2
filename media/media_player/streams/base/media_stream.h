@@ -14,8 +14,8 @@ public:
 public slots:
     void rejectEof();
     void eofDetected();
-    void suspendStream();
-    void resumeStream();
+    virtual void suspendStream();
+    virtual void resumeStream();
     virtual void flushData() {}
 
 protected:
