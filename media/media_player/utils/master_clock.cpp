@@ -13,23 +13,27 @@ MasterClock *MasterClock::instance() {
 }
 
 MasterClock::MasterClock() : QObject() {
-    reset(0);
+    reset();
 }
 
 MasterClock::~MasterClock() {
 
 }
 
-void MasterClock::reset(uint clock) {
-    setMain(clock);
-    setAudio(clock);
-    setVideo(clock);
-    setSubtitle(clock);
+void MasterClock::reset() {
+    resetMain();
+    setAudio(0);
+    setVideo(0);
+    setSubtitle(0);
 
     audioOClock = 0;
     videoClockNext = 0;
     mainLastPtsVal = 0;
     mainLastDelayVal = 0.20;
+}
+
+void MasterClock::resetMain() {
+    mainClock = (double)av_gettime() / 1000000.0;
 }
 
 int MasterClock::computeAudioDelay() {

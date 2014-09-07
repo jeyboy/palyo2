@@ -95,6 +95,12 @@ void VideoStream::nextPict() {
     output -> setFrame(frames.takeFirst());
 }
 
+void VideoStream::resumeStream() {
+    qDebug() << "!!!!! VIDEO RESUME";
+    MasterClock::instance() -> resetMain();
+    MediaStream::resume();
+}
+
 void VideoStream::flushData() {
     MediaStream::dropPackets();
     qDeleteAll(frames);

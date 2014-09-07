@@ -14,6 +14,7 @@ public:
 
     bool isBlocked();
     void flushData();
+    void resumeStream();
 public slots:
     void nextPict();
 protected:

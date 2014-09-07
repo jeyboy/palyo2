@@ -20,19 +20,15 @@ public:
         delete self;
     }
 
-    void reset(uint clock);
+    void reset();
+    void resetMain();
+
     int computeAudioDelay();
     int computeVideoDelay(double compClock, double compClockNext);
 
     inline double main_clock() { return mainClock; }
     inline void setMain(double newClock) { mainClock = newClock; }
     inline void iterateMain(double offset) { mainClock += offset; }
-
-    inline double mainLastPts() { return mainLastPtsVal; }
-    inline void setMainLastPts(double newClock) { mainLastPtsVal = newClock; }
-
-    inline double mainLastDelay() { return mainLastDelayVal; }
-    inline void setMainLastDelay(double newClock) { mainLastDelayVal = newClock; }
 
     inline double audio() { return audioClock; }
     inline void setAudio(double newClock) {
