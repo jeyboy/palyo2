@@ -25,21 +25,27 @@ MediaPlayer::~MediaPlayer() {
     MasterClock::close();
 }
 
-bool MediaPlayer::open(QUrl url) {
+bool MediaPlayer::open(QUrl url, int64_t position_millis, int64_t duration_millis) {
     stop();
+
     bool res = openContext(url);
+    item_duration = qMin(context -> duration, duration_millis * 1000);
+
     if (res) {
         decoder = new StreamDecoder(this, context);
         res &= decoder -> isValid();
     }
 
-    if (res) resume();
+    if (res) {
+        seekMillis(position_millis);
+        pause();
+    }
     return res;
 }
 
 //TODO: get correct duration through seek to last frame
 int64_t MediaPlayer::duration() {
-   return context -> duration; // return wrong duration sometimes
+   return item_duration; /*context -> duration;*/ // return wrong duration sometimes
 }
 double MediaPlayer::_duration() {
    return duration() / AV_TIME_BASE;
@@ -108,9 +114,9 @@ void MediaPlayer::stop() {
     closeContext();
 }
 
-void MediaPlayer::seek(int64_t target) {
+void MediaPlayer::seek(int64_t microMillis) {
     if (decoder == 0) return;
-    decoder -> seek(target);
+    decoder -> seek(microMillis);
 }
 
 void MediaPlayer::seekMillis(int target) {

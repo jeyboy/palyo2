@@ -18,7 +18,7 @@ public:
 
     ~MediaPlayer();
 
-    bool open(QUrl url);
+    bool open(QUrl url, int64_t position_millis = 0, int64_t duration_millis = (INT64_MAX / 1000));
 
     int64_t duration();
     int64_t position();
@@ -54,6 +54,7 @@ private:
     StreamDecoder * decoder;
 
     bool isRemote;
+    int64_t item_duration;
 
     AVFormatContext *context;
 

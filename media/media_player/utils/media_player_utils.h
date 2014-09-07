@@ -5,6 +5,14 @@
 #define AUDIO_INBUF_SIZE 20480
 #define AUDIO_REFILL_THRESH 4096
 
+#ifndef INT64_MAX
+    #define INT64_MAX 9223372036854775807LL
+#endif
+
+#ifndef INT64_MIN
+    #define INT64_MIN -INT64_MAX
+#endif
+
 #include <QAudioFormat>
 #include <QAudioDeviceInfo>
 #include <QAudioInput>

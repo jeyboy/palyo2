@@ -6,6 +6,8 @@
 
 #include "misc/format.h"
 
+//QTime(0, 0, 0).addMSecs(mpPlayer->duration()).toString("HH:mm:ss")
+
 class Duration {
 public:
     static QString fromSeconds(int seconds, bool includeHours = false);

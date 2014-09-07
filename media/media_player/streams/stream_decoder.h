@@ -7,14 +7,6 @@
 #include "decoders/video_stream.h"
 #include "decoders/subtitle_stream.h"
 
-#ifndef INT64_MAX
-    #define INT64_MAX 9223372036854775807LL
-#endif
-
-#ifndef INT64_MIN
-    #define INT64_MIN -INT64_MAX
-#endif
-
 class StreamDecoder : public Stream {
     Q_OBJECT
 public:
@@ -28,7 +20,6 @@ public:
     inline bool hasSubtitles() const { return subtitleStream -> isValid(); }
 
     double position();
-
     void seek(int64_t target);
 
     void suspend();
