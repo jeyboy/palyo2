@@ -64,6 +64,10 @@ QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int
 //                                int srcRange, const int table[4], int dstRange,
 //                                int brightness, int contrast, int saturation);
 
+//    sws_setColorspaceDetails(c, ff_yuv2rgb_coeffs[SWS_CS_DEFAULT],
+//        c->srcRange, ff_yuv2rgb_coeffs[SWS_CS_DEFAULT] /* FIXME*/,
+//        c->dstRange, 0, 1<<16, 1<<16);
+
     // Convert to RGB
     sws_scale(resampleContext, frame -> data, frame -> linesize, 0, heightIn, RGBFrame -> data, RGBFrame -> linesize);
 
