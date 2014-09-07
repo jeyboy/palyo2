@@ -41,7 +41,6 @@ public:
 public slots:
 //    void errorOcurred();
     void play();
-    void togglePlay();
     void resume();
     void pause();
     void stop();

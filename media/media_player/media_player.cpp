@@ -106,13 +106,6 @@ void MediaPlayer::play() {
     decoder -> resume();
 }
 
-void MediaPlayer::togglePlay() {
-    if (decoder == 0) return;
-
-
-    decoder -> resume();
-}
-
 void MediaPlayer::resume() {
     if (decoder == 0) return;
     decoder -> resume();
