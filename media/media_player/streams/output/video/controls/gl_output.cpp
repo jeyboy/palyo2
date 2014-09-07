@@ -36,7 +36,7 @@ void GLOutput::drawNext() {
 
     emit updated();
     repaint();
-    // TODO: pict skip logic maybe need
+
     timer.singleShot(frame -> calcDelay(), this, SLOT(drawNext()));
 }
 

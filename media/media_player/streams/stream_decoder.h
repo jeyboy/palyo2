@@ -10,10 +10,23 @@
 class StreamDecoder : public Stream {
     Q_OBJECT
 public:
+    enum DecoderState {
+        NoData = -1,
+        Initialization = 0,
+        Process = 1,
+        EofDetected = 2,
+        Seeking = 3,
+        Suspended = 4
+    };
+
     StreamDecoder(QObject * parent, AVFormatContext * currContext);
     ~StreamDecoder();
 
-    inline bool isValid() const { return state; }
+    DecoderState getState() const { return state; }
+
+    inline bool isValid() const { return state == NoData; }
+    inline bool isActive() const { return state == Seeking || state == Process || state == Initialization; }
+    inline bool isPaused() const { return state == Suspended; }
 
     inline bool hasAudio() const { return audioStream -> isValid(); }
     inline bool hasVideo() const { return videoStream -> isValid(); }
@@ -44,8 +57,7 @@ private:
     void findStreams();
 
     QString defaultLang;
-
-    bool state;
+    enum DecoderState state;
 
     int ac = 0;
     int vc = 0;

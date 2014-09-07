@@ -16,7 +16,6 @@ VideoOutput::VideoOutput(QObject * parent, int width, int height) : OutputContai
     newLayout -> setContentsMargins(0, 0, 0, 0);
     setLayout(newLayout);
 
-    panel = new ControlPanel(this);
     panel -> setRegion(rect());
     panel -> show();
     screen -> lower();

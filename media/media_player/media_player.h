@@ -35,12 +35,17 @@ public:
     QString info();
     bool tags(QHash<QString, QString> &);
 
+    bool isPlayed() const;
+    bool isPaused() const;
+
 public slots:
 //    void errorOcurred();
     void play();
+    void togglePlay();
     void resume();
     void pause();
     void stop();
+
     void seek(int64_t);
     void seekMillis(int);
 

@@ -4,7 +4,6 @@
 #include "media/media_player/utils/video_frame.h"
 #include "controls/output_container.h"
 #include "controls/gl_output.h"
-#include "controls/control_panel.h"
 
 #include <QLayout>
 #include <QWidget>
@@ -14,6 +13,8 @@ class VideoOutput : public OutputContainer {
 public:
     VideoOutput( QObject * parent, int width, int height);
     ~VideoOutput();
+
+    void setAspectRatio(int w, int h);
 
     void setFrame(VideoFrame * frame);
     void setPause();
@@ -25,7 +26,6 @@ protected:
 //    void paintEvent(QPaintEvent *);
 private:
     GLOutput * screen;
-    ControlPanel * panel;
 };
 
 #endif // VIDEO_OUTPUT_H

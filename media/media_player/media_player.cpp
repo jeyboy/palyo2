@@ -89,11 +89,27 @@ bool MediaPlayer::tags(QHash<QString, QString> & ret) {
     return false;
 }
 
+bool MediaPlayer::isPlayed() const {
+    if (decoder == 0) return false;
+    return decoder -> isActive();
+}
+bool MediaPlayer::isPaused() const {
+    if (decoder == 0) return false;
+    return decoder -> isPaused();
+}
+
 
 ////////////// SLOTS  ///////////////////////////////////////
 
 void MediaPlayer::play() {
     if (decoder == 0) return;
+    decoder -> resume();
+}
+
+void MediaPlayer::togglePlay() {
+    if (decoder == 0) return;
+
+
     decoder -> resume();
 }
 

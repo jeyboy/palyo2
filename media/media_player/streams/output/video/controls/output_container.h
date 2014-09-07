@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 
+#include "control_panel.h"
 
 class OutputContainer : public QWidget {
      Q_OBJECT
@@ -12,6 +13,8 @@ public:
     OutputContainer(QWidget* parent = NULL);
 protected:
     bool event(QEvent *);
+
+    ControlPanel * panel;
 };
 
 #endif // OUTPUT_CONTAINER_H

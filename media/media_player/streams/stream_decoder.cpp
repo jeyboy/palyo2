@@ -3,7 +3,7 @@
 
 StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : Stream(parent)
     , defaultLang("rus")
-    , state(true)
+    , state(Initialization)
     , videoStream(0)
     , audioStream(0)
     , subtitleStream(0) {
@@ -54,6 +54,7 @@ double StreamDecoder::position() {
 
 void StreamDecoder::seek(int64_t target) {
     suspend();
+    state = Seeking;
     emit flushDataRequired();
     avformat_seek_file(context, -1, INT64_MIN, target, INT64_MAX, 0);
     emit eofRejectRequired();
@@ -61,6 +62,7 @@ void StreamDecoder::seek(int64_t target) {
 }
 
 void StreamDecoder::suspend() {
+    state = Suspended;
     Stream::suspend();
     emit suspendRequired();
 }
@@ -80,6 +82,7 @@ void StreamDecoder::routine() {
 
     int status;
     bool preload = audioStream -> requirePreload() && videoStream -> requirePreload();
+    state = Process;
 
     while (true) {
         if (pauseRequired) return;
@@ -111,6 +114,7 @@ void StreamDecoder::routine() {
             qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
 
             pauseRequired = true;
+            state = EofDetected;
             emit eofDetectRequired();
 
             break;
@@ -158,6 +162,6 @@ void StreamDecoder::findStreams() {
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
 //        emit errorOccurred("No one audio or video streams founds");
-        state = false;
+        state = NoData;
     }
 }
