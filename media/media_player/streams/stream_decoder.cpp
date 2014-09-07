@@ -45,11 +45,7 @@ StreamDecoder::~StreamDecoder() {
 
 double StreamDecoder::position() {
     return MasterClock::instance() -> audio();
-
-//    if (audioStream -> isValid())
-//        return MasterClock::instance() -> audio(); // orient on the audio stream position
-//    else
-//        return MasterClock::instance() -> video();
+//    return qMax(MasterClock::instance() -> audio(), MasterClock::instance() -> video());
 }
 
 void StreamDecoder::seek(int64_t target) {
@@ -67,7 +63,6 @@ void StreamDecoder::suspend() {
     emit suspendRequired();
 }
 void StreamDecoder::resume() {
-    qDebug() << "RESUME";
     Stream::resume();
     emit resumeRequired();
 }
@@ -75,7 +70,7 @@ void StreamDecoder::resume() {
 //TODO: maybe one currFrame init enough
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
-    if ((videoStream -> isBlocked() && audioStream -> isBlocked()) || pauseRequired) {
+    if ((videoStream -> isBlocked() || audioStream -> isBlocked()) || pauseRequired) {
         msleep(10);
         return;
     }
@@ -86,7 +81,6 @@ void StreamDecoder::routine() {
 
     while (true) {
         if (pauseRequired) return;
-        qDebug() << "!!! ROUTINE STEP";
 
         status = av_read_frame(context, currFrame);
 
@@ -122,7 +116,7 @@ void StreamDecoder::routine() {
 
         if (!preload || (videoStream -> isBlocked() || audioStream -> isBlocked())) {
             qDebug() << "ROUTINE PRELOAD";
-            break;
+            return;
         }
     }
 }

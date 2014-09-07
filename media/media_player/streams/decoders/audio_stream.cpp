@@ -51,16 +51,15 @@ AudioStream::~AudioStream() {
 //}
 
 bool AudioStream::isBlocked() {
+    qDebug() << "LAKA " << frames.size();
     return MediaStream::isBlocked() || frames.size() >= FRAMES_LIMIT;
 }
 
 void AudioStream::suspendStream() {
-    qDebug() << "!!!!!!!!!!!!!!! AUDIO SUSPEND";
     output -> suspend();
     MediaStream::suspend();
 }
 void AudioStream::resumeStream() {
-    qDebug() << "!!!!!!!!!!!!!!! AUDIO RESUME";
     MediaStream::resume();
     output -> resume();
 }

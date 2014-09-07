@@ -6,7 +6,7 @@
 #include <QMutex>
 
 #define FRAMES_LIMIT 4
-#define PACKETS_LIMIT 2
+#define PACKETS_LIMIT 4
 
 class IMediaStream {
 
