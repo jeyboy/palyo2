@@ -53,6 +53,17 @@ QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int
         return 0;
     }
 
+//    * @param table the yuv2rgb coefficients describing the output yuv space, normally ff_yuv2rgb_coeffs[x]
+//    * @param inv_table the yuv2rgb coefficients describing the input yuv space, normally ff_yuv2rgb_coeffs[x]
+//    * @param brightness 16.16 fixed point brightness correction
+//    * @param contrast 16.16 fixed point contrast correction
+//    * @param saturation 16.16 fixed point saturation correction
+//    * @return -1 if not supported
+//    */
+//   int sws_setColorspaceDetails(struct SwsContext *c, const int inv_table[4],
+//                                int srcRange, const int table[4], int dstRange,
+//                                int brightness, int contrast, int saturation);
+
     // Convert to RGB
     sws_scale(resampleContext, frame -> data, frame -> linesize, 0, heightIn, RGBFrame -> data, RGBFrame -> linesize);
 
