@@ -21,6 +21,10 @@ void GLOutput::setPauseDelay() {
     this -> frame -> pts = -1;
 }
 
+void GLOutput::setPauseDelay(int millis) {
+    this -> frame -> pts = -millis;
+}
+
 void GLOutput::setFrame(VideoFrame * frame) {
     mutex.lock();
     delete this -> frame;

@@ -51,7 +51,6 @@ AudioStream::~AudioStream() {
 //}
 
 bool AudioStream::isBlocked() {
-    qDebug() << "LAKA " << frames.size();
     return MediaStream::isBlocked() || frames.size() >= FRAMES_LIMIT;
 }
 
@@ -74,7 +73,7 @@ void AudioStream::flushData() {
 void AudioStream::routine() {
     bool isEmpty = packets.isEmpty();
 
-    if (!pauseRequired && isEmpty && eof) suspend();
+    if (!pauseRequired && isEmpty && eof) suspendStream();
     if (pauseRequired) return;
 
     // TODO: mutex required for frames
@@ -147,7 +146,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
         return reslen;
     }
 
-    if (pauseRequired) suspend();
+    if (pauseRequired || eof) suspendStream();
     qDebug() << "IS EMPTY";
     return maxlen;
 }

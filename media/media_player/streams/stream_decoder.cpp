@@ -68,9 +68,10 @@ void StreamDecoder::resume() {
 }
 
 //TODO: maybe one currFrame init enough
+//TODO: while eof Stream::run delay must be minimal
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
-    if ((videoStream -> isBlocked() || audioStream -> isBlocked()) || pauseRequired) {
+    if (videoStream -> isBlocked() || audioStream -> isBlocked() || pauseRequired) {
         msleep(10);
         return;
     }
@@ -115,7 +116,6 @@ void StreamDecoder::routine() {
         }
 
         if (!preload || (videoStream -> isBlocked() || audioStream -> isBlocked())) {
-            qDebug() << "ROUTINE PRELOAD";
             return;
         }
     }

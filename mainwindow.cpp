@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    To play/convert videos directly from Youtube, using FFmpeg, you need to compile your ffmpeg with ​libquvi support.
 //    MediaPlayer::instance() -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("K:/VIDEO/Dick Figures The Movie.mp4"), 60000);
+      MediaPlayer::instance() -> open(QUrl::fromLocalFile("K:/VIDEO/Dick Figures The Movie.mp4"), 60000);
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/New Year, New Tricks - Happy 2014!.mkv"));
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/111412158")); //short
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp4"));
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/not played.mp3"));
-      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
+//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 
     MediaPlayer::instance() -> play();
 }

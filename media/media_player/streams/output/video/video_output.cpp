@@ -32,8 +32,11 @@ void VideoOutput::setFrame(VideoFrame * frame) {
     screen -> setFrame(frame);
 }
 
-void VideoOutput::setPause() {
-    screen -> setPauseDelay();
+void VideoOutput::setPause(int millis) {
+    if (millis < 1)
+        screen -> setPauseDelay();
+    else
+        screen -> setPauseDelay(millis);
 }
 
 void VideoOutput::titleUpdate() {

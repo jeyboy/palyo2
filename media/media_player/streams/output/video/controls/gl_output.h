@@ -14,6 +14,7 @@ public:
     ~GLOutput();
 
     void setPauseDelay();
+    void setPauseDelay(int millis);
     void setFrame(VideoFrame * frame);
 
 signals:

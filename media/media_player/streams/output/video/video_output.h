@@ -17,7 +17,7 @@ public:
     void setAspectRatio(int w, int h);
 
     void setFrame(VideoFrame * frame);
-    void setPause();
+    void setPause(int millis = 0);
 public slots:
     void titleUpdate();
 protected:

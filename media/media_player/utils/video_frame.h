@@ -23,11 +23,15 @@ struct VideoFrame {
     uint calcDelay() {
         uint res = 40;
 
-        if (pts != -1)
+        if (pts > -1)
             res = MasterClock::instance() -> computeVideoDelay(
                 pts == 0 ? MasterClock::instance() -> video() : pts,
                 MasterClock::instance() -> video() + next_pts
             );
+
+        if (pts < -1)
+            res = -pts;
+
         return res;
     }
 
