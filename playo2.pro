@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = playo2
 TEMPLATE = app
-
+RC_FILE = playo.rc
 
 DEFINES += TAGLIB_NO_CONFIG
 #DEFINES += TAGLIB_STATIC=1

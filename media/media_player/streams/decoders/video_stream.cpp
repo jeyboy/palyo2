@@ -91,7 +91,8 @@ void VideoStream::nextPict() {
     if (pauseRequired || frames.isEmpty()) {
 //        if (eof) output -> setFrame(new VideoFrame(0,0,0));
 
-//        output -> setPause(eof ? 100 : 0);
+        if (pauseRequired)
+            output -> setPause(eof ? 100 : 0);
         return;
     }
 
