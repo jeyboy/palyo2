@@ -63,6 +63,9 @@ void AudioStream::resumeStream() {
     output -> resume();
 }
 
+uint AudioStream::getVolume() const { return output -> volume() * 1000; }
+void AudioStream::setVolume(uint val) { output -> setVolume((qreal)val / 1000); }
+
 void AudioStream::flushData() {
     MediaStream::dropPackets();
     qDeleteAll(frames);

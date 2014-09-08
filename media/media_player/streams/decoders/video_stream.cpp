@@ -7,6 +7,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
     , resampler(0){
 
     if (valid) {
+        calcAspectRatio();
         output = new VideoOutput(this, codec_context -> width, codec_context -> height);
         resampler = new VideoResampler(codec_context -> pix_fmt);
     }
@@ -14,7 +15,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
 
 VideoStream::~VideoStream() {
     if (output)
-        output -> setFrame(new VideoFrame(0, 0, 0));
+        output -> setFrame(new VideoFrame(0, 0, 0, 0));
 
     delete output;
     delete resampler;  
@@ -68,7 +69,7 @@ void VideoStream::routine() {
             img = resampler -> proceed(frame, width, height, width, height);
 
             if (img)
-              frames.append(calcPts(new VideoFrame(img, -1, -1)));
+              frames.append(calcPts(new VideoFrame(img, -1, -1, aspect_ratio)));
         } else {
             qWarning("Could not get a full picture from this frame");
 //            char bla[AV_ERROR_MAX_STRING_SIZE];
@@ -136,21 +137,15 @@ double VideoStream::syncPts(AVFrame *src_frame) {
 }
 
 double VideoStream::calcAspectRatio() {
-    //if(vp->bmp) {
-    //  if(is->video_st->codec->sample_aspect_ratio.num == 0) {
-    //    aspect_ratio = 0;
-    //  } else {
-    //    aspect_ratio = av_q2d(is->video_st->codec->sample_aspect_ratio) *
-    //  is->video_st->codec->width / is->video_st->codec->height;
-    //  }
-    //  if(aspect_ratio <= 0.0) {
-    //    aspect_ratio = (float)is->video_st->codec->width /
-    //  (float)is->video_st->codec->height;
-    //  }
-    //  h = screen->h;
-    //  w = ((int)rint(h * aspect_ratio)) & -3;
-    //  if(w > screen->w) {
-    //    w = screen->w;
-    //    h = ((int)rint(w / aspect_ratio)) & -3;
-    //  }
+    aspect_ratio = 0;
+
+    if(codec_context -> sample_aspect_ratio.num != 0) {
+        aspect_ratio = av_q2d(codec_context -> sample_aspect_ratio) *
+            codec_context -> width / codec_context -> height;
+    }
+
+    if(aspect_ratio <= 0) {
+        aspect_ratio = (float)codec_context -> width /
+            (float)codec_context -> height;
+    }
 }

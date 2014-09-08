@@ -15,6 +15,8 @@ public:
     bool isBlocked();
     void flushData();
     void resumeStream();
+
+    inline QWidget * getScreenWidget() const { return output; }
 public slots:
     void nextPict();
 protected:
@@ -23,6 +25,8 @@ protected:
     double syncPts(AVFrame *src_frame);
     double calcAspectRatio();
 private:   
+    double aspect_ratio;
+
     VideoOutput * output;
     VideoResampler * resampler;
     QList<VideoFrame *> frames;

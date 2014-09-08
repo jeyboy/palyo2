@@ -54,7 +54,7 @@ void GLOutput::paintEvent(QPaintEvent *) {
     //Set the painter to use a smooth scaling algorithm.
     p.setRenderHint(QPainter::SmoothPixmapTransform, 1);
     mutex.lock();
-    p.drawImage(this -> rect(), *frame -> image);
+    p.drawImage(frame -> calcSize(this -> rect()), *frame -> image);
     mutex.unlock();
 
     //    QGLWidget::paintEvent(event);

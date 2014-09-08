@@ -38,6 +38,8 @@ public:
     bool isPlayed() const;
     bool isPaused() const;
 
+    QWidget * getScreenWidget() const;
+
 public slots:
 //    void errorOcurred();
     void play();
@@ -47,6 +49,9 @@ public slots:
 
     void seek(int64_t);
     void seekMillis(int);
+
+    //0..10000
+    void setVolume(uint val);
 
 protected:
     bool openContext(QUrl url);

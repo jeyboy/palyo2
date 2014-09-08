@@ -67,6 +67,22 @@ void StreamDecoder::resume() {
     emit resumeRequired();
 }
 
+QWidget * StreamDecoder::getScreenWidget() const {
+    if (videoStream -> isValid())
+        return videoStream -> getScreenWidget();
+    else return 0;
+}
+
+uint StreamDecoder::getVolume() const {
+    if (audioStream -> isValid())
+        return audioStream -> getVolume();
+    else return 0;
+}
+void StreamDecoder::setVolume(uint val) {
+    if (audioStream -> isValid())
+        audioStream -> setVolume(val);
+}
+
 //TODO: maybe one currFrame init enough
 //TODO: while eof Stream::run delay must be minimal
 void StreamDecoder::routine() {

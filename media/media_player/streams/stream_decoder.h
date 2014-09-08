@@ -37,6 +37,11 @@ public:
 
     void suspend();
     void resume();
+
+    QWidget * getScreenWidget() const;
+
+    uint getVolume() const;
+    void setVolume(uint val);
 signals:
     void flushDataRequired();
     void eofDetectRequired();

@@ -98,6 +98,10 @@ bool MediaPlayer::isPaused() const {
     return decoder -> isPaused();
 }
 
+QWidget * MediaPlayer::getScreenWidget() const {
+    if (decoder == 0) return 0;
+    return decoder -> getScreenWidget();
+}
 
 ////////////// SLOTS  ///////////////////////////////////////
 
@@ -131,6 +135,11 @@ void MediaPlayer::seek(int64_t microMillis) {
 void MediaPlayer::seekMillis(int target) {
     if (decoder == 0) return;
     decoder -> seek((int64_t)target * 1000);
+}
+
+void MediaPlayer::setVolume(uint val) {
+    if (decoder == 0) return;
+    decoder -> setVolume(val);
 }
 
 ////////////// PROTECTED //////////////////////////////////

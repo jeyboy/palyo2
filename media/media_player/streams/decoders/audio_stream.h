@@ -19,6 +19,9 @@ public:
     void suspendStream();
     void resumeStream();
 
+    uint getVolume() const;
+    void setVolume(uint val);
+
 protected:
     void routine();
     qint64 readData(char *data, qint64 maxlen);

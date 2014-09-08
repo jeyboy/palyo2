@@ -11,7 +11,7 @@
 class VideoOutput : public OutputContainer {
      Q_OBJECT
 public:
-    VideoOutput( QObject * parent, int width, int height);
+    VideoOutput(QObject * parent, int width, int height);
     ~VideoOutput();
 
     void setAspectRatio(int w, int h);

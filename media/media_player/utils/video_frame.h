@@ -10,7 +10,8 @@ struct VideoFrame {
         pts = -1;
     }
 
-    VideoFrame(QImage * img, double framePts, double nextPts) {
+    VideoFrame(QImage * img, double framePts, double nextPts, double aspectRatio) {
+        aspect_ratio = aspectRatio;
         image = img;
         pts = framePts;
         next_pts = nextPts;
@@ -35,8 +36,28 @@ struct VideoFrame {
         return res;
     }
 
+    QRect calcSize(QRect defSize) {
+        int h = defSize.height();
+        int w = ((int)rint(h * aspect_ratio)) & -3;
+        if (w > defSize.width()) {
+            w = defSize.width();
+            h = ((int)rint(w / aspect_ratio)) & -3;
+        }
+
+
+        QRect rect(defSize.left() + (defSize.width() - w) / 2, defSize.top() + (defSize.height() - h) / 2, w, h);
+        return rect;
+
+//        int h = height;
+//        int w = ((int)rint(h * aspect_ratio)) & -3;
+//        if (w > width) {
+//            w = width;
+//            h = ((int)rint(w / aspect_ratio)) & -3;
+//        }
+    }
+
     QImage * image;
-    double pts, next_pts;
+    double pts, next_pts, aspect_ratio;
 };
 
 #endif // VIDEO_FRAME_H

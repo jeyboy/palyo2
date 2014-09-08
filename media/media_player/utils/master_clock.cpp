@@ -81,5 +81,5 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
 //            actual_delay = 0.010;
     }
 
-    return actual_delay * 999; // 100
+    return actual_delay * 1000;
 }
