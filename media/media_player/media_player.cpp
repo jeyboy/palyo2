@@ -37,6 +37,7 @@ bool MediaPlayer::open(QUrl url, int64_t position_millis, int64_t duration_milli
     }
 
     if (res) {
+        qDebug() << "sdfsdf";
         seekMillis(position_millis);
         pause();
     }

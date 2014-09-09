@@ -24,7 +24,7 @@ public:
 
     DecoderState getState() const { return state; }
 
-    inline bool isValid() const { return state == NoData; }
+    inline bool isValid() const { return state != NoData; }
     inline bool isActive() const { return state == Seeking || state == Process || state == Initialization; }
     inline bool isPaused() const { return state == Suspended; }
 
