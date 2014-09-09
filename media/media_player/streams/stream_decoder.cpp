@@ -14,8 +14,10 @@ StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : 
 
     MasterClock::instance() -> reset();
 
-    suspend();
-    start();
+    if (isValid()) {
+        suspend();
+        start();
+    }
 }
 
 StreamDecoder::~StreamDecoder() {
