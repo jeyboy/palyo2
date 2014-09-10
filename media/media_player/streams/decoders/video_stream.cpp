@@ -1,4 +1,5 @@
 #include "video_stream.h"
+#include "misc/screen.h"
 #include <QApplication>
 
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
@@ -8,7 +9,14 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
 
     if (valid) {
         calcAspectRatio();
-        output = new VideoOutput(this, codec_context -> width, codec_context -> height);
+
+        int width, height;
+        Screen::screenSize(width, height);
+
+        width = qMin((int)(width * 0.6), codec_context -> width);
+        height = qMin((int)(height * 0.6), codec_context -> height);
+
+        output = new VideoOutput(this, width, height);
         resampler = new VideoResampler(codec_context -> pix_fmt);
     }
 }
@@ -91,8 +99,8 @@ void VideoStream::nextPict() {
     if (pauseRequired || frames.isEmpty()) {
 //        if (eof) output -> setFrame(new VideoFrame(0,0,0));
 
-//        if (pauseRequired)
-//            output -> setPause(eof ? 100 : 0);
+        if (pauseRequired)
+            output -> setPause(eof ? 100 : 0);
         return;
     }
 

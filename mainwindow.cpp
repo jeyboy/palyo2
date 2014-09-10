@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QDesktopServices>
+#include "misc/screen.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    To play/convert videos directly from Youtube, using FFmpeg, you need to compile your ffmpeg with ​libquvi support.
 //    MediaPlayer::instance() -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
-      MediaPlayer::instance() -> open(QUrl::fromLocalFile("K:/VIDEO/Dick Figures The Movie.mp4"), 60000);
+//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("K:/VIDEO/Dick Figures The Movie.mp4"), 60000);
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/New Year, New Tricks - Happy 2014!.mkv"));
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/111412158")); //short
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
@@ -36,23 +36,24 @@ MainWindow::MainWindow(QWidget *parent) :
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47933391"));
 
 
-//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp4"));
+    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp4"));
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/test.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/not played.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 
-//    MediaPlayer::instance() -> play();
+    MediaPlayer::instance() -> play();
 }
 
 void MainWindow::locationCorrection() {
-    QDesktopWidget *desktop = QApplication::desktop();
+    int width, height;
+    Screen::screenSize(width, height);
     int left = x(), top = y();
 
-    if (left >= desktop -> width())
-        left = desktop -> width() - 50;
+    if (left >= width)
+        left = width - 50;
 
-    if (top >= desktop -> height())
-        top = desktop -> height() - 50;
+    if (top >= height)
+        top = height - 50;
 
     move(left, top);
 }

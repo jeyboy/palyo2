@@ -2,6 +2,7 @@
 #define VIDEO_FRAME_H
 
 #include <QImage>
+#include <QTransform>
 #include "media/media_player/utils/master_clock.h"
 
 struct VideoFrame {
@@ -19,6 +20,13 @@ struct VideoFrame {
 
     ~VideoFrame() {
         delete image;
+    }
+
+    QImage rotated() {
+        QTransform myTransform;
+        myTransform.rotate(90);
+        return image -> transformed(myTransform);
+
     }
 
     uint calcDelay() {

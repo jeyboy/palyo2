@@ -48,14 +48,14 @@ void GLOutput::closeEvent(QCloseEvent *) {
     emit closed();
 }
 
-void GLOutput::paintEvent(QPaintEvent * event) {
+void GLOutput::paintEvent(QPaintEvent *) {
 //    QGLWidget::paintEvent(event);
 
     QPainter p(this);
 
     //Set the painter to use a smooth scaling algorithm.
     p.setRenderHint(QPainter::SmoothPixmapTransform, 1);
-//    p.setRenderHint(QPainter::Antialiasing, 1);
+    p.setRenderHint(QPainter::Antialiasing, 1);
 
     mutex.lock();
     p.drawImage(frame -> calcSize(this -> rect()), *frame -> image);
