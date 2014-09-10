@@ -108,7 +108,6 @@ void VideoStream::nextPict() {
 }
 
 void VideoStream::resumeStream() {
-    qDebug() << "!!!!! VIDEO RESUME";
     MasterClock::instance() -> resetMain();
     MediaStream::resume();
 }

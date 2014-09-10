@@ -51,12 +51,14 @@ double StreamDecoder::position() {
 }
 
 void StreamDecoder::seek(int64_t target) {
+    skip = true;
     suspend();
     state = Seeking;
     emit flushDataRequired();
     avformat_seek_file(context, -1, INT64_MIN, target, INT64_MAX, 0);
     emit eofRejectRequired();
     resume();
+    skip = false;
 }
 
 void StreamDecoder::suspend() {

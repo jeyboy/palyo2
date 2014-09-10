@@ -22,6 +22,7 @@ protected:
 
     bool exitRequired;
     bool pauseRequired;
+    bool skip;
 };
 
 #endif // STREAM_H

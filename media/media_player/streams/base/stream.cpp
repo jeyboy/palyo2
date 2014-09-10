@@ -3,7 +3,8 @@
 
 Stream::Stream(QObject * parent) : QThread(parent)
   , exitRequired(false)
-  , pauseRequired(false) {
+  , pauseRequired(false)
+  , skip(false) {
 }
 
 Stream::~Stream() {
@@ -15,7 +16,9 @@ void Stream::run() {
     while(!exitRequired) {
         if (!pauseRequired)
             routine();
-        else msleep(25);
+        else
+            if (!skip)
+                msleep(50);
     }
 }
 
