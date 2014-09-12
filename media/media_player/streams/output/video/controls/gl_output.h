@@ -7,7 +7,7 @@
 #include <QMutex>
 #include <QTimer>
 
-class GLOutput : public QGLWidget {
+class GLOutput : public QWidget {
      Q_OBJECT
 public:
     GLOutput(QWidget* parent = NULL);

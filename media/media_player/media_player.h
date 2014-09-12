@@ -54,7 +54,7 @@ public slots:
     void setVolume(uint val);
 
 protected:
-    bool openContext(QUrl url);
+    bool openContext(QUrl & url);
     void closeContext();
 
 private:

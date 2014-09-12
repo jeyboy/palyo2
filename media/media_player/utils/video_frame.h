@@ -2,32 +2,37 @@
 #define VIDEO_FRAME_H
 
 #include <QImage>
+#include <QPixmap>
 #include <QTransform>
 #include "media/media_player/utils/master_clock.h"
 
 struct VideoFrame {
     VideoFrame() {
-        image = new QImage(":play");
+        image = QPixmap(":play");
         pts = -1;
+        close = false;
     }
 
     VideoFrame(QImage * img, double framePts, double nextPts, double aspectRatio) {
+        close = img == 0;
         aspect_ratio = aspectRatio;
-        image = img;
+        if (!close)
+            image = QPixmap::fromImage(*img);
+        delete img;
         pts = framePts;
         next_pts = nextPts;
     }
 
     ~VideoFrame() {
-        delete image;
+//        delete image;
     }
 
-    QImage rotated() {
-        QTransform myTransform;
-        myTransform.rotate(90);
-        return image -> transformed(myTransform);
+//    QPixmap rotated() {
+//        QTransform myTransform;
+//        myTransform.rotate(90);
+//        return image.transformed(myTransform);
 
-    }
+//    }
 
     uint calcDelay() {
         uint res = 40;
@@ -55,17 +60,11 @@ struct VideoFrame {
 
         QRect rect(defSize.left() + (defSize.width() - w) / 2, defSize.top() + (defSize.height() - h) / 2, w, h);
         return rect;
-
-//        int h = height;
-//        int w = ((int)rint(h * aspect_ratio)) & -3;
-//        if (w > width) {
-//            w = width;
-//            h = ((int)rint(w / aspect_ratio)) & -3;
-//        }
     }
 
-    QImage * image;
+    QPixmap image;
     double pts, next_pts, aspect_ratio;
+    bool close;
 };
 
 #endif // VIDEO_FRAME_H

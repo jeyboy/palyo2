@@ -1,12 +1,15 @@
 #include "gl_output.h"
 
 #include <QDebug>
+#include <QTime>
 
-GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
+GLOutput::GLOutput(QWidget* parent) : QWidget(parent)
   , frame(new VideoFrame) {
 
-    setAutoBufferSwap(true);
-    setAutoFillBackground(false);
+    setAutoFillBackground(true);
+    setAttribute(Qt::WA_PaintOnScreen);
+//    setAttribute(Qt::WA_UpdatesDisabled);
+    setAttribute(Qt::WA_OpaquePaintEvent);
 
     drawNext();
 }
@@ -33,7 +36,7 @@ void GLOutput::setFrame(VideoFrame * frame) {
 }
 
 void GLOutput::drawNext() {
-    if (frame -> image == 0) {
+    if (frame -> close) {
         close();
         return;
     }
@@ -52,12 +55,13 @@ void GLOutput::paintEvent(QPaintEvent *) {
 //    QGLWidget::paintEvent(event);
 
     QPainter p(this);
+//    p.fillRect(this -> rect(), Qt::black);
 
     //Set the painter to use a smooth scaling algorithm.
     p.setRenderHint(QPainter::SmoothPixmapTransform, 1);
     p.setRenderHint(QPainter::Antialiasing, 1);
 
     mutex.lock();
-    p.drawImage(frame -> calcSize(this -> rect()), *frame -> image);
+    p.drawPixmap(frame -> calcSize(this -> rect()), frame -> image);
     mutex.unlock();
 }

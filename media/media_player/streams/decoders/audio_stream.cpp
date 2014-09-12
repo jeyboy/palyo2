@@ -36,8 +36,7 @@ AudioStream::~AudioStream() {
     close();
 
     delete resampler;
-    qDeleteAll(frames);
-    frames.clear();
+    flushData();
 }
 
 //AudioFrame * AudioStream::decoded() {

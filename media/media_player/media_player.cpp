@@ -145,7 +145,7 @@ void MediaPlayer::setVolume(uint val) {
 
 ////////////// PROTECTED //////////////////////////////////
 
-bool MediaPlayer::openContext(QUrl url) {
+bool MediaPlayer::openContext(QUrl & url) {
     QString path;
     if ((isRemote = url.isLocalFile())) {
         path = url.toLocalFile();
