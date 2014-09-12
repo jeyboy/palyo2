@@ -73,12 +73,15 @@ QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int
 
     // Convert the frame to QImage
     QImage * img = new QImage(widthOut, heightOut, QImage::Format_RGB888);
-    uint8_t * offset = RGBFrame -> data[0];
-    int len = widthOut * 3;
+    //new realisation
+    memcpy(img -> bits(), RGBFrame -> data[0], widthOut * 3 * heightOut);
 
-    for (int y = 0; y < heightOut; y++, offset += RGBFrame -> linesize[0]) {
-        memcpy(img -> scanLine(y), offset, len);
-    }
+//    uint8_t * offset = RGBFrame -> data[0];
+//    int len = widthOut * 3;
+
+//    for (int y = 0; y < heightOut; y++, offset += RGBFrame -> linesize[0]) {
+//        memcpy(img -> scanLine(y), offset, len);
+//    }
 
     return img;
 }
