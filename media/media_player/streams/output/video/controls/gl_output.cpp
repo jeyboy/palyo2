@@ -3,10 +3,11 @@
 #include <QDebug>
 #include <QTime>
 
-GLOutput::GLOutput(QWidget* parent) : QWidget(parent)
+GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
   , frame(new VideoFrame) {
 
-    setAutoFillBackground(true);
+    setAutoBufferSwap(true);
+    setAutoFillBackground(false);
     setAttribute(Qt::WA_PaintOnScreen);
 //    setAttribute(Qt::WA_UpdatesDisabled);
     setAttribute(Qt::WA_OpaquePaintEvent);
@@ -41,6 +42,9 @@ void GLOutput::drawNext() {
         return;
     }
 
+    if (output_rect.left() < -100)
+        output_rect = frame -> calcSize(this -> rect());
+
     emit updated();
     repaint();
 
@@ -62,6 +66,12 @@ void GLOutput::paintEvent(QPaintEvent *) {
 //    p.setRenderHint(QPainter::Antialiasing, 1);
 
     mutex.lock();
-    p.drawPixmap(frame -> calcSize(this -> rect()), frame -> image);
+    p.drawPixmap(output_rect, frame -> image);
     mutex.unlock();
+}
+
+void GLOutput::resizeEvent(QResizeEvent * event) {
+    QGLWidget::resizeEvent(event);
+
+    output_rect = frame -> calcSize(this -> rect());
 }

@@ -58,7 +58,7 @@ QRect ControlPanel::getRegion() const {
 
 void ControlPanel::setRegion(QRect rect) {
 //    rect.setBottom(rect.top() + minimumHeight());
-    rect.setTop(rect.bottom() - minimumHeight());
+    rect.setTop(rect.bottom() - minimumHeight() + 1);
     setGeometry((region = rect));
 }
 

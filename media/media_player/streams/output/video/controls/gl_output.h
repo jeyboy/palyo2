@@ -7,7 +7,7 @@
 #include <QMutex>
 #include <QTimer>
 
-class GLOutput : public QWidget {
+class GLOutput : public QGLWidget {
      Q_OBJECT
 public:
     GLOutput(QWidget* parent = NULL);
@@ -26,7 +26,9 @@ public slots:
 protected:
     void closeEvent(QCloseEvent *);
     void paintEvent(QPaintEvent *);
+    void resizeEvent(QResizeEvent *);
 private:
+    QRect output_rect;
     VideoFrame * frame;
     QMutex mutex;
     QTimer timer;
