@@ -25,13 +25,17 @@ public slots:
     void drawNext();
 protected:
     void closeEvent(QCloseEvent *);
-    void paintEvent(QPaintEvent *);
+//    void paintEvent(QPaintEvent *);
     void resizeEvent(QResizeEvent *);
+    void initializeGL();
+    void paintGL();
 private:
     QRect output_rect;
     VideoFrame * frame;
     QMutex mutex;
     QTimer timer;
+
+    GLuint texture;
 };
 
 #endif // GL_OUTPUT_H

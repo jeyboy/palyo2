@@ -8,23 +8,19 @@
 
 struct VideoFrame {
     VideoFrame() {
-        image = QPixmap(":play");
+        image = new QImage(":play");
         pts = -1;
-        close = false;
     }
 
     VideoFrame(QImage * img, double framePts, double nextPts, double aspectRatio) {
-        close = img == 0;
         aspect_ratio = aspectRatio;
-        if (!close)
-            image = QPixmap::fromImage(*img);
-        delete img;
+        image = img;
         pts = framePts;
         next_pts = nextPts;
     }
 
     ~VideoFrame() {
-//        delete image;
+        delete image;
     }
 
 //    QPixmap rotated() {
@@ -62,9 +58,8 @@ struct VideoFrame {
         return rect;
     }
 
-    QPixmap image;
+    QImage * image;
     double pts, next_pts, aspect_ratio;
-    bool close;
 };
 
 #endif // VIDEO_FRAME_H

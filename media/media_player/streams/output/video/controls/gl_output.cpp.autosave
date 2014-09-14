@@ -98,47 +98,17 @@ void GLOutput::initializeGL() {
 }
 
 void GLOutput::paintGL() {
-////    glClear(GL_COLOR_BUFFER_BIT);
-////    glDisable(GL_DEPTH_TEST);
-////    glMatrixMode(GL_PROJECTION);
-////    glLoadIdentity();
-////    gluOrtho2D(0,win.width(),0,win.height());
-////    glMatrixMode(GL_MODELVIEW);
-////    glLoadIdentity();
-//    glEnable(GL_TEXTURE_2D);
-
     QImage t = QGLWidget::convertToGLFormat(*frame -> image);
-//    texture = bindTexture(t);
-//    drawTexture(output_rect, texture);
-////    deleteTexture(texture);
 
-
-////    glTexImage2D(GL_TEXTURE_2D, 0, 3, t.width(), t.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, t.bits());
-////    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-////    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-////    glFlush();
-////    glutSwapBuffers();
-////    glDisable(GL_TEXTURE_2D);
-///
-///
     glEnable(GL_TEXTURE_2D);
-//	glAlphaFunc(GL_GREATER, 0.1f);
-//	glEnable(GL_ALPHA_TEST);
 
-//    glGenTextures( 1, &texture );
-//    glBindTexture( GL_TEXTURE_2D, texture );
     glTexImage2D( GL_TEXTURE_2D, 0, 3, t.width(), t.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, t.bits());
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
-//    glDisable(GL_ALPHA_TEST);
-//    glDisable(GL_TEXTURE_2D);
-
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
-
-//    glBindTexture(GL_TEXTURE_2D, texture);
 
     glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
