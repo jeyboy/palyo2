@@ -36,6 +36,28 @@ private:
     QTimer timer;
 
     GLuint texture;
+
+    const GLfloat squareVertices[8] = {
+        -1.0f, -1.0f,
+        1.0f, -1.0f,
+        -1.0f, 1.0f,
+        1.0f, 1.0f
+    };
+
+    const GLfloat textureVertices[8] = {
+//        1.0f, 1.0f,
+//        1.0f, 0.0f,
+//        0.0f,  1.0f,
+//        0.0f,  0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f
+//        0.0f, 0.8f,
+//        1.0f, 0.8f,
+//        0.0f, 0.2f,
+//        1.0f, 0.2f
+    };
 };
 
 #endif // GL_OUTPUT_H

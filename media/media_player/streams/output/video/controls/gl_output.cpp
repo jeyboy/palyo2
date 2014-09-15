@@ -18,13 +18,18 @@ GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
 //    glType = GL_UNSIGNED_BYTE;
 
     QGLFormat glFmt;
-    glFmt.setSwapInterval(1); // 1= vsync on
+//    glFmt.setSwapInterval(1); // 1= vsync on
 //    glFmt.setAlpha(GL_RGBA==glFormat);
 //    glFmt.setRgba(GL_RGBA==glFormat);
     glFmt.setDoubleBuffer(true); // default
     glFmt.setOverlay(false);
     glFmt.setSampleBuffers(false);
+    glFmt.setDepth(false);
+//    glFmt.setDirectRendering(true);
     QGLFormat::setDefaultFormat(glFmt);
+
+    glDisable(GL_DEPTH_TEST);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
 
     setAttribute(Qt::WA_OpaquePaintEvent,true);
     setAttribute(Qt::WA_PaintOnScreen,true);
@@ -49,9 +54,15 @@ void GLOutput::setPauseDelay(int millis) {
 }
 
 void GLOutput::setFrame(VideoFrame * frame) {
+    if (frame -> image) {
+        QImage * img = new QImage(QGLWidget::convertToGLFormat(*frame -> image));
+        delete frame -> image;
+        frame -> image = img;
+    }
+
     mutex.lock();
     delete this -> frame;
-    this -> frame = frame;
+    this -> frame = frame;    
     mutex.unlock();
 }
 
@@ -90,72 +101,54 @@ void GLOutput::closeEvent(QCloseEvent *) {
 //}
 
 void GLOutput::initializeGL() {
+    glViewport(0, 0, width(), height());
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-1, 1, -1, 1, 0, 1);
+
 //    generate the texture name
     glGenTextures(1, &texture);
 
     //bind the texture ID
     glBindTexture(GL_TEXTURE_2D, texture);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 void GLOutput::paintGL() {
-////    glClear(GL_COLOR_BUFFER_BIT);
-////    glDisable(GL_DEPTH_TEST);
-////    glMatrixMode(GL_PROJECTION);
-////    glLoadIdentity();
-////    gluOrtho2D(0,win.width(),0,win.height());
-////    glMatrixMode(GL_MODELVIEW);
-////    glLoadIdentity();
-//    glEnable(GL_TEXTURE_2D);
-
-    QImage t = QGLWidget::convertToGLFormat(*frame -> image);
-//    texture = bindTexture(t);
-//    drawTexture(output_rect, texture);
-////    deleteTexture(texture);
-
-
-////    glTexImage2D(GL_TEXTURE_2D, 0, 3, t.width(), t.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, t.bits());
-////    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-////    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-////    glFlush();
-////    glutSwapBuffers();
-////    glDisable(GL_TEXTURE_2D);
-///
-///
     glEnable(GL_TEXTURE_2D);
-//	glAlphaFunc(GL_GREATER, 0.1f);
-//	glEnable(GL_ALPHA_TEST);
 
-//    glGenTextures( 1, &texture );
-//    glBindTexture( GL_TEXTURE_2D, texture );
-    glTexImage2D( GL_TEXTURE_2D, 0, 3, t.width(), t.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, t.bits());
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-
-//    glDisable(GL_ALPHA_TEST);
-//    glDisable(GL_TEXTURE_2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, frame -> image -> width(), frame -> image -> height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, frame -> image -> bits());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+//    glTranslatef(0.0f, 1.0f, 0.0f);
 
-//    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex2f(-1.0f, -1.0f);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex2f(1.0f, -1.0f);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex2f(1.0f, 1.0f);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex2f(-1.0f, 1.0f);
+        glTexCoord2f(0.0f, 0.0f);  glVertex2f(-1.0f, -1.0f);
+        glTexCoord2f(1.0f, 0.0f);  glVertex2f(1.0f, -1.0f);
+        glTexCoord2f(1.0f, 1.0f);  glVertex2f(1.0f, 1.0f);
+        glTexCoord2f(0.0f, 1.0f);  glVertex2f(-1.0f, 1.0f);
     glEnd();
-    glDisable(GL_TEXTURE_2D);
+
+    /* we can mix gl and qpainter.
+     * QPainter painter(this);
+     * painter.beginNativePainting();
+     * gl functions...
+     * painter.endNativePainting();
+     * swapBuffers();
+     */
+//    swapBuffers();
 }
 
 void GLOutput::resizeEvent(QResizeEvent * event) {
     QGLWidget::resizeEvent(event);
 
     output_rect = frame -> calcSize(this -> rect());
+    glViewport(0, 0, width(), height());
 }
