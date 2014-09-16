@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QTime>
+#include <QApplication>
 
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
   , frame(new VideoFrame) {
@@ -72,8 +73,8 @@ void GLOutput::drawNext() {
         return;
     }
 
-    if (output_rect.left() < -100)
-        output_rect = frame -> calcSize(this -> rect());
+//    if (output_rect.left() < -100)
+//        output_rect = frame -> calcSize(this -> rect());
 
     emit updated();
     repaint();
@@ -101,6 +102,7 @@ void GLOutput::closeEvent(QCloseEvent *) {
 //}
 
 void GLOutput::initializeGL() {
+    output_rect = frame -> calcSize(this -> rect());
     glViewport(0, 0, width(), height());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

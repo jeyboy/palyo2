@@ -8,7 +8,7 @@ VideoOutput::VideoOutput(QObject * parent, int width, int height) : OutputContai
     screen = new GLOutput(this);
     screen -> setMouseTracking(true);
     connect(screen, SIGNAL(closed()), this, SLOT(close()));
-    connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
+//    connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
     connect(screen, SIGNAL(updated()), parent, SLOT(nextPict()));
 
     QVBoxLayout * newLayout = new QVBoxLayout(this);
