@@ -50,9 +50,9 @@ void GLOutput::setFrame(VideoFrame * frame) {
         delete img;
         img = new QImage(QGLWidget::convertToGLFormat(*frame -> image));
         mutex.unlock();
-        delete frame;
         emit updated();
         repaint();
+        delete frame;
     }
 }
 

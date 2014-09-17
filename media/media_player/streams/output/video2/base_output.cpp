@@ -26,7 +26,7 @@ QWidget * BaseOutput::widget() const {
 
 void BaseOutput::routine() {
     if (frames.isEmpty()) {
-        msleep(5);
+        msleep(2);
         return;
     }
 

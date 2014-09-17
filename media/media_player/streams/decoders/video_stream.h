@@ -13,6 +13,7 @@ public:
 
     bool isBlocked();
     void flushData();
+    void suspendStream();
     void resumeStream();
 
     inline QWidget * getScreenWidget() const { return output -> widget(); }

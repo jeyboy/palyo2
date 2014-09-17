@@ -94,8 +94,14 @@ void VideoStream::routine() {
     av_free_packet(packet);
 }
 
+void VideoStream::suspendStream() {
+    output -> suspend();
+    MediaStream::suspendStream();
+}
+
 void VideoStream::resumeStream() {
     MasterClock::instance() -> resetMain();
+    output -> resume();
     MediaStream::resume();
 }
 
