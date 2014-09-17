@@ -3,11 +3,10 @@
 
 #include "media/media_player/utils/video_frame.h"
 #include "media/media_player/streams/base/media_stream.h"
-#include "media/media_player/streams/output/video/video_output.h"
+#include "media/media_player/streams/output/video2/base_output.h"
 #include "media/media_player/resamplers/video_resampler.h"
 
 class VideoStream : public MediaStream {
-    Q_OBJECT
 public:
     VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     ~VideoStream();
@@ -16,9 +15,7 @@ public:
     void flushData();
     void resumeStream();
 
-    inline QWidget * getScreenWidget() const { return output; }
-public slots:
-    void nextPict();
+    inline QWidget * getScreenWidget() const { return output -> widget(); }
 protected:
     void routine();
     VideoFrame * calcPts(VideoFrame * videoFrame);
@@ -27,9 +24,8 @@ protected:
 private:   
     double aspect_ratio;
 
-    VideoOutput * output;
+    BaseOutput * output;
     VideoResampler * resampler;
-    QList<VideoFrame *> frames;
 };
 
 #endif // VIDEO_STREAM_H

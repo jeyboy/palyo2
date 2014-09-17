@@ -24,7 +24,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
         fillFormat(format);
 
         output = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, parent);
-        output -> setNotifyInterval(20);
+//        output -> setNotifyInterval(20);
         output -> setVolume(1.0);
         output -> start(this);
     }

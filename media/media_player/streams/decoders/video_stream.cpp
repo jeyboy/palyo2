@@ -16,24 +16,23 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
         width = qMin((int)(width * 0.6), codec_context -> width);
         height = qMin((int)(height * 0.6), codec_context -> height);
 
-        output = new VideoOutput(this, width, height);
+        output = new BaseOutput(this, width, height);
         resampler = new VideoResampler(codec_context -> pix_fmt);
     }
 }
 
 VideoStream::~VideoStream() {
-    if (output)
-        output -> setFrame(new VideoFrame(0, 0, 0, 0));
+    if (output) {
+        output -> stop();
+        output -> wait();
+    }
 
     delete output;
     delete resampler;  
-
-    qDeleteAll(frames);
-    frames.clear();
 }
 
 bool VideoStream::isBlocked() {
-    return MediaStream::isBlocked() || frames.size() >= FRAMES_LIMIT;
+    return MediaStream::isBlocked() || output -> bufferSize() >= FRAMES_LIMIT;
 }
 
 void VideoStream::routine() {
@@ -42,7 +41,7 @@ void VideoStream::routine() {
     if (!pauseRequired && isEmpty && eof) suspend();
     if (pauseRequired) return;
 
-    if (isEmpty || frames.size() >= FRAMES_LIMIT) {
+    if (isEmpty || output -> bufferSize() >= FRAMES_LIMIT) {
         msleep(2);
         return;
     }
@@ -77,7 +76,7 @@ void VideoStream::routine() {
             img = resampler -> proceed(frame, width, height, width, height);
 
             if (img)
-              frames.append(calcPts(new VideoFrame(img, -1, -1, aspect_ratio)));
+                output -> proceedFrame(calcPts(new VideoFrame(img, -1, -1, aspect_ratio)));
         } else {
             qWarning("Could not get a full picture from this frame");
 //            char bla[AV_ERROR_MAX_STRING_SIZE];
@@ -95,18 +94,6 @@ void VideoStream::routine() {
     av_free_packet(packet);
 }
 
-void VideoStream::nextPict() {
-    if (pauseRequired || frames.isEmpty()) {
-//        if (eof) output -> setFrame(new VideoFrame(0,0,0));
-
-        if (pauseRequired)
-            output -> setPause(eof ? 100 : 0);
-        return;
-    }
-
-    output -> setFrame(frames.takeFirst());
-}
-
 void VideoStream::resumeStream() {
     MasterClock::instance() -> resetMain();
     MediaStream::resume();
@@ -114,8 +101,7 @@ void VideoStream::resumeStream() {
 
 void VideoStream::flushData() {
     MediaStream::dropPackets();
-    qDeleteAll(frames);
-    frames.clear();
+    output -> flushData();
     avcodec_flush_buffers(codec_context);
 }
 

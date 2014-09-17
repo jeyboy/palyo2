@@ -13,16 +13,12 @@ public:
     GLOutput(QWidget* parent = NULL);
     ~GLOutput();
 
-    void setPauseDelay();
-    void setPauseDelay(int millis);
-    void setFrame(VideoFrame * frame);
+    void setFrame(QImage * frame);
 
 signals:
     void closed();
     void updated();
 
-public slots:
-    void drawNext();
 protected:
     void closeEvent(QCloseEvent *);
 //    void paintEvent(QPaintEvent *);
@@ -31,7 +27,7 @@ protected:
     void paintGL();
 private:
     QRect output_rect;
-    VideoFrame * frame;
+    QImage * img;
     QMutex mutex;
     QTimer timer;
 

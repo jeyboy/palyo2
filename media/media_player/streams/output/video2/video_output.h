@@ -15,11 +15,9 @@ public:
     ~VideoOutput();
 
     void setAspectRatio(int w, int h);
-
-    void setFrame(VideoFrame * frame);
-    void setPause(int millis = 0);
 public slots:
     void titleUpdate();
+    void setFrame(void * image);
 protected:
     void mouseMoveEvent(QMouseEvent * event);
     void resizeEvent(QResizeEvent * event);

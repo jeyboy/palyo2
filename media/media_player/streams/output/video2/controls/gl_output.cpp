@@ -5,7 +5,7 @@
 #include <QApplication>
 
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
-  , frame(new VideoFrame) {
+  , img(0) {
 
 //    setAutoBufferSwap(true);
 //    setAutoFillBackground(false);
@@ -34,52 +34,25 @@ GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
 
     setAttribute(Qt::WA_OpaquePaintEvent,true);
     setAttribute(Qt::WA_PaintOnScreen,true);
-
-    drawNext();
 }
 
 GLOutput::~GLOutput() {
     mutex.lock();
-    delete frame;
+    delete img;
     mutex.unlock();
 
     deleteTexture(texture);
 }
 
-void GLOutput::setPauseDelay() {
-    this -> frame -> pts = -1;
-}
-
-void GLOutput::setPauseDelay(int millis) {
-    this -> frame -> pts = -millis;
-}
-
-void GLOutput::setFrame(VideoFrame * frame) {
-    if (frame -> image) {
-        QImage * img = new QImage(QGLWidget::convertToGLFormat(*frame -> image));
-        delete frame -> image;
-        frame -> image = img;
-    }
-
+void GLOutput::setFrame(QImage * image) {
     mutex.lock();
-    delete this -> frame;
-    this -> frame = frame;    
-    mutex.unlock();
-}
-
-void GLOutput::drawNext() {
-    if (frame -> image == 0) {
-        close();
-        return;
+    if (image) {
+        qDebug() << "||||||||||";
+        img = new QImage(QGLWidget::convertToGLFormat(*image));
+        emit updated();
+        repaint();
     }
-
-//    if (output_rect.left() < -100)
-//        output_rect = frame -> calcSize(this -> rect());
-
-    emit updated();
-    repaint();
-
-    timer.singleShot(frame -> calcDelay(), this, SLOT(drawNext()));
+    mutex.unlock();
 }
 
 void GLOutput::closeEvent(QCloseEvent *) {
@@ -102,7 +75,6 @@ void GLOutput::closeEvent(QCloseEvent *) {
 //}
 
 void GLOutput::initializeGL() {
-    output_rect = frame -> calcSize(this -> rect());
     glViewport(0, 0, width(), height());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -117,9 +89,11 @@ void GLOutput::initializeGL() {
 }
 
 void GLOutput::paintGL() {
+    if (img == 0) return;
+
     glEnable(GL_TEXTURE_2D);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, frame -> image -> width(), frame -> image -> height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, frame -> image -> bits());
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img -> bits());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -151,6 +125,8 @@ void GLOutput::paintGL() {
 void GLOutput::resizeEvent(QResizeEvent * event) {
     QGLWidget::resizeEvent(event);
 
-    output_rect = frame -> calcSize(this -> rect());
     glViewport(0, 0, width(), height());
+
+//    output_rect = frame -> calcSize(this -> rect());
+//    glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
 }

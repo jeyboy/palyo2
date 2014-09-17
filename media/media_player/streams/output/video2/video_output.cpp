@@ -7,9 +7,7 @@ VideoOutput::VideoOutput(QObject * parent, int width, int height) : OutputContai
 
     screen = new GLOutput(this);
     screen -> setMouseTracking(true);
-    connect(screen, SIGNAL(closed()), this, SLOT(close()));
-//    connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
-    connect(screen, SIGNAL(updated()), parent, SLOT(nextPict()));
+    connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
 
     QVBoxLayout * newLayout = new QVBoxLayout(this);
     newLayout -> addWidget(screen);
@@ -28,20 +26,13 @@ VideoOutput::~VideoOutput() {
 
 }
 
-void VideoOutput::setFrame(VideoFrame * frame) {
-    screen -> setFrame(frame);
-}
-
-void VideoOutput::setPause(int millis) {
-    if (millis < 1)
-        screen -> setPauseDelay();
-    else
-        screen -> setPauseDelay(millis);
-}
-
 void VideoOutput::titleUpdate() {
     QString temp = MediaPlayer::instance() -> info();
     setWindowTitle(temp);
+}
+
+void VideoOutput::setFrame(void * image) {
+    screen -> setFrame((QImage *)image);
 }
 
 void VideoOutput::mouseMoveEvent(QMouseEvent * event) {
