@@ -31,8 +31,8 @@ void VideoOutput::titleUpdate() {
     setWindowTitle(temp);
 }
 
-void VideoOutput::setFrame(void * image) {
-    screen -> setFrame((QImage *)image);
+void VideoOutput::setFrame(void * frame) {
+    screen -> setFrame((VideoFrame *)frame);
 }
 
 void VideoOutput::mouseMoveEvent(QMouseEvent * event) {

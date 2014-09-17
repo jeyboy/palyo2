@@ -2,12 +2,13 @@
 
 BaseOutput::BaseOutput(QObject * parent, int width, int height) : Stream(parent) {
     output = new VideoOutput(this, width, height);
-    connect(this, SIGNAL(framePrepared(void *)), output, SLOT(setFrame(void *)), Qt::DirectConnection);
+    connect(this, SIGNAL(framePrepared(void *)), output, SLOT(setFrame(void *)));//, Qt::DirectConnection);
     start();
 }
 
 BaseOutput::~BaseOutput() {
     flushData();
+    delete output;
 }
 
 void BaseOutput::flushData() {
@@ -31,6 +32,5 @@ void BaseOutput::routine() {
 
     VideoFrame * frame = frames.takeFirst();
     msleep(frame -> calcDelay());
-    emit framePrepared(frame -> image);
-    delete frame;
+    emit framePrepared(frame);
 }

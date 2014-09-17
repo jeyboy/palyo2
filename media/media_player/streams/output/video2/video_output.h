@@ -17,7 +17,7 @@ public:
     void setAspectRatio(int w, int h);
 public slots:
     void titleUpdate();
-    void setFrame(void * image);
+    void setFrame(void * frame);
 protected:
     void mouseMoveEvent(QMouseEvent * event);
     void resizeEvent(QResizeEvent * event);

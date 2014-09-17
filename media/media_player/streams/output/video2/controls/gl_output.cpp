@@ -44,15 +44,16 @@ GLOutput::~GLOutput() {
     deleteTexture(texture);
 }
 
-void GLOutput::setFrame(QImage * image) {
-    mutex.lock();
-    if (image) {
-        qDebug() << "||||||||||";
-        img = new QImage(QGLWidget::convertToGLFormat(*image));
+void GLOutput::setFrame(VideoFrame * frame) {
+    if (frame) {
+        mutex.lock();
+        delete img;
+        img = new QImage(QGLWidget::convertToGLFormat(*frame -> image));
+        mutex.unlock();
+        delete frame;
         emit updated();
         repaint();
     }
-    mutex.unlock();
 }
 
 void GLOutput::closeEvent(QCloseEvent *) {
@@ -93,7 +94,10 @@ void GLOutput::paintGL() {
 
     glEnable(GL_TEXTURE_2D);
 
+    mutex.lock();
     glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img -> bits());
+    mutex.unlock();
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

@@ -13,7 +13,7 @@ public:
     GLOutput(QWidget* parent = NULL);
     ~GLOutput();
 
-    void setFrame(QImage * frame);
+    void setFrame(VideoFrame * frame);
 
 signals:
     void closed();

@@ -4,9 +4,9 @@ VideoResampler::VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelF
     pixelFormatIn = pixel_format_in;
     pixelFormatOut = pixel_format_out;
 
-    RGBFrame = 0;
     resampleContext = 0;
     RGBFrame = av_frame_alloc();
+    RGBBuffer = 0;
 }
 
 VideoResampler::~VideoResampler() {
@@ -74,6 +74,7 @@ QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int
     // Convert the frame to QImage
     QImage * img = new QImage(widthOut, heightOut, QImage::Format_RGB888);
     //new realisation
+
     memcpy(img -> bits(), RGBFrame -> data[0], widthOut * 3 * heightOut);
 
 //    uint8_t * offset = RGBFrame -> data[0];
