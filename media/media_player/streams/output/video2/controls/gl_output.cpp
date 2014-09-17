@@ -29,10 +29,9 @@ GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
 //    glFmt.setDirectRendering(true);
     QGLFormat::setDefaultFormat(glFmt);
 
-    glDisable(GL_DEPTH_TEST);
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
-    setAttribute(Qt::WA_OpaquePaintEvent,true);
+//    setAttribute(Qt::WA_OpaquePaintEvent,true);
     setAttribute(Qt::WA_PaintOnScreen,true);
 }
 
@@ -93,6 +92,7 @@ void GLOutput::paintGL() {
     if (img == 0) return;
 
     glEnable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
 
     mutex.lock();
     glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img -> bits());

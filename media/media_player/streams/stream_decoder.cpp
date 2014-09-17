@@ -170,7 +170,6 @@ uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {
 
 void StreamDecoder::findStreams() {
     videoStream = new VideoStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
-//    connect(search, SIGNAL(finished()), searchThread, SLOT(deleteLater()));
     audioStream = new AudioStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, langStream(), bestStream(audioStream, videoStream), NULL, 0));
     subtitleStream = new SubtitleStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
 

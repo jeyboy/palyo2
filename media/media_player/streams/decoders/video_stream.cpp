@@ -32,7 +32,7 @@ VideoStream::~VideoStream() {
 }
 
 bool VideoStream::isBlocked() {
-    return MediaStream::isBlocked() || output -> bufferSize() >= FRAMES_LIMIT;
+    return MediaStream::isBlocked() || (output && output -> bufferSize() >= FRAMES_LIMIT);
 }
 
 void VideoStream::routine() {
