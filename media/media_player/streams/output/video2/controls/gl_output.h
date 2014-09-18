@@ -5,7 +5,6 @@
 
 #include <QGLWidget>
 #include <QMutex>
-#include <QTimer>
 
 class GLOutput : public QGLWidget {
      Q_OBJECT
@@ -29,31 +28,8 @@ private:
     QRect output_rect;
     QImage * img;
     QMutex mutex;
-    QTimer timer;
 
     GLuint texture;
-
-    const GLfloat squareVertices[8] = {
-        -1.0f, -1.0f,
-        1.0f, -1.0f,
-        -1.0f, 1.0f,
-        1.0f, 1.0f
-    };
-
-    const GLfloat textureVertices[8] = {
-//        1.0f, 1.0f,
-//        1.0f, 0.0f,
-//        0.0f,  1.0f,
-//        0.0f,  0.0f,
-        0.0f, 1.0f,
-        1.0f, 1.0f,
-        0.0f, 0.0f,
-        1.0f, 0.0f
-//        0.0f, 0.8f,
-//        1.0f, 0.8f,
-//        0.0f, 0.2f,
-//        1.0f, 0.2f
-    };
 };
 
 #endif // GL_OUTPUT_H

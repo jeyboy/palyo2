@@ -1,7 +1,6 @@
 #include "gl_output.h"
 
 #include <QDebug>
-#include <QTime>
 #include <QApplication>
 
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
