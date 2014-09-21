@@ -15,7 +15,6 @@ private:
     enum AVPixelFormat pixelFormatOut;
     AVFrame * RGBFrame;
 
-    unsigned char * RGBBuffer;
     SwsContext* resampleContext;
 };
 

@@ -25,6 +25,8 @@ protected:
     void initializeGL();
     void paintGL();
 private:
+    bool init;
+
     QRect output_rect;
     QImage * img;
     QMutex mutex;

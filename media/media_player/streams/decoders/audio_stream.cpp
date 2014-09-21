@@ -39,16 +39,6 @@ AudioStream::~AudioStream() {
     flushData();
 }
 
-//AudioFrame * AudioStream::decoded() {
-//    if (pauseRequired || frames.isEmpty()) {
-//        return new AudioFrame();
-//    } else {
-//        AudioFrame * currFrame = frames.takeFirst();
-//        MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
-//        return currFrame;
-//    }
-//}
-
 bool AudioStream::isBlocked() {
     return MediaStream::isBlocked() || frames.size() >= FRAMES_LIMIT;
 }
@@ -98,7 +88,8 @@ void AudioStream::routine() {
             qDebug() << "Error while decoding audio frame";
             break;
         } else {
-            if (got_frame) {                
+            if (got_frame) {
+                //TODO: copy data direct to the buffer
                 QByteArray * ar = new QByteArray();
                 if (resampleRequire) {
                     if (!resampler -> proceed(frame, ar))

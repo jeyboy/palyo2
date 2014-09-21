@@ -1,6 +1,5 @@
 #include "video_stream.h"
 #include "misc/screen.h"
-#include <QApplication>
 
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : MediaStream(context, streamIndex, parent, priority)

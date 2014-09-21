@@ -6,33 +6,19 @@ VideoResampler::VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelF
 
     resampleContext = 0;
     RGBFrame = av_frame_alloc();
-    RGBBuffer = 0;
 }
 
 VideoResampler::~VideoResampler() {
     av_frame_free(&RGBFrame);
-    delete [] RGBBuffer;
     sws_freeContext(resampleContext);
 }
 
 QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {
-    if (!RGBFrame || RGBFrame -> width != widthOut
-            || RGBFrame -> height != heightOut) {
-
-        RGBFrame -> width = widthOut;
-        RGBFrame -> height = heightOut;
-
-        // Determine required buffer size and allocate buffer
-        int numBytes = avpicture_get_size(AV_PIX_FMT_RGB24, widthOut, heightOut);
-
-        if (RGBBuffer)
-            delete[] RGBBuffer;
-
-        RGBBuffer = new unsigned char[numBytes];
-
+    QImage * img = new QImage(widthOut, heightOut, QImage::Format_RGB888);
+    RGBFrame -> width = widthOut;
+    RGBFrame -> height = heightOut;
         // Assign appropriate parts of buffer to image planes in RGBFrame
-        avpicture_fill((AVPicture *)RGBFrame, RGBBuffer, pixelFormatOut, widthOut, heightOut);
-    }
+    avpicture_fill((AVPicture *)RGBFrame, img -> bits(), pixelFormatOut, widthOut, heightOut);
 
     resampleContext = sws_getCachedContext(
                 resampleContext,
@@ -42,7 +28,7 @@ QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int
                 widthOut,
                 heightOut,
                 pixelFormatOut,
-                SWS_BICUBIC,
+                SWS_BICUBIC, //SWS_POINT
                 NULL,
                 NULL,
                 NULL
@@ -70,20 +56,6 @@ QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int
 
     // Convert to RGB
     sws_scale(resampleContext, frame -> data, frame -> linesize, 0, heightIn, RGBFrame -> data, RGBFrame -> linesize);
-
-    // Convert the frame to QImage
-    QImage * img = new QImage(widthOut, heightOut, QImage::Format_RGB888);
-    //new realisation
-
-    memcpy(img -> bits(), RGBFrame -> data[0], widthOut * 3 * heightOut);
-
-//    uint8_t * offset = RGBFrame -> data[0];
-//    int len = widthOut * 3;
-
-//    for (int y = 0; y < heightOut; y++, offset += RGBFrame -> linesize[0]) {
-//        memcpy(img -> scanLine(y), offset, len);
-//    }
-
     return img;
 }
 

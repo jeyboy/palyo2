@@ -6,6 +6,7 @@
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
   , img(0) {
 
+    init = false;
 //    setAutoBufferSwap(true);
 //    setAutoFillBackground(false);
 //    setAttribute(Qt::WA_PaintOnScreen);
@@ -84,7 +85,7 @@ void GLOutput::initializeGL() {
 
     //bind the texture ID
     glBindTexture(GL_TEXTURE_2D, texture);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 void GLOutput::paintGL() {
@@ -94,7 +95,13 @@ void GLOutput::paintGL() {
     glDisable(GL_DEPTH_TEST);
 
     mutex.lock();
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img -> bits());
+    glBindTexture(GL_TEXTURE_2D, texture);
+    if (init == false) {
+        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img -> bits());
+        init = true;
+    } else
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img -> width(), img -> height(), GL_RGBA, GL_UNSIGNED_BYTE, img -> bits());
+
     mutex.unlock();
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
