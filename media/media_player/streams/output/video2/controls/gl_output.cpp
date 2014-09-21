@@ -4,7 +4,7 @@
 #include <QApplication>
 
 GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
-  , img(0) {
+  , vFrame(0) {
 
     init = false;
 //    setAutoBufferSwap(true);
@@ -31,13 +31,13 @@ GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
-//    setAttribute(Qt::WA_OpaquePaintEvent,true);
+    setAttribute(Qt::WA_OpaquePaintEvent,true);
     setAttribute(Qt::WA_PaintOnScreen,true);
 }
 
 GLOutput::~GLOutput() {
     mutex.lock();
-    delete img;
+    delete vFrame;
     mutex.unlock();
 
     deleteTexture(texture);
@@ -46,12 +46,11 @@ GLOutput::~GLOutput() {
 void GLOutput::setFrame(VideoFrame * frame) {
     if (frame) {
         mutex.lock();
-        delete img;
-        img = new QImage(QGLWidget::convertToGLFormat(*frame -> image));
+        delete vFrame;
+        vFrame = frame;
         mutex.unlock();
         emit updated();
         repaint();
-        delete frame;
     }
 }
 
@@ -89,7 +88,7 @@ void GLOutput::initializeGL() {
 }
 
 void GLOutput::paintGL() {
-    if (img == 0) return;
+    if (vFrame == 0) return;
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
@@ -97,10 +96,10 @@ void GLOutput::paintGL() {
     mutex.lock();
     glBindTexture(GL_TEXTURE_2D, texture);
     if (init == false) {
-        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img -> bits());
+        glTexImage2D(GL_TEXTURE_2D, 0, 3, vFrame -> image -> width(), vFrame -> image -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, vFrame -> image -> bits());
         init = true;
     } else
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img -> width(), img -> height(), GL_RGBA, GL_UNSIGNED_BYTE, img -> bits());
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, vFrame -> image -> width(), vFrame -> image -> height(), GL_RGB, GL_UNSIGNED_BYTE, vFrame -> image -> bits());
 
     mutex.unlock();
 
@@ -114,6 +113,8 @@ void GLOutput::paintGL() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 //    glTranslatef(0.0f, 1.0f, 0.0f);
+
+    glRotatef(180, .5f, 0, 0);
 
     glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);  glVertex2f(-1.0f, -1.0f);

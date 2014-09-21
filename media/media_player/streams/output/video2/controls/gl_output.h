@@ -28,7 +28,7 @@ private:
     bool init;
 
     QRect output_rect;
-    QImage * img;
+    VideoFrame * vFrame;
     QMutex mutex;
 
     GLuint texture;
