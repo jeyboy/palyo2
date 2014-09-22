@@ -28,7 +28,7 @@ QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int
                 widthOut,
                 heightOut,
                 pixelFormatOut,
-                SWS_BICUBIC, //SWS_POINT
+                SWS_FAST_BILINEAR, //SWS_BICUBIC, //SWS_POINT
                 NULL,
                 NULL,
                 NULL
