@@ -3,6 +3,7 @@
 #include <QDebug>
 
 RenderInterface::RenderInterface(QWidget* parent) : QWidget(parent)
+  , fpsCounter(0)
   , vFrame(0) {
 
     init = false;
@@ -32,6 +33,14 @@ void RenderInterface::setFrame(VideoFrame * frame) {
 //    QWidget::repaint();
 //    paintFrame();
 //}
+
+void RenderInterface::redrawed() { fpsCounter++; }
+
+void RenderInterface::fpsCalculation() {
+    emit fpsChanged(fpsCounter);
+    fpsCounter = 0;
+    timer.singleShot(1000, this, SLOT(fpsCalculation()));
+}
 
 void RenderInterface::closeEvent(QCloseEvent *) {
     emit closed();

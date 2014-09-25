@@ -18,20 +18,26 @@ public:
 signals:
     void closed();
     void updated();
+    void fpsChanged(int val);
 
-//public slots:
+//protected slots:
 //    void repaint();
 
 protected:
+    void redrawed();
+    void fpsCalculation();
+
 //    virtual void paintFrame() = 0;
     void closeEvent(QCloseEvent *);
     void resizeEvent(QResizeEvent *);
 private:
     bool init;
+    int fpsCounter;
 
     QRect output_rect;
     VideoFrame * vFrame;
     QMutex mutex;
+    QTimer timer;
 };
 
 #endif // RENDER_INTERFACE_H
