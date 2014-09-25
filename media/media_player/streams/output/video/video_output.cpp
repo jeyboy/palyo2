@@ -8,11 +8,9 @@ VideoOutput::VideoOutput(QObject * parent, RenderType type, int width, int heigh
     resize(width, height);
 
     QVBoxLayout * newLayout = new QVBoxLayout(this);
-    screen = new GLRender(this);
-    newLayout -> addWidget(screen);
     newLayout -> setContentsMargins(0, 0, 0, 0);
     setLayout(newLayout);
-//    setRender(type);
+    setRender(type);
 
     panel -> setRegion(rect());
     panel -> show();
