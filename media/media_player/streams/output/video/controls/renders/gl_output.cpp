@@ -7,19 +7,16 @@ GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
   , vFrame(0) {
 
     init = false;
-//    setAutoBufferSwap(true);
-//    setAutoFillBackground(false);
-//    setAttribute(Qt::WA_PaintOnScreen);
-////    setAttribute(Qt::WA_UpdatesDisabled);
-//    setAttribute(Qt::WA_OpaquePaintEvent);
+////    setAutoBufferSwap(true);
+////    setAutoFillBackground(false);
 
-//    QGL::setPreferredPaintEngine(QPaintEngine::OpenGL2);
+////    QGL::setPreferredPaintEngine(QPaintEngine::OpenGL2);
 
-//    glFormat = GL_RGB;  //  QImage RGBA is BGRA
-//    glType = GL_UNSIGNED_BYTE;
+////    glFormat = GL_RGB;  //  QImage RGBA is BGRA
+////    glType = GL_UNSIGNED_BYTE;
 
     QGLFormat glFmt;
-//    glFmt.setSwapInterval(1); // 1= vsync on
+    glFmt.setSwapInterval(1); // 1= vsync on
 //    glFmt.setAlpha(GL_RGBA==glFormat);
 //    glFmt.setRgba(GL_RGBA==glFormat);
     glFmt.setDoubleBuffer(true); // default
@@ -57,21 +54,6 @@ void GLOutput::setFrame(VideoFrame * frame) {
 void GLOutput::closeEvent(QCloseEvent *) {
     emit closed();
 }
-
-//void GLOutput::paintEvent(QPaintEvent *) {
-////    QGLWidget::paintEvent(event);
-
-//    QPainter p(this);
-////    p.fillRect(this -> rect(), Qt::black);
-
-//    //Set the painter to use a smooth scaling algorithm.
-//    p.setRenderHint(QPainter::SmoothPixmapTransform, 1);
-////    p.setRenderHint(QPainter::Antialiasing, 1);
-
-//    mutex.lock();
-//    p.drawImage(output_rect, *frame -> image);
-//    mutex.unlock();
-//}
 
 void GLOutput::initializeGL() {
     glViewport(0, 0, width(), height());
