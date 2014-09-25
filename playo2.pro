@@ -118,9 +118,9 @@ SOURCES += main.cpp\
     media/media_player/streams/output/video/controls/output_container.cpp \
     media/media_player/streams/output/video/video_output.cpp \
     media/media_player/streams/output/video/base_output.cpp \
-    media/media_player/streams/output/video/controls/renders/gl_output.cpp \
     media/media_player/streams/output/video/controls/renders/render_interface.cpp \
-    media/media_player/streams/output/video/controls/renders/hardware_render.cpp
+    media/media_player/streams/output/video/controls/renders/hardware_render.cpp \
+    media/media_player/streams/output/video/controls/renders/gl_render.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -226,9 +226,9 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/output/video/controls/output_container.h \
     media/media_player/streams/output/video/video_output.h \
     media/media_player/streams/output/video/base_output.h \
-    media/media_player/streams/output/video/controls/renders/gl_output.h \
     media/media_player/streams/output/video/controls/renders/render_interface.h \
-    media/media_player/streams/output/video/controls/renders/hardware_render.h
+    media/media_player/streams/output/video/controls/renders/hardware_render.h \
+    media/media_player/streams/output/video/controls/renders/gl_render.h
 
 
 unix:!mac {

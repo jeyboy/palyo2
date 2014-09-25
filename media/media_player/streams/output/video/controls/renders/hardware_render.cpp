@@ -6,6 +6,7 @@ RenderInterface::RenderInterface(QWidget* parent) : QWidget(parent)
   , vFrame(0)
   , init(true) {
 
+    setAutoFillBackground(true);
 }
 
 void HardwareRender::paintEvent(QPaintEvent * event) {

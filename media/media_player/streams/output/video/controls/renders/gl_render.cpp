@@ -1,12 +1,8 @@
-#include "gl_output.h"
+#include "gl_render.h"
 
 #include <QDebug>
-#include <QApplication>
 
-GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
-  , vFrame(0) {
-
-    init = false;
+GLRender::GLRender(QWidget* parent) : RenderInterface(parent), QGLWidget(parent) {
 ////    setAutoBufferSwap(true);
 ////    setAutoFillBackground(false);
 
@@ -27,32 +23,14 @@ GLOutput::GLOutput(QWidget* parent) : QGLWidget(parent)
     QGLFormat::setDefaultFormat(glFmt);
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
-
-    setAttribute(Qt::WA_OpaquePaintEvent,true);
-    setAttribute(Qt::WA_PaintOnScreen,true);
 }
 
-GLOutput::~GLOutput() {
-    mutex.lock();
-    delete vFrame;
-    mutex.unlock();
-
+GLRender::~GLRender() {
     deleteTexture(texture);
 }
 
-void GLOutput::setFrame(VideoFrame * frame) {
-    if (frame) {
-        mutex.lock();
-        delete vFrame;
-        vFrame = frame;
-        mutex.unlock();
-        emit updated();
-        repaint();
-    }
-}
-
-void GLOutput::closeEvent(QCloseEvent *) {
-    emit closed();
+void GLRender::resizeViewport(int w, int h) {
+    glViewport(0, 0, w, h);
 }
 
 void GLOutput::initializeGL() {
@@ -69,7 +47,7 @@ void GLOutput::initializeGL() {
 //    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
-void GLOutput::paintGL() {
+void GLRender::paintGL() {
     if (vFrame == 0) return;
 
     glEnable(GL_TEXTURE_2D);
@@ -105,6 +83,8 @@ void GLOutput::paintGL() {
         glTexCoord2f(0.0f, 1.0f);  glVertex2f(-1.0f, 1.0f);
     glEnd();
 
+    redrawed();
+
     /* we can mix gl and qpainter.
      * QPainter painter(this);
      * painter.beginNativePainting();
@@ -113,13 +93,4 @@ void GLOutput::paintGL() {
      * swapBuffers();
      */
 //    swapBuffers();
-}
-
-void GLOutput::resizeEvent(QResizeEvent * event) {
-    QGLWidget::resizeEvent(event);
-
-    glViewport(0, 0, width(), height());
-
-//    output_rect = frame -> calcSize(this -> rect());
-//    glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
 }
