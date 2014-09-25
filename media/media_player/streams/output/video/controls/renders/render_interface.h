@@ -2,9 +2,11 @@
 #define RENDER_INTERFACE_H
 
 #include "media/media_player/utils/video_frame.h"
+#include "render_types.h"
 
 #include <QWidget>
 #include <QMutex>
+#include <QTimer>
 
 class RenderInterface : public QWidget {
      Q_OBJECT
@@ -13,7 +15,8 @@ public:
     ~RenderInterface();
 
     void setFrame(VideoFrame * frame);
-    void resizeViewport(int w, int h) = 0;
+    virtual void resizeViewport(int w, int h) = 0;
+    virtual enum RenderType getRenderType() const = 0;
 
 signals:
     void closed();
@@ -30,7 +33,7 @@ protected:
 //    virtual void paintFrame() = 0;
     void closeEvent(QCloseEvent *);
     void resizeEvent(QResizeEvent *);
-private:
+
     bool init;
     int fpsCounter;
 

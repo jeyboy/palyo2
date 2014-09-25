@@ -1,12 +1,16 @@
 #include "hardware_render.h"
 
 #include <QDebug>
+#include <QPainter>
 
-RenderInterface::RenderInterface(QWidget* parent) : QWidget(parent)
-  , vFrame(0)
-  , init(true) {
+HardwareRender::HardwareRender(QWidget* parent) : RenderInterface(parent) {
+    init = true;
 
     setAutoFillBackground(true);
+}
+
+HardwareRender::~HardwareRender() {
+
 }
 
 void HardwareRender::paintEvent(QPaintEvent * event) {
@@ -20,7 +24,7 @@ void HardwareRender::paintEvent(QPaintEvent * event) {
     p.setRenderHint(QPainter::Antialiasing, 1);
 
     mutex.lock();
-    p.drawImage(output_rect, *frame -> image);
+    p.drawImage(output_rect, *vFrame -> image);
     mutex.unlock();
     redrawed();
 }

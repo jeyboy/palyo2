@@ -33,8 +33,8 @@ void GLRender::resizeViewport(int w, int h) {
     glViewport(0, 0, w, h);
 }
 
-void GLOutput::initializeGL() {
-    glViewport(0, 0, width(), height());
+void GLRender::initializeGL() {
+    glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-1, 1, -1, 1, 0, 1);

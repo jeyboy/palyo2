@@ -1,22 +1,21 @@
 #include "video_output.h"
 #include "media/media_player/media_player.h"
 
-VideoOutput::VideoOutput(QObject * parent, int width, int height) : OutputContainer() {
+VideoOutput::VideoOutput(QObject * parent, RenderType type, int width, int height) : OutputContainer()
+    , screen(0) {
+
     setMouseTracking(true);
     resize(width, height);
 
-    screen = new GLOutput(this);
-    screen -> setMouseTracking(true);
-    connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
-
     QVBoxLayout * newLayout = new QVBoxLayout(this);
+    screen = new GLRender(this);
     newLayout -> addWidget(screen);
     newLayout -> setContentsMargins(0, 0, 0, 0);
     setLayout(newLayout);
+//    setRender(type);
 
     panel -> setRegion(rect());
     panel -> show();
-    screen -> lower();
 
     show();
     setFocus();
@@ -24,6 +23,29 @@ VideoOutput::VideoOutput(QObject * parent, int width, int height) : OutputContai
 
 VideoOutput::~VideoOutput() {
 
+}
+
+void VideoOutput::setRender(RenderType type) {
+    if (screen) {
+        layout() -> removeWidget(screen);
+        delete screen;
+        screen = 0;
+    }
+
+    switch(type) {
+        case gl: {
+            screen = new GLRender(this);
+            break;
+        }
+        default: {
+            screen = new HardwareRender(this);
+            break;
+        }
+    }
+
+    connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
+    screen -> setMouseTracking(true);
+    layout() -> addWidget(screen);
 }
 
 void VideoOutput::titleUpdate() {

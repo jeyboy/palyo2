@@ -6,9 +6,11 @@
 #include <QGLWidget>
 
 class GLRender : public QGLWidget, public RenderInterface {
+public:
     GLRender(QWidget* parent = NULL);
     ~GLRender();
 
+    inline RenderType getRenderType() const { return gl; }
     void resizeViewport(int w, int h);
 
 protected:
