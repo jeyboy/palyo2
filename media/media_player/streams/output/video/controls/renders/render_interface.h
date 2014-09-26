@@ -23,9 +23,11 @@ signals:
     void updated();
     void fpsChanged(int val);
 
+private slots:
+    void fpsCalculation();
+
 protected:
     void redrawed();
-    void fpsCalculation();
 
 //    virtual void paintFrame() = 0;
     void closeEvent(QCloseEvent *);

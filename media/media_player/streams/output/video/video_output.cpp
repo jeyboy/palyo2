@@ -41,20 +41,25 @@ void VideoOutput::setRender(RenderType type) {
         }
     }
 
-    screen -> setStyleSheet("QWidget { border-style: outset;  border-width: 2px;  border-radius: 10px;  border-color: beige;}");
+    connect(screen, SIGNAL(fpsChanged(int)), this, SLOT(fpsChanged(int)));
     connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
+
     screen -> setMouseTracking(true);
     layout() -> addWidget(screen);
     panel -> setRegion(rect());
 }
 
 void VideoOutput::titleUpdate() {
-    QString temp = MediaPlayer::instance() -> info();
+    QString temp = MediaPlayer::instance() -> info() + " (" + fps + "fps )";
     setWindowTitle(temp);
 }
 
 void VideoOutput::setFrame(void * frame) {
     screen -> setFrame((VideoFrame *)frame);
+}
+
+void VideoOutput::fpsChanged(int newFps) {
+    fps = QString::number(newFps);
 }
 
 void VideoOutput::mouseMoveEvent(QMouseEvent * event) {

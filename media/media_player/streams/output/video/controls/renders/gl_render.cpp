@@ -49,7 +49,6 @@ void GLRender::initializeGL() {
 
 void GLRender::paintGL() {
     if (vFrame == 0) return;
-//    makeCurrent();
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
@@ -86,12 +85,10 @@ void GLRender::paintGL() {
 
     redrawed();
 
-    /* we can mix gl and qpainter.
-     * QPainter painter(this);
-     * painter.beginNativePainting();
-     * gl functions...
-     * painter.endNativePainting();
-     * swapBuffers();
-     */
+//    QPainter painter(this);
+//    painter.beginNativePainting();
+//    painter.drawText(5, 5, 40, 20, Qt::AlignCenter, QString::number(fpsCounter));
+//    painter.endNativePainting();
+//    makeCurrent();
 //    swapBuffers();
 }

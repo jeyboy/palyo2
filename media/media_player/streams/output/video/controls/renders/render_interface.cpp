@@ -10,6 +10,7 @@ RenderInterface::RenderInterface(QWidget* parent) : QGLWidget(parent)
 
     setAttribute(Qt::WA_OpaquePaintEvent,true);
     setAttribute(Qt::WA_PaintOnScreen,true);
+    fpsCalculation();
 }
 
 RenderInterface::~RenderInterface() {
@@ -38,6 +39,7 @@ void RenderInterface::redrawed() { fpsCounter++; }
 
 void RenderInterface::fpsCalculation() {
     emit fpsChanged(fpsCounter);
+
     fpsCounter = 0;
     timer.singleShot(1000, this, SLOT(fpsCalculation()));
 }
