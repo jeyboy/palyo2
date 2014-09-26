@@ -30,7 +30,12 @@ GLRender::~GLRender() {
 }
 
 void GLRender::resizeViewport(int w, int h) {
-    glViewport(0, 0, w, h);
+    if (vFrame) {
+        output_rect = vFrame -> calcSize(this -> rect());
+        glViewport(output_rect.left(), output_rect.top(), output_rect.width(), h);
+    } else {
+        glViewport(0, 0, w, h);
+    }
 }
 
 void GLRender::initializeGL() {
@@ -56,7 +61,7 @@ void GLRender::paintGL() {
     mutex.lock();
     glBindTexture(GL_TEXTURE_2D, texture);
     if (init == false) {
-        output_rect = vFrame -> calcSize(this -> rect());
+        resizeViewport(width(), height());
         glTexImage2D(GL_TEXTURE_2D, 0, 3, vFrame -> image -> width(), vFrame -> image -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, vFrame -> image -> bits());
         init = true;
     } else

@@ -16,7 +16,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
         width = qMin((int)(width * 0.6), codec_context -> width);
         height = qMin((int)(height * 0.6), codec_context -> height);
 
-        output = new BaseOutput(this, hardware, width, height);
+        output = new BaseOutput(this, gl, width, height);
         resampler = new VideoResampler(codec_context -> pix_fmt);
     }
 }
