@@ -56,6 +56,7 @@ void GLRender::paintGL() {
     mutex.lock();
     glBindTexture(GL_TEXTURE_2D, texture);
     if (init == false) {
+        output_rect = vFrame -> calcSize(this -> rect());
         glTexImage2D(GL_TEXTURE_2D, 0, 3, vFrame -> image -> width(), vFrame -> image -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, vFrame -> image -> bits());
         init = true;
     } else

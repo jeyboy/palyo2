@@ -4,9 +4,7 @@
 #include <QPainter>
 
 HardwareRender::HardwareRender(QWidget* parent) : RenderInterface(parent) {
-    init = true;
-
-    setAutoFillBackground(true);
+    setAutoFillBackground(false);
 }
 
 HardwareRender::~HardwareRender() {
@@ -14,12 +12,18 @@ HardwareRender::~HardwareRender() {
 }
 
 void HardwareRender::paintEvent(QPaintEvent * event) {
-    qDebug() << "HARD";
+    if (vFrame == 0) return;
+
+    if (!init) {
+        init = true;
+        output_rect = vFrame -> calcSize(this -> rect());
+    }
+
     Q_UNUSED(event);
 //    QWidget::paintEvent(event);
 
     QPainter p(this);
-//    p.fillRect(this -> rect(), Qt::black);
+    p.fillRect(rect(), Qt::black);
 
     p.setRenderHint(QPainter::SmoothPixmapTransform, 1);
     p.setRenderHint(QPainter::Antialiasing, 1);
