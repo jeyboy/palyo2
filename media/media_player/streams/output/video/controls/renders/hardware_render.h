@@ -10,7 +10,6 @@ public:
 
     inline RenderType getRenderType() const { return hardware; }
     void resizeViewport(int w, int h) {}
-    void repaint();
 
 protected:
     void paintEvent(QPaintEvent *);

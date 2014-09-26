@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-RenderInterface::RenderInterface(QWidget* parent) : QWidget(parent)
+RenderInterface::RenderInterface(QWidget* parent) : QGLWidget(parent)
   , fpsCounter(0)
   , vFrame(0) {
 

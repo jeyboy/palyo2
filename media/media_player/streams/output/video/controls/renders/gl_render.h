@@ -3,9 +3,7 @@
 
 #include "media/media_player/streams/output/video/controls/renders/render_interface.h"
 
-#include <QGLWidget>
-
-class GLRender : public QGLWidget, public RenderInterface {
+class GLRender : public RenderInterface {
 public:
     GLRender(QWidget* parent = NULL);
     ~GLRender();

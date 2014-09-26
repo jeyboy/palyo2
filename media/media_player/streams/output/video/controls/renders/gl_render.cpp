@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-GLRender::GLRender(QWidget* parent) : RenderInterface(parent), QGLWidget(parent) {
+GLRender::GLRender(QWidget* parent) : RenderInterface(parent) {
 ////    setAutoBufferSwap(true);
 ////    setAutoFillBackground(false);
 
@@ -33,10 +33,6 @@ void GLRender::resizeViewport(int w, int h) {
     glViewport(0, 0, w, h);
 }
 
-void GLRender::repaint() {
-    paintGL();
-}
-
 void GLRender::initializeGL() {
     glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
     glMatrixMode(GL_PROJECTION);
@@ -53,7 +49,7 @@ void GLRender::initializeGL() {
 
 void GLRender::paintGL() {
     if (vFrame == 0) return;
-    qDebug() << "GL";
+//    makeCurrent();
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);

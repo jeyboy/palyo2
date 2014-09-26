@@ -41,6 +41,7 @@ void VideoOutput::setRender(RenderType type) {
         }
     }
 
+    screen -> setStyleSheet("QWidget { border-style: outset;  border-width: 2px;  border-radius: 10px;  border-color: beige;}");
     connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
     screen -> setMouseTracking(true);
     layout() -> addWidget(screen);
