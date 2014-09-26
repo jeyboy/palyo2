@@ -13,7 +13,12 @@ HardwareRender::~HardwareRender() {
 
 }
 
+void HardwareRender::repaint() {
+    QWidget::repaint();
+}
+
 void HardwareRender::paintEvent(QPaintEvent * event) {
+    qDebug() << "HARD";
     Q_UNUSED(event);
 //    QWidget::paintEvent(event);
 

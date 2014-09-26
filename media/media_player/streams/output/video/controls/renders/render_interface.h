@@ -17,6 +17,7 @@ public:
     void setFrame(VideoFrame * frame);
     virtual void resizeViewport(int w, int h) = 0;
     virtual enum RenderType getRenderType() const = 0;
+    virtual void repaint() = 0;
 
 signals:
     void closed();

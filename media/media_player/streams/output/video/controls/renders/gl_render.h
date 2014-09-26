@@ -13,6 +13,8 @@ public:
     inline RenderType getRenderType() const { return gl; }
     void resizeViewport(int w, int h);
 
+    void repaint();
+
 protected:
     void initializeGL();
     void paintGL();
