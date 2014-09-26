@@ -12,8 +12,8 @@ VideoOutput::VideoOutput(QObject * parent, RenderType type, int width, int heigh
     setLayout(newLayout);
     setRender(type);
 
-    panel -> setRegion(rect());
     panel -> show();
+    panel -> raise();
 
     show();
     setFocus();
@@ -45,6 +45,7 @@ void VideoOutput::setRender(RenderType type) {
     connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
     screen -> setMouseTracking(true);
     layout() -> addWidget(screen);
+    panel -> setRegion(rect());
 }
 
 void VideoOutput::titleUpdate() {
