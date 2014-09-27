@@ -1,7 +1,7 @@
 #ifndef GL_RENDER_H
 #define GL_RENDER_H
 
-#include "media/media_player/streams/output/video/controls/renders/render_interface.h"
+#include "media/media_player/output/video/controls/renders/render_interface.h"
 
 class GLRender : public RenderInterface {
 public:

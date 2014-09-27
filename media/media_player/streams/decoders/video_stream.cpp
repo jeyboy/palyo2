@@ -1,6 +1,6 @@
 #include "video_stream.h"
 #include "misc/screen.h"
-#include "media/media_player/streams/output/video/controls/renders/render_types.h"
+#include "media/media_player/output/video/controls/renders/render_types.h"
 
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : MediaStream(context, streamIndex, parent, priority)

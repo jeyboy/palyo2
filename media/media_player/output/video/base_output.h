@@ -2,7 +2,7 @@
 #define BASE_OUTPUT_H
 
 #include "media/media_player/streams/base/stream.h"
-#include "media/media_player/streams/output/video/controls/renders/render_types.h"
+#include "media/media_player/output/video/controls/renders/render_types.h"
 #include "video_output.h"
 
 class BaseOutput : public Stream {

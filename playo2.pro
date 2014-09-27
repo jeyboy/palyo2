@@ -108,18 +108,18 @@ SOURCES += main.cpp\
     media/media_player/streams/decoders/audio_stream.cpp \
     media/media_player/streams/decoders/video_stream.cpp \
     media/media_player/streams/decoders/subtitle_stream.cpp \
-    media/media_player/streams/output/audio/portaudio_output_stream.cpp \
     media/media_player/resamplers/audio_resampler.cpp \
     media/media_player/resamplers/video_resampler.cpp \
     media/media_player/utils/master_clock.cpp \
-    media/media_player/streams/output/audio/audio_output_stream.cpp \
-    media/media_player/streams/output/video/controls/control_panel.cpp \
-    media/media_player/streams/output/video/controls/output_container.cpp \
-    media/media_player/streams/output/video/video_output.cpp \
-    media/media_player/streams/output/video/base_output.cpp \
-    media/media_player/streams/output/video/controls/renders/render_interface.cpp \
-    media/media_player/streams/output/video/controls/renders/hardware_render.cpp \
-    media/media_player/streams/output/video/controls/renders/gl_render.cpp
+    media/media_player/output/audio/portaudio_output_stream.cpp \
+    media/media_player/output/audio/audio_output_stream.cpp \
+    media/media_player/output/video/controls/control_panel.cpp \
+    media/media_player/output/video/controls/output_container.cpp \
+    media/media_player/output/video/video_output.cpp \
+    media/media_player/output/video/base_output.cpp \
+    media/media_player/output/video/controls/renders/render_interface.cpp \
+    media/media_player/output/video/controls/renders/hardware_render.cpp \
+    media/media_player/output/video/controls/renders/gl_render.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -132,7 +132,6 @@ HEADERS  += mainwindow.h \
     web/web_api.h\
     web/socials/vk_api.h\
     web/socials/soundcloud_api.h \
-#    file_registration/file_registration.h \
     globalshortcut/qxtglobal.h \
     globalshortcut/qxtglobalshortcut.h \
     globalshortcut/qxtglobalshortcut_p.h \
@@ -200,6 +199,7 @@ HEADERS  += mainwindow.h \
     misc/stylesheets.h \
     misc/rand.h \
     misc/extensions.h \
+    misc/screen.h \
     dialogs/extension_dialog.h \
     override/simple_list_view.h \
     media/media_player/media_player.h \
@@ -212,23 +212,22 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/decoders/audio_stream.h \
     media/media_player/streams/decoders/video_stream.h \
     media/media_player/streams/decoders/subtitle_stream.h \
-    media/media_player/streams/output/audio/portaudio_output_stream.h \
     media/media_player/resamplers/audio_resampler.h \
     media/media_player/resamplers/video_resampler.h \
     media/media_player/utils/video_frame.h \
-    media/media_player/streams/output/audio/audio_output_stream.h \
     media/media_player/streams/base/i_media_stream.h \
     media/media_player/utils/audio_frame.h \
-    misc/screen.h \
-    media/media_player/streams/output/video/controls/control_panel.h \
-    media/media_player/streams/output/video/controls/output_container.h \
-    media/media_player/streams/output/video/video_output.h \
-    media/media_player/streams/output/video/base_output.h \
-    media/media_player/streams/output/video/controls/renders/render_interface.h \
-    media/media_player/streams/output/video/controls/renders/hardware_render.h \
-    media/media_player/streams/output/video/controls/renders/gl_render.h \
-    media/media_player/streams/output/video/controls/renders/render_types.h \
-    media/media_player/streams/output/video/controls/renders/renders.h
+    media/media_player/output/audio/audio_output_stream.h \
+    media/media_player/output/audio/portaudio_output_stream.h \
+    media/media_player/output/video/controls/control_panel.h \
+    media/media_player/output/video/controls/output_container.h \
+    media/media_player/output/video/video_output.h \
+    media/media_player/output/video/base_output.h \
+    media/media_player/output/video/controls/renders/render_interface.h \
+    media/media_player/output/video/controls/renders/hardware_render.h \
+    media/media_player/output/video/controls/renders/gl_render.h \
+    media/media_player/output/video/controls/renders/render_types.h \
+    media/media_player/output/video/controls/renders/renders.h
 
 
 unix:!mac {
