@@ -60,12 +60,14 @@ void GLRender::paintGL() {
 
     mutex.lock();
     glBindTexture(GL_TEXTURE_2D, texture);
+    QImage * img = vFrame -> asImage();
+
     if (init == false) {
         resizeViewport(width(), height());
-        glTexImage2D(GL_TEXTURE_2D, 0, 3, vFrame -> image -> width(), vFrame -> image -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, vFrame -> image -> bits());
+        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
         init = true;
     } else
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, vFrame -> image -> width(), vFrame -> image -> height(), GL_RGB, GL_UNSIGNED_BYTE, vFrame -> image -> bits());
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img -> width(), img -> height(), GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
 
     mutex.unlock();
 

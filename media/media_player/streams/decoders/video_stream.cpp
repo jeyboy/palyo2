@@ -48,7 +48,7 @@ void VideoStream::routine() {
 
     int len, got_picture;
     int width = codec_context -> width, height = codec_context -> height;
-    QImage * img = 0;
+    void * img = 0;
     AVPacket * packet;
 
     mutex -> lock();

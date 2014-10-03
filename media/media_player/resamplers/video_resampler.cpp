@@ -13,7 +13,7 @@ VideoResampler::~VideoResampler() {
     sws_freeContext(resampleContext);
 }
 
-QImage * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {
+void * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {
     QImage * img = new QImage(widthOut, heightOut, QImage::Format_RGB888);
     RGBFrame -> width = widthOut;
     RGBFrame -> height = heightOut;

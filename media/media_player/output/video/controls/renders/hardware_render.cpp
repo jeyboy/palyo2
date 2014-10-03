@@ -29,7 +29,7 @@ void HardwareRender::paintEvent(QPaintEvent * event) {
     p.setRenderHint(QPainter::Antialiasing, 1);
 
     mutex.lock();
-    p.drawImage(output_rect, *vFrame -> image);
+    p.drawImage(output_rect, *vFrame -> asImage());
     mutex.unlock();
     redrawed();
 }

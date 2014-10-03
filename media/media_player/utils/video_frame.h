@@ -8,11 +8,11 @@
 
 struct VideoFrame {
     VideoFrame() {
-        image = new QImage(":play");
+        image = 0;
         pts = -1;
     }
 
-    VideoFrame(QImage * img, double framePts, double nextPts, double aspectRatio) {
+    VideoFrame(void * img, double framePts, double nextPts, double aspectRatio) {
         aspect_ratio = aspectRatio;
         image = img;
         pts = framePts;
@@ -20,15 +20,15 @@ struct VideoFrame {
     }
 
     ~VideoFrame() {
-        delete image;
+        QImage * img = asImage();
+        if (img != 0)
+            delete asImage();
+        else
+            delete asFrame();
     }
 
-//    QPixmap rotated() {
-//        QTransform myTransform;
-//        myTransform.rotate(90);
-//        return image.transformed(myTransform);
-
-//    }
+    QImage * asImage() { return (QImage *)image; }
+    AVFrame * asFrame() { return (AVFrame *)image; }
 
     uint calcDelay() {
         uint res = 40;
@@ -58,7 +58,7 @@ struct VideoFrame {
         return rect;
     }
 
-    QImage * image;
+    void * image;
     double pts, next_pts, aspect_ratio;
 };
 
