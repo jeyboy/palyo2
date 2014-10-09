@@ -11,12 +11,13 @@ HardwareRender::~HardwareRender() {
 
 }
 
-void HardwareRender::setQuality(const enum RenderQuality & quality) {
+//TODO: add quality settings
+void HardwareRender::setQuality(const Quality & quality) {
     switch(quality) {
-        case RenderQuality::best : {
+        case RenderInterface::best : {
 
         break;}
-        case RenderQuality::low : {
+        case RenderInterface::low : {
 
         break;}
         default : {

@@ -26,12 +26,12 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
 }
 
 GLRenderRaw::~GLRenderRaw() {
-    deleteTexture(texture);
+//    deleteTexture(texture);
 }
 
-void GLRenderRaw::setQuality(const enum RenderQuality & quality) {
+void GLRenderRaw::setQuality(const Quality & quality) {
     switch(quality) {
-        case RenderQuality::best : {
+        case RenderInterface::best : {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
@@ -39,7 +39,7 @@ void GLRenderRaw::setQuality(const enum RenderQuality & quality) {
             //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
             glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         break;}
-        case RenderQuality::low : {
+        case RenderInterface::low : {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);

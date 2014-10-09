@@ -3,7 +3,6 @@
 
 #include "media/media_player/utils/video_frame.h"
 #include "render_types.h"
-#include "render_quality.h"
 
 #include <QGLWidget>
 #include <QMutex>
@@ -12,10 +11,12 @@
 class RenderInterface : public QGLWidget {
      Q_OBJECT
 public:
+    enum Quality { best, fast, low };
+
     RenderInterface(QWidget* parent = NULL);
     ~RenderInterface();
 
-    void setQuality(const enum RenderQuality &) = 0;
+    virtual void setQuality(const Quality & quality) = 0;
     void setFrame(VideoFrame * frame);
     virtual void resizeViewport(int w, int h) = 0;
     virtual enum RenderType getRenderType() const = 0;

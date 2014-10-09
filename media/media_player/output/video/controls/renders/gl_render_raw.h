@@ -9,6 +9,8 @@ public:
     GLRenderRaw(QWidget* parent = NULL);
     ~GLRenderRaw();
 
+    void setQuality(const Quality & quality);
+
     inline RenderType getRenderType() const { return gl_plus; }
     void resizeViewport(int w, int h);
 

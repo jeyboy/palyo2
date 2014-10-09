@@ -229,8 +229,7 @@ HEADERS  += mainwindow.h \
     media/media_player/output/video/controls/renders/gl_render.h \
     media/media_player/output/video/controls/renders/render_types.h \
     media/media_player/output/video/controls/renders/renders.h \
-    media/media_player/output/video/controls/renders/gl_render_raw.h \
-    media/media_player/output/video/controls/renders/render_quality.h
+    media/media_player/output/video/controls/renders/gl_render_raw.h
 
 
 unix:!mac {

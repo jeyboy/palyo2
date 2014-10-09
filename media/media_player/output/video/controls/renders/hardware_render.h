@@ -8,6 +8,7 @@ public:
     HardwareRender(QWidget* parent = NULL);
     ~HardwareRender();
 
+    void setQuality(const Quality & quality);
     inline RenderType getRenderType() const { return hardware; }
     void resizeViewport(int w, int h) {}
 

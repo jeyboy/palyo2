@@ -29,6 +29,17 @@ GLRender::~GLRender() {
     deleteTexture(texture);
 }
 
+void GLRender::setQuality(const Quality & quality) {
+    switch(quality) {
+        case RenderInterface::best : {
+
+        break;}
+        default : {
+
+        }
+    };
+}
+
 void GLRender::resizeViewport(int w, int h) {
     if (vFrame) {
         output_rect = vFrame -> calcSize(this -> rect());

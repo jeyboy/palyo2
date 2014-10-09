@@ -25,9 +25,9 @@ struct VideoFrame {
             delete asImage();
         else {
             uint8_t * buffers = asBuffers();
-            av_freep(buffers[0]);
-            av_freep(buffers[1]);
-            av_freep(buffers[2]);
+            av_freep((uint8_t *)buffers[0]);
+            av_freep((uint8_t *)buffers[1]);
+            av_freep((uint8_t *)buffers[2]);
             av_freep(buffers);
         }
     }
