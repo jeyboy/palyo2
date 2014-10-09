@@ -23,12 +23,17 @@ struct VideoFrame {
         QImage * img = asImage();
         if (img != 0)
             delete asImage();
-        else
-            delete asFrame();
+        else {
+            uint8_t * buffers = asBuffers();
+            av_freep(buffers[0]);
+            av_freep(buffers[1]);
+            av_freep(buffers[2]);
+            av_freep(buffers);
+        }
     }
 
     QImage * asImage() { return (QImage *)image; }
-    AVFrame * asFrame() { return (AVFrame *)image; }
+    uint8_t * asBuffers() { return (uint8_t *)image; }
 
     uint calcDelay() {
         uint res = 40;

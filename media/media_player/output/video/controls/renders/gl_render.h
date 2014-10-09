@@ -8,6 +8,8 @@ public:
     GLRender(QWidget* parent = NULL);
     ~GLRender();
 
+    void setQuality(const enum RenderQuality & quality);
+
     inline RenderType getRenderType() const { return gl; }
     void resizeViewport(int w, int h);
 

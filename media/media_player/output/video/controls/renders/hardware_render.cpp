@@ -11,6 +11,20 @@ HardwareRender::~HardwareRender() {
 
 }
 
+void HardwareRender::setQuality(const enum RenderQuality & quality) {
+    switch(quality) {
+        case RenderQuality::best : {
+
+        break;}
+        case RenderQuality::low : {
+
+        break;}
+        default : {
+
+        }
+    };
+}
+
 void HardwareRender::paintEvent(QPaintEvent * event) {
     if (vFrame == 0) return;
 

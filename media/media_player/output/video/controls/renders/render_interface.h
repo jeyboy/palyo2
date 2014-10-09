@@ -3,6 +3,7 @@
 
 #include "media/media_player/utils/video_frame.h"
 #include "render_types.h"
+#include "render_quality.h"
 
 #include <QGLWidget>
 #include <QMutex>
@@ -14,6 +15,7 @@ public:
     RenderInterface(QWidget* parent = NULL);
     ~RenderInterface();
 
+    void setQuality(const enum RenderQuality &) = 0;
     void setFrame(VideoFrame * frame);
     virtual void resizeViewport(int w, int h) = 0;
     virtual enum RenderType getRenderType() const = 0;

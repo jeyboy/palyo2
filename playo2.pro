@@ -119,7 +119,8 @@ SOURCES += main.cpp\
     media/media_player/output/video/base_output.cpp \
     media/media_player/output/video/controls/renders/render_interface.cpp \
     media/media_player/output/video/controls/renders/hardware_render.cpp \
-    media/media_player/output/video/controls/renders/gl_render.cpp
+    media/media_player/output/video/controls/renders/gl_render.cpp \
+    media/media_player/output/video/controls/renders/gl_render_raw.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -227,7 +228,9 @@ HEADERS  += mainwindow.h \
     media/media_player/output/video/controls/renders/hardware_render.h \
     media/media_player/output/video/controls/renders/gl_render.h \
     media/media_player/output/video/controls/renders/render_types.h \
-    media/media_player/output/video/controls/renders/renders.h
+    media/media_player/output/video/controls/renders/renders.h \
+    media/media_player/output/video/controls/renders/gl_render_raw.h \
+    media/media_player/output/video/controls/renders/render_quality.h
 
 
 unix:!mac {

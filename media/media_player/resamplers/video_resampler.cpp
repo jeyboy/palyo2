@@ -13,6 +13,63 @@ VideoResampler::~VideoResampler() {
     sws_freeContext(resampleContext);
 }
 
+void * VideoResampler::proceed2(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {
+    if (frame -> format == AV_PIX_FMT_YUV420P) {
+        uint8_t * data[3];
+
+        int size = frame -> linesize[0] * frame -> height;
+        data[0] = (uint8_t*)av_malloc(size);
+        memcpy(data[0], frame -> data[0], size);
+
+        size = frame -> linesize[1] * frame -> height / 2;
+        data[1] = (uint8_t*)av_malloc(size);
+        memcpy(data[1], frame -> data[1], size);
+
+        size = frame -> linesize[2] * frame -> height / 2;
+        data[2] = (uint8_t*)av_malloc(size);
+        memcpy(data[2], frame -> data[2], size);
+
+        return data;
+
+
+//        int size = avpicture_get_size(frame -> format, frame -> width, frame -> height);
+//        uint8_t* buffer = (uint8_t*)av_malloc(size);
+
+
+        // Initialize the AVFrame
+//        AVFrame* dupFrame = avcodec_alloc_frame();
+//        dupFrame -> width = widthIn;
+//        dupFrame -> height = heightIn;
+//        dupFrame -> format = AV_PIX_FMT_YUV420P;
+
+
+//        // Allocate a buffer large enough for all data
+//        int size = avpicture_get_size(frame->format, frame->width, frame->height);
+//        uint8_t* buffer = (uint8_t*)av_malloc(size);
+
+//        // Initialize frame->linesize and frame->data pointers
+//        avpicture_fill((AVPicture*)frame, buffer, frame->format, frame->width, frame->height);
+
+//        // Copy data from the 3 input buffers
+//        memcpy(frame -> data[0], inputBufferY, frame -> linesize[0] * frame -> height);
+//        memcpy(frame -> data[1], inputBufferU, frame -> linesize[1] * frame -> height / 2);
+//        memcpy(frame -> data[2], inputBufferV, frame -> linesize[2] * frame -> height / 2);
+
+
+
+//        // Initialize frame->linesize
+//        avpicture_fill((AVPicture*)dupFrame, NULL, frame -> format, frame -> width, frame -> height);
+
+//        // Set frame->data pointers manually
+//        dupFrame -> data[0] = inputBufferY;
+//        dupFrame -> data[1] = inputBufferU;
+//        dupFrame -> data[2] = inputBufferV;
+
+        // Or if your Y, U, V buffers are contiguous and have the correct size, simply use:
+        // avpicture_fill((AVPicture*)frame, inputBufferYUV, frame->format, frame->width, frame->height);
+    } else return proceed(frame, widthIn, heightIn, widthOut, heightOut);
+}
+
 void * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {
     QImage * img = new QImage(widthOut, heightOut, QImage::Format_RGB888);
     RGBFrame -> width = widthOut;
