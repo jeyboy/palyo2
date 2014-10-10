@@ -67,86 +67,79 @@ void GLRenderRaw::resizeViewport(int w, int h) {
     }
 }
 
-bool GLRenderRaw::setupShader() {
-    if(shader_created) {
-        printf("Already creatd the shader.\n");
-        return false;
-    }
+//bool GLRenderRaw::setupShader() {
+//    if(shader_created) {
+//        printf("Already creatd the shader.\n");
+//        return false;
+//    }
 
-    vert = rx_create_shader(GL_VERTEX_SHADER, YUV420P_VS);
-    frag = rx_create_shader(GL_FRAGMENT_SHADER, YUV420P_FS);
-    prog = rx_create_program(vert, frag);
+//    vert = rx_create_shader(GL_VERTEX_SHADER, YUV420P_VS);
+//    frag = rx_create_shader(GL_FRAGMENT_SHADER, YUV420P_FS);
+//    prog = rx_create_program(vert, frag);
 
-    glLinkProgram(prog);
-    rx_print_shader_link_info(prog);
+//    glLinkProgram(prog);
+//    rx_print_shader_link_info(prog);
 
-    glUseProgram(prog);
-    glUniform1i(glGetUniformLocation(prog, "y_tex"), 0);
-    glUniform1i(glGetUniformLocation(prog, "u_tex"), 1);
-    glUniform1i(glGetUniformLocation(prog, "v_tex"), 2);
+//    glUseProgram(prog);
+//    glUniform1i(glGetUniformLocation(prog, "y_tex"), 0);
+//    glUniform1i(glGetUniformLocation(prog, "u_tex"), 1);
+//    glUniform1i(glGetUniformLocation(prog, "v_tex"), 2);
 
-    u_pos = glGetUniformLocation(prog, "draw_pos");
+//    u_pos = glGetUniformLocation(prog, "draw_pos");
 
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    resize(viewport[2], viewport[3]);
+//    GLint viewport[4];
+//    glGetIntegerv(GL_VIEWPORT, viewport);
+//    resize(viewport[2], viewport[3]);
 
-    return true;
-}
+//    return true;
+//}
 
 void GLRenderRaw::initializeGL() {
     glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
 
-    glGenVertexArrays(1, &vao);
+//    glGenVertexArrays(1, &vao);
 }
 
 void GLRenderRaw::paintGL() {
     if (vFrame == 0) return;
 
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
+//    glEnable(GL_TEXTURE_2D);
+//    glDisable(GL_DEPTH_TEST);
 
-    mutex.lock();
-    glBindTexture(GL_TEXTURE_2D, texture);
-    QImage * img = vFrame -> asImage();
+//    mutex.lock();
+//    glBindTexture(GL_TEXTURE_2D, texture);
+//    QImage * img = vFrame -> asImage();
 
-    if (init == false) {
-        resizeViewport(width(), height());
-        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
-        init = true;
-    } else
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img -> width(), img -> height(), GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
+//    if (init == false) {
+//        resizeViewport(width(), height());
+//        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
+//        init = true;
+//    } else
+//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img -> width(), img -> height(), GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
 
-    mutex.unlock();
+//    mutex.unlock();
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-//    glTranslatef(0.0f, 1.0f, 0.0f);
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+////    glTranslatef(0.0f, 1.0f, 0.0f);
 
-    glRotatef(180, .5f, 0, 0);
+//    glRotatef(180, .5f, 0, 0);
 
-    glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 0.0f);  glVertex2f(-1.0f, -1.0f);
-        glTexCoord2f(1.0f, 0.0f);  glVertex2f(1.0f, -1.0f);
-        glTexCoord2f(1.0f, 1.0f);  glVertex2f(1.0f, 1.0f);
-        glTexCoord2f(0.0f, 1.0f);  glVertex2f(-1.0f, 1.0f);
-    glEnd();
+//    glBegin(GL_QUADS);
+//        glTexCoord2f(0.0f, 0.0f);  glVertex2f(-1.0f, -1.0f);
+//        glTexCoord2f(1.0f, 0.0f);  glVertex2f(1.0f, -1.0f);
+//        glTexCoord2f(1.0f, 1.0f);  glVertex2f(1.0f, 1.0f);
+//        glTexCoord2f(0.0f, 1.0f);  glVertex2f(-1.0f, 1.0f);
+//    glEnd();
 
     redrawed();
-
-//    QPainter painter(this);
-//    painter.beginNativePainting();
-//    painter.drawText(5, 5, 40, 20, Qt::AlignCenter, QString::number(fpsCounter));
-//    painter.endNativePainting();
-//    makeCurrent();
-//    swapBuffers();
 }
 
 
