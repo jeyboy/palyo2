@@ -23,6 +23,7 @@ GLRender::GLRender(QWidget* parent) : RenderInterface(parent) {
     QGLFormat::setDefaultFormat(glFmt);
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
+    setQuality(best);
 }
 
 GLRender::~GLRender() {
@@ -32,10 +33,28 @@ GLRender::~GLRender() {
 void GLRender::setQuality(const Quality & quality) {
     switch(quality) {
         case RenderInterface::best : {
-
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+        break;}
+        case RenderInterface::low : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
         break;}
         default : {
-
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
         }
     };
 }

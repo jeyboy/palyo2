@@ -61,7 +61,7 @@ void GLRenderRaw::setQuality(const Quality & quality) {
 void GLRenderRaw::resizeViewport(int w, int h) {
     if (vFrame) {
         output_rect = vFrame -> calcSize(this -> rect());
-        glViewport(output_rect.left(), output_rect.top(), output_rect.width(), h);
+        glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
     } else {
         glViewport(0, 0, w, h);
     }
