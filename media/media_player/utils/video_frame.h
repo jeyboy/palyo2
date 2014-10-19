@@ -1,39 +1,29 @@
 #ifndef VIDEO_FRAME_H
 #define VIDEO_FRAME_H
 
-#include <QImage>
-#include <QPixmap>
 #include <QTransform>
 #include "media/media_player/utils/master_clock.h"
+#include "media/media_player/utils/video_buffer.h"
 
 struct VideoFrame {
     VideoFrame() {
-        image = 0;
+        buffer = 0;
         pts = -1;
     }
 
-    VideoFrame(void * img, double framePts, double nextPts, double aspectRatio) {
+    VideoFrame(VideoBuffer * buff, double framePts, double nextPts, double aspectRatio) {
         aspect_ratio = aspectRatio;
-        image = img;
+        buffer = buff;
         pts = framePts;
         next_pts = nextPts;
     }
 
     ~VideoFrame() {
-        QImage * img = asImage();
-        if (img != 0)
-            delete asImage();
-        else {
-            uint8_t * buffers = asBuffers();
-            av_freep((uint8_t *)buffers[0]);
-            av_freep((uint8_t *)buffers[1]);
-            av_freep((uint8_t *)buffers[2]);
-            av_freep(buffers);
-        }
+        delete buffer;
     }
 
-    QImage * asImage() { return (QImage *)image; }
-    uint8_t * asBuffers() { return (uint8_t *)image; }
+    QImage * asImage() { return buffer -> asQImage(); }
+    AVPicture * asPicture() { return buffer -> asAVPicture(); }
 
     uint calcDelay() {
         uint res = 40;
@@ -58,12 +48,11 @@ struct VideoFrame {
             h = ((int)rint(w / aspect_ratio)) & -3;
         }
 
-
         QRect rect(defSize.left() + (defSize.width() - w) / 2, defSize.top() + (defSize.height() - h) / 2, w, h);
         return rect;
     }
 
-    void * image;
+    VideoBuffer * buffer;
     double pts, next_pts, aspect_ratio;
 };
 

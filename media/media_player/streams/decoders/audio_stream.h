@@ -5,6 +5,8 @@
 #include "media/media_player/streams/base/media_stream.h"
 #include "media/media_player/utils/audio_frame.h"
 
+//#include <QAudioDeviceInfo>
+#include <QAudioOutput>
 #include <QIODevice>
 #include <QAudioFormat>
 

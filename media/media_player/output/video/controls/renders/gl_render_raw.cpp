@@ -25,8 +25,13 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
     glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
-GLRenderRaw::~GLRenderRaw() {
-//    deleteTexture(texture);
+GLRenderRaw::~GLRenderRaw() {   
+//    if (!textures.isEmpty()) {
+//        glDeleteTextures(textures.size(), textures.data());
+//        textures.clear();
+//    }
+
+    delete shader;
 }
 
 void GLRenderRaw::setQuality(const Quality & quality) {
@@ -67,41 +72,102 @@ void GLRenderRaw::resizeViewport(int w, int h) {
     }
 }
 
-//bool GLRenderRaw::setupShader() {
-//    if(shader_created) {
-//        printf("Already creatd the shader.\n");
-//        return false;
-//    }
+//void GLRenderRaw::setupTextures(int w, int h) {
+//    glEnable(GL_TEXTURE_2D);
 
-//    vert = rx_create_shader(GL_VERTEX_SHADER, YUV420P_VS);
-//    frag = rx_create_shader(GL_FRAGMENT_SHADER, YUV420P_FS);
-//    prog = rx_create_program(vert, frag);
+//    /* Select texture unit 1 as the active unit and bind the U texture. */
+//    glActiveTexture(GL_TEXTURE1);
+//    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 1);
+//    shader -> program -> setUniformValue(shader -> Utex, 1);
+//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+//    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_LUMINANCE, 376, 288, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Utex);
 
-//    glLinkProgram(prog);
-//    rx_print_shader_link_info(prog);
+//    /* Select texture unit 2 as the active unit and bind the V texture. */
+//    glActiveTexture(GL_TEXTURE2);
+//    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 2);
+//    shader -> program -> setUniformValue(shader -> Vtex, 2);
+//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+//    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_LUMINANCE, 376, 288, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Vtex);
 
-//    glUseProgram(prog);
-//    glUniform1i(glGetUniformLocation(prog, "y_tex"), 0);
-//    glUniform1i(glGetUniformLocation(prog, "u_tex"), 1);
-//    glUniform1i(glGetUniformLocation(prog, "v_tex"), 2);
-
-//    u_pos = glGetUniformLocation(prog, "draw_pos");
-
-//    GLint viewport[4];
-//    glGetIntegerv(GL_VIEWPORT, viewport);
-//    resize(viewport[2], viewport[3]);
-
-//    return true;
+//    /* Select texture unit 0 as the active unit and bind the Y texture. */
+//    glActiveTexture(GL_TEXTURE0);
+//    shader -> program -> setUniformValue(shader -> Ytex, 0);
+//    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 0);
+//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+//    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_LUMINANCE, 752, 576, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Ytex);
 //}
 
 void GLRenderRaw::initializeGL() {
-    glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
+    initializeOpenGLFunctions();
 
-//    glGenVertexArrays(1, &vao);
+    shader = new Shader();
+    shader -> setup();
+
+    glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
 }
 
 void GLRenderRaw::paintGL() {
     if (vFrame == 0) return;
+
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
+
+    shader -> program -> bind();
+
+    mutex.lock();
+//    QImage * img = vFrame -> asImage();
+
+//    if (init == false) {
+//        resizeViewport(width(), height());
+
+//        for (int i = 0; i < 3; i++) {
+//    //        glActiveTexture(GL_TEXTURE0 + i);
+//            glBindTexture(GL_TEXTURE_2D, yuv_texture_id_[i]);
+//            shader -> program -> setUniformValue(yuv_texture_object_[i], (GLint)i);
+//            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, stream_yuv_width_[i], stream_yuv_height_[i], GL_RGBA, GL_UNSIGNED_BYTE, yuv_data_[i]);
+//        }
+//        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
+
+//        init = true;
+//    } else
+//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img -> width(), img -> height(), GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
+
+    mutex.unlock();
+
+//    shader -> program -> setAttributeArray(shader -> position_object_, GL_FLOAT, kVertexInformation, 2);
+//    shader -> program -> setAttributeArray(shader -> texture_position_object_, GL_FLOAT, kTextureCoordinateInformation, 2);
+//    shader -> program -> enableAttributeArray(shader -> position_object_);
+//    shader -> program -> enableAttributeArray(shader -> texture_position_object_);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    /* Draw image (again and again). */
+
+//    glBegin(GL_QUADS);
+//      glTexCoord2i(0,0);
+//      glVertex2i(0,0);
+//      glTexCoord2i(720,0);
+//      glVertex2i(B_WIDTH,0);
+//      glTexCoord2i(720,576);
+//      glVertex2i(B_WIDTH,B_HEIGHT);
+//      glTexCoord2i(0,576);
+//      glVertex2i(0,B_HEIGHT);
+//    glEnd();
+
+    /* Flip buffers. */
+
+    glFlush();
+//    SDL_GL_SwapBuffers();
+
+    shader -> program -> release();
+//    shader -> program -> disableAttributeArray(shader -> texture_position_object_);
+//    shader -> program -> disableAttributeArray(shader -> position_object_);
+
 
 //    glEnable(GL_TEXTURE_2D);
 //    glDisable(GL_DEPTH_TEST);
@@ -141,315 +207,6 @@ void GLRenderRaw::paintGL() {
 
     redrawed();
 }
-
-
-//#include "QtAV/GLWidgetRenderer.h"
-//#include "QtAV/private/VideoRenderer_p.h"
-//#include "utils/OpenGLHelper.h"
-//#include <QtCore/QCoreApplication>
-//#include <QtCore/QFile>
-//#include <QtCore/qmath.h>
-//#include <QtCore/QVector>
-//#include <QResizeEvent>
-//#include <QtOpenGL/QGLShaderProgram>
-//#include <QtOpenGL/QGLShader>
-//#define NO_QGL_SHADER (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-////TODO: vsync http://stackoverflow.com/questions/589064/how-to-enable-vertical-sync-in-opengl
-////TODO: check gl errors
-////glEGLImageTargetTexture2DOES:http://software.intel.com/en-us/articles/using-opengl-es-to-accelerate-apps-with-legacy-2d-guis
-
-
-////#ifdef GL_EXT_unpack_subimage
-//#ifndef GL_UNPACK_ROW_LENGTH
-//#ifdef GL_UNPACK_ROW_LENGTH_EXT
-//#define GL_UNPACK_ROW_LENGTH GL_UNPACK_ROW_LENGTH_EXT
-//#endif //GL_UNPACK_ROW_LENGTH_EXT
-//#endif //GL_UNPACK_ROW_LENGTH
-
-//#include "QtAV/ColorTransform.h"
-//#include "QtAV/FilterContext.h"
-
-//#define UPLOAD_ROI 0
-//#define ROI_TEXCOORDS 1
-
-//#define AVALIGN(x, a) (((x)+(a)-1)&~((a)-1))
-
-
-////TODO: QGLfunctions?
-//namespace QtAV {
-
-//const GLfloat kVertices[] = {
-//    -1, 1,
-//    1, 1,
-//    1, -1,
-//    -1, -1,
-//};
-
-//static inline void checkGlError(const char* op = 0) {
-//    GLenum error = glGetError();
-//    if (error == GL_NO_ERROR)
-//        return;
-//    qWarning("GL error %s (%#x): %s", op, error, glGetString(error));
-//}
-
-//#define CHECK_GL_ERROR(FUNC) \
-//    FUNC; \
-//    checkGlError(#FUNC);
-
-//static const char kVertexShader[] =
-//    "attribute vec4 a_Position;\n"
-//    "attribute vec2 a_TexCoords;\n"
-//    "uniform mat4 u_MVP_matrix;\n"
-//    "varying vec2 v_TexCoords;\n"
-//    "void main() {\n"
-//    "  gl_Position = u_MVP_matrix * a_Position;\n"
-//    "  v_TexCoords = a_TexCoords; \n"
-//    "}\n";
-
-
-//class GLWidgetRendererPrivate : public VideoRendererPrivate
-//#if QTAV_HAVE(QGLFUNCTIONS)
-//        , public QGLFunctions
-//#endif //QTAV_HAVE(QGLFUNCTIONS)
-//{
-//public:
-//    GLWidgetRendererPrivate():
-//        VideoRendererPrivate()
-//      , hasGLSL(true)
-//      , update_texcoords(true)
-//      , effective_tex_width_ratio(1)
-//      , shader_program(0)
-//      , program(0)
-//      , vert(0)
-//      , frag(0)
-//      , a_Position(-1)
-//      , a_TexCoords(-1)
-//      , u_matrix(-1)
-//      , u_bpp(-1)
-//      , painter(0)
-//      , video_format(VideoFormat::Format_Invalid)
-//      , material_type(0)
-//    {
-//        if (QGLFormat::openGLVersionFlags() == QGLFormat::OpenGL_Version_None) {
-//            available = false;
-//            return;
-//        }
-//        colorTransform.setOutputColorSpace(ColorTransform::RGB);
-//    }
-//    ~GLWidgetRendererPrivate() {
-//        releaseShaderProgram();
-//        if (!textures.isEmpty()) {
-//            glDeleteTextures(textures.size(), textures.data());
-//            textures.clear();
-//        }
-//        if (shader_program) {
-//            delete shader_program;
-//            shader_program = 0;
-//        }
-//    }
-//    bool initWithContext(const QGLContext *ctx) {
-//        Q_UNUSED(ctx);
-//#if !NO_QGL_SHADER
-//        shader_program = new QGLShaderProgram(ctx, 0);
-//#endif
-//        return true;
-//    }
-
-//    GLuint loadShader(GLenum shaderType, const char* pSource);
-//    GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
-//    bool releaseShaderProgram();
-//    QString getShaderFromFile(const QString& fileName);
-//    bool prepareShaderProgram(const VideoFormat& fmt, ColorTransform::ColorSpace cs);
-//    bool initTexture(GLuint tex, GLint internal_format, GLenum format, GLenum dataType, int width, int height);
-//    bool initTextures(const VideoFormat& fmt);
-//    void updateTexturesIfNeeded();
-//    void upload(const QRect& roi);
-//    void uploadPlane(int p, GLint internal_format, GLenum format, const QRect& roi);
-//    //GL 4.x: GL_FRAGMENT_SHADER_DERIVATIVE_HINT,GL_TEXTURE_COMPRESSION_HINT
-//    //GL_DONT_CARE(default), GL_FASTEST, GL_NICEST
-//    /*
-
-//    void setupAspectRatio() {
-//        mpv_matrix(0, 0) = (float)out_rect.width()/(float)renderer_width;
-//        mpv_matrix(1, 1) = (float)out_rect.height()/(float)renderer_height;
-//    }
-
-//    class VideoMaterialType {};
-//    VideoMaterialType* materialType(const VideoFormat& fmt) const {
-//        static VideoMaterialType rgbType;
-//        static VideoMaterialType packedType; // TODO: uyuy, yuy2
-//        static VideoMaterialType planar16leType;
-//        static VideoMaterialType planar16beType;
-//        static VideoMaterialType yuv8Type;
-//        static VideoMaterialType invalidType;
-//        if (fmt.isRGB() && !fmt.isPlanar())
-//            return &rgbType;
-//        if (!fmt.isPlanar())
-//            return &packedType;
-//        if (fmt.bytesPerPixel(0) == 1)
-//            return &yuv8Type;
-//        if (fmt.isBigEndian())
-//            return &planar16beType;
-//        else
-//            return &planar16leType;
-//        return &invalidType;
-//    }
-//    void updateShaderIfNeeded();
-
-//    bool hasGLSL;
-//    bool update_texcoords;
-//    QVector<GLuint> textures; //texture ids. size is plane count
-//    QVector<QSize> texture_size;
-//    /*
-//     * actually if render a full frame, only plane 0 is enough. other planes are the same as texture size.
-//     * because linesize[0]>=linesize[1]
-//     * uploade size is required when
-//     * 1. y/u is not an integer because of alignment. then padding size of y < padding size of u, and effective size y/u != texture size y/u
-//     * 2. odd size. enlarge y
-//     */
-//    QVector<QSize> texture_upload_size;
-
-//    QVector<int> effective_tex_width; //without additional width for alignment
-//    qreal effective_tex_width_ratio;
-//    QVector<GLint> internal_format;
-//    QVector<GLenum> data_format;
-//    QVector<GLenum> data_type;
-//    QGLShaderProgram *shader_program;
-//    GLuint program;
-//    GLuint vert, frag;
-//    GLint a_Position;
-//    GLint a_TexCoords;
-//    QVector<GLint> u_Texture; //u_TextureN uniform. size is channel count
-//    GLint u_matrix;
-//    GLint u_colorMatrix;
-//    GLuint u_bpp;
-
-//    QPainter *painter;
-
-//    VideoFormat video_format;
-//    QSize plane0Size;
-//    // width is in bytes. different alignments may result in different plane 1 linesize even if plane 0 are the same
-//    int plane1_linesize;
-//    ColorTransform colorTransform;
-//    QMatrix4x4 mpv_matrix;
-//    VideoMaterialType *material_type;
-//};
-
-
-////http://www.opengl.org/wiki/GLSL#Error_Checking
-//// TODO: use QGLShaderProgram for better compatiblity
-//GLuint GLWidgetRendererPrivate::loadShader(GLenum shaderType, const char* pSource) {
-//    if (!hasGLSL)
-//        return 0;
-//    GLuint shader = glCreateShader(shaderType);
-//    if (shader) {
-//        glShaderSource(shader, 1, &pSource, NULL);
-//        glCompileShader(shader);
-//        GLint compiled = GL_FALSE;
-//        glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-//        if (compiled == GL_FALSE) {
-//            GLint infoLen = 0;
-//            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
-//            if (infoLen) {
-//                char* buf = (char*)malloc(infoLen);
-//                if (buf) {
-//                    glGetShaderInfoLog(shader, infoLen, NULL, buf);
-//                    qWarning("Could not compile shader %d:\n%s\n", shaderType, buf);
-//                    free(buf);
-//                }
-//            }
-//            glDeleteShader(shader);
-//            shader = 0;
-//        }
-//    }
-//    return shader;
-//}
-
-//GLuint GLWidgetRendererPrivate::createProgram(const char* pVertexSource, const char* pFragmentSource) {
-//    if (!hasGLSL)
-//        return 0;
-//    program = glCreateProgram(); //TODO: var name conflict. temp var is better
-//    if (!program)
-//        return 0;
-//    GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
-//    if (!vertexShader) {
-//        return 0;
-//    }
-//    GLuint pixelShader = loadShader(GL_FRAGMENT_SHADER, pFragmentSource);
-//    if (!pixelShader) {
-//        glDeleteShader(vertexShader);
-//        return 0;
-//    }
-//    glAttachShader(program, vertexShader);
-//    glAttachShader(program, pixelShader);
-//    glLinkProgram(program);
-//    GLint linkStatus = GL_FALSE;
-//    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-//    if (linkStatus != GL_TRUE) {
-//        GLint bufLength = 0;
-//        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
-//        if (bufLength) {
-//            char* buf = (char*)malloc(bufLength);
-//            if (buf) {
-//                glGetProgramInfoLog(program, bufLength, NULL, buf);
-//                qWarning("Could not link program:\n%s\n", buf);
-//                free(buf);
-//            }
-//        }
-//        glDetachShader(program, vertexShader);
-//        glDeleteShader(vertexShader);
-//        glDetachShader(program, pixelShader);
-//        glDeleteShader(pixelShader);
-//        glDeleteProgram(program);
-//        program = 0;
-//        return 0;
-//    }
-//    //Always detach shaders after a successful link.
-//    glDetachShader(program, vertexShader);
-//    glDetachShader(program, pixelShader);
-//    vert = vertexShader;
-//    frag = pixelShader;
-//    return program;
-//}
-
-//bool GLWidgetRendererPrivate::releaseShaderProgram()
-//{
-//    video_format.setPixelFormat(VideoFormat::Format_Invalid);
-//#if NO_QGL_SHADER
-//    if (vert) {
-//        if (program)
-//            glDetachShader(program, vert);
-//        glDeleteShader(vert);
-//    }
-//    if (frag) {
-//        if (program)
-//            glDetachShader(program, frag);
-//        glDeleteShader(frag);
-//    }
-//    if (program) {
-//        glDeleteProgram(program);
-//        program = 0;
-//    }
-//#else
-//    shader_program->removeAllShaders();
-//#endif
-//    return true;
-//}
-
-//QString GLWidgetRendererPrivate::getShaderFromFile(const QString &fileName)
-//{
-//    QFile f(qApp->applicationDirPath() + "/" + fileName);
-//    if (!f.exists()) {
-//        f.setFileName(":/" + fileName);
-//    }
-//    if (!f.open(QIODevice::ReadOnly)) {
-//        qWarning("Can not load shader %s: %s", f.fileName().toUtf8().constData(), f.errorString().toUtf8().constData());
-//        return QString();
-//    }
-//    QString src = f.readAll();
-//    f.close();
-//    return src;
-//}
 
 //bool GLWidgetRendererPrivate::prepareShaderProgram(const VideoFormat &fmt, ColorTransform::ColorSpace cs)
 //{
@@ -538,6 +295,164 @@ void GLRenderRaw::paintGL() {
 //        qDebug("glGetUniformLocation(\"%s\") = %d\n", tex_var.toUtf8().constData(), u_Texture[i]);
 //    }
 //    return true;
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//#include "QtAV/GLWidgetRenderer.h"
+//#include "QtAV/private/VideoRenderer_p.h"
+//#include "utils/OpenGLHelper.h"
+//#include <QtCore/QCoreApplication>
+//#include <QtCore/QFile>
+//#include <QtCore/qmath.h>
+//#include <QtCore/QVector>
+//#include <QResizeEvent>
+//#include <QtOpenGL/QGLShaderProgram>
+//#include <QtOpenGL/QGLShader>
+//#define NO_QGL_SHADER (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+////TODO: vsync http://stackoverflow.com/questions/589064/how-to-enable-vertical-sync-in-opengl
+////TODO: check gl errors
+////glEGLImageTargetTexture2DOES:http://software.intel.com/en-us/articles/using-opengl-es-to-accelerate-apps-with-legacy-2d-guis
+
+
+////#ifdef GL_EXT_unpack_subimage
+//#ifndef GL_UNPACK_ROW_LENGTH
+//#ifdef GL_UNPACK_ROW_LENGTH_EXT
+//#define GL_UNPACK_ROW_LENGTH GL_UNPACK_ROW_LENGTH_EXT
+//#endif //GL_UNPACK_ROW_LENGTH_EXT
+//#endif //GL_UNPACK_ROW_LENGTH
+
+//#include "QtAV/ColorTransform.h"
+//#include "QtAV/FilterContext.h"
+
+//#define UPLOAD_ROI 0
+//#define ROI_TEXCOORDS 1
+
+//#define AVALIGN(x, a) (((x)+(a)-1)&~((a)-1))
+
+
+////TODO: QGLfunctions?
+//namespace QtAV {
+
+
+//class GLWidgetRendererPrivate : public VideoRendererPrivate
+//#if QTAV_HAVE(QGLFUNCTIONS)
+//        , public QGLFunctions
+//#endif //QTAV_HAVE(QGLFUNCTIONS)
+//{
+//public:
+//    GLWidgetRendererPrivate():
+//        VideoRendererPrivate()
+//      , hasGLSL(true)
+//      , update_texcoords(true)
+//      , effective_tex_width_ratio(1)
+//      , shader_program(0)
+//      , program(0)
+//      , vert(0)
+//      , frag(0)
+//      , a_Position(-1)
+//      , a_TexCoords(-1)
+//      , u_matrix(-1)
+//      , u_bpp(-1)
+//      , painter(0)
+//      , video_format(VideoFormat::Format_Invalid)
+//      , material_type(0)
+//    {
+//        if (QGLFormat::openGLVersionFlags() == QGLFormat::OpenGL_Version_None) {
+//            available = false;
+//            return;
+//        }
+//        colorTransform.setOutputColorSpace(ColorTransform::RGB);
+//    }
+//    bool initWithContext(const QGLContext *ctx) {
+//        Q_UNUSED(ctx);
+//#if !NO_QGL_SHADER
+//        shader_program = new QGLShaderProgram(ctx, 0);
+//#endif
+//        return true;
+//    }
+
+//    GLuint loadShader(GLenum shaderType, const char* pSource);
+//    GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
+//    bool prepareShaderProgram(const VideoFormat& fmt, ColorTransform::ColorSpace cs);
+//    bool initTexture(GLuint tex, GLint internal_format, GLenum format, GLenum dataType, int width, int height);
+//    bool initTextures(const VideoFormat& fmt);
+//    void updateTexturesIfNeeded();
+//    void upload(const QRect& roi);
+//    void uploadPlane(int p, GLint internal_format, GLenum format, const QRect& roi);
+//    //GL 4.x: GL_FRAGMENT_SHADER_DERIVATIVE_HINT,GL_TEXTURE_COMPRESSION_HINT
+//    //GL_DONT_CARE(default), GL_FASTEST, GL_NICEST
+//    /*
+
+//    void setupAspectRatio() {
+//        mpv_matrix(0, 0) = (float)out_rect.width()/(float)renderer_width;
+//        mpv_matrix(1, 1) = (float)out_rect.height()/(float)renderer_height;
+//    }
+
+//    class VideoMaterialType {};
+//    VideoMaterialType* materialType(const VideoFormat& fmt) const {
+//        static VideoMaterialType rgbType;
+//        static VideoMaterialType packedType; // TODO: uyuy, yuy2
+//        static VideoMaterialType planar16leType;
+//        static VideoMaterialType planar16beType;
+//        static VideoMaterialType yuv8Type;
+//        static VideoMaterialType invalidType;
+//        if (fmt.isRGB() && !fmt.isPlanar())
+//            return &rgbType;
+//        if (!fmt.isPlanar())
+//            return &packedType;
+//        if (fmt.bytesPerPixel(0) == 1)
+//            return &yuv8Type;
+//        if (fmt.isBigEndian())
+//            return &planar16beType;
+//        else
+//            return &planar16leType;
+//        return &invalidType;
+//    }
+//    void updateShaderIfNeeded();
+//};
+
+//QString GLWidgetRendererPrivate::getShaderFromFile(const QString &fileName)
+//{
+//    QFile f(qApp->applicationDirPath() + "/" + fileName);
+//    if (!f.exists()) {
+//        f.setFileName(":/" + fileName);
+//    }
+//    if (!f.open(QIODevice::ReadOnly)) {
+//        qWarning("Can not load shader %s: %s", f.fileName().toUtf8().constData(), f.errorString().toUtf8().constData());
+//        return QString();
+//    }
+//    QString src = f.readAll();
+//    f.close();
+//    return src;
 //}
 
 //bool GLWidgetRendererPrivate::initTexture(GLuint tex, GLint internalFormat, GLenum format, GLenum dataType, int width, int height)

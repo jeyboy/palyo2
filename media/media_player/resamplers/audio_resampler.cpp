@@ -45,14 +45,6 @@ bool AudioResampler::proceed(AVFrame * frame, QByteArray * data) {
     if (samples_output > -1) {
         int length = settings -> calcBufferSize(samples_output);
         data -> append((const char*)buffer[0], length);
-
-//        if (settings -> channelCountOut > 2) {
-//            data -> append((const char*)buffer[1], length);
-//            data -> append((const char*)buffer[2], length);
-
-////            for(int chanNum = 1; chanNum < settings -> channelCountOut / 2; chanNum++)
-////                data -> append((const char*)*(buffer++), length);
-//        }
         return true;
     } else qDebug() << "RESAMPLE ERROR";
     return false;

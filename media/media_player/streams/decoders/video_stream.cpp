@@ -48,7 +48,7 @@ void VideoStream::routine() {
 
     int len, got_picture;
     int width = codec_context -> width, height = codec_context -> height;
-    void * img = 0;
+    VideoBuffer * buff = 0;
     AVPacket * packet;
 
     mutex -> lock();
@@ -73,10 +73,10 @@ void VideoStream::routine() {
         }
 
         if (got_picture) {
-            img = resampler -> proceed(frame, width, height, width, height);
+            buff = resampler -> proceed(frame, width, height, width, height);
 
-            if (img)
-                output -> proceedFrame(calcPts(new VideoFrame(img, -1, -1, aspect_ratio)));
+            if (buff)
+                output -> proceedFrame(calcPts(new VideoFrame(buff, -1, -1, aspect_ratio)));
         } else {
             qWarning("Could not get a full picture from this frame");
 //            char bla[AV_ERROR_MAX_STRING_SIZE];

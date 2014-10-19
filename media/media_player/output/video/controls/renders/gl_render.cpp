@@ -23,7 +23,7 @@ GLRender::GLRender(QWidget* parent) : RenderInterface(parent) {
     QGLFormat::setDefaultFormat(glFmt);
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
-    setQuality(best);
+//    setQuality(best);
 }
 
 GLRender::~GLRender() {

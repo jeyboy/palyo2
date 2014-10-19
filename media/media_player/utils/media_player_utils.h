@@ -1,9 +1,9 @@
 #ifndef MEDIA_PLAYER_UTILS_H
 #define MEDIA_PLAYER_UTILS_H
 
-#define INBUF_SIZE 4096
-#define AUDIO_INBUF_SIZE 20480
-#define AUDIO_REFILL_THRESH 4096
+//#define INBUF_SIZE 4096
+//#define AUDIO_INBUF_SIZE 20480
+//#define AUDIO_REFILL_THRESH 4096
 
 #ifndef INT64_MAX
     #define INT64_MAX 9223372036854775807LL
@@ -13,11 +13,6 @@
     #define INT64_MIN -INT64_MAX
 #endif
 
-#include <QAudioFormat>
-#include <QAudioDeviceInfo>
-#include <QAudioInput>
-#include <QAudioOutput>
-#include <QBuffer>
 #include <QDebug>
 
 #define __STDC_CONSTANT_MACROS
