@@ -31,7 +31,10 @@ GLRenderRaw::~GLRenderRaw() {
 //        textures.clear();
 //    }
 
-    delete shader;
+    if (shader) {
+        delete shader;
+        shader = 0;
+    }
 }
 
 void GLRenderRaw::setQuality(const Quality & quality) {
@@ -101,7 +104,100 @@ void GLRenderRaw::initializeGL() {
     initializeOpenGLFunctions();
 
     shader = new Shader();
-    shader -> setup();
+    shader -> setup(context());
+
+    //    if (fmt.isRGB()) {
+    //        if (fmt.isPlanar())
+    //            cs = ColorTransform::GBR;
+    //    } else {
+    //        if (video_frame.width() >= 1280 || video_frame.height() > 576) //values from mpv
+    //            cs = ColorTransform::BT709;
+    //        else
+    //            cs = ColorTransform::BT601;
+    //    }
+
+
+
+
+
+    //    // TODO: only to kinds, packed.glsl, planar.glsl
+    //    QString frag;
+    //    if (fmt.isPlanar()) {
+    //        frag = getShaderFromFile("shaders/planar.f.glsl");
+    //    } else {
+    //        frag = getShaderFromFile("shaders/rgb.f.glsl");
+    //    }
+    //    if (frag.isEmpty())
+    //        return false;
+    //    if (fmt.isRGB()) {
+    //        frag.prepend("#define INPUT_RGB\n");
+    //    } else {
+    //        frag.prepend(QString("#define YUV%1P\n").arg(fmt.bitsPerPixel(0)));
+    //    }
+    //    if (fmt.isPlanar() && fmt.bytesPerPixel(0) == 2) {
+    //        if (fmt.isBigEndian())
+    //            frag.prepend("#define LA_16BITS_BE\n");
+    //        else
+    //            frag.prepend("#define LA_16BITS_LE\n");
+    //    }
+    //    if (cs == ColorTransform::BT601) {
+    //        frag.prepend("#define CS_BT601\n");
+    //    } else if (cs == ColorTransform::BT709) {
+    //        frag.prepend("#define CS_BT709\n");
+    //    }
+    //#if NO_QGL_SHADER
+    //    program = createProgram(kVertexShader, frag.toUtf8().constData());
+    //    if (!program) {
+    //        qWarning("Could not create shader program.");
+    //        return false;
+    //    }
+    //    // vertex shader. we can set attribute locations calling glBindAttribLocation
+    //    a_Position = glGetAttribLocation(program, "a_Position");
+    //    a_TexCoords = glGetAttribLocation(program, "a_TexCoords");
+    //    u_matrix = glGetUniformLocation(program, "u_MVP_matrix");
+    //    u_bpp = glGetUniformLocation(program, "u_bpp");
+    //    // fragment shader
+    //    u_colorMatrix = glGetUniformLocation(program, "u_colorMatrix");
+    //#else
+    //    if (!shader_program->addShaderFromSourceCode(QGLShader::Vertex, kVertexShader)) {
+    //        qWarning("Failed to add vertex shader: %s", shader_program->log().toUtf8().constData());
+    //        return false;
+    //    }
+    //    if (!shader_program->addShaderFromSourceCode(QGLShader::Fragment, frag)) {
+    //        qWarning("Failed to add fragment shader: %s", shader_program->log().toUtf8().constData());
+    //        return false;
+    //    }
+    //    if (!shader_program->link()) {
+    //        qWarning("Failed to link shader program...%s", shader_program->log().toUtf8().constData());
+    //        return false;
+    //    }
+    //    // vertex shader
+    //    a_Position = shader_program->attributeLocation("a_Position");
+    //    a_TexCoords = shader_program->attributeLocation("a_TexCoords");
+    //    u_matrix = shader_program->uniformLocation("u_MVP_matrix");
+    //    u_bpp = shader_program->uniformLocation("u_bpp");
+    //    // fragment shader
+    //    u_colorMatrix = shader_program->uniformLocation("u_colorMatrix");
+    //#endif //NO_QGL_SHADER
+    //    qDebug("glGetAttribLocation(\"a_Position\") = %d\n", a_Position);
+    //    qDebug("glGetAttribLocation(\"a_TexCoords\") = %d\n", a_TexCoords);
+    //    qDebug("glGetUniformLocation(\"u_MVP_matrix\") = %d\n", u_matrix);
+    //    qDebug("glGetUniformLocation(\"u_bpp\") = %d\n", u_bpp);
+    //    qDebug("glGetUniformLocation(\"u_colorMatrix\") = %d\n", u_colorMatrix);
+
+    //    if (fmt.isRGB())
+    //        u_Texture.resize(1);
+    //    else
+    //        u_Texture.resize(fmt.channels());
+    //    for (int i = 0; i < u_Texture.size(); ++i) {
+    //        QString tex_var = QString("u_Texture%1").arg(i);
+    //#if NO_QGL_SHADER
+    //        u_Texture[i] = glGetUniformLocation(program, tex_var.toUtf8().constData());
+    //#else
+    //        u_Texture[i] = shader_program->uniformLocation(tex_var);
+    //#endif
+    //        qDebug("glGetUniformLocation(\"%s\") = %d\n", tex_var.toUtf8().constData(), u_Texture[i]);
+    //    }
 
     glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
 }
@@ -161,7 +257,7 @@ void GLRenderRaw::paintGL() {
 
     /* Flip buffers. */
 
-    glFlush();
+//    glFlush();
 //    SDL_GL_SwapBuffers();
 
     shader -> program -> release();
@@ -208,94 +304,6 @@ void GLRenderRaw::paintGL() {
     redrawed();
 }
 
-//bool GLWidgetRendererPrivate::prepareShaderProgram(const VideoFormat &fmt, ColorTransform::ColorSpace cs)
-//{
-//    // isSupported(pixfmt)
-//    if (!fmt.isValid())
-//        return false;
-//    releaseShaderProgram();
-//    video_format.setPixelFormatFFmpeg(fmt.pixelFormatFFmpeg());
-//    colorTransform.setInputColorSpace(cs);
-//    // TODO: only to kinds, packed.glsl, planar.glsl
-//    QString frag;
-//    if (fmt.isPlanar()) {
-//        frag = getShaderFromFile("shaders/planar.f.glsl");
-//    } else {
-//        frag = getShaderFromFile("shaders/rgb.f.glsl");
-//    }
-//    if (frag.isEmpty())
-//        return false;
-//    if (fmt.isRGB()) {
-//        frag.prepend("#define INPUT_RGB\n");
-//    } else {
-//        frag.prepend(QString("#define YUV%1P\n").arg(fmt.bitsPerPixel(0)));
-//    }
-//    if (fmt.isPlanar() && fmt.bytesPerPixel(0) == 2) {
-//        if (fmt.isBigEndian())
-//            frag.prepend("#define LA_16BITS_BE\n");
-//        else
-//            frag.prepend("#define LA_16BITS_LE\n");
-//    }
-//    if (cs == ColorTransform::BT601) {
-//        frag.prepend("#define CS_BT601\n");
-//    } else if (cs == ColorTransform::BT709) {
-//        frag.prepend("#define CS_BT709\n");
-//    }
-//#if NO_QGL_SHADER
-//    program = createProgram(kVertexShader, frag.toUtf8().constData());
-//    if (!program) {
-//        qWarning("Could not create shader program.");
-//        return false;
-//    }
-//    // vertex shader. we can set attribute locations calling glBindAttribLocation
-//    a_Position = glGetAttribLocation(program, "a_Position");
-//    a_TexCoords = glGetAttribLocation(program, "a_TexCoords");
-//    u_matrix = glGetUniformLocation(program, "u_MVP_matrix");
-//    u_bpp = glGetUniformLocation(program, "u_bpp");
-//    // fragment shader
-//    u_colorMatrix = glGetUniformLocation(program, "u_colorMatrix");
-//#else
-//    if (!shader_program->addShaderFromSourceCode(QGLShader::Vertex, kVertexShader)) {
-//        qWarning("Failed to add vertex shader: %s", shader_program->log().toUtf8().constData());
-//        return false;
-//    }
-//    if (!shader_program->addShaderFromSourceCode(QGLShader::Fragment, frag)) {
-//        qWarning("Failed to add fragment shader: %s", shader_program->log().toUtf8().constData());
-//        return false;
-//    }
-//    if (!shader_program->link()) {
-//        qWarning("Failed to link shader program...%s", shader_program->log().toUtf8().constData());
-//        return false;
-//    }
-//    // vertex shader
-//    a_Position = shader_program->attributeLocation("a_Position");
-//    a_TexCoords = shader_program->attributeLocation("a_TexCoords");
-//    u_matrix = shader_program->uniformLocation("u_MVP_matrix");
-//    u_bpp = shader_program->uniformLocation("u_bpp");
-//    // fragment shader
-//    u_colorMatrix = shader_program->uniformLocation("u_colorMatrix");
-//#endif //NO_QGL_SHADER
-//    qDebug("glGetAttribLocation(\"a_Position\") = %d\n", a_Position);
-//    qDebug("glGetAttribLocation(\"a_TexCoords\") = %d\n", a_TexCoords);
-//    qDebug("glGetUniformLocation(\"u_MVP_matrix\") = %d\n", u_matrix);
-//    qDebug("glGetUniformLocation(\"u_bpp\") = %d\n", u_bpp);
-//    qDebug("glGetUniformLocation(\"u_colorMatrix\") = %d\n", u_colorMatrix);
-
-//    if (fmt.isRGB())
-//        u_Texture.resize(1);
-//    else
-//        u_Texture.resize(fmt.channels());
-//    for (int i = 0; i < u_Texture.size(); ++i) {
-//        QString tex_var = QString("u_Texture%1").arg(i);
-//#if NO_QGL_SHADER
-//        u_Texture[i] = glGetUniformLocation(program, tex_var.toUtf8().constData());
-//#else
-//        u_Texture[i] = shader_program->uniformLocation(tex_var);
-//#endif
-//        qDebug("glGetUniformLocation(\"%s\") = %d\n", tex_var.toUtf8().constData(), u_Texture[i]);
-//    }
-//    return true;
-//}
 
 
 
@@ -304,43 +312,6 @@ void GLRenderRaw::paintGL() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//#include "QtAV/GLWidgetRenderer.h"
-//#include "QtAV/private/VideoRenderer_p.h"
-//#include "utils/OpenGLHelper.h"
-//#include <QtCore/QCoreApplication>
-//#include <QtCore/QFile>
-//#include <QtCore/qmath.h>
-//#include <QtCore/QVector>
-//#include <QResizeEvent>
-//#include <QtOpenGL/QGLShaderProgram>
-//#include <QtOpenGL/QGLShader>
-//#define NO_QGL_SHADER (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-////TODO: vsync http://stackoverflow.com/questions/589064/how-to-enable-vertical-sync-in-opengl
-////TODO: check gl errors
-////glEGLImageTargetTexture2DOES:http://software.intel.com/en-us/articles/using-opengl-es-to-accelerate-apps-with-legacy-2d-guis
 
 
 ////#ifdef GL_EXT_unpack_subimage
@@ -362,6 +333,17 @@ void GLRenderRaw::paintGL() {
 ////TODO: QGLfunctions?
 //namespace QtAV {
 
+//static inline void checkGlError(const char* op = 0) {
+//    GLenum error = glGetError();
+//    if (error == GL_NO_ERROR)
+//        return;
+//    qWarning("GL error %s (%#x): %s", op, error, glGetString(error));
+//}
+
+//#define CHECK_GL_ERROR(FUNC) \
+//    FUNC; \
+//    checkGlError(#FUNC);
+
 
 //class GLWidgetRendererPrivate : public VideoRendererPrivate
 //#if QTAV_HAVE(QGLFUNCTIONS)
@@ -371,20 +353,6 @@ void GLRenderRaw::paintGL() {
 //public:
 //    GLWidgetRendererPrivate():
 //        VideoRendererPrivate()
-//      , hasGLSL(true)
-//      , update_texcoords(true)
-//      , effective_tex_width_ratio(1)
-//      , shader_program(0)
-//      , program(0)
-//      , vert(0)
-//      , frag(0)
-//      , a_Position(-1)
-//      , a_TexCoords(-1)
-//      , u_matrix(-1)
-//      , u_bpp(-1)
-//      , painter(0)
-//      , video_format(VideoFormat::Format_Invalid)
-//      , material_type(0)
 //    {
 //        if (QGLFormat::openGLVersionFlags() == QGLFormat::OpenGL_Version_None) {
 //            available = false;
@@ -392,16 +360,11 @@ void GLRenderRaw::paintGL() {
 //        }
 //        colorTransform.setOutputColorSpace(ColorTransform::RGB);
 //    }
-//    bool initWithContext(const QGLContext *ctx) {
-//        Q_UNUSED(ctx);
-//#if !NO_QGL_SHADER
-//        shader_program = new QGLShaderProgram(ctx, 0);
-//#endif
-//        return true;
-//    }
 
 //    GLuint loadShader(GLenum shaderType, const char* pSource);
 //    GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
+//    bool releaseShaderProgram();
+//    QString getShaderFromFile(const QString& fileName);
 //    bool prepareShaderProgram(const VideoFormat& fmt, ColorTransform::ColorSpace cs);
 //    bool initTexture(GLuint tex, GLint internal_format, GLenum format, GLenum dataType, int width, int height);
 //    bool initTextures(const VideoFormat& fmt);
@@ -411,6 +374,11 @@ void GLRenderRaw::paintGL() {
 //    //GL 4.x: GL_FRAGMENT_SHADER_DERIVATIVE_HINT,GL_TEXTURE_COMPRESSION_HINT
 //    //GL_DONT_CARE(default), GL_FASTEST, GL_NICEST
 //    /*
+//     * it seems that only glTexParameteri matters when drawing an image
+//     * MAG_FILTER/MIN_FILTER combinations: http://gregs-blog.com/2008/01/17/opengl-texture-filter-parameters-explained/
+//     * TODO: understand what each parameter means. GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T
+//     * what is MIPMAP?
+//     */
 
 //    void setupAspectRatio() {
 //        mpv_matrix(0, 0) = (float)out_rect.width()/(float)renderer_width;
@@ -439,6 +407,83 @@ void GLRenderRaw::paintGL() {
 //    }
 //    void updateShaderIfNeeded();
 //};
+
+
+////http://www.opengl.org/wiki/GLSL#Error_Checking
+//// TODO: use QGLShaderProgram for better compatiblity
+//GLuint GLWidgetRendererPrivate::loadShader(GLenum shaderType, const char* pSource) {
+//    if (!hasGLSL)
+//        return 0;
+//    GLuint shader = glCreateShader(shaderType);
+//    if (shader) {
+//        glShaderSource(shader, 1, &pSource, NULL);
+//        glCompileShader(shader);
+//        GLint compiled = GL_FALSE;
+//        glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+//        if (compiled == GL_FALSE) {
+//            GLint infoLen = 0;
+//            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
+//            if (infoLen) {
+//                char* buf = (char*)malloc(infoLen);
+//                if (buf) {
+//                    glGetShaderInfoLog(shader, infoLen, NULL, buf);
+//                    qWarning("Could not compile shader %d:\n%s\n", shaderType, buf);
+//                    free(buf);
+//                }
+//            }
+//            glDeleteShader(shader);
+//            shader = 0;
+//        }
+//    }
+//    return shader;
+//}
+
+//GLuint GLWidgetRendererPrivate::createProgram(const char* pVertexSource, const char* pFragmentSource) {
+//    if (!hasGLSL)
+//        return 0;
+//    program = glCreateProgram(); //TODO: var name conflict. temp var is better
+//    if (!program)
+//        return 0;
+//    GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
+//    if (!vertexShader) {
+//        return 0;
+//    }
+//    GLuint pixelShader = loadShader(GL_FRAGMENT_SHADER, pFragmentSource);
+//    if (!pixelShader) {
+//        glDeleteShader(vertexShader);
+//        return 0;
+//    }
+//    glAttachShader(program, vertexShader);
+//    glAttachShader(program, pixelShader);
+//    glLinkProgram(program);
+//    GLint linkStatus = GL_FALSE;
+//    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+//    if (linkStatus != GL_TRUE) {
+//        GLint bufLength = 0;
+//        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
+//        if (bufLength) {
+//            char* buf = (char*)malloc(bufLength);
+//            if (buf) {
+//                glGetProgramInfoLog(program, bufLength, NULL, buf);
+//                qWarning("Could not link program:\n%s\n", buf);
+//                free(buf);
+//            }
+//        }
+//        glDetachShader(program, vertexShader);
+//        glDeleteShader(vertexShader);
+//        glDetachShader(program, pixelShader);
+//        glDeleteShader(pixelShader);
+//        glDeleteProgram(program);
+//        program = 0;
+//        return 0;
+//    }
+//    //Always detach shaders after a successful link.
+//    glDetachShader(program, vertexShader);
+//    glDetachShader(program, pixelShader);
+//    vert = vertexShader;
+//    frag = pixelShader;
+//    return program;
+//}
 
 //QString GLWidgetRendererPrivate::getShaderFromFile(const QString &fileName)
 //{
@@ -1075,6 +1120,3 @@ void GLRenderRaw::paintGL() {
 //    d.colorTransform.setSaturation(s);
 //    return true;
 //}
-
-//} //namespace QtAV
-

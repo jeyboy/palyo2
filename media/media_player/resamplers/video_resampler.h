@@ -12,15 +12,14 @@ public:
 protected:
     VideoBuffer * toQImage(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut);
     void setColorspaceDetails(int brightness, int contrast, int saturation);
-    bool isPlanar(enum PixelFormat fmt);
-    bool isBigEndian(enum PixelFormat fmt);
-    bool isLittleEndian(enum PixelFormat fmt);
     QImage::Format toQImageFormat(PixelFormat fmt);
+    bool isCompatibleFormat(AVPixelFormat fmt);
 
 private:
     enum AVPixelFormat pixelFormatIn;
     enum AVPixelFormat pixelFormatOut;
     AVFrame * RGBFrame;
+    QImage::Format img_format;
 
     SwsContext* resampleContext;
 };

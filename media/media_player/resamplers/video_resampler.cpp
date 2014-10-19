@@ -2,11 +2,12 @@
 #include "qdebug.h"
 
 // only_conversion - did not output result as QImage if possible
-VideoResampler::VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelFormat pixel_format_out) {
-    pixelFormatIn = pixel_format_in;
-    pixelFormatOut = pixel_format_out;
-
-    resampleContext = 0;
+VideoResampler::VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelFormat pixel_format_out) :
+      pixelFormatIn(pixel_format_in)
+    , pixelFormatOut(pixel_format_out)
+    , resampleContext(0)
+    , img_format(toQImageFormat(pixelFormatOut))
+{
     RGBFrame = av_frame_alloc();
 }
 
@@ -16,12 +17,6 @@ VideoResampler::~VideoResampler() {
 }
 
 VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {
-//    frame -> colorspace
-
-
-
-
-
     //            if (!RGBFrame || RGBFrame -> width != width
     //                    || RGBFrame -> height != height) {
     //                // Determine required buffer size and allocate buffer
@@ -43,7 +38,10 @@ VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn
         AVPicture * newPict = new AVPicture();
         if (avpicture_alloc(newPict, (AVPixelFormat)frame -> format, frame -> width, frame -> height) == 0) {
             av_picture_copy(newPict, (AVPicture *)frame, (AVPixelFormat)frame -> format, frame -> width, frame -> height);
-        } else return 0;
+        } else {
+            qDebug() << "HUDO";
+            return 0;
+        }
 
 //        uint8_t * data[3];
 
@@ -61,7 +59,7 @@ VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn
 //        memcpy(data[2], frame -> data[2], size);
 
 //        return data;
-        return new VideoBuffer(newPict, frame -> width, frame -> height, (AVPixelFormat)frame -> format);
+        return new VideoBuffer(newPict, frame -> width, frame -> height, (AVPixelFormat)frame -> format, frame -> colorspace);
     } else return toQImage(frame, widthIn, heightIn, widthOut, heightOut);
 }
 
@@ -97,9 +95,8 @@ VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn
 //    return new VideoBuffer<QImage>(img, img -> width(), img -> height(), pixelFormatOut);
 //}
 
+//TODO: maybe change format linkage on GL formats ?
 VideoBuffer * VideoResampler::toQImage(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {
-    QImage::Format img_format = toQImageFormat(pixelFormatOut);
-
     if (img_format == QImage::Format_Invalid) return 0;
 
     QImage * img = new QImage(widthOut, heightOut, img_format);
@@ -129,7 +126,7 @@ VideoBuffer * VideoResampler::toQImage(AVFrame * frame, int widthIn, int heightI
 
     // Convert to RGB
     sws_scale(resampleContext, frame -> data, frame -> linesize, 0, heightIn, RGBFrame -> data, RGBFrame -> linesize);
-    return new VideoBuffer(img, img -> width(), img -> height(), pixelFormatOut);
+    return new VideoBuffer(img, img -> width(), img -> height(), pixelFormatOut, frame -> colorspace);
 }
 
 void VideoResampler::setColorspaceDetails(int brightness, int contrast, int saturation) {
@@ -162,20 +159,26 @@ void VideoResampler::setColorspaceDetails(int brightness, int contrast, int satu
 
 QImage::Format VideoResampler::toQImageFormat(PixelFormat fmt) {
     switch(fmt) {
-        case AV_PIX_FMT_RGB24: { return QImage::Format_RGB888; }
-        case AV_PIX_FMT_RGB32: { return QImage::Format_RGB32; }
+        case AV_PIX_FMT_RGB24:  { return QImage::Format_RGB888; }
+        case AV_PIX_FMT_RGB32:  { return QImage::Format_RGB32;  }
         case AV_PIX_FMT_0RGB32: { return QImage::Format_ARGB32; } // TODO: maybe need correct AV_PIX_FMT format
-        case AV_PIX_FMT_RGB565: { return QImage::Format_RGB16; }
+        case AV_PIX_FMT_ARGB:   { return QImage::Format_ARGB32; }
+        case AV_PIX_FMT_RGB565: { return QImage::Format_RGB16;  }
         case AV_PIX_FMT_RGB555: { return QImage::Format_RGB555; }
         case AV_PIX_FMT_RGB444: { return QImage::Format_RGB444; }
+
         default: return QImage::Format_Invalid;
     }
 }
 
-bool VideoResampler::isPlanar(enum PixelFormat fmt) {
+bool VideoResampler::isCompatibleFormat(AVPixelFormat fmt) {
+
     return
             fmt == AV_PIX_FMT_YUV420P ||
+            fmt == AV_PIX_FMT_YUV420P ||
             fmt == AV_PIX_FMT_YUYV422 ||
+            fmt == AV_PIX_FMT_RGB24 ||
+            fmt == AV_PIX_FMT_BGR24 ||
             fmt == AV_PIX_FMT_YUV422P ||
             fmt == AV_PIX_FMT_YUV444P ||
             fmt == AV_PIX_FMT_YUV410P ||
@@ -184,6 +187,14 @@ bool VideoResampler::isPlanar(enum PixelFormat fmt) {
             fmt == AV_PIX_FMT_UYVY422 ||
             fmt == AV_PIX_FMT_NV12 ||
             fmt == AV_PIX_FMT_NV21 ||
+            fmt == AV_PIX_FMT_ARGB ||
+            fmt == AV_PIX_FMT_RGB32 ||
+            fmt == AV_PIX_FMT_RGBA ||
+            fmt == AV_PIX_FMT_BGRA ||
+            fmt == AV_PIX_FMT_RGB565 ||
+            fmt == AV_PIX_FMT_RGB555 ||
+            fmt == AV_PIX_FMT_BGR565 ||
+            fmt == AV_PIX_FMT_BGR555 ||
             fmt == AV_PIX_FMT_YUV420P16LE ||
             fmt == AV_PIX_FMT_YUV420P16BE ||
             fmt == AV_PIX_FMT_YUV422P16LE ||
@@ -216,59 +227,6 @@ bool VideoResampler::isPlanar(enum PixelFormat fmt) {
             fmt == AV_PIX_FMT_YUV444P14LE;
 }
 
-bool VideoResampler::isBigEndian(enum PixelFormat fmt) {
-    return
-            fmt == AV_PIX_FMT_YUV420P16BE ||
-            fmt == AV_PIX_FMT_YUV422P16BE ||
-            fmt == AV_PIX_FMT_YUV444P16BE ||
-            fmt == AV_PIX_FMT_YUV420P9BE ||
-            fmt == AV_PIX_FMT_YUV420P10BE ||
-            fmt == AV_PIX_FMT_YUV422P10BE ||
-            fmt == AV_PIX_FMT_YUV444P9BE ||
-            fmt == AV_PIX_FMT_YUV444P10BE ||
-            fmt == AV_PIX_FMT_YUV422P9BE ||
-            fmt == AV_PIX_FMT_YUV420P12BE ||
-            fmt == AV_PIX_FMT_YUV420P14BE ||
-            fmt == AV_PIX_FMT_YUV422P12BE ||
-            fmt == AV_PIX_FMT_YUV422P14BE ||
-            fmt == AV_PIX_FMT_YUV444P12BE ||
-            fmt == AV_PIX_FMT_YUV444P14BE;
-}
-
-bool VideoResampler::isLittleEndian(enum PixelFormat fmt) {
-    return
-            fmt == AV_PIX_FMT_YUV420P16LE ||
-            fmt == AV_PIX_FMT_YUV422P16LE ||
-            fmt == AV_PIX_FMT_YUV444P16LE ||
-            fmt == AV_PIX_FMT_YUV420P9LE ||
-            fmt == AV_PIX_FMT_YUV420P10LE ||
-            fmt == AV_PIX_FMT_YUV422P10LE ||
-            fmt == AV_PIX_FMT_YUV444P9LE ||
-            fmt == AV_PIX_FMT_YUV444P10LE ||
-            fmt == AV_PIX_FMT_YUV422P9LE ||
-            fmt == AV_PIX_FMT_YUV420P12LE ||
-            fmt == AV_PIX_FMT_YUV420P14LE ||
-            fmt == AV_PIX_FMT_YUV422P12LE ||
-            fmt == AV_PIX_FMT_YUV422P14LE ||
-            fmt == AV_PIX_FMT_YUV444P12LE ||
-            fmt == AV_PIX_FMT_YUV444P14LE;
-}
-
-//bool VideoStream::isRGB(PixelFormat pixfmt)
-//{
-//    return pixfmt == Format_RGB32 || pixfmt == Format_ARGB32
-//        || pixfmt == Format_BGR24 || pixfmt == Format_BGRA32
-//        || pixfmt == Format_BGR565 || pixfmt == Format_RGB555 || pixfmt == Format_RGB565
-//        || pixfmt == Format_BGR24 || pixfmt == Format_BGR32 || pixfmt == Format_BGR555
-//            ;
-//}
-
-//bool VideoFormat::hasAlpha(PixelFormat pixfmt)
-//{
-//    return pixfmt == Format_ARGB32 || pixfmt == Format_BGRA32
-//        || pixfmt == Format_AYUV444// || pixfmt == Format_RGB555 || pixfmt == Format_BGR555
-//            ;
-//}
 
 
 

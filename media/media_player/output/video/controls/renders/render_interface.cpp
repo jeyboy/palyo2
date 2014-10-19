@@ -2,6 +2,9 @@
 
 #include <QDebug>
 
+//TODO: hide mouse cursor after some watch time
+//TODO: try to move cursor, when it hidden, for monitor sleep blocking
+
 RenderInterface::RenderInterface(QWidget* parent) : QGLWidget(parent)
   , fpsCounter(0)
   , vFrame(0) {

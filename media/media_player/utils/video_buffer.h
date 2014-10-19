@@ -1,3 +1,7 @@
+//        QString str(av_get_pix_fmt_name(fmt));
+//        QRegExp rgb_pattern("(RGB)|(BGR)");
+//        qDebug() << "BBBBBBBB " << str << " " << new QString(av_get_pix_fmt_name(fmt) << 10);
+
 #ifndef VIDEO_BUFFER_H
 #define VIDEO_BUFFER_H
 
@@ -39,18 +43,22 @@ public:
         rgb
     };
 
-    VideoBuffer(QImage * img, int width, int height, AVPixelFormat format) : av_picture(0) {
+    VideoBuffer(QImage * img, int width, int height, AVPixelFormat format, AVColorSpace colorspace) : av_picture(0) {
+        color_space = colorspace;
         fmt = format;
         buff_width = width;
         buff_height = height;
         q_image = img;
+        descriptor = av_pix_fmt_desc_get(fmt);
     }
 
-    VideoBuffer(AVPicture * pict, int width, int height, AVPixelFormat format) : q_image(0) {
+    VideoBuffer(AVPicture * pict, int width, int height, AVPixelFormat format, AVColorSpace colorspace) : q_image(0) {
+        color_space = colorspace;
         fmt = format;
         buff_width = width;
         buff_height = height;
         av_picture = pict;
+        descriptor = av_pix_fmt_desc_get(fmt);
     }
 
     ~VideoBuffer() {
@@ -58,10 +66,19 @@ public:
             delete q_image;
         if (av_picture)
             avpicture_free(av_picture);
+
+        av_freep(descriptor);
     }
 
     QImage * asQImage() { return q_image; }
     AVPicture * asAVPicture() { return av_picture; }
+
+    int channelsCount() const {
+        AVPixFmtDescriptor * descriptor = av_pix_fmt_desc_get(fmt);
+        int res = descriptor -> nb_components;
+        delete descriptor;
+        return res;
+    }
 
     //TODO: not completed for rgb and not tested
     void blend_subrect(const AVSubtitleRect *rect) {
@@ -76,6 +93,113 @@ public:
             return rgb;
         } else return other;
     }
+
+    bool isRGB() { return (descriptor -> flags & AV_PIX_FMT_FLAG_RGB) == AV_PIX_FMT_FLAG_RGB; }
+    bool isHWACCEL() { return (descriptor -> flags & AV_PIX_FMT_FLAG_HWACCEL) == AV_PIX_FMT_FLAG_HWACCEL; }
+    bool isPlanar() { return (descriptor -> flags & AV_PIX_FMT_FLAG_PLANAR) == AV_PIX_FMT_FLAG_PLANAR; }
+    bool isBigEndian() { return (descriptor -> flags & AV_PIX_FMT_FLAG_BE) == AV_PIX_FMT_FLAG_BE; }
+    bool isBitstream() { return (descriptor -> flags & AV_PIX_FMT_FLAG_BITSTREAM) == AV_PIX_FMT_FLAG_BITSTREAM; }
+    bool hasPalette() { return (descriptor -> flags & AV_PIX_FMT_FLAG_PAL) == AV_PIX_FMT_FLAG_PAL; }
+    bool hasPseudoPalette() { return (descriptor -> flags & AV_PIX_FMT_FLAG_PSEUDOPAL) == AV_PIX_FMT_FLAG_PSEUDOPAL; }
+    bool hasAlpha() { return (descriptor -> flags & AV_PIX_FMT_FLAG_ALPHA) == AV_PIX_FMT_FLAG_ALPHA; }
+
+
+
+
+
+
+
+//        AVPixelFormat f = av_pix_fmt_swap_endianness(fmt); // need to check this later
+
+//        return
+//                f == AV_PIX_FMT_RGB24 || f == AV_PIX_FMT_BGR24
+//             || f == AV_PIX_FMT_RGB565 || f == AV_PIX_FMT_BGR565
+//             || f == AV_PIX_FMT_RGB555 || f == AV_PIX_FMT_BGR555
+//             || f == AV_PIX_FMT_ARGB || f == AV_PIX_FMT_RGBA
+//             || f == AV_PIX_FMT_ABGR || f == AV_PIX_FMT_BGRA;
+//    }
+
+//    bool isPlanar() {
+//        return
+//                fmt == AV_PIX_FMT_YUV420P ||
+//                fmt == AV_PIX_FMT_YUYV422 ||
+//                fmt == AV_PIX_FMT_YUV422P ||
+//                fmt == AV_PIX_FMT_YUV444P ||
+//                fmt == AV_PIX_FMT_YUV410P ||
+//                fmt == AV_PIX_FMT_YUV411P ||
+//                fmt == AV_PIX_FMT_YUVJ420P ||
+//                fmt == AV_PIX_FMT_UYVY422 ||
+//                fmt == AV_PIX_FMT_NV12 ||
+//                fmt == AV_PIX_FMT_NV21 ||
+//                fmt == AV_PIX_FMT_YUV420P16LE ||
+//                fmt == AV_PIX_FMT_YUV420P16BE ||
+//                fmt == AV_PIX_FMT_YUV422P16LE ||
+//                fmt == AV_PIX_FMT_YUV422P16BE ||
+//                fmt == AV_PIX_FMT_YUV444P16LE ||
+//                fmt == AV_PIX_FMT_YUV444P16BE ||
+//                fmt == AV_PIX_FMT_YUV420P9BE ||
+//                fmt == AV_PIX_FMT_YUV420P9LE ||
+//                fmt == AV_PIX_FMT_YUV420P10BE ||
+//                fmt == AV_PIX_FMT_YUV420P10LE ||
+//                fmt == AV_PIX_FMT_YUV422P10BE ||
+//                fmt == AV_PIX_FMT_YUV422P10LE ||
+//                fmt == AV_PIX_FMT_YUV444P9BE ||
+//                fmt == AV_PIX_FMT_YUV444P9LE ||
+//                fmt == AV_PIX_FMT_YUV444P10BE ||
+//                fmt == AV_PIX_FMT_YUV444P10LE ||
+//                fmt == AV_PIX_FMT_YUV422P9BE ||
+//                fmt == AV_PIX_FMT_YUV422P9LE ||
+//                fmt == AV_PIX_FMT_YUV420P12BE ||
+//                fmt == AV_PIX_FMT_YUV420P12LE ||
+//                fmt == AV_PIX_FMT_YUV420P14BE ||
+//                fmt == AV_PIX_FMT_YUV420P14LE ||
+//                fmt == AV_PIX_FMT_YUV422P12BE ||
+//                fmt == AV_PIX_FMT_YUV422P12LE ||
+//                fmt == AV_PIX_FMT_YUV422P14BE ||
+//                fmt == AV_PIX_FMT_YUV422P14LE ||
+//                fmt == AV_PIX_FMT_YUV444P12BE ||
+//                fmt == AV_PIX_FMT_YUV444P12LE ||
+//                fmt == AV_PIX_FMT_YUV444P14BE ||
+//                fmt == AV_PIX_FMT_YUV444P14LE;
+//    }
+
+//    bool isBigEndian() {
+//        return
+//                fmt == AV_PIX_FMT_YUV420P16BE ||
+//                fmt == AV_PIX_FMT_YUV422P16BE ||
+//                fmt == AV_PIX_FMT_YUV444P16BE ||
+//                fmt == AV_PIX_FMT_YUV420P9BE ||
+//                fmt == AV_PIX_FMT_YUV420P10BE ||
+//                fmt == AV_PIX_FMT_YUV422P10BE ||
+//                fmt == AV_PIX_FMT_YUV444P9BE ||
+//                fmt == AV_PIX_FMT_YUV444P10BE ||
+//                fmt == AV_PIX_FMT_YUV422P9BE ||
+//                fmt == AV_PIX_FMT_YUV420P12BE ||
+//                fmt == AV_PIX_FMT_YUV420P14BE ||
+//                fmt == AV_PIX_FMT_YUV422P12BE ||
+//                fmt == AV_PIX_FMT_YUV422P14BE ||
+//                fmt == AV_PIX_FMT_YUV444P12BE ||
+//                fmt == AV_PIX_FMT_YUV444P14BE;
+//    }
+
+//    bool isLittleEndian() {
+//        return
+//                fmt == AV_PIX_FMT_YUV420P16LE ||
+//                fmt == AV_PIX_FMT_YUV422P16LE ||
+//                fmt == AV_PIX_FMT_YUV444P16LE ||
+//                fmt == AV_PIX_FMT_YUV420P9LE ||
+//                fmt == AV_PIX_FMT_YUV420P10LE ||
+//                fmt == AV_PIX_FMT_YUV422P10LE ||
+//                fmt == AV_PIX_FMT_YUV444P9LE ||
+//                fmt == AV_PIX_FMT_YUV444P10LE ||
+//                fmt == AV_PIX_FMT_YUV422P9LE ||
+//                fmt == AV_PIX_FMT_YUV420P12LE ||
+//                fmt == AV_PIX_FMT_YUV420P14LE ||
+//                fmt == AV_PIX_FMT_YUV422P12LE ||
+//                fmt == AV_PIX_FMT_YUV422P14LE ||
+//                fmt == AV_PIX_FMT_YUV444P12LE ||
+//                fmt == AV_PIX_FMT_YUV444P14LE;
+//    }
 
 protected:
     void rgba_blend_subrect(const AVSubtitleRect *rect) {
@@ -287,6 +411,8 @@ private:
     VideoBufferType buff_type;
     QImage * q_image;
     AVPicture * av_picture;
+    AVColorSpace color_space;
+    AVPixFmtDescriptor * descriptor;
 };
 
 #endif // VIDEO_BUFFER_H

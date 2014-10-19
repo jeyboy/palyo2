@@ -5,24 +5,40 @@
 
 struct Shader {
 
+    Shader() :
+            update_texcoords(true)
+          , effective_tex_width_ratio(1)
+          , shader_program(0)
+          , program(0)
+          , vert(0)
+          , frag(0)
+          , a_Position(-1)
+          , a_TexCoords(-1)
+          , u_matrix(-1)
+          , u_bpp(-1)
+          , painter(0)
+          , video_format(VideoFormat::Format_Invalid)
+          , material_type(0)
+    {
+
+    }
+
     ~Shader() { remove(); }
 
-    bool setup() {
-        program = new QGLShaderProgram();
+    bool setup(const QGLContext * ctx) {
+        program = new QGLShaderProgram(ctx);
 
-//        program -> addShaderFromSourceCode(QGLShader::Vertex, kVertexShader);
-        program -> addShaderFromSourceCode(QGLShader::Fragment, kFragmentShader());
+        program -> addShaderFromSourceCode(QGLShader::Vertex, kVertexShader());
 
-//        a_Position = shader_program -> attributeLocation("a_Position");
-//        a_TexCoords = shader_program -> attributeLocation("a_TexCoords");
-//        u_matrix = shader_program -> uniformLocation("u_MVP_matrix");
-//        u_bpp = shader_program -> uniformLocation("u_bpp");
 
-//        u_colorMatrix = shader_program -> uniformLocation("u_colorMatrix");
+//        program -> addShaderFromSourceCode(QGLShader::Fragment, kFragmentShader());
 
-        Ytex = program -> attributeLocation("Ytex");
-        Utex = program -> attributeLocation("Utex");
-        Vtex = program -> attributeLocation("Vtex");
+
+        a_Position      = program -> attributeLocation("a_Position");
+        a_TexCoords     = program -> attributeLocation("a_TexCoords");
+        u_matrix        = program -> uniformLocation("u_MVP_matrix");
+        u_bpp           = program -> uniformLocation("u_bpp");
+        u_colorMatrix   = program -> uniformLocation("u_colorMatrix");
 
         return program -> link();
     }
@@ -36,33 +52,52 @@ struct Shader {
         } else return false;
     }
 
-    const char * kFragmentShader() {
+
+    const char * kVertexShader() {
         return
-                "uniform sampler2DRect Ytex;\n"
-                "uniform sampler2DRect Utex, Vtex;\n"
-                "void main(void) {\n"
-                "  float nx, ny, r, g, b, y, u, v;\n"
-                "  vec4 txl, ux, vx;"
-                "  nx = gl_TexCoord[0].x;\n"
-                "  ny = 576.0 - gl_TexCoord[0].y;\n"
-                "  y = texture2DRect(Ytex,vec2(nx, ny)).r;\n"
-                "  u = texture2DRect(Utex,vec2(nx/2.0, ny/2.0)).r;\n"
-                "  v = texture2DRect(Vtex,vec2(nx/2.0, ny/2.0)).r;\n"
-
-                "  y = 1.1643 * (y - 0.0625);\n"
-                "  u = u - 0.5;\n"
-                "  v = v - 0.5;\n"
-
-                "  r = y + 1.5958 * v;\n"
-                "  g = y - 0.39173 * u - 0.81290 * v;\n"
-                "  b = y + 2.017 * u;\n"
-
-                "  gl_FragColor = vec4(r, g, b, 1.0);\n"
-                "}\n";
+            "attribute vec4 a_Position;\n"
+            "attribute vec2 a_TexCoords;\n"
+            "uniform mat4 u_MVP_matrix;\n"
+            "varying vec2 v_TexCoords;\n"
+            "void main() {\n"
+            "  gl_Position = u_MVP_matrix * a_Position;\n"
+            "  v_TexCoords = a_TexCoords; \n"
+            "}\n";
     }
 
+
+//    const char * kFragmentShader() {
+//        return
+//                "uniform sampler2DRect Ytex;\n"
+//                "uniform sampler2DRect Utex, Vtex;\n"
+//                "void main(void) {\n"
+//                "  float nx, ny, r, g, b, y, u, v;\n"
+//                "  vec4 txl, ux, vx;"
+//                "  nx = gl_TexCoord[0].x;\n"
+//                "  ny = 576.0 - gl_TexCoord[0].y;\n"
+//                "  y = texture2DRect(Ytex,vec2(nx, ny)).r;\n"
+//                "  u = texture2DRect(Utex,vec2(nx/2.0, ny/2.0)).r;\n"
+//                "  v = texture2DRect(Vtex,vec2(nx/2.0, ny/2.0)).r;\n"
+
+//                "  y = 1.1643 * (y - 0.0625);\n"
+//                "  u = u - 0.5;\n"
+//                "  v = v - 0.5;\n"
+
+//                "  r = y + 1.5958 * v;\n"
+//                "  g = y - 0.39173 * u - 0.81290 * v;\n"
+//                "  b = y + 2.017 * u;\n"
+
+//                "  gl_FragColor = vec4(r, g, b, 1.0);\n"
+//                "}\n";
+//    }
+
     QGLShaderProgram * program;
-    GLubyte Ytex, Utex, Vtex;
+
+    GLint a_Position;
+    GLint a_TexCoords;
+    GLint u_matrix;
+    GLint u_colorMatrix;
+    GLuint u_bpp;
 };
 
 #endif // SHADER_H
