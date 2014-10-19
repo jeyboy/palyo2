@@ -20,6 +20,7 @@ private:
     enum AVPixelFormat pixelFormatOut;
     AVFrame * RGBFrame;
     QImage::Format img_format;
+    bool compatible;
 
     SwsContext* resampleContext;
 };

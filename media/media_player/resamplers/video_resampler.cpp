@@ -7,6 +7,7 @@ VideoResampler::VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelF
     , pixelFormatOut(pixel_format_out)
     , resampleContext(0)
     , img_format(toQImageFormat(pixelFormatOut))
+    , compatible(isCompatibleFormat(pixel_format_out))
 {
     RGBFrame = av_frame_alloc();
 }
@@ -34,7 +35,7 @@ VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn
     //                avpicture_fill((AVPicture *)RGBFrame, RGBBuffer, AV_PIX_FMT_RGB24, width, height);
     //            }
 
-    if (false/*isPlanar((AVPixelFormat)frame -> format)*/) {
+    if (compatible) {
         AVPicture * newPict = new AVPicture();
         if (avpicture_alloc(newPict, (AVPixelFormat)frame -> format, frame -> width, frame -> height) == 0) {
             av_picture_copy(newPict, (AVPicture *)frame, (AVPixelFormat)frame -> format, frame -> width, frame -> height);
