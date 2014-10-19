@@ -53,7 +53,7 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
         delay = mainLastDelayVal;
     }
     // Save for next time
-    mainLastPtsVal = videoClockNext;
+    mainLastPtsVal = compClock;//videoClockNext;
     mainLastDelayVal = delay;
 
     double diff = videoClockNext - audioClock;
