@@ -3,6 +3,23 @@
 #include <QDebug>
 
 GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
+    //    setAcceptDrops(true);
+    //    setFocusPolicy(Qt::StrongFocus);
+    //    /* To rapidly update custom widgets that constantly paint over their entire areas with
+    //     * opaque content, e.g., video streaming widgets, it is better to set the widget's
+    //     * Qt::WA_OpaquePaintEvent, avoiding any unnecessary overhead associated with repainting the
+    //     * widget's background
+    //     */
+    //    setAttribute(Qt::WA_OpaquePaintEvent);
+    //    setAttribute(Qt::WA_PaintOnScreen);
+    //    setAttribute(Qt::WA_NoSystemBackground);
+    //    //default: swap in qpainter dtor. we should swap before QPainter.endNativePainting()
+    //    setAutoBufferSwap(false);
+    //    setAutoFillBackground(false);
+
+
+
+
 ////    setAutoBufferSwap(true);
 ////    setAutoFillBackground(false);
 
@@ -64,6 +81,130 @@ void GLRenderRaw::setQuality(const Quality & quality) {
             glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
         }
     };
+}
+
+bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat) {
+    glBindTexture(GL_TEXTURE_2D, tex);
+//    setupQuality();
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D
+                 , 0                //level
+                 , internalFormat               //internal format. 4? why GL_RGBA? GL_RGB?
+                 , width
+                 , height
+                 , 0                //border, ES not support
+                 , format          //format, must the same as internal format?
+                 , dataType
+                 , NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    return true;
+}
+
+bool GLWidgetRendererPrivate::initTextures() {
+    //http://www.berkelium.com/OpenGL/GDC99/internalformat.html
+    //NV12: UV is 1 plane. 16 bits as a unit. GL_LUMINANCE4, 8, 16, ... 32?
+    //GL_LUMINANCE, GL_LUMINANCE_ALPHA are deprecated in GL3, removed in GL3.1
+    //replaced by GL_RED, GL_RG, GL_RGB, GL_RGBA? for 1, 2, 3, 4 channel image
+    //http://www.gamedev.net/topic/634850-do-luminance-textures-still-exist-to-opengl/
+    //https://github.com/kivy/kivy/issues/1738: GL_LUMINANCE does work on a Galaxy Tab 2. LUMINANCE_ALPHA very slow on Linux
+     //ALPHA: vec4(1,1,1,A), LUMINANCE: (L,L,L,1), LUMINANCE_ALPHA: (L,L,L,A)
+    /*
+     * To support both planar and packed use GL_ALPHA and in shader use r,g,a like xbmc does.
+     * or use Swizzle_mask to layout the channels: http://www.opengl.org/wiki/Texture#Swizzle_mask
+     * GL ES2 support: GL_RGB, GL_RGBA, GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_ALPHA
+     * http://stackoverflow.com/questions/18688057/which-opengl-es-2-0-texture-formats-are-color-depth-or-stencil-renderable
+     */
+
+
+    if (!fmt.isPlanar()) {
+        GLint internal_fmt;
+        GLenum data_fmt;
+        GLenum data_t;
+        if (!OpenGLHelper::videoFormatToGL(fmt, &internal_fmt, &data_fmt, &data_t)) {
+            qWarning("no opengl format found");
+            return false;
+        }
+        internal_format = QVector<GLint>(fmt.planeCount(), internal_fmt);
+        data_format = QVector<GLenum>(fmt.planeCount(), data_fmt);
+        data_type = QVector<GLenum>(fmt.planeCount(), data_t);
+    } else {
+        internal_format.resize(fmt.planeCount());
+        data_format.resize(fmt.planeCount());
+        data_type = QVector<GLenum>(fmt.planeCount(), GL_UNSIGNED_BYTE);
+        if (fmt.isPlanar()) {
+        /*!
+         * GLES internal_format == data_format, GL_LUMINANCE_ALPHA is 2 bytes
+         * so if NV12 use GL_LUMINANCE_ALPHA, YV12 use GL_ALPHA
+         */
+            qDebug("///////////bpp %d", fmt.bytesPerPixel());
+            internal_format[0] = data_format[0] = GL_LUMINANCE; //or GL_RED for GL
+            if (fmt.planeCount() == 2) {
+                internal_format[1] = data_format[1] = GL_LUMINANCE_ALPHA;
+            } else {
+                if (fmt.bytesPerPixel(1) == 2) {
+                    // read 16 bits and compute the real luminance in shader
+                    internal_format.fill(GL_LUMINANCE_ALPHA); //vec4(L,L,L,A)
+                    data_format.fill(GL_LUMINANCE_ALPHA);
+                } else {
+                    internal_format[1] = data_format[1] = GL_LUMINANCE; //vec4(L,L,L,1)
+                    internal_format[2] = data_format[2] = GL_ALPHA;//GL_ALPHA;
+                }
+            }
+            for (int i = 0; i < internal_format.size(); ++i) {
+                // xbmc use bpp not bpp(plane)
+                //internal_format[i] = GetGLInternalFormat(data_format[i], fmt.bytesPerPixel(i));
+                //data_format[i] = internal_format[i];
+            }
+        } else {
+            //glPixelStorei(GL_UNPACK_ALIGNMENT, fmt.bytesPerPixel());
+            // TODO: if no alpha, data_fmt is not GL_BGRA. align at every upload?
+        }
+    }
+
+    for (int i = 0; i < fmt.planeCount(); ++i) {
+        //qDebug("format: %#x GL_LUMINANCE_ALPHA=%#x", data_format[i], GL_LUMINANCE_ALPHA);
+        if (fmt.bytesPerPixel(i) == 2 && fmt.planeCount() == 3) {
+            //data_type[i] = GL_UNSIGNED_SHORT;
+        }
+        int bpp_gl = OpenGLHelper::bytesOfGLFormat(data_format[i], data_type[i]);
+        int pad = qCeil((qreal)(texture_size[i].width() - effective_tex_width[i])/(qreal)bpp_gl);
+        texture_size[i].setWidth(qCeil((qreal)texture_size[i].width()/(qreal)bpp_gl));
+        texture_upload_size[i].setWidth(qCeil((qreal)texture_upload_size[i].width()/(qreal)bpp_gl));
+        effective_tex_width[i] /= bpp_gl; //fmt.bytesPerPixel(i);
+        //effective_tex_width_ratio =
+        qDebug("texture width: %d - %d = pad: %d. bpp(gl): %d", texture_size[i].width(), effective_tex_width[i], pad, bpp_gl);
+    }
+
+    /*
+     * there are 2 fragment shaders: rgb and yuv.
+     * only 1 texture for packed rgb. planar rgb likes yuv
+     * To support both planar and packed yuv, and mixed yuv(NV12), we give a texture sample
+     * for each channel. For packed, each (channel) texture sample is the same. For planar,
+     * packed channels has the same texture sample.
+     * But the number of actural textures we upload is plane count.
+     * Which means the number of texture id equals to plane count
+     */
+    if (textures.size() != fmt.planeCount()) {
+        glDeleteTextures(textures.size(), textures.data());
+        qDebug("delete %d textures", textures.size());
+        textures.clear();
+        textures.resize(fmt.planeCount());
+        glGenTextures(textures.size(), textures.data());
+    }
+
+    if (!hasGLSL) {
+        initTexture(textures[0], internal_format[0], data_format[0], data_type[0], texture_size[0].width(), texture_size[0].height());
+        // more than 1?
+        qWarning("Does not support GLSL!");
+        return false;
+    }
+    qDebug("init textures...");
+    for (int i = 0; i < textures.size(); ++i) {
+        initTexture(textures[i], internal_format[i], data_format[i], data_type[i], texture_size[i].width(), texture_size[i].height());
+    }
+    return true;
 }
 
 void GLRenderRaw::resizeViewport(int w, int h) {
@@ -145,59 +286,22 @@ void GLRenderRaw::initializeGL() {
     //    } else if (cs == ColorTransform::BT709) {
     //        frag.prepend("#define CS_BT709\n");
     //    }
-    //#if NO_QGL_SHADER
-    //    program = createProgram(kVertexShader, frag.toUtf8().constData());
-    //    if (!program) {
-    //        qWarning("Could not create shader program.");
-    //        return false;
-    //    }
-    //    // vertex shader. we can set attribute locations calling glBindAttribLocation
-    //    a_Position = glGetAttribLocation(program, "a_Position");
-    //    a_TexCoords = glGetAttribLocation(program, "a_TexCoords");
-    //    u_matrix = glGetUniformLocation(program, "u_MVP_matrix");
-    //    u_bpp = glGetUniformLocation(program, "u_bpp");
-    //    // fragment shader
-    //    u_colorMatrix = glGetUniformLocation(program, "u_colorMatrix");
-    //#else
-    //    if (!shader_program->addShaderFromSourceCode(QGLShader::Vertex, kVertexShader)) {
-    //        qWarning("Failed to add vertex shader: %s", shader_program->log().toUtf8().constData());
-    //        return false;
-    //    }
-    //    if (!shader_program->addShaderFromSourceCode(QGLShader::Fragment, frag)) {
-    //        qWarning("Failed to add fragment shader: %s", shader_program->log().toUtf8().constData());
-    //        return false;
-    //    }
-    //    if (!shader_program->link()) {
-    //        qWarning("Failed to link shader program...%s", shader_program->log().toUtf8().constData());
-    //        return false;
-    //    }
-    //    // vertex shader
-    //    a_Position = shader_program->attributeLocation("a_Position");
-    //    a_TexCoords = shader_program->attributeLocation("a_TexCoords");
-    //    u_matrix = shader_program->uniformLocation("u_MVP_matrix");
-    //    u_bpp = shader_program->uniformLocation("u_bpp");
-    //    // fragment shader
-    //    u_colorMatrix = shader_program->uniformLocation("u_colorMatrix");
-    //#endif //NO_QGL_SHADER
-    //    qDebug("glGetAttribLocation(\"a_Position\") = %d\n", a_Position);
-    //    qDebug("glGetAttribLocation(\"a_TexCoords\") = %d\n", a_TexCoords);
-    //    qDebug("glGetUniformLocation(\"u_MVP_matrix\") = %d\n", u_matrix);
-    //    qDebug("glGetUniformLocation(\"u_bpp\") = %d\n", u_bpp);
-    //    qDebug("glGetUniformLocation(\"u_colorMatrix\") = %d\n", u_colorMatrix);
 
-    //    if (fmt.isRGB())
-    //        u_Texture.resize(1);
-    //    else
-    //        u_Texture.resize(fmt.channels());
-    //    for (int i = 0; i < u_Texture.size(); ++i) {
-    //        QString tex_var = QString("u_Texture%1").arg(i);
-    //#if NO_QGL_SHADER
-    //        u_Texture[i] = glGetUniformLocation(program, tex_var.toUtf8().constData());
-    //#else
-    //        u_Texture[i] = shader_program->uniformLocation(tex_var);
-    //#endif
-    //        qDebug("glGetUniformLocation(\"%s\") = %d\n", tex_var.toUtf8().constData(), u_Texture[i]);
-    //    }
+
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH); //setupQuality?
+    glClearDepth(1.0f);
+
+    if (vFrame -> buffer -> isRGB())
+        u_Texture.resize(1);
+    else
+        u_Texture.resize(fmt.channels());
+
+    for (int i = 0; i < u_Texture.size(); ++i) {
+        QString tex_var = QString("u_Texture%1").arg(i);
+        u_Texture[i] = shader_program->uniformLocation(tex_var);
+    }
 
     glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
 }
@@ -207,6 +311,148 @@ void GLRenderRaw::paintGL() {
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
+
+
+
+    //    QRect roi = realROI();
+    //    const int nb_planes = d.video_frame.planeCount(); //number of texture id
+    //    int mapped = 0;
+    //    for (int i = 0; i < nb_planes; ++i) {
+    //        if (d.video_frame.map(GLTextureSurface, &d.textures[i])) {
+    //            OpenGLHelper::glActiveTexture(GL_TEXTURE0 + i);
+    //            // if mapped by SurfaceInterop, the texture may be not bound
+    //            glBindTexture(GL_TEXTURE_2D, d.textures[i]); //we've bind 0 after upload()
+    //            mapped++;
+    //        }
+    //    }
+    //    if (mapped < nb_planes) {
+    //        d.upload(roi);
+    //    }
+    //    //TODO: compute kTexCoords only if roi changed
+    //#if ROI_TEXCOORDS
+    ///*!
+    //  tex coords: ROI/frameRect()*effective_tex_width_ratio
+    //*/
+    //    const GLfloat kTexCoords[] = {
+    //        (GLfloat)roi.x()*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)roi.y()/(GLfloat)d.video_frame.height(),
+    //        (GLfloat)(roi.x() + roi.width())*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)roi.y()/(GLfloat)d.video_frame.height(),
+    //        (GLfloat)(roi.x() + roi.width())*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)(roi.y()+roi.height())/(GLfloat)d.video_frame.height(),
+    //        (GLfloat)roi.x()*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)(roi.y()+roi.height())/(GLfloat)d.video_frame.height(),
+    //    };
+    //#else
+        const GLfloat kTexCoords[] = {
+                0, 0,
+                1, 0,
+                1, 1,
+                0, 1,
+        };
+    //#endif //ROI_TEXCOORDS
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glPushMatrix();
+    glScalef((float)d.out_rect.width()/(float)d.renderer_width, (float)d.out_rect.height()/(float)d.renderer_height, 0);
+    glVertexPointer(2, GL_FLOAT, 0, kVertices);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, 0, kTexCoords);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glPopMatrix();
+
+    for (int i = 0; i < textures.size(); ++i) {
+        video_frame.unmap(&d.textures[i]);
+    }
+
+
+    shader -> program -> bind();
+
+    // all texture ids should be binded when renderering even for packed plane!
+    for (int i = 0; i < nb_planes; ++i) {
+            // use glUniform1i to swap planes. swap uv: i => (3-i)%3
+            // TODO: in shader, use uniform sample2D u_Texture[], and use glUniform1iv(u_Texture, 3, {...})
+        shader -> program -> setUniformValue(u_Texture[i], (GLint)i);
+    }
+
+    if (nb_planes < u_Texture.size()) {
+        for (int i = nb_planes; i < u_Texture.size(); ++i) {
+            shader -> program -> setUniformValue(u_Texture[i], (GLint)(nb_planes - 1));
+        }
+    }
+
+    //    /*
+    //     * in Qt4 QMatrix4x4 stores qreal (double), while GLfloat may be float
+    //     * QShaderProgram deal with this case. But compares sizeof(QMatrix4x4) and (GLfloat)*16
+    //     * which seems not correct because QMatrix4x4 has a flag var
+    //     */
+    GLfloat *mat = (GLfloat*)d.colorTransform.matrixRef().data();
+    GLfloat glm[16];
+
+    #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+        if (sizeof(qreal) != sizeof(GLfloat)) {
+    #else
+        if (sizeof(float) != sizeof(GLfloat)) {
+    #endif
+            d.colorTransform.matrixData(glm);
+            mat = glm;
+        }
+
+    shader -> program -> setUniformValue(u_colorMatrix, colorTransform.matrixRef());
+    shader -> program -> setUniformValue(u_matrix, mpv_matrix);
+    shader -> program -> setUniformValue(u_bpp, (GLfloat)video_format.bitsPerPixel(0));
+
+
+    //   // uniforms done. attributes begin
+
+    shader -> program -> setAttributeArray(a_Position, GL_FLOAT, kVertices, 2);
+    shader -> program -> setAttributeArray(a_TexCoords, GL_FLOAT, kTexCoords, 2);
+    shader -> program -> enableAttributeArray(a_Position);
+    shader -> program -> enableAttributeArray(a_TexCoords);
+
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+
+    shader -> program -> release();
+    shader -> program -> disableAttributeArray(a_TexCoords);
+    shader -> program -> disableAttributeArray(a_Position);
+
+
+    //    for (int i = 0; i < d.textures.size(); ++i) {
+    //        d.video_frame.unmap(&d.textures[i]);
+    //    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     shader -> program -> bind();
 
@@ -438,53 +684,6 @@ void GLRenderRaw::paintGL() {
 //    return shader;
 //}
 
-//GLuint GLWidgetRendererPrivate::createProgram(const char* pVertexSource, const char* pFragmentSource) {
-//    if (!hasGLSL)
-//        return 0;
-//    program = glCreateProgram(); //TODO: var name conflict. temp var is better
-//    if (!program)
-//        return 0;
-//    GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
-//    if (!vertexShader) {
-//        return 0;
-//    }
-//    GLuint pixelShader = loadShader(GL_FRAGMENT_SHADER, pFragmentSource);
-//    if (!pixelShader) {
-//        glDeleteShader(vertexShader);
-//        return 0;
-//    }
-//    glAttachShader(program, vertexShader);
-//    glAttachShader(program, pixelShader);
-//    glLinkProgram(program);
-//    GLint linkStatus = GL_FALSE;
-//    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-//    if (linkStatus != GL_TRUE) {
-//        GLint bufLength = 0;
-//        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
-//        if (bufLength) {
-//            char* buf = (char*)malloc(bufLength);
-//            if (buf) {
-//                glGetProgramInfoLog(program, bufLength, NULL, buf);
-//                qWarning("Could not link program:\n%s\n", buf);
-//                free(buf);
-//            }
-//        }
-//        glDetachShader(program, vertexShader);
-//        glDeleteShader(vertexShader);
-//        glDetachShader(program, pixelShader);
-//        glDeleteShader(pixelShader);
-//        glDeleteProgram(program);
-//        program = 0;
-//        return 0;
-//    }
-//    //Always detach shaders after a successful link.
-//    glDetachShader(program, vertexShader);
-//    glDetachShader(program, pixelShader);
-//    vert = vertexShader;
-//    frag = pixelShader;
-//    return program;
-//}
-
 //QString GLWidgetRendererPrivate::getShaderFromFile(const QString &fileName)
 //{
 //    QFile f(qApp->applicationDirPath() + "/" + fileName);
@@ -498,134 +697,6 @@ void GLRenderRaw::paintGL() {
 //    QString src = f.readAll();
 //    f.close();
 //    return src;
-//}
-
-//bool GLWidgetRendererPrivate::initTexture(GLuint tex, GLint internalFormat, GLenum format, GLenum dataType, int width, int height)
-//{
-//    glBindTexture(GL_TEXTURE_2D, tex);
-//    setupQuality();
-//    // This is necessary for non-power-of-two textures
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//    glTexImage2D(GL_TEXTURE_2D
-//                 , 0                //level
-//                 , internalFormat               //internal format. 4? why GL_RGBA? GL_RGB?
-//                 , width
-//                 , height
-//                 , 0                //border, ES not support
-//                 , format          //format, must the same as internal format?
-//                 , dataType
-//                 , NULL);
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//    return true;
-//}
-
-//bool GLWidgetRendererPrivate::initTextures(const VideoFormat &fmt)
-//{
-//    // isSupported(pixfmt)
-//    if (!fmt.isValid())
-//        return false;
-//    video_format.setPixelFormatFFmpeg(fmt.pixelFormatFFmpeg());
-
-//    //http://www.berkelium.com/OpenGL/GDC99/internalformat.html
-//    //NV12: UV is 1 plane. 16 bits as a unit. GL_LUMINANCE4, 8, 16, ... 32?
-//    //GL_LUMINANCE, GL_LUMINANCE_ALPHA are deprecated in GL3, removed in GL3.1
-//    //replaced by GL_RED, GL_RG, GL_RGB, GL_RGBA? for 1, 2, 3, 4 channel image
-//    //http://www.gamedev.net/topic/634850-do-luminance-textures-still-exist-to-opengl/
-//    //https://github.com/kivy/kivy/issues/1738: GL_LUMINANCE does work on a Galaxy Tab 2. LUMINANCE_ALPHA very slow on Linux
-//     //ALPHA: vec4(1,1,1,A), LUMINANCE: (L,L,L,1), LUMINANCE_ALPHA: (L,L,L,A)
-//    /*
-//     * To support both planar and packed use GL_ALPHA and in shader use r,g,a like xbmc does.
-//     * or use Swizzle_mask to layout the channels: http://www.opengl.org/wiki/Texture#Swizzle_mask
-//     * GL ES2 support: GL_RGB, GL_RGBA, GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_ALPHA
-//     * http://stackoverflow.com/questions/18688057/which-opengl-es-2-0-texture-formats-are-color-depth-or-stencil-renderable
-//     */
-//    if (!fmt.isPlanar()) {
-//        GLint internal_fmt;
-//        GLenum data_fmt;
-//        GLenum data_t;
-//        if (!OpenGLHelper::videoFormatToGL(fmt, &internal_fmt, &data_fmt, &data_t)) {
-//            qWarning("no opengl format found");
-//            return false;
-//        }
-//        internal_format = QVector<GLint>(fmt.planeCount(), internal_fmt);
-//        data_format = QVector<GLenum>(fmt.planeCount(), data_fmt);
-//        data_type = QVector<GLenum>(fmt.planeCount(), data_t);
-//    } else {
-//        internal_format.resize(fmt.planeCount());
-//        data_format.resize(fmt.planeCount());
-//        data_type = QVector<GLenum>(fmt.planeCount(), GL_UNSIGNED_BYTE);
-//        if (fmt.isPlanar()) {
-//        /*!
-//         * GLES internal_format == data_format, GL_LUMINANCE_ALPHA is 2 bytes
-//         * so if NV12 use GL_LUMINANCE_ALPHA, YV12 use GL_ALPHA
-//         */
-//            qDebug("///////////bpp %d", fmt.bytesPerPixel());
-//            internal_format[0] = data_format[0] = GL_LUMINANCE; //or GL_RED for GL
-//            if (fmt.planeCount() == 2) {
-//                internal_format[1] = data_format[1] = GL_LUMINANCE_ALPHA;
-//            } else {
-//                if (fmt.bytesPerPixel(1) == 2) {
-//                    // read 16 bits and compute the real luminance in shader
-//                    internal_format.fill(GL_LUMINANCE_ALPHA); //vec4(L,L,L,A)
-//                    data_format.fill(GL_LUMINANCE_ALPHA);
-//                } else {
-//                    internal_format[1] = data_format[1] = GL_LUMINANCE; //vec4(L,L,L,1)
-//                    internal_format[2] = data_format[2] = GL_ALPHA;//GL_ALPHA;
-//                }
-//            }
-//            for (int i = 0; i < internal_format.size(); ++i) {
-//                // xbmc use bpp not bpp(plane)
-//                //internal_format[i] = GetGLInternalFormat(data_format[i], fmt.bytesPerPixel(i));
-//                //data_format[i] = internal_format[i];
-//            }
-//        } else {
-//            //glPixelStorei(GL_UNPACK_ALIGNMENT, fmt.bytesPerPixel());
-//            // TODO: if no alpha, data_fmt is not GL_BGRA. align at every upload?
-//        }
-//    }
-//    for (int i = 0; i < fmt.planeCount(); ++i) {
-//        //qDebug("format: %#x GL_LUMINANCE_ALPHA=%#x", data_format[i], GL_LUMINANCE_ALPHA);
-//        if (fmt.bytesPerPixel(i) == 2 && fmt.planeCount() == 3) {
-//            //data_type[i] = GL_UNSIGNED_SHORT;
-//        }
-//        int bpp_gl = OpenGLHelper::bytesOfGLFormat(data_format[i], data_type[i]);
-//        int pad = qCeil((qreal)(texture_size[i].width() - effective_tex_width[i])/(qreal)bpp_gl);
-//        texture_size[i].setWidth(qCeil((qreal)texture_size[i].width()/(qreal)bpp_gl));
-//        texture_upload_size[i].setWidth(qCeil((qreal)texture_upload_size[i].width()/(qreal)bpp_gl));
-//        effective_tex_width[i] /= bpp_gl; //fmt.bytesPerPixel(i);
-//        //effective_tex_width_ratio =
-//        qDebug("texture width: %d - %d = pad: %d. bpp(gl): %d", texture_size[i].width(), effective_tex_width[i], pad, bpp_gl);
-//    }
-
-//    /*
-//     * there are 2 fragment shaders: rgb and yuv.
-//     * only 1 texture for packed rgb. planar rgb likes yuv
-//     * To support both planar and packed yuv, and mixed yuv(NV12), we give a texture sample
-//     * for each channel. For packed, each (channel) texture sample is the same. For planar,
-//     * packed channels has the same texture sample.
-//     * But the number of actural textures we upload is plane count.
-//     * Which means the number of texture id equals to plane count
-//     */
-//    if (textures.size() != fmt.planeCount()) {
-//        glDeleteTextures(textures.size(), textures.data());
-//        qDebug("delete %d textures", textures.size());
-//        textures.clear();
-//        textures.resize(fmt.planeCount());
-//        glGenTextures(textures.size(), textures.data());
-//    }
-
-//    if (!hasGLSL) {
-//        initTexture(textures[0], internal_format[0], data_format[0], data_type[0], texture_size[0].width(), texture_size[0].height());
-//        // more than 1?
-//        qWarning("Does not support GLSL!");
-//        return false;
-//    }
-//    qDebug("init textures...");
-//    for (int i = 0; i < textures.size(); ++i) {
-//        initTexture(textures[i], internal_format[i], data_format[i], data_type[i], texture_size[i].width(), texture_size[i].height());
-//    }
-//    return true;
 //}
 
 //void GLWidgetRendererPrivate::updateTexturesIfNeeded()
@@ -797,32 +868,6 @@ void GLRenderRaw::paintGL() {
 //    //glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 //}
 
-//GLWidgetRenderer::GLWidgetRenderer(QWidget *parent, const QGLWidget* shareWidget, Qt::WindowFlags f):
-//    QGLWidget(parent, shareWidget, f),VideoRenderer(*new GLWidgetRendererPrivate())
-//{
-//    DPTR_INIT_PRIVATE(GLWidgetRenderer);
-//    DPTR_D(GLWidgetRenderer);
-//    setPreferredPixelFormat(VideoFormat::Format_YUV420P);
-//    setAcceptDrops(true);
-//    setFocusPolicy(Qt::StrongFocus);
-//    /* To rapidly update custom widgets that constantly paint over their entire areas with
-//     * opaque content, e.g., video streaming widgets, it is better to set the widget's
-//     * Qt::WA_OpaquePaintEvent, avoiding any unnecessary overhead associated with repainting the
-//     * widget's background
-//     */
-//    setAttribute(Qt::WA_OpaquePaintEvent);
-//    setAttribute(Qt::WA_PaintOnScreen);
-//    setAttribute(Qt::WA_NoSystemBackground);
-//    //default: swap in qpainter dtor. we should swap before QPainter.endNativePainting()
-//    setAutoBufferSwap(false);
-//    setAutoFillBackground(false);
-//    d.painter = new QPainter();
-//    d.filter_context = FilterContext::create(FilterContext::QtPainter);
-//    QPainterFilterContext *ctx = static_cast<QPainterFilterContext*>(d.filter_context);
-//    ctx->paint_device = this;
-//    ctx->painter = d.painter;
-//}
-
 //bool GLWidgetRenderer::isSupported(VideoFormat::PixelFormat pixfmt) const
 //{
 //    Q_UNUSED(pixfmt);
@@ -849,274 +894,4 @@ void GLRenderRaw::paintGL() {
 //{
 //    glClearColor(0, 0, 0, 0);
 //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//}
-
-//void GLWidgetRenderer::drawFrame()
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    d.updateTexturesIfNeeded();
-//    d.updateShaderIfNeeded();
-//    QRect roi = realROI();
-//    const int nb_planes = d.video_frame.planeCount(); //number of texture id
-//    int mapped = 0;
-//    for (int i = 0; i < nb_planes; ++i) {
-//        if (d.video_frame.map(GLTextureSurface, &d.textures[i])) {
-//            OpenGLHelper::glActiveTexture(GL_TEXTURE0 + i);
-//            // if mapped by SurfaceInterop, the texture may be not bound
-//            glBindTexture(GL_TEXTURE_2D, d.textures[i]); //we've bind 0 after upload()
-//            mapped++;
-//        }
-//    }
-//    if (mapped < nb_planes) {
-//        d.upload(roi);
-//    }
-//    //TODO: compute kTexCoords only if roi changed
-//#if ROI_TEXCOORDS
-///*!
-//  tex coords: ROI/frameRect()*effective_tex_width_ratio
-//*/
-//    const GLfloat kTexCoords[] = {
-//        (GLfloat)roi.x()*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)roi.y()/(GLfloat)d.video_frame.height(),
-//        (GLfloat)(roi.x() + roi.width())*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)roi.y()/(GLfloat)d.video_frame.height(),
-//        (GLfloat)(roi.x() + roi.width())*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)(roi.y()+roi.height())/(GLfloat)d.video_frame.height(),
-//        (GLfloat)roi.x()*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)(roi.y()+roi.height())/(GLfloat)d.video_frame.height(),
-//    };
-//#else
-//    const GLfloat kTexCoords[] = {
-//            0, 0,
-//            1, 0,
-//            1, 1,
-//            0, 1,
-//    };
-//#endif //ROI_TEXCOORDS
-//#ifndef QT_OPENGL_ES_2
-//    //GL_XXX may not defined in ES2. so macro is required
-//    if (!d.hasGLSL) {
-//        //qpainter will reset gl state, so need glMatrixMode and clear color(in drawBackground())
-//        //TODO: study what state will be reset
-//        glMatrixMode(GL_PROJECTION);
-//        glLoadIdentity();
-//        glMatrixMode(GL_MODELVIEW);
-//        glLoadIdentity();
-
-//        glPushMatrix();
-//        glScalef((float)d.out_rect.width()/(float)d.renderer_width, (float)d.out_rect.height()/(float)d.renderer_height, 0);
-//        glVertexPointer(2, GL_FLOAT, 0, kVertices);
-//        glEnableClientState(GL_VERTEX_ARRAY);
-//        glTexCoordPointer(2, GL_FLOAT, 0, kTexCoords);
-//        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-//        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-//        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-//        glDisableClientState(GL_VERTEX_ARRAY);
-//        glPopMatrix();
-//        for (int i = 0; i < d.textures.size(); ++i) {
-//            d.video_frame.unmap(&d.textures[i]);
-//        }
-//        return;
-//    }
-//#endif //QT_OPENGL_ES_2
-//    // uniforms begin
-//    // shader program may not ready before upload
-//#if NO_QGL_SHADER
-//    glUseProgram(d.program); //for glUniform
-//#else
-//    d.shader_program->bind();
-//#endif //NO_QGL_SHADER
-//    // all texture ids should be binded when renderering even for packed plane!
-//    for (int i = 0; i < nb_planes; ++i) {
-//        // use glUniform1i to swap planes. swap uv: i => (3-i)%3
-//        // TODO: in shader, use uniform sample2D u_Texture[], and use glUniform1iv(u_Texture, 3, {...})
-//#if NO_QGL_SHADER
-//        glUniform1i(d.u_Texture[i], i);
-//#else
-//        d.shader_program->setUniformValue(d.u_Texture[i], (GLint)i);
-//#endif
-//    }
-//    if (nb_planes < d.u_Texture.size()) {
-//        for (int i = nb_planes; i < d.u_Texture.size(); ++i) {
-//#if NO_QGL_SHADER
-//            glUniform1i(d.u_Texture[i], nb_planes - 1);
-//#else
-//            d.shader_program->setUniformValue(d.u_Texture[i], (GLint)(nb_planes - 1));
-//#endif
-//        }
-//    }
-//    /*
-//     * in Qt4 QMatrix4x4 stores qreal (double), while GLfloat may be float
-//     * QShaderProgram deal with this case. But compares sizeof(QMatrix4x4) and (GLfloat)*16
-//     * which seems not correct because QMatrix4x4 has a flag var
-//     */
-//    GLfloat *mat = (GLfloat*)d.colorTransform.matrixRef().data();
-//    GLfloat glm[16];
-//#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-//    if (sizeof(qreal) != sizeof(GLfloat)) {
-//#else
-//    if (sizeof(float) != sizeof(GLfloat)) {
-//#endif
-//        d.colorTransform.matrixData(glm);
-//        mat = glm;
-//    }
-//    //QMatrix4x4 stores value in Column-major order to match OpenGL. so transpose is not required in glUniformMatrix4fv
-//#if NO_QGL_SHADER
-//    glUniformMatrix4fv(d.u_colorMatrix, 1, GL_FALSE, mat);
-//    glUniformMatrix4fv(d.u_matrix, 1, GL_FALSE/*transpose or not*/, d.mpv_matrix.constData());
-//    glUniform1f(d.u_bpp, (GLfloat)d.video_format.bitsPerPixel(0));
-//#else
-//   d.shader_program->setUniformValue(d.u_colorMatrix, d.colorTransform.matrixRef());
-//   d.shader_program->setUniformValue(d.u_matrix, d.mpv_matrix);
-//   d.shader_program->setUniformValue(d.u_bpp, (GLfloat)d.video_format.bitsPerPixel(0));
-//#endif
-//   // uniforms done. attributes begin
-//   //qpainter need. TODO: VBO?
-//#if NO_QGL_SHADER
-//   glVertexAttribPointer(d.a_Position, 2, GL_FLOAT, GL_FALSE, 0, kVertices);
-//   glVertexAttribPointer(d.a_TexCoords, 2, GL_FLOAT, GL_FALSE, 0, kTexCoords);
-//   glEnableVertexAttribArray(d.a_Position);
-//   glEnableVertexAttribArray(d.a_TexCoords);
-//#else
-//   d.shader_program->setAttributeArray(d.a_Position, GL_FLOAT, kVertices, 2);
-//   d.shader_program->setAttributeArray(d.a_TexCoords, GL_FLOAT, kTexCoords, 2);
-//   d.shader_program->enableAttributeArray(d.a_Position);
-//   d.shader_program->enableAttributeArray(d.a_TexCoords);
-//#endif
-//   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-//#if NO_QGL_SHADER
-//   //glUseProgram(0);
-//   glDisableVertexAttribArray(d.a_TexCoords);
-//   glDisableVertexAttribArray(d.a_Position);
-//#else
-//   d.shader_program->release();
-//   d.shader_program->disableAttributeArray(d.a_TexCoords);
-//   d.shader_program->disableAttributeArray(d.a_Position);
-//#endif
-
-//    for (int i = 0; i < d.textures.size(); ++i) {
-//        d.video_frame.unmap(&d.textures[i]);
-//    }
-//}
-
-//void GLWidgetRenderer::initializeGL()
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    makeCurrent();
-//    //const QByteArray extensions(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)));
-//    d.hasGLSL = QGLShaderProgram::hasOpenGLShaderPrograms();
-//    qDebug("OpenGL version: %d.%d  hasGLSL: %d", format().majorVersion(), format().minorVersion(), d.hasGLSL);
-//#if QTAV_HAVE(QGLFUNCTIONS)
-//    initializeGLFunctions();
-//    d.initializeGLFunctions();
-//#endif //QTAV_HAVE(QGLFUNCTIONS)
-//    glEnable(GL_TEXTURE_2D);
-//    glDisable(GL_DEPTH_TEST);
-//    if (!d.hasGLSL) {
-//#ifndef QT_OPENGL_ES_2
-//        glShadeModel(GL_SMOOTH); //setupQuality?
-//        glClearDepth(1.0f);
-//#endif //QT_OPENGL_ES_2
-//    }
-//    else {
-//        d.initWithContext(context());
-//    }
-//    glClearColor(0.0, 0.0, 0.0, 0.0);
-//}
-
-//void GLWidgetRenderer::paintGL()
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    /* we can mix gl and qpainter.
-//     * QPainter painter(this);
-//     * painter.beginNativePainting();
-//     * gl functions...
-//     * painter.endNativePainting();
-//     * swapBuffers();
-//     */
-//    handlePaintEvent();
-//    swapBuffers();
-//    if (d.painter && d.painter->isActive())
-//        d.painter->end();
-//}
-
-//void GLWidgetRenderer::resizeGL(int w, int h)
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    //qDebug("%s @%d %dx%d", __FUNCTION__, __LINE__, d.out_rect.width(), d.out_rect.height());
-//    glViewport(0, 0, w, h);
-//    d.setupAspectRatio();
-//#ifndef QT_OPENGL_ES_2
-//    //??
-//    if (!d.hasGLSL) {
-//        glMatrixMode(GL_PROJECTION);
-//        glLoadIdentity();
-//        glMatrixMode(GL_MODELVIEW);
-//        glLoadIdentity();
-//    }
-//#endif //QT_OPENGL_ES_2
-//}
-
-//void GLWidgetRenderer::resizeEvent(QResizeEvent *e)
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    d.update_background = true;
-//    resizeRenderer(e->size());
-//    QGLWidget::resizeEvent(e); //will call resizeGL(). TODO:will call paintEvent()?
-//}
-
-////TODO: out_rect not correct when top level changed
-//void GLWidgetRenderer::showEvent(QShowEvent *)
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    d.update_background = true;
-//    /*
-//     * Do something that depends on widget below! e.g. recreate render target for direct2d.
-//     * When Qt::WindowStaysOnTopHint changed, window will hide first then show. If you
-//     * don't do anything here, the widget content will never be updated.
-//     */
-//}
-
-//void GLWidgetRenderer::onSetOutAspectRatio(qreal ratio)
-//{
-//    Q_UNUSED(ratio);
-//    d_func().setupAspectRatio();
-//}
-
-//void GLWidgetRenderer::onSetOutAspectRatioMode(OutAspectRatioMode mode)
-//{
-//    Q_UNUSED(mode);
-//    d_func().setupAspectRatio();
-//}
-
-//bool GLWidgetRenderer::onSetBrightness(qreal b)
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    if (!d.hasGLSL)
-//        return false;
-//    d.colorTransform.setBrightness(b);
-//    return true;
-//}
-
-//bool GLWidgetRenderer::onSetContrast(qreal c)
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    if (!d.hasGLSL)
-//        return false;
-//    d.colorTransform.setContrast(c);
-//    return true;
-//}
-
-//bool GLWidgetRenderer::onSetHue(qreal h)
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    if (!d.hasGLSL)
-//        return false;
-//    d.colorTransform.setHue(h);
-//    return true;
-//}
-
-//bool GLWidgetRenderer::onSetSaturation(qreal s)
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    if (!d.hasGLSL)
-//        return false;
-//    d.colorTransform.setSaturation(s);
-//    return true;
 //}

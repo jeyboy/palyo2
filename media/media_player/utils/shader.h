@@ -1,38 +1,54 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+//#if defined(YUV_MAT_GLSL)
+////http://en.wikipedia.org/wiki/YUV calculation used
+////http://www.fourcc.org/fccyvrgb.php
+////GLSL: col first
+//// use bt601
+//    #if defined(CS_BT709)
+//    "    const mat4 yuv2rgbMatrix = mat4(
+//    "           1,      1,          1,      0,"
+//    "           0,      -0.187,     1.8556, 0,"
+//    "           1.5701, -0.4664,    0,      0,"
+//    "           0,      0,          0,      1)"
+//    #else //BT601
+//    "    const mat4 yuv2rgbMatrix = mat4("
+//    "           1,      1,      1,      0,"
+//    "           0,      -0.344, 1.773,  0,"
+//    "           1.403,  -0.714, 0,      0,"
+//    "           0,      0,      0,      1)"
+//    #endif
+//    "    * mat4("
+//    "           1,      0,      0,      0,"
+//    "           0,      1,      0,      0,"
+//    "           0,      0,      1,      0,"
+//    "           0,      -0.5,   -0.5,   1);"
+//#endif
+
+
+
 #include <QGLShaderProgram>
 
 struct Shader {
 
     Shader() :
-            update_texcoords(true)
-          , effective_tex_width_ratio(1)
-          , shader_program(0)
-          , program(0)
-          , vert(0)
-          , frag(0)
+          program(0)
           , a_Position(-1)
           , a_TexCoords(-1)
           , u_matrix(-1)
           , u_bpp(-1)
-          , painter(0)
-          , video_format(VideoFormat::Format_Invalid)
-          , material_type(0)
     {
 
     }
 
     ~Shader() { remove(); }
 
-    bool setup(const QGLContext * ctx) {
+    bool setup(const QGLContext * ctx, bool planar = false, bool big_endian = false, bool little_endian = false) {
         program = new QGLShaderProgram(ctx);
 
-        program -> addShaderFromSourceCode(QGLShader::Vertex, kVertexShader());
-
-
-//        program -> addShaderFromSourceCode(QGLShader::Fragment, kFragmentShader());
-
+        program -> addShaderFromSourceCode(QGLShader::Vertex, vertexShader());
+        program -> addShaderFromSourceCode(QGLShader::Fragment, fragmentShader(planar, big_endian, little_endian));
 
         a_Position      = program -> attributeLocation("a_Position");
         a_TexCoords     = program -> attributeLocation("a_TexCoords");
@@ -53,7 +69,7 @@ struct Shader {
     }
 
 
-    const char * kVertexShader() {
+    const char * vertexShader() {
         return
             "attribute vec4 a_Position;\n"
             "attribute vec2 a_TexCoords;\n"
@@ -65,31 +81,72 @@ struct Shader {
             "}\n";
     }
 
+    const char * fragmentShader(bool planar, bool big_endian, bool little_endian) {
+        if (planar) {
+            if (big_endian || little_endian) {
+                #define LA_16BITS 1
+            } else {
+                #define LA_16BITS 0
+            }
 
-//    const char * kFragmentShader() {
-//        return
-//                "uniform sampler2DRect Ytex;\n"
-//                "uniform sampler2DRect Utex, Vtex;\n"
-//                "void main(void) {\n"
-//                "  float nx, ny, r, g, b, y, u, v;\n"
-//                "  vec4 txl, ux, vx;"
-//                "  nx = gl_TexCoord[0].x;\n"
-//                "  ny = 576.0 - gl_TexCoord[0].y;\n"
-//                "  y = texture2DRect(Ytex,vec2(nx, ny)).r;\n"
-//                "  u = texture2DRect(Utex,vec2(nx/2.0, ny/2.0)).r;\n"
-//                "  v = texture2DRect(Vtex,vec2(nx/2.0, ny/2.0)).r;\n"
+            //#ifdef GL_ES
+            //// Set default precision to medium
+            //precision mediump int;
+            //precision mediump float;
+            //#else
+            //#define highp
+            //#define mediump
+            //#define lowp
+            //#endif
 
-//                "  y = 1.1643 * (y - 0.0625);\n"
-//                "  u = u - 0.5;\n"
-//                "  v = v - 0.5;\n"
+            return
+                    //// Set default precision to medium
+                    "precision mediump int;"
+                    "precision mediump float;"
+                    "uniform sampler2D u_Texture0; "
+                    "uniform sampler2D u_Texture1; "
+                    "uniform sampler2D u_Texture2; "
+                    "varying lowp vec2 v_TexCoords;"
+                    "uniform float u_bpp;          "
+                    "uniform mat4 u_colorMatrix;   "
 
-//                "  r = y + 1.5958 * v;\n"
-//                "  g = y - 0.39173 * u - 0.81290 * v;\n"
-//                "  b = y + 2.017 * u;\n"
 
-//                "  gl_FragColor = vec4(r, g, b, 1.0);\n"
-//                "}\n";
-//    }
+                    // 10, 16bit: http://msdn.microsoft.com/en-us/library/windows/desktop/bb970578%28v=vs.85%29.aspx
+                    "void main() {"
+                        // FFmpeg supports 9, 10, 12, 14, 16 bits
+                    #if LA_16BITS
+                        "float range = exp2(u_bpp) - 1.0;"
+                        #if defined(LA_16BITS_LE)
+                            "vec2 t = vec2(1.0, 256.0) * 255.0 / range;"
+                        #else
+                            "vec2 t = vec2(256.0, 1.0) * 255.0 / range;"
+                        #endif
+                    #endif //LA_16BITS // 10p in little endian: yyyyyyyy yy000000 => (L, L, L, A)
+                        "gl_FragColor = clamp(u_colorMatrix"
+                        "                     * vec4("
+                    #if LA_16BITS
+                        "                         dot(texture2D(u_Texture0, v_TexCoords).ra, t),"
+                        "                         dot(texture2D(u_Texture1, v_TexCoords).ra, t),"
+                        "                         dot(texture2D(u_Texture2, v_TexCoords).ra, t),"
+                    #else // use r, g, a to work for both yv12 and nv12. idea from xbmc
+                        "                         texture2D(u_Texture0, v_TexCoords).r,"
+                        "                         texture2D(u_Texture1, v_TexCoords).g,"
+                        "                         texture2D(u_Texture2, v_TexCoords).a,"
+                    #endif //LA_16BITS
+                        "                         1)"
+                        "                     , 0.0, 1.0);"
+                    "}";
+        } else {
+            return
+                    "uniform sampler2D u_Texture0;"
+                    "varying vec2 v_TexCoords;"
+                    "uniform mat4 u_colorMatrix;"
+                    ""
+                    "void main() {"
+                    "  gl_FragColor = u_colorMatrix * texture2D(u_Texture0, v_TexCoords);"
+                    "}";
+        }
+    }
 
     QGLShaderProgram * program;
 

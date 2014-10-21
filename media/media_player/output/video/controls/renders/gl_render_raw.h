@@ -18,6 +18,7 @@ public:
     ~GLRenderRaw();
 
     void setQuality(const Quality & quality);
+    bool initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat = GL_RGBA);
 
     inline RenderType getRenderType() const { return gl_plus; }
     void resizeViewport(int w, int h);

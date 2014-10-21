@@ -67,17 +67,14 @@ public:
         if (av_picture)
             avpicture_free(av_picture);
 
-        av_freep(descriptor);
+//        av_freep(descriptor);
     }
 
     QImage * asQImage() { return q_image; }
     AVPicture * asAVPicture() { return av_picture; }
 
     int channelsCount() const {
-        AVPixFmtDescriptor * descriptor = av_pix_fmt_desc_get(fmt);
-        int res = descriptor -> nb_components;
-        delete descriptor;
-        return res;
+        return descriptor -> nb_components;
     }
 
     //TODO: not completed for rgb and not tested
@@ -412,7 +409,7 @@ private:
     QImage * q_image;
     AVPicture * av_picture;
     AVColorSpace color_space;
-    AVPixFmtDescriptor * descriptor;
+    const AVPixFmtDescriptor * descriptor;
 };
 
 #endif // VIDEO_BUFFER_H
