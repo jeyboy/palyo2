@@ -4,6 +4,9 @@
 #include "media_player_utils.h"
 #include <QImage>
 
+#include <GL/gl.h>
+#include <GL/glext.h>
+
 struct VideoTypes {
     enum PixelFormat {
         PF_Invalid = -1,
@@ -25,6 +28,8 @@ struct VideoTypes {
         PF_BGR565LE,
         PF_BGR555BE,
         PF_BGR555LE,
+        PF_RGB444BE,
+        PF_RGB444LE,
 
         //http://www.fourcc.org/yuv.php
         PF_AYUV444,
@@ -86,6 +91,10 @@ struct VideoTypes {
     static bool isCompatible(AVPixelFormat & fmt);
     static QImage::Format toQImageFormat(AVPixelFormat & fmt);
     static PixelFormat toPixelFormat(AVPixelFormat & fmt);
+
+    static bool videoFormatToGL(const AVPixelFormat & fmt, GLint* internal_format, GLenum* data_format, GLenum* data_type);
+    static int bytesPerGLFormat(GLenum format, GLenum dataType);
+    static GLint getGLInternalFormat(GLint data_format, int bpp);
 };
 
 #endif // VIDEO_TYPES_H
