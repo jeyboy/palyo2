@@ -1,7 +1,7 @@
 #ifndef VIDEO_STREAM_H
 #define VIDEO_STREAM_H
 
-#include "media/media_player/utils/video_frame.h"
+#include "../frames/video_frame.h"
 #include "media/media_player/streams/base/media_stream.h"
 #include "media/media_player/output/video/base_output.h"
 #include "media/media_player/resamplers/video_resampler.h"

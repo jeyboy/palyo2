@@ -120,7 +120,9 @@ SOURCES += main.cpp\
     media/media_player/output/video/controls/renders/render_interface.cpp \
     media/media_player/output/video/controls/renders/hardware_render.cpp \
     media/media_player/output/video/controls/renders/gl_render.cpp \
-    media/media_player/output/video/controls/renders/gl_render_raw.cpp
+    media/media_player/output/video/controls/renders/gl_render_raw.cpp \
+    media/media_player/streams/decoders/audio_stream - копия (2).cpp \
+    media/media_player/utils/video_types.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -215,9 +217,7 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/decoders/subtitle_stream.h \
     media/media_player/resamplers/audio_resampler.h \
     media/media_player/resamplers/video_resampler.h \
-    media/media_player/utils/video_frame.h \
     media/media_player/streams/base/i_media_stream.h \
-    media/media_player/utils/audio_frame.h \
     media/media_player/output/audio/audio_output_stream.h \
     media/media_player/output/audio/portaudio_output_stream.h \
     media/media_player/output/video/controls/control_panel.h \
@@ -227,11 +227,17 @@ HEADERS  += mainwindow.h \
     media/media_player/output/video/controls/renders/render_interface.h \
     media/media_player/output/video/controls/renders/hardware_render.h \
     media/media_player/output/video/controls/renders/gl_render.h \
-    media/media_player/output/video/controls/renders/render_types.h \
     media/media_player/output/video/controls/renders/renders.h \
     media/media_player/output/video/controls/renders/gl_render_raw.h \
-    media/media_player/utils/shader.h \
-    media/media_player/utils/video_buffer.h
+    media/media_player/streams/decoders/audio_stream - копия (2).h \
+    media/media_player/streams/frames/video/color_conversion.h \
+    media/media_player/streams/frames/video/shader.h \
+    media/media_player/streams/frames/video/video_buffer.h \
+    media/media_player/streams/frames/video/video_settings.h \
+    media/media_player/streams/frames/audio_frame.h \
+    media/media_player/streams/frames/video_frame.h \
+    media/media_player/output/video/controls/renders/render_types.h \
+    media/media_player/utils/video_types.h
 
 
 unix:!mac {

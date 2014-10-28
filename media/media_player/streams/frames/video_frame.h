@@ -3,7 +3,7 @@
 
 #include <QTransform>
 #include "media/media_player/utils/master_clock.h"
-#include "media/media_player/utils/video_buffer.h"
+#include "./video/video_buffer.h"
 
 struct VideoFrame {
     VideoFrame() {

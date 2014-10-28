@@ -32,8 +32,8 @@
 
 struct Shader {
 
-    Shader() :
-          program(0)
+    Shader(const QGLContext * ctx) :
+          program(new QGLShaderProgram(ctx))
           , a_Position(-1)
           , a_TexCoords(-1)
           , u_matrix(-1)
@@ -44,9 +44,7 @@ struct Shader {
 
     ~Shader() { remove(); }
 
-    bool setup(const QGLContext * ctx, bool planar = false, bool big_endian = false, bool little_endian = false) {
-        program = new QGLShaderProgram(ctx);
-
+    bool setup(bool planar = false, bool big_endian = false, bool little_endian = false) {
         program -> addShaderFromSourceCode(QGLShader::Vertex, vertexShader());
         program -> addShaderFromSourceCode(QGLShader::Fragment, fragmentShader(planar, big_endian, little_endian));
 

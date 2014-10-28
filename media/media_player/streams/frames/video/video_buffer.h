@@ -6,7 +6,8 @@
 #define VIDEO_BUFFER_H
 
 #include <QBitmap>
-#include "../utils/media_player_utils.h"
+#include "media/media_player/utils/media_player_utils.h"
+#include "video_settings.h"
 
 #define ALPHA_BLEND(a, oldp, newp, s)\
 ((((oldp << s) * (255 - (a))) + (newp * (a))) / (255 << s))
@@ -43,27 +44,20 @@ public:
         rgb
     };
 
-    VideoBuffer(QImage * img, int width, int height, AVPixelFormat format, AVColorSpace colorspace) : av_picture(0) {
-        color_space = colorspace;
-        fmt = format;
-        buff_width = width;
-        buff_height = height;
+    VideoBuffer(QImage * img, VideoSettings * settings) : av_picture(0) {
+        setts = settings;
         q_image = img;
-        descriptor = av_pix_fmt_desc_get(fmt);
     }
 
-    VideoBuffer(AVPicture * pict, int width, int height, AVPixelFormat format, AVColorSpace colorspace) : q_image(0) {
-        color_space = colorspace;
-        fmt = format;
-        buff_width = width;
-        buff_height = height;
+    VideoBuffer(AVPicture * pict, VideoSettings * settings) : q_image(0) {
+        setts = settings;
         av_picture = pict;
-        descriptor = av_pix_fmt_desc_get(fmt);
     }
 
     ~VideoBuffer() {
         if (q_image)
             delete q_image;
+
         if (av_picture)
             avpicture_free(av_picture);
 
@@ -72,10 +66,6 @@ public:
 
     QImage * asQImage() { return q_image; }
     AVPicture * asAVPicture() { return av_picture; }
-
-    int channelsCount() const {
-        return descriptor -> nb_components;
-    }
 
     //TODO: not completed for rgb and not tested
     void blend_subrect(const AVSubtitleRect *rect) {
@@ -91,112 +81,7 @@ public:
         } else return other;
     }
 
-    bool isRGB() { return (descriptor -> flags & AV_PIX_FMT_FLAG_RGB) == AV_PIX_FMT_FLAG_RGB; }
-    bool isHWACCEL() { return (descriptor -> flags & AV_PIX_FMT_FLAG_HWACCEL) == AV_PIX_FMT_FLAG_HWACCEL; }
-    bool isPlanar() { return (descriptor -> flags & AV_PIX_FMT_FLAG_PLANAR) == AV_PIX_FMT_FLAG_PLANAR; }
-    bool isBigEndian() { return (descriptor -> flags & AV_PIX_FMT_FLAG_BE) == AV_PIX_FMT_FLAG_BE; }
-    bool isBitstream() { return (descriptor -> flags & AV_PIX_FMT_FLAG_BITSTREAM) == AV_PIX_FMT_FLAG_BITSTREAM; }
-    bool hasPalette() { return (descriptor -> flags & AV_PIX_FMT_FLAG_PAL) == AV_PIX_FMT_FLAG_PAL; }
-    bool hasPseudoPalette() { return (descriptor -> flags & AV_PIX_FMT_FLAG_PSEUDOPAL) == AV_PIX_FMT_FLAG_PSEUDOPAL; }
-    bool hasAlpha() { return (descriptor -> flags & AV_PIX_FMT_FLAG_ALPHA) == AV_PIX_FMT_FLAG_ALPHA; }
-
-
-
-
-
-
-
-//        AVPixelFormat f = av_pix_fmt_swap_endianness(fmt); // need to check this later
-
-//        return
-//                f == AV_PIX_FMT_RGB24 || f == AV_PIX_FMT_BGR24
-//             || f == AV_PIX_FMT_RGB565 || f == AV_PIX_FMT_BGR565
-//             || f == AV_PIX_FMT_RGB555 || f == AV_PIX_FMT_BGR555
-//             || f == AV_PIX_FMT_ARGB || f == AV_PIX_FMT_RGBA
-//             || f == AV_PIX_FMT_ABGR || f == AV_PIX_FMT_BGRA;
-//    }
-
-//    bool isPlanar() {
-//        return
-//                fmt == AV_PIX_FMT_YUV420P ||
-//                fmt == AV_PIX_FMT_YUYV422 ||
-//                fmt == AV_PIX_FMT_YUV422P ||
-//                fmt == AV_PIX_FMT_YUV444P ||
-//                fmt == AV_PIX_FMT_YUV410P ||
-//                fmt == AV_PIX_FMT_YUV411P ||
-//                fmt == AV_PIX_FMT_YUVJ420P ||
-//                fmt == AV_PIX_FMT_UYVY422 ||
-//                fmt == AV_PIX_FMT_NV12 ||
-//                fmt == AV_PIX_FMT_NV21 ||
-//                fmt == AV_PIX_FMT_YUV420P16LE ||
-//                fmt == AV_PIX_FMT_YUV420P16BE ||
-//                fmt == AV_PIX_FMT_YUV422P16LE ||
-//                fmt == AV_PIX_FMT_YUV422P16BE ||
-//                fmt == AV_PIX_FMT_YUV444P16LE ||
-//                fmt == AV_PIX_FMT_YUV444P16BE ||
-//                fmt == AV_PIX_FMT_YUV420P9BE ||
-//                fmt == AV_PIX_FMT_YUV420P9LE ||
-//                fmt == AV_PIX_FMT_YUV420P10BE ||
-//                fmt == AV_PIX_FMT_YUV420P10LE ||
-//                fmt == AV_PIX_FMT_YUV422P10BE ||
-//                fmt == AV_PIX_FMT_YUV422P10LE ||
-//                fmt == AV_PIX_FMT_YUV444P9BE ||
-//                fmt == AV_PIX_FMT_YUV444P9LE ||
-//                fmt == AV_PIX_FMT_YUV444P10BE ||
-//                fmt == AV_PIX_FMT_YUV444P10LE ||
-//                fmt == AV_PIX_FMT_YUV422P9BE ||
-//                fmt == AV_PIX_FMT_YUV422P9LE ||
-//                fmt == AV_PIX_FMT_YUV420P12BE ||
-//                fmt == AV_PIX_FMT_YUV420P12LE ||
-//                fmt == AV_PIX_FMT_YUV420P14BE ||
-//                fmt == AV_PIX_FMT_YUV420P14LE ||
-//                fmt == AV_PIX_FMT_YUV422P12BE ||
-//                fmt == AV_PIX_FMT_YUV422P12LE ||
-//                fmt == AV_PIX_FMT_YUV422P14BE ||
-//                fmt == AV_PIX_FMT_YUV422P14LE ||
-//                fmt == AV_PIX_FMT_YUV444P12BE ||
-//                fmt == AV_PIX_FMT_YUV444P12LE ||
-//                fmt == AV_PIX_FMT_YUV444P14BE ||
-//                fmt == AV_PIX_FMT_YUV444P14LE;
-//    }
-
-//    bool isBigEndian() {
-//        return
-//                fmt == AV_PIX_FMT_YUV420P16BE ||
-//                fmt == AV_PIX_FMT_YUV422P16BE ||
-//                fmt == AV_PIX_FMT_YUV444P16BE ||
-//                fmt == AV_PIX_FMT_YUV420P9BE ||
-//                fmt == AV_PIX_FMT_YUV420P10BE ||
-//                fmt == AV_PIX_FMT_YUV422P10BE ||
-//                fmt == AV_PIX_FMT_YUV444P9BE ||
-//                fmt == AV_PIX_FMT_YUV444P10BE ||
-//                fmt == AV_PIX_FMT_YUV422P9BE ||
-//                fmt == AV_PIX_FMT_YUV420P12BE ||
-//                fmt == AV_PIX_FMT_YUV420P14BE ||
-//                fmt == AV_PIX_FMT_YUV422P12BE ||
-//                fmt == AV_PIX_FMT_YUV422P14BE ||
-//                fmt == AV_PIX_FMT_YUV444P12BE ||
-//                fmt == AV_PIX_FMT_YUV444P14BE;
-//    }
-
-//    bool isLittleEndian() {
-//        return
-//                fmt == AV_PIX_FMT_YUV420P16LE ||
-//                fmt == AV_PIX_FMT_YUV422P16LE ||
-//                fmt == AV_PIX_FMT_YUV444P16LE ||
-//                fmt == AV_PIX_FMT_YUV420P9LE ||
-//                fmt == AV_PIX_FMT_YUV420P10LE ||
-//                fmt == AV_PIX_FMT_YUV422P10LE ||
-//                fmt == AV_PIX_FMT_YUV444P9LE ||
-//                fmt == AV_PIX_FMT_YUV444P10LE ||
-//                fmt == AV_PIX_FMT_YUV422P9LE ||
-//                fmt == AV_PIX_FMT_YUV420P12LE ||
-//                fmt == AV_PIX_FMT_YUV420P14LE ||
-//                fmt == AV_PIX_FMT_YUV422P12LE ||
-//                fmt == AV_PIX_FMT_YUV422P14LE ||
-//                fmt == AV_PIX_FMT_YUV444P12LE ||
-//                fmt == AV_PIX_FMT_YUV444P14LE;
-//    }
+    inline VideoSettings * settings() const { return setts; }
 
 protected:
     void rgba_blend_subrect(const AVSubtitleRect *rect) {
@@ -211,10 +96,10 @@ protected:
         const uint32_t *pal;
         int dstx, dsty, dstw, dsth;
 
-        dstw = av_clip(rect -> w, 0, buff_width);
-        dsth = av_clip(rect -> h, 0, buff_height);
-        dstx = av_clip(rect -> x, 0, buff_width - dstw);
-        dsty = av_clip(rect -> y, 0, buff_height - dsth);
+        dstw = av_clip(rect -> w, 0, setts -> buff_width);
+        dsth = av_clip(rect -> h, 0, setts -> buff_height);
+        dstx = av_clip(rect -> x, 0, setts -> buff_width - dstw);
+        dsty = av_clip(rect -> y, 0, setts -> buff_height - dsth);
         lum = av_picture -> data[0] + dsty * av_picture -> linesize[0];
         cb  = av_picture -> data[1] + (dsty >> 1) * av_picture -> linesize[1];
         cr  = av_picture -> data[2] + (dsty >> 1) * av_picture -> linesize[2];
@@ -403,13 +288,10 @@ protected:
     }
 
 private:
-    int buff_width, buff_height;
-    AVPixelFormat fmt;
+    VideoSettings * setts;
     VideoBufferType buff_type;
     QImage * q_image;
     AVPicture * av_picture;
-    AVColorSpace color_space;
-    const AVPixFmtDescriptor * descriptor;
 };
 
 #endif // VIDEO_BUFFER_H

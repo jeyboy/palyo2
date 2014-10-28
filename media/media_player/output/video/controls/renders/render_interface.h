@@ -1,7 +1,7 @@
 #ifndef RENDER_INTERFACE_H
 #define RENDER_INTERFACE_H
 
-#include "media/media_player/utils/video_frame.h"
+#include "media/media_player/streams/frames/video_frame.h"
 #include "render_types.h"
 
 #include <QGLWidget>

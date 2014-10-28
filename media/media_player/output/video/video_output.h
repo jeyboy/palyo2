@@ -1,7 +1,6 @@
 #ifndef VIDEO_OUTPUT_H
 #define VIDEO_OUTPUT_H
 
-#include "media/media_player/utils/video_frame.h"
 #include "controls/output_container.h"
 #include "controls/renders/renders.h"
 

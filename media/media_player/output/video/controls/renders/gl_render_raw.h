@@ -2,6 +2,7 @@
 #define GL_RENDER_H
 
 #include "media/media_player/utils/shader.h"
+#include "media/media_player/utils/color_conversion.h"
 #include "media/media_player/output/video/controls/renders/render_interface.h"
 #include <QOpenGLFunctions>
 
@@ -17,8 +18,13 @@ public:
     GLRenderRaw(QWidget* parent = NULL);
     ~GLRenderRaw();
 
+    bool videoFormatToGL(const AVPixelFormat & fmt, GLint* internal_format, GLenum* data_format, GLenum* data_type);
+    int bytesOfGLFormat(GLenum format, GLenum dataType);
+    GLint GetGLInternalFormat(GLint data_format, int bpp);
+
     void setQuality(const Quality & quality);
     bool initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat = GL_RGBA);
+    bool GLRenderRaw::initTextures();
 
     inline RenderType getRenderType() const { return gl_plus; }
     void resizeViewport(int w, int h);
@@ -26,13 +32,15 @@ public:
     void repaint();
 
 protected:
+    void computeOutParameters(qreal outAspectRatio);
+    void prepareSettings();
     void initializeGL();
     void paintGL();  
 
 private:
     //    bool update_texcoords;
-    //    QVector<GLuint> textures; //texture ids. size is plane count
-    //    QVector<QSize> texture_size;
+    QVector<GLuint> textures; //texture ids. size is plane count
+    QVector<QSize> texture_size;
     //    /*
     //     * actually if render a full frame, only plane 0 is enough. other planes are the same as texture size.
     //     * because linesize[0]>=linesize[1]
@@ -44,14 +52,13 @@ private:
 
     //    QVector<int> effective_tex_width; //without additional width for alignment
     //    qreal effective_tex_width_ratio;
-    //    QVector<GLint> internal_format;
-    //    QVector<GLenum> data_format;
-    //    QVector<GLenum> data_type;
-    //    QGLShaderProgram *shader_program;
+    QVector<GLint> internal_format;
+    QVector<GLenum> data_format;
+    QVector<GLenum> data_type;
     //    GLuint program;
     //    GLuint vert, frag;
 
-    //    QVector<GLint> u_Texture; //u_TextureN uniform. size is channel count
+    QVector<GLint> u_Texture;
 
 
     //    QPainter *painter;
@@ -60,10 +67,12 @@ private:
     //    QSize plane0Size;
     //    // width is in bytes. different alignments may result in different plane 1 linesize even if plane 0 are the same
     //    int plane1_linesize;
-    //    ColorTransform colorTransform;
-    //    QMatrix4x4 mpv_matrix;
+
+    QMatrix4x4 mpv_matrix;
 
     Shader * shader;
+    ColorConversion * color_conversion;
+    int renderer_width, renderer_height;
 };
 
 #endif // GL_RENDER_H

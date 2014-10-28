@@ -8,16 +8,18 @@ VideoResampler::VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelF
     , resampleContext(0)
     , img_format(toQImageFormat(pixelFormatOut))
     , compatible(isCompatibleFormat(pixel_format_out))
+    , settings(0)
 {
     RGBFrame = av_frame_alloc();
 }
 
 VideoResampler::~VideoResampler() {
+    delete settings;
     av_frame_free(&RGBFrame);
     sws_freeContext(resampleContext);
 }
 
-VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {
+VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {  
     //            if (!RGBFrame || RGBFrame -> width != width
     //                    || RGBFrame -> height != height) {
     //                // Determine required buffer size and allocate buffer
@@ -36,6 +38,8 @@ VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn
     //            }
 
     if (compatible) {
+        initSettings(frame, (AVPixelFormat)frame -> format, frame -> width, frame -> height);
+
         AVPicture * newPict = new AVPicture();
         if (avpicture_alloc(newPict, (AVPixelFormat)frame -> format, frame -> width, frame -> height) == 0) {
             av_picture_copy(newPict, (AVPicture *)frame, (AVPixelFormat)frame -> format, frame -> width, frame -> height);
@@ -60,7 +64,7 @@ VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn
 //        memcpy(data[2], frame -> data[2], size);
 
 //        return data;
-        return new VideoBuffer(newPict, frame -> width, frame -> height, (AVPixelFormat)frame -> format, frame -> colorspace);
+        return new VideoBuffer(newPict, settings);
     } else return toQImage(frame, widthIn, heightIn, widthOut, heightOut);
 }
 
@@ -127,7 +131,8 @@ VideoBuffer * VideoResampler::toQImage(AVFrame * frame, int widthIn, int heightI
 
     // Convert to RGB
     sws_scale(resampleContext, frame -> data, frame -> linesize, 0, heightIn, RGBFrame -> data, RGBFrame -> linesize);
-    return new VideoBuffer(img, img -> width(), img -> height(), pixelFormatOut, frame -> colorspace);
+    initSettings(frame, pixelFormatOut, img -> width(), img -> height());
+    return new VideoBuffer(img, settings);
 }
 
 void VideoResampler::setColorspaceDetails(int brightness, int contrast, int saturation) {
@@ -156,20 +161,6 @@ void VideoResampler::setColorspaceDetails(int brightness, int contrast, int satu
     //                             , (((d.contrast + 100) << 16) + 50)/100
     //                             , (((d.saturation + 100) << 16) + 50)/100
     //                             );
-}
-
-QImage::Format VideoResampler::toQImageFormat(PixelFormat fmt) {
-    switch(fmt) {
-        case AV_PIX_FMT_RGB24:  { return QImage::Format_RGB888; }
-        case AV_PIX_FMT_RGB32:  { return QImage::Format_RGB32;  }
-        case AV_PIX_FMT_0RGB32: { return QImage::Format_ARGB32; } // TODO: maybe need correct AV_PIX_FMT format
-        case AV_PIX_FMT_ARGB:   { return QImage::Format_ARGB32; }
-        case AV_PIX_FMT_RGB565: { return QImage::Format_RGB16;  }
-        case AV_PIX_FMT_RGB555: { return QImage::Format_RGB555; }
-        case AV_PIX_FMT_RGB444: { return QImage::Format_RGB444; }
-
-        default: return QImage::Format_Invalid;
-    }
 }
 
 bool VideoResampler::isCompatibleFormat(AVPixelFormat fmt) {
@@ -226,6 +217,11 @@ bool VideoResampler::isCompatibleFormat(AVPixelFormat fmt) {
             fmt == AV_PIX_FMT_YUV444P12LE ||
             fmt == AV_PIX_FMT_YUV444P14BE ||
             fmt == AV_PIX_FMT_YUV444P14LE;
+}
+
+void VideoResampler::initSettings(AVFrame * frame, enum AVPixelFormat pixelFormat, int w, int h) {
+    if (settings == 0)
+        settings = new VideoSettings(pixelFormat, frame -> colorspace, w, h);
 }
 
 

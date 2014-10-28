@@ -2,9 +2,12 @@
 
 #include <QDebug>
 
-GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
+GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent)
+  , renderer_width(480)
+  , renderer_height(320)
+{
     //    setAcceptDrops(true);
-    //    setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy(Qt::StrongFocus);
     //    /* To rapidly update custom widgets that constantly paint over their entire areas with
     //     * opaque content, e.g., video streaming widgets, it is better to set the widget's
     //     * Qt::WA_OpaquePaintEvent, avoiding any unnecessary overhead associated with repainting the
@@ -52,6 +55,135 @@ GLRenderRaw::~GLRenderRaw() {
         delete shader;
         shader = 0;
     }
+
+    if (color_conversion) {
+        delete color_conversion;
+        color_conversion = 0;
+    }
+}
+
+bool GLRenderRaw::videoFormatToGL(const AVPixelFormat & fmt, GLint* internal_format, GLenum* data_format, GLenum* data_type) {
+    struct fmt_entry {
+        AVPixelFormat pixfmt;
+        GLint internal_format;
+        GLenum format;
+        GLenum type;
+    };
+
+
+    static const struct fmt_entry pixfmt_to_gl_formats[] = {
+
+
+
+
+        case AV_PIX_FMT_RGB32:  { return QImage::Format_RGB32;  }
+        case AV_PIX_FMT_0RGB32: { return QImage::Format_ARGB32; } // TODO: maybe need correct AV_PIX_FMT format
+        case AV_PIX_FMT_ARGB:   { return QImage::Format_ARGB32; }
+        case AV_PIX_FMT_RGB565: { return QImage::Format_RGB16;  }
+        case AV_PIX_FMT_RGB444: { return QImage::Format_RGB444; }
+
+
+
+
+        #ifdef QT_OPENGL_ES_2
+            {VideoFormat::Format_ARGB32, GL_BGRA, GL_BGRA, GL_UNSIGNED_BYTE },
+            {VideoFormat::Format_RGB32,  GL_BGRA, GL_BGRA, GL_UNSIGNED_BYTE },
+        #else
+            {VideoFormat::Format_RGB32,  GL_RGBA, GL_BGRA, GL_UNSIGNED_BYTE },
+            {VideoFormat::Format_ARGB32, GL_RGBA, GL_BGRA, GL_UNSIGNED_BYTE },
+        #endif
+
+        {AV_PIX_FMT_RGB24,  GL_RGB,  GL_RGB,  GL_UNSIGNED_BYTE },
+
+        #ifdef GL_UNSIGNED_SHORT_1_5_5_5_REV
+            {AV_PIX_FMT_RGB555, GL_RGBA, GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV},
+        #endif
+
+        {VideoFormat::Format_RGB565, GL_RGB,  GL_RGB,  GL_UNSIGNED_SHORT_5_6_5}, //GL_UNSIGNED_SHORT_5_6_5_REV?
+        //{VideoFormat::Format_BGRA32, GL_RGBA, GL_BGRA, GL_UNSIGNED_BYTE },
+        //{VideoFormat::Format_BGR32,  GL_BGRA, GL_BGRA, GL_UNSIGNED_BYTE },
+        {VideoFormat::Format_BGR24,  GL_RGB,  GL_BGR,  GL_UNSIGNED_BYTE },
+
+        #ifdef GL_UNSIGNED_SHORT_1_5_5_5_REV
+            {VideoFormat::Format_BGR555, GL_RGBA, GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV},
+        #endif
+            {VideoFormat::Format_BGR565, GL_RGB,  GL_RGB,  GL_UNSIGNED_SHORT_5_6_5}, // need swap r b?
+    };
+
+    for (unsigned int i = 0; i < sizeof(pixfmt_to_gl_formats)/sizeof(pixfmt_to_gl_formats[0]); ++i) {
+        if (pixfmt_to_gl_formats[i].pixfmt == fmt.pixelFormat()) {
+            *internal_format = pixfmt_to_gl_formats[i].internal_format;
+            *data_format = pixfmt_to_gl_formats[i].format;
+            *data_type = pixfmt_to_gl_formats[i].type;
+            return true;
+        }
+    }
+    return false;
+}
+
+// TODO: format + datatype? internal format == format?
+//https://www.khronos.org/registry/gles/extensions/EXT/EXT_texture_format_BGRA8888.txt
+int GLRenderRaw::bytesOfGLFormat(GLenum format, GLenum dataType) {
+    switch (format) {
+        #ifdef GL_BGRA //ifndef GL_ES
+            case GL_BGRA:
+        #endif
+
+        case GL_RGBA:
+            return 4;
+
+        #ifdef GL_BGR //ifndef GL_ES
+            case GL_BGR:
+        #endif
+
+        case GL_RGB:
+            switch (dataType) {
+                case GL_UNSIGNED_SHORT_5_6_5:
+                    return 2;
+                default:
+                    return 3;
+            }
+//            return 3;
+        case GL_LUMINANCE_ALPHA:
+            return 2;
+        case GL_LUMINANCE:
+        case GL_ALPHA:
+                return 1;
+
+        #ifdef GL_LUMINANCE16
+            case GL_LUMINANCE16:
+                return 2;
+        #endif //GL_LUMINANCE16
+
+        #ifdef GL_ALPHA16
+            case GL_ALPHA16:
+                return 2;
+        #endif //GL_ALPHA16
+
+        default:
+            qWarning("bytesOfGLFormat - Unknown format %u", format);
+            return 1;
+    }
+}
+
+GLint GLRenderRaw::GetGLInternalFormat(GLint data_format, int bpp) {
+    if (bpp != 2)
+        return data_format;
+
+    switch (data_format) {
+        #ifdef GL_ALPHA16
+            case GL_ALPHA:
+                return GL_ALPHA16;
+        #endif //GL_ALPHA16
+
+        #ifdef GL_LUMINANCE16
+            case GL_LUMINANCE:
+                return GL_LUMINANCE16;
+        #endif //GL_LUMINANCE16
+
+        default:
+            return data_format;
+    }
 }
 
 void GLRenderRaw::setQuality(const Quality & quality) {
@@ -83,6 +215,26 @@ void GLRenderRaw::setQuality(const Quality & quality) {
     };
 }
 
+void GLRenderRaw::computeOutParameters(qreal outAspectRatio) {
+    qreal rendererAspectRatio = qreal(renderer_width) / qreal(renderer_height);
+    if (out_aspect_ratio_mode == VideoRenderer::RendererAspectRatio) {
+        out_aspect_ratio = rendererAspectRatio;
+        out_rect = QRect(0, 0, renderer_width, renderer_height);
+        return;
+    }
+
+    if (rendererAspectRatio >= outAspectRatio) {
+        int w = outAspectRatio * qreal(h);
+        out_rect = QRect((renderer_width - w) / 2, 0, w, renderer_height);
+    } else if (rendererAspectRatio < outAspectRatio) {
+        int h = qreal(w) / outAspectRatio;
+        out_rect = QRect(0, (renderer_height - h) / 2, renderer_width, h);
+    }
+
+    mpv_matrix(0, 0) = (float)out_rect.width()/(float)renderer_width;
+    mpv_matrix(1, 1) = (float)out_rect.height()/(float)renderer_height;
+}
+
 bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat) {
     glBindTexture(GL_TEXTURE_2D, tex);
 //    setupQuality();
@@ -102,7 +254,7 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
     return true;
 }
 
-bool GLWidgetRendererPrivate::initTextures() {
+bool GLRenderRaw::initTextures() {
     //http://www.berkelium.com/OpenGL/GDC99/internalformat.html
     //NV12: UV is 1 plane. 16 bits as a unit. GL_LUMINANCE4, 8, 16, ... 32?
     //GL_LUMINANCE, GL_LUMINANCE_ALPHA are deprecated in GL3, removed in GL3.1
@@ -177,15 +329,15 @@ bool GLWidgetRendererPrivate::initTextures() {
         qDebug("texture width: %d - %d = pad: %d. bpp(gl): %d", texture_size[i].width(), effective_tex_width[i], pad, bpp_gl);
     }
 
-    /*
-     * there are 2 fragment shaders: rgb and yuv.
-     * only 1 texture for packed rgb. planar rgb likes yuv
-     * To support both planar and packed yuv, and mixed yuv(NV12), we give a texture sample
-     * for each channel. For packed, each (channel) texture sample is the same. For planar,
-     * packed channels has the same texture sample.
-     * But the number of actural textures we upload is plane count.
-     * Which means the number of texture id equals to plane count
-     */
+//    /*
+//     * there are 2 fragment shaders: rgb and yuv.
+//     * only 1 texture for packed rgb. planar rgb likes yuv
+//     * To support both planar and packed yuv, and mixed yuv(NV12), we give a texture sample
+//     * for each channel. For packed, each (channel) texture sample is the same. For planar,
+//     * packed channels has the same texture sample.
+//     * But the number of actural textures we upload is plane count.
+//     * Which means the number of texture id equals to plane count
+//     */
     if (textures.size() != fmt.planeCount()) {
         glDeleteTextures(textures.size(), textures.data());
         qDebug("delete %d textures", textures.size());
@@ -194,13 +346,6 @@ bool GLWidgetRendererPrivate::initTextures() {
         glGenTextures(textures.size(), textures.data());
     }
 
-    if (!hasGLSL) {
-        initTexture(textures[0], internal_format[0], data_format[0], data_type[0], texture_size[0].width(), texture_size[0].height());
-        // more than 1?
-        qWarning("Does not support GLSL!");
-        return false;
-    }
-    qDebug("init textures...");
     for (int i = 0; i < textures.size(); ++i) {
         initTexture(textures[i], internal_format[i], data_format[i], data_type[i], texture_size[i].width(), texture_size[i].height());
     }
@@ -214,6 +359,9 @@ void GLRenderRaw::resizeViewport(int w, int h) {
     } else {
         glViewport(0, 0, w, h);
     }
+
+    //TODO: recalc aspect ratio matrix
+    //computeOutParameters();
 }
 
 //void GLRenderRaw::setupTextures(int w, int h) {
@@ -241,22 +389,42 @@ void GLRenderRaw::resizeViewport(int w, int h) {
 //    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_LUMINANCE, 752, 576, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Ytex);
 //}
 
-void GLRenderRaw::initializeGL() {
-    initializeOpenGLFunctions();
+void GLRenderRaw::prepareSettings() {
+    mpv_matrix(0, 0) = 1.0f;
+    mpv_matrix(1, 1) = 1.0f;
 
-    shader = new Shader();
-    shader -> setup(context());
+    ColorConversion::ColorSpace cs;
+    VideoSettings * settings = vFrame -> buffer -> settings();
 
-    //    if (fmt.isRGB()) {
-    //        if (fmt.isPlanar())
-    //            cs = ColorTransform::GBR;
-    //    } else {
-    //        if (video_frame.width() >= 1280 || video_frame.height() > 576) //values from mpv
-    //            cs = ColorTransform::BT709;
-    //        else
-    //            cs = ColorTransform::BT601;
-    //    }
+    bool variousEndian = settings -> isPlanar() && settings -> bytesPerPixel(0) == 2;
+    shader -> setup(settings -> isPlanar(), variousEndian && settings -> isBigEndian(), variousEndian && !settings -> isBigEndian());
 
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH); //setupQuality?
+    glClearDepth(1.0f);
+
+    if (settings -> isRGB()) {
+        u_Texture.resize(1);
+
+        if (settings -> isPlanar())
+            cs = ColorConversion::GBR;
+    } else {
+        u_Texture.resize(fmt.channels());
+
+        if (settings -> buff_width >= 1280 || settings -> buff_height() > 576) //values from mpv
+            cs = ColorConversion::BT709;
+        else
+            cs = ColorConversion::BT601;
+    }
+
+    QString tex_var;
+    for (int i = 0; i < u_Texture.size(); ++i) {
+        tex_var = QString("u_Texture%1").arg(i);
+        u_Texture[i] = shader -> program -> uniformLocation(tex_var);
+    }
+
+    color_conversion = new ColorConversion(cs, ColorConversion::RGB);
 
 
 
@@ -286,22 +454,12 @@ void GLRenderRaw::initializeGL() {
     //    } else if (cs == ColorTransform::BT709) {
     //        frag.prepend("#define CS_BT709\n");
     //    }
+}
 
+void GLRenderRaw::initializeGL() {
+    initializeOpenGLFunctions();
 
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
-    glShadeModel(GL_SMOOTH); //setupQuality?
-    glClearDepth(1.0f);
-
-    if (vFrame -> buffer -> isRGB())
-        u_Texture.resize(1);
-    else
-        u_Texture.resize(fmt.channels());
-
-    for (int i = 0; i < u_Texture.size(); ++i) {
-        QString tex_var = QString("u_Texture%1").arg(i);
-        u_Texture[i] = shader_program->uniformLocation(tex_var);
-    }
+    shader = new Shader(context());
 
     glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
 }
@@ -311,7 +469,6 @@ void GLRenderRaw::paintGL() {
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
-
 
 
     //    QRect roi = realROI();
@@ -368,7 +525,6 @@ void GLRenderRaw::paintGL() {
         video_frame.unmap(&d.textures[i]);
     }
 
-
     shader -> program -> bind();
 
     // all texture ids should be binded when renderering even for packed plane!
@@ -397,11 +553,11 @@ void GLRenderRaw::paintGL() {
     #else
         if (sizeof(float) != sizeof(GLfloat)) {
     #endif
-            d.colorTransform.matrixData(glm);
+            colorTransform.matrixData(glm);
             mat = glm;
         }
 
-    shader -> program -> setUniformValue(u_colorMatrix, colorTransform.matrixRef());
+    shader -> program -> setUniformValue(u_colorMatrix, color_conversion -> matrixRef());
     shader -> program -> setUniformValue(u_matrix, mpv_matrix);
     shader -> program -> setUniformValue(u_bpp, (GLfloat)video_format.bitsPerPixel(0));
 
@@ -460,6 +616,7 @@ void GLRenderRaw::paintGL() {
 //    QImage * img = vFrame -> asImage();
 
 //    if (init == false) {
+//        prepareSettings();
 //        resizeViewport(width(), height());
 
 //        for (int i = 0; i < 3; i++) {
@@ -519,6 +676,7 @@ void GLRenderRaw::paintGL() {
 //    QImage * img = vFrame -> asImage();
 
 //    if (init == false) {
+//        prepareSettings();
 //        resizeViewport(width(), height());
 //        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
 //        init = true;
@@ -744,34 +902,6 @@ void GLRenderRaw::paintGL() {
 //    }
 //}
 
-//void GLWidgetRendererPrivate::updateShaderIfNeeded()
-//{
-//    const VideoFormat& fmt(video_frame.format());
-//    if (fmt != video_format) {
-//        qDebug("pixel format changed: %s => %s", qPrintable(video_format.name()), qPrintable(fmt.name()));
-//    }
-//    VideoMaterialType *newType = materialType(fmt);
-//    if (material_type == newType)
-//        return;
-//    material_type = newType;
-//    // http://forum.doom9.org/archive/index.php/t-160211.html
-//    ColorTransform::ColorSpace cs = ColorTransform::RGB;
-//    if (fmt.isRGB()) {
-//        if (fmt.isPlanar())
-//            cs = ColorTransform::GBR;
-//    } else {
-//        if (video_frame.width() >= 1280 || video_frame.height() > 576) //values from mpv
-//            cs = ColorTransform::BT709;
-//        else
-//            cs = ColorTransform::BT601;
-//    }
-//    if (!prepareShaderProgram(fmt, cs)) {
-//        qWarning("shader program create error...");
-//        return;
-//    } else {
-//        qDebug("shader program created!!!");
-//    }
-//}
 
 //void GLWidgetRendererPrivate::upload(const QRect &roi)
 //{
@@ -866,32 +996,4 @@ void GLRenderRaw::paintGL() {
 ////    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 //#endif
 //    //glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-//}
-
-//bool GLWidgetRenderer::isSupported(VideoFormat::PixelFormat pixfmt) const
-//{
-//    Q_UNUSED(pixfmt);
-//    return true; //TODO
-//}
-
-//bool GLWidgetRenderer::receiveFrame(const VideoFrame& frame)
-//{
-//    DPTR_D(GLWidgetRenderer);
-//    QMutexLocker locker(&d.img_mutex);
-//    Q_UNUSED(locker);
-//    d.video_frame = frame;
-
-//    update(); //can not call updateGL() directly because no event and paintGL() will in video thread
-//    return true;
-//}
-
-//bool GLWidgetRenderer::needUpdateBackground() const
-//{
-//    return true;
-//}
-
-//void GLWidgetRenderer::drawBackground()
-//{
-//    glClearColor(0, 0, 0, 0);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //}
