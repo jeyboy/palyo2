@@ -424,7 +424,7 @@ QImage::Format VideoTypes::toQImageFormat(AVPixelFormat & fmt) {
     return QImage::Format_Invalid;
 }
 
-VideoTypes::VideoType VideoTypes::toVideoType(AVPixelFormat * fmt) {
+VideoTypes::VideoType VideoTypes::toVideoType(AVPixelFormat & fmt) {
     for (unsigned int i = 0; i < sizeof(pix_fmt_map)/sizeof(pix_fmt_map[0]); ++i) {
         if (pix_fmt_map[i].ff == fmt)
             return pix_fmt_map[i].fmt;

@@ -9,7 +9,7 @@ VideoResampler::VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelF
     , settings(0)
 {
     img_format = VideoTypes::toQImageFormat(pixelFormatOut);
-    compatible = VideoTypes::isCompatible(pixelFormatOut);
+    compatible = false; //VideoTypes::isCompatible(pixelFormatOut);
     RGBFrame = av_frame_alloc();
 }
 

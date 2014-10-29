@@ -10,6 +10,7 @@ public:
     ~VideoResampler();
 
     VideoBuffer * proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut);
+    inline bool isGLShaderCompatible() { return compatible; }
 protected:
     VideoBuffer * toQImage(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut);
     void setColorspaceDetails(int brightness, int contrast, int saturation);
