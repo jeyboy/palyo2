@@ -1,7 +1,7 @@
 #include "video_types.h"
 
 struct fmt_entry {
-    AVPixelFormat pixfmt;
+    VideoTypes::VideoType pixfmt;
     GLint internal_format;
     GLenum format;
     GLenum type;
@@ -68,7 +68,7 @@ static const struct fmt_entry pixfmt_to_gl_formats[] = {
 
 
 static const struct {
-    VideoTypes::PixelFormat fmt;
+    VideoTypes::VideoType fmt;
     AVPixelFormat ff;
     QImage::Format img_fmt;
 } pix_fmt_map[] = {
@@ -421,10 +421,10 @@ QImage::Format VideoTypes::toQImageFormat(AVPixelFormat & fmt) {
             return pix_fmt_map[i].img_fmt;
     }
 
-    default: return QImage::Format_Invalid;
+    return QImage::Format_Invalid;
 }
 
-VideoType VideoTypes::toVideoType(AVPixelFormat * fmt) {
+VideoTypes::VideoType VideoTypes::toVideoType(AVPixelFormat * fmt) {
     for (unsigned int i = 0; i < sizeof(pix_fmt_map)/sizeof(pix_fmt_map[0]); ++i) {
         if (pix_fmt_map[i].ff == fmt)
             return pix_fmt_map[i].fmt;

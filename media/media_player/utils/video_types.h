@@ -91,7 +91,7 @@ struct VideoTypes {
 
     static bool isCompatible(AVPixelFormat & fmt);
     static QImage::Format toQImageFormat(AVPixelFormat & fmt);
-    static VideoType toVideoType(AVPixelFormat & fmt);
+    static VideoTypes::VideoType toVideoType(AVPixelFormat & fmt);
 
     static bool videoFormatToGL(const VideoType type, GLint* internal_format, GLenum* data_format, GLenum* data_type);
     static int bytesPerGLFormat(GLenum format, GLenum dataType);

@@ -403,9 +403,9 @@ void GLRenderRaw::paintGL() {
     glDisableClientState(GL_VERTEX_ARRAY);
     glPopMatrix();
 
-    for (int i = 0; i < textures.size(); ++i) {
-        video_frame.unmap(&d.textures[i]);
-    }
+//    for (int i = 0; i < textures.size(); ++i) {
+//        video_frame.unmap(&d.textures[i]);
+//    }
 
     shader -> program -> bind();
 
