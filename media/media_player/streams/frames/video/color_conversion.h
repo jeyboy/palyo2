@@ -103,14 +103,14 @@ public:
         this -> contrast = contrast;
         compute();
     }
-    qreal contrast() const { return contrast; }
+    qreal getContrast() const { return contrast; }
 
     void setSaturation(qreal saturation) {
         if (this -> saturation == saturation) return;
         this -> saturation = saturation;
         compute();
     }
-    qreal saturation() const { return saturation; }
+    qreal getSaturation() const { return saturation; }
 
 protected:
     const QMatrix4x4& YUV2RGB(ColorSpace cs) {
@@ -122,7 +122,7 @@ protected:
         }
     }
 
-    void compute() const {
+    void compute() {
         //http://docs.rainmeter.net/tips/colormatrix-guide
         //http://www.graficaobscura.com/matrix/index.html
         //http://beesbuzz.biz/code/hsv_color_transforms.php
@@ -188,24 +188,11 @@ protected:
     }
 private:
     ColorSpace in, out;
-    qreal hue, saturation, contrast, brightness;
+    qreal hue;
+    qreal saturation;
+    qreal contrast;
+    qreal brightness;
     mutable QMatrix4x4 M;
 };
-
-
-
-
-
-/*!
- * \brief reset
- *   set to identity
- */
-void ColorTransform::reset()
-{
-    d->reset();
-}
-
-
-
 
 #endif // COLOR_CONVERSION_H

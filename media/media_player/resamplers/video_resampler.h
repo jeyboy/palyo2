@@ -2,7 +2,7 @@
 #define VIDEO_RESAMPLER_H
 
 #include "media/media_player/streams/frames/video/video_buffer.h"
-#include "media/media_player/streams/frames/video/video_settings.h"
+#include "media/media_player/utils/video_types.h"
 
 class VideoResampler {
 public:
@@ -13,7 +13,6 @@ public:
 protected:
     VideoBuffer * toQImage(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut);
     void setColorspaceDetails(int brightness, int contrast, int saturation);
-    bool isCompatibleFormat(AVPixelFormat fmt);
     void initSettings(AVFrame * frame, enum AVPixelFormat pixelFormatOut, int w, int h);
 
 private:

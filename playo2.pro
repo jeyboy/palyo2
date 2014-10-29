@@ -121,7 +121,6 @@ SOURCES += main.cpp\
     media/media_player/output/video/controls/renders/hardware_render.cpp \
     media/media_player/output/video/controls/renders/gl_render.cpp \
     media/media_player/output/video/controls/renders/gl_render_raw.cpp \
-    media/media_player/streams/decoders/audio_stream - копия (2).cpp \
     media/media_player/utils/video_types.cpp
 
 HEADERS  += mainwindow.h \
@@ -229,7 +228,6 @@ HEADERS  += mainwindow.h \
     media/media_player/output/video/controls/renders/gl_render.h \
     media/media_player/output/video/controls/renders/renders.h \
     media/media_player/output/video/controls/renders/gl_render_raw.h \
-    media/media_player/streams/decoders/audio_stream - копия (2).h \
     media/media_player/streams/frames/video/color_conversion.h \
     media/media_player/streams/frames/video/shader.h \
     media/media_player/streams/frames/video/video_buffer.h \

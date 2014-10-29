@@ -6,10 +6,10 @@ VideoResampler::VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelF
       pixelFormatIn(pixel_format_in)
     , pixelFormatOut(pixel_format_out)
     , resampleContext(0)
-    , img_format(toQImageFormat(pixelFormatOut))
-    , compatible(isCompatibleFormat(pixel_format_out))
     , settings(0)
 {
+    img_format = VideoTypes::toQImageFormat(pixelFormatOut);
+    compatible = VideoTypes::isCompatible(pixelFormatOut);
     RGBFrame = av_frame_alloc();
 }
 
@@ -161,62 +161,6 @@ void VideoResampler::setColorspaceDetails(int brightness, int contrast, int satu
     //                             , (((d.contrast + 100) << 16) + 50)/100
     //                             , (((d.saturation + 100) << 16) + 50)/100
     //                             );
-}
-
-bool VideoResampler::isCompatibleFormat(AVPixelFormat fmt) {
-
-    return
-            fmt == AV_PIX_FMT_YUV420P ||
-            fmt == AV_PIX_FMT_YUV420P ||
-            fmt == AV_PIX_FMT_YUYV422 ||
-            fmt == AV_PIX_FMT_RGB24 ||
-            fmt == AV_PIX_FMT_BGR24 ||
-            fmt == AV_PIX_FMT_YUV422P ||
-            fmt == AV_PIX_FMT_YUV444P ||
-            fmt == AV_PIX_FMT_YUV410P ||
-            fmt == AV_PIX_FMT_YUV411P ||
-            fmt == AV_PIX_FMT_YUVJ420P ||
-            fmt == AV_PIX_FMT_UYVY422 ||
-            fmt == AV_PIX_FMT_NV12 ||
-            fmt == AV_PIX_FMT_NV21 ||
-            fmt == AV_PIX_FMT_ARGB ||
-            fmt == AV_PIX_FMT_RGB32 ||
-            fmt == AV_PIX_FMT_RGBA ||
-            fmt == AV_PIX_FMT_BGRA ||
-            fmt == AV_PIX_FMT_RGB565 ||
-            fmt == AV_PIX_FMT_RGB555 ||
-            fmt == AV_PIX_FMT_BGR565 ||
-            fmt == AV_PIX_FMT_BGR555 ||
-            fmt == AV_PIX_FMT_YUV420P16LE ||
-            fmt == AV_PIX_FMT_YUV420P16BE ||
-            fmt == AV_PIX_FMT_YUV422P16LE ||
-            fmt == AV_PIX_FMT_YUV422P16BE ||
-            fmt == AV_PIX_FMT_YUV444P16LE ||
-            fmt == AV_PIX_FMT_YUV444P16BE ||
-            fmt == AV_PIX_FMT_YUV420P9BE ||
-            fmt == AV_PIX_FMT_YUV420P9LE ||
-            fmt == AV_PIX_FMT_YUV420P10BE ||
-            fmt == AV_PIX_FMT_YUV420P10LE ||
-            fmt == AV_PIX_FMT_YUV422P10BE ||
-            fmt == AV_PIX_FMT_YUV422P10LE ||
-            fmt == AV_PIX_FMT_YUV444P9BE ||
-            fmt == AV_PIX_FMT_YUV444P9LE ||
-            fmt == AV_PIX_FMT_YUV444P10BE ||
-            fmt == AV_PIX_FMT_YUV444P10LE ||
-            fmt == AV_PIX_FMT_YUV422P9BE ||
-            fmt == AV_PIX_FMT_YUV422P9LE ||
-            fmt == AV_PIX_FMT_YUV420P12BE ||
-            fmt == AV_PIX_FMT_YUV420P12LE ||
-            fmt == AV_PIX_FMT_YUV420P14BE ||
-            fmt == AV_PIX_FMT_YUV420P14LE ||
-            fmt == AV_PIX_FMT_YUV422P12BE ||
-            fmt == AV_PIX_FMT_YUV422P12LE ||
-            fmt == AV_PIX_FMT_YUV422P14BE ||
-            fmt == AV_PIX_FMT_YUV422P14LE ||
-            fmt == AV_PIX_FMT_YUV444P12BE ||
-            fmt == AV_PIX_FMT_YUV444P12LE ||
-            fmt == AV_PIX_FMT_YUV444P14BE ||
-            fmt == AV_PIX_FMT_YUV444P14LE;
 }
 
 void VideoResampler::initSettings(AVFrame * frame, enum AVPixelFormat pixelFormat, int w, int h) {

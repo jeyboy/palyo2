@@ -6,9 +6,10 @@
 
 #include <GL/gl.h>
 #include <GL/glext.h>
+//#include <QOpenGLFunctions>
 
 struct VideoTypes {
-    enum PixelFormat {
+    enum VideoType {
         PF_Invalid = -1,
 
         PF_MONO,
@@ -90,9 +91,9 @@ struct VideoTypes {
 
     static bool isCompatible(AVPixelFormat & fmt);
     static QImage::Format toQImageFormat(AVPixelFormat & fmt);
-    static PixelFormat toPixelFormat(AVPixelFormat & fmt);
+    static VideoType toVideoType(AVPixelFormat & fmt);
 
-    static bool videoFormatToGL(const AVPixelFormat & fmt, GLint* internal_format, GLenum* data_format, GLenum* data_type);
+    static bool videoFormatToGL(const VideoType type, GLint* internal_format, GLenum* data_format, GLenum* data_type);
     static int bytesPerGLFormat(GLenum format, GLenum dataType);
     static GLint getGLInternalFormat(GLint data_format, int bpp);
 };

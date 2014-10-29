@@ -424,7 +424,7 @@ QImage::Format VideoTypes::toQImageFormat(AVPixelFormat & fmt) {
     default: return QImage::Format_Invalid;
 }
 
-PixelFormat VideoTypes::toPixelFormat(AVPixelFormat & fmt) {
+VideoType VideoTypes::toVideoType(AVPixelFormat * fmt) {
     for (unsigned int i = 0; i < sizeof(pix_fmt_map)/sizeof(pix_fmt_map[0]); ++i) {
         if (pix_fmt_map[i].ff == fmt)
             return pix_fmt_map[i].fmt;
@@ -432,9 +432,9 @@ PixelFormat VideoTypes::toPixelFormat(AVPixelFormat & fmt) {
     return VideoTypes::PF_Invalid;
 }
 
-bool VideoTypes::videoFormatToGL(const AVPixelFormat & fmt, GLint* internal_format, GLenum* data_format, GLenum* data_type) {
+bool VideoTypes::videoFormatToGL(const VideoType type, GLint* internal_format, GLenum* data_format, GLenum* data_type) {
     for (unsigned int i = 0; i < sizeof(pixfmt_to_gl_formats)/sizeof(pixfmt_to_gl_formats[0]); ++i) {
-        if (pixfmt_to_gl_formats[i].pixfmt == fmt.pixelFormat()) {
+        if (pixfmt_to_gl_formats[i].pixfmt == type) {
             *internal_format = pixfmt_to_gl_formats[i].internal_format;
             *data_format = pixfmt_to_gl_formats[i].format;
             *data_type = pixfmt_to_gl_formats[i].type;

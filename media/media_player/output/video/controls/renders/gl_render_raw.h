@@ -1,8 +1,9 @@
 #ifndef GL_RENDER_H
 #define GL_RENDER_H
 
-#include "media/media_player/utils/shader.h"
-#include "media/media_player/utils/color_conversion.h"
+#include "media/media_player/utils/video_types.h"
+#include "media/media_player/streams/frames/video/shader.h"
+#include "media/media_player/streams/frames/video/color_conversion.h"
 #include "media/media_player/output/video/controls/renders/render_interface.h"
 #include <QOpenGLFunctions>
 
@@ -18,20 +19,18 @@ public:
     GLRenderRaw(QWidget* parent = NULL);
     ~GLRenderRaw();
 
-    bool videoFormatToGL(const AVPixelFormat & fmt, GLint* internal_format, GLenum* data_format, GLenum* data_type);
-    int bytesOfGLFormat(GLenum format, GLenum dataType);
-    GLint GetGLInternalFormat(GLint data_format, int bpp);
-
     void setQuality(const Quality & quality);
-    bool initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat = GL_RGBA);
-    bool GLRenderRaw::initTextures();
 
     inline RenderType getRenderType() const { return gl_plus; }
+
+protected:
+    bool initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat = GL_RGBA);
+    bool initTextures();
+
     void resizeViewport(int w, int h);
 
     void repaint();
 
-protected:
     void computeOutParameters(qreal outAspectRatio);
     void prepareSettings();
     void initializeGL();
@@ -48,7 +47,7 @@ private:
     //     * 1. y/u is not an integer because of alignment. then padding size of y < padding size of u, and effective size y/u != texture size y/u
     //     * 2. odd size. enlarge y
     //     */
-    //    QVector<QSize> texture_upload_size;
+    QVector<QSize> texture_upload_size;
 
     //    QVector<int> effective_tex_width; //without additional width for alignment
     //    qreal effective_tex_width_ratio;

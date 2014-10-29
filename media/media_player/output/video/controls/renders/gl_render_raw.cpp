@@ -92,23 +92,23 @@ void GLRenderRaw::setQuality(const Quality & quality) {
 }
 
 void GLRenderRaw::computeOutParameters(qreal outAspectRatio) {
-    qreal rendererAspectRatio = qreal(renderer_width) / qreal(renderer_height);
-    if (out_aspect_ratio_mode == VideoRenderer::RendererAspectRatio) {
-        out_aspect_ratio = rendererAspectRatio;
-        out_rect = QRect(0, 0, renderer_width, renderer_height);
-        return;
-    }
+//    qreal rendererAspectRatio = qreal(renderer_width) / qreal(renderer_height);
+//    if (out_aspect_ratio_mode == VideoRenderer::RendererAspectRatio) {
+//        out_aspect_ratio = rendererAspectRatio;
+//        out_rect = QRect(0, 0, renderer_width, renderer_height);
+//        return;
+//    }
 
-    if (rendererAspectRatio >= outAspectRatio) {
-        int w = outAspectRatio * qreal(h);
-        out_rect = QRect((renderer_width - w) / 2, 0, w, renderer_height);
-    } else if (rendererAspectRatio < outAspectRatio) {
-        int h = qreal(w) / outAspectRatio;
-        out_rect = QRect(0, (renderer_height - h) / 2, renderer_width, h);
-    }
+//    if (rendererAspectRatio >= outAspectRatio) {
+//        int w = outAspectRatio * qreal(h);
+//        out_rect = QRect((renderer_width - w) / 2, 0, w, renderer_height);
+//    } else if (rendererAspectRatio < outAspectRatio) {
+//        int h = qreal(w) / outAspectRatio;
+//        out_rect = QRect(0, (renderer_height - h) / 2, renderer_width, h);
+//    }
 
-    mpv_matrix(0, 0) = (float)out_rect.width()/(float)renderer_width;
-    mpv_matrix(1, 1) = (float)out_rect.height()/(float)renderer_height;
+//    mpv_matrix(0, 0) = (float)out_rect.width()/(float)renderer_width;
+//    mpv_matrix(1, 1) = (float)out_rect.height()/(float)renderer_height;
 }
 
 bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat) {
@@ -145,33 +145,37 @@ bool GLRenderRaw::initTextures() {
      * http://stackoverflow.com/questions/18688057/which-opengl-es-2-0-texture-formats-are-color-depth-or-stencil-renderable
      */
 
+    VideoSettings * settings = vFrame -> buffer -> settings();
 
-    if (!fmt.isPlanar()) {
+    if (!settings -> isPlanar()) {
         GLint internal_fmt;
         GLenum data_fmt;
         GLenum data_t;
-        if (!OpenGLHelper::videoFormatToGL(fmt, &internal_fmt, &data_fmt, &data_t)) {
+
+
+        if (!VideoTypes::videoFormatToGL(settings ->toVideoType(), &internal_fmt, &data_fmt, &data_t)) {
             qWarning("no opengl format found");
             return false;
         }
-        internal_format = QVector<GLint>(fmt.planeCount(), internal_fmt);
-        data_format = QVector<GLenum>(fmt.planeCount(), data_fmt);
-        data_type = QVector<GLenum>(fmt.planeCount(), data_t);
+
+        internal_format = QVector<GLint>(settings -> planeCount(), internal_fmt);
+        data_format = QVector<GLenum>(settings -> planeCount(), data_fmt);
+        data_type = QVector<GLenum>(settings -> planeCount(), data_t);
     } else {
-        internal_format.resize(fmt.planeCount());
-        data_format.resize(fmt.planeCount());
-        data_type = QVector<GLenum>(fmt.planeCount(), GL_UNSIGNED_BYTE);
-        if (fmt.isPlanar()) {
+        internal_format.resize(settings -> planeCount());
+        data_format.resize(settings -> planeCount());
+        data_type = QVector<GLenum>(settings -> planeCount(), GL_UNSIGNED_BYTE);
+        if (settings -> isPlanar()) {
         /*!
          * GLES internal_format == data_format, GL_LUMINANCE_ALPHA is 2 bytes
          * so if NV12 use GL_LUMINANCE_ALPHA, YV12 use GL_ALPHA
          */
-            qDebug("///////////bpp %d", fmt.bytesPerPixel());
+//            qDebug("///////////bpp %d", fmt.bytesPerPixel());
             internal_format[0] = data_format[0] = GL_LUMINANCE; //or GL_RED for GL
-            if (fmt.planeCount() == 2) {
+            if (settings -> planeCount() == 2) {
                 internal_format[1] = data_format[1] = GL_LUMINANCE_ALPHA;
             } else {
-                if (fmt.bytesPerPixel(1) == 2) {
+                if (settings -> bytesPerPixel(1) == 2) {
                     // read 16 bits and compute the real luminance in shader
                     internal_format.fill(GL_LUMINANCE_ALPHA); //vec4(L,L,L,A)
                     data_format.fill(GL_LUMINANCE_ALPHA);
@@ -191,18 +195,17 @@ bool GLRenderRaw::initTextures() {
         }
     }
 
-    for (int i = 0; i < fmt.planeCount(); ++i) {
+    for (int i = 0; i < settings -> planeCount(); ++i) {
         //qDebug("format: %#x GL_LUMINANCE_ALPHA=%#x", data_format[i], GL_LUMINANCE_ALPHA);
-        if (fmt.bytesPerPixel(i) == 2 && fmt.planeCount() == 3) {
+        if (settings -> bytesPerPixel(i) == 2 && settings -> planeCount() == 3) {
             //data_type[i] = GL_UNSIGNED_SHORT;
         }
-        int bpp_gl = OpenGLHelper::bytesOfGLFormat(data_format[i], data_type[i]);
-        int pad = qCeil((qreal)(texture_size[i].width() - effective_tex_width[i])/(qreal)bpp_gl);
-        texture_size[i].setWidth(qCeil((qreal)texture_size[i].width()/(qreal)bpp_gl));
-        texture_upload_size[i].setWidth(qCeil((qreal)texture_upload_size[i].width()/(qreal)bpp_gl));
-        effective_tex_width[i] /= bpp_gl; //fmt.bytesPerPixel(i);
-        //effective_tex_width_ratio =
-        qDebug("texture width: %d - %d = pad: %d. bpp(gl): %d", texture_size[i].width(), effective_tex_width[i], pad, bpp_gl);
+        int bpp_gl = VideoTypes::bytesPerGLFormat(data_format[i], data_type[i]);
+//        int pad = qCeil((qreal)(texture_size[i].width() - effective_tex_width[i]) / (qreal)bpp_gl);
+        texture_size[i].setWidth(qCeil((qreal)texture_size[i].width() / (qreal)bpp_gl));
+        texture_upload_size[i].setWidth(qCeil((qreal)texture_upload_size[i].width() / (qreal)bpp_gl));
+//        effective_tex_width[i] /= bpp_gl; //fmt.bytesPerPixel(i);
+//        qDebug("texture width: %d - %d = pad: %d. bpp(gl): %d", texture_size[i].width(), effective_tex_width[i], pad, bpp_gl);
     }
 
 //    /*
@@ -214,11 +217,11 @@ bool GLRenderRaw::initTextures() {
 //     * But the number of actural textures we upload is plane count.
 //     * Which means the number of texture id equals to plane count
 //     */
-    if (textures.size() != fmt.planeCount()) {
+    if (textures.size() != settings -> planeCount()) {
         glDeleteTextures(textures.size(), textures.data());
         qDebug("delete %d textures", textures.size());
         textures.clear();
-        textures.resize(fmt.planeCount());
+        textures.resize(settings -> planeCount());
         glGenTextures(textures.size(), textures.data());
     }
 
@@ -286,9 +289,9 @@ void GLRenderRaw::prepareSettings() {
         if (settings -> isPlanar())
             cs = ColorConversion::GBR;
     } else {
-        u_Texture.resize(fmt.channels());
+        u_Texture.resize(settings -> channelsCount());
 
-        if (settings -> buff_width >= 1280 || settings -> buff_height() > 576) //values from mpv
+        if (settings -> buff_width >= 1280 || settings -> buff_height > 576) //values from mpv
             cs = ColorConversion::BT709;
         else
             cs = ColorConversion::BT601;
@@ -302,7 +305,7 @@ void GLRenderRaw::prepareSettings() {
 
     color_conversion = new ColorConversion(cs, ColorConversion::RGB);
 
-
+    initTextures();
 
 
     //    // TODO: only to kinds, packed.glsl, planar.glsl
@@ -347,6 +350,9 @@ void GLRenderRaw::paintGL() {
     glDisable(GL_DEPTH_TEST);
 
 
+    VideoSettings * settings = vFrame -> buffer -> settings();
+    const int nb_planes = settings -> planeCount(); //number of texture id
+
     //    QRect roi = realROI();
     //    const int nb_planes = d.video_frame.planeCount(); //number of texture id
     //    int mapped = 0;
@@ -387,7 +393,7 @@ void GLRenderRaw::paintGL() {
     glLoadIdentity();
 
     glPushMatrix();
-    glScalef((float)d.out_rect.width()/(float)d.renderer_width, (float)d.out_rect.height()/(float)d.renderer_height, 0);
+//    glScalef((float)d.out_rect.width()/(float)d.renderer_width, (float)d.out_rect.height()/(float)d.renderer_height, 0);
     glVertexPointer(2, GL_FLOAT, 0, kVertices);
     glEnableClientState(GL_VERTEX_ARRAY);
     glTexCoordPointer(2, GL_FLOAT, 0, kTexCoords);
@@ -421,7 +427,7 @@ void GLRenderRaw::paintGL() {
     //     * QShaderProgram deal with this case. But compares sizeof(QMatrix4x4) and (GLfloat)*16
     //     * which seems not correct because QMatrix4x4 has a flag var
     //     */
-    GLfloat *mat = (GLfloat*)d.colorTransform.matrixRef().data();
+    GLfloat *mat = (GLfloat*)color_conversion -> matrixRef().data();
     GLfloat glm[16];
 
     #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
@@ -429,28 +435,28 @@ void GLRenderRaw::paintGL() {
     #else
         if (sizeof(float) != sizeof(GLfloat)) {
     #endif
-            colorTransform.matrixData(glm);
+            color_conversion -> matrixData(glm);
             mat = glm;
         }
 
-    shader -> program -> setUniformValue(u_colorMatrix, color_conversion -> matrixRef());
-    shader -> program -> setUniformValue(u_matrix, mpv_matrix);
-    shader -> program -> setUniformValue(u_bpp, (GLfloat)video_format.bitsPerPixel(0));
+    shader -> program -> setUniformValue(shader -> u_colorMatrix, color_conversion -> matrixRef());
+    shader -> program -> setUniformValue(shader -> u_matrix, mpv_matrix);
+    shader -> program -> setUniformValue(shader -> u_bpp, (GLfloat)settings -> bitsPerPixel(0));
 
 
     //   // uniforms done. attributes begin
 
-    shader -> program -> setAttributeArray(a_Position, GL_FLOAT, kVertices, 2);
-    shader -> program -> setAttributeArray(a_TexCoords, GL_FLOAT, kTexCoords, 2);
-    shader -> program -> enableAttributeArray(a_Position);
-    shader -> program -> enableAttributeArray(a_TexCoords);
+    shader -> program -> setAttributeArray(shader -> a_Position, GL_FLOAT, kVertices, 2);
+    shader -> program -> setAttributeArray(shader -> a_TexCoords, GL_FLOAT, kTexCoords, 2);
+    shader -> program -> enableAttributeArray(shader -> a_Position);
+    shader -> program -> enableAttributeArray(shader -> a_TexCoords);
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
 
     shader -> program -> release();
-    shader -> program -> disableAttributeArray(a_TexCoords);
-    shader -> program -> disableAttributeArray(a_Position);
+    shader -> program -> disableAttributeArray(shader -> a_TexCoords);
+    shader -> program -> disableAttributeArray(shader -> a_Position);
 
 
     //    for (int i = 0; i < d.textures.size(); ++i) {
