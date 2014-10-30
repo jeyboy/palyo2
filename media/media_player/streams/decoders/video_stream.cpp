@@ -19,7 +19,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
         resampler = new VideoResampler(codec_context -> pix_fmt);
         output = new BaseOutput(
                     this,
-                    resampler -> isGLShaderCompatible() ? gl : gl_plus,
+                    resampler -> isGLShaderCompatible() ? gl_plus : gl,
                     width,
                     height);
     }

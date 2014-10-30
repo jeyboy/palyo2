@@ -6,6 +6,9 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent)
   , renderer_width(480)
   , renderer_height(320)
 {
+    makeCurrent();
+    initializeOpenGLFunctions();
+
     //    setAcceptDrops(true);
     setFocusPolicy(Qt::StrongFocus);
     //    /* To rapidly update custom widgets that constantly paint over their entire areas with
@@ -46,10 +49,10 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent)
 }
 
 GLRenderRaw::~GLRenderRaw() {   
-//    if (!textures.isEmpty()) {
-//        glDeleteTextures(textures.size(), textures.data());
-//        textures.clear();
-//    }
+    if (!textures.isEmpty()) {
+        glDeleteTextures(textures.size(), textures.data());
+        textures.clear();
+    }
 
     if (shader) {
         delete shader;
@@ -146,6 +149,7 @@ bool GLRenderRaw::initTextures() {
      */
 
     VideoSettings * settings = vFrame -> buffer -> settings();
+    const int nb_planes = settings -> planeCount();
 
     if (!settings -> isPlanar()) {
         GLint internal_fmt;
@@ -158,21 +162,21 @@ bool GLRenderRaw::initTextures() {
             return false;
         }
 
-        internal_format = QVector<GLint>(settings -> planeCount(), internal_fmt);
-        data_format = QVector<GLenum>(settings -> planeCount(), data_fmt);
-        data_type = QVector<GLenum>(settings -> planeCount(), data_t);
+        //TODO: internal_format did not used at this time
+        internal_format = QVector<GLint>(nb_planes, internal_fmt);
+        data_format = QVector<GLenum>(nb_planes, data_fmt);
+        data_type = QVector<GLenum>(nb_planes, data_t);
     } else {
-        internal_format.resize(settings -> planeCount());
-        data_format.resize(settings -> planeCount());
-        data_type = QVector<GLenum>(settings -> planeCount(), GL_UNSIGNED_BYTE);
+        internal_format.resize(nb_planes);
+        data_format.resize(nb_planes);
+        data_type = QVector<GLenum>(nb_planes, GL_UNSIGNED_BYTE);
         if (settings -> isPlanar()) {
-        /*!
-         * GLES internal_format == data_format, GL_LUMINANCE_ALPHA is 2 bytes
-         * so if NV12 use GL_LUMINANCE_ALPHA, YV12 use GL_ALPHA
-         */
-//            qDebug("///////////bpp %d", fmt.bytesPerPixel());
+            /*!
+             * GLES internal_format == data_format, GL_LUMINANCE_ALPHA is 2 bytes
+             * so if NV12 use GL_LUMINANCE_ALPHA, YV12 use GL_ALPHA
+             */
             internal_format[0] = data_format[0] = GL_LUMINANCE; //or GL_RED for GL
-            if (settings -> planeCount() == 2) {
+            if (nb_planes == 2) {
                 internal_format[1] = data_format[1] = GL_LUMINANCE_ALPHA;
             } else {
                 if (settings -> bytesPerPixel(1) == 2) {
@@ -186,48 +190,41 @@ bool GLRenderRaw::initTextures() {
             }
             for (int i = 0; i < internal_format.size(); ++i) {
                 // xbmc use bpp not bpp(plane)
-                //internal_format[i] = GetGLInternalFormat(data_format[i], fmt.bytesPerPixel(i));
-                //data_format[i] = internal_format[i];
+                internal_format[i] = VideoTypes::getGLInternalFormat(data_format[i], settings -> bytesPerPixel(i));
+                data_format[i] = internal_format[i];
             }
         } else {
-            //glPixelStorei(GL_UNPACK_ALIGNMENT, fmt.bytesPerPixel());
+            glPixelStorei(GL_UNPACK_ALIGNMENT, settings -> bytesPerPixel());
             // TODO: if no alpha, data_fmt is not GL_BGRA. align at every upload?
         }
     }
 
-    for (int i = 0; i < settings -> planeCount(); ++i) {
-        //qDebug("format: %#x GL_LUMINANCE_ALPHA=%#x", data_format[i], GL_LUMINANCE_ALPHA);
-        if (settings -> bytesPerPixel(i) == 2 && settings -> planeCount() == 3) {
-            //data_type[i] = GL_UNSIGNED_SHORT;
-        }
+    textures.resize(nb_planes);
+    glGenTextures(textures.size(), textures.data());
+
+    texture_size.resize(nb_planes);
+
+    for (int i = 0; i < nb_planes; ++i) {
+        texture_size[i] = QSize(vFrame -> buffer -> lineSize(i), vFrame -> buffer -> planeHeight(i));
+    }
+
+    for (int i = 0; i < nb_planes; ++i) {
+        if (settings -> bytesPerPixel(i) == 2 && nb_planes == 3) { data_type[i] = GL_UNSIGNED_SHORT; }
         int bpp_gl = VideoTypes::bytesPerGLFormat(data_format[i], data_type[i]);
-//        int pad = qCeil((qreal)(texture_size[i].width() - effective_tex_width[i]) / (qreal)bpp_gl);
         texture_size[i].setWidth(qCeil((qreal)texture_size[i].width() / (qreal)bpp_gl));
-        texture_upload_size[i].setWidth(qCeil((qreal)texture_upload_size[i].width() / (qreal)bpp_gl));
-//        effective_tex_width[i] /= bpp_gl; //fmt.bytesPerPixel(i);
-//        qDebug("texture width: %d - %d = pad: %d. bpp(gl): %d", texture_size[i].width(), effective_tex_width[i], pad, bpp_gl);
     }
 
-//    /*
-//     * there are 2 fragment shaders: rgb and yuv.
-//     * only 1 texture for packed rgb. planar rgb likes yuv
-//     * To support both planar and packed yuv, and mixed yuv(NV12), we give a texture sample
-//     * for each channel. For packed, each (channel) texture sample is the same. For planar,
-//     * packed channels has the same texture sample.
-//     * But the number of actural textures we upload is plane count.
-//     * Which means the number of texture id equals to plane count
-//     */
-    if (textures.size() != settings -> planeCount()) {
-        glDeleteTextures(textures.size(), textures.data());
-        qDebug("delete %d textures", textures.size());
-        textures.clear();
-        textures.resize(settings -> planeCount());
-        glGenTextures(textures.size(), textures.data());
-    }
+    for (int i = 0; i < textures.size(); ++i)
+        initTexture(
+                    textures[i],
+                    internal_format[i],
+                    data_format[i],
+                    data_type[i],
+                    texture_size[i].width(),
+                    texture_size[i].height()
+        );
 
-    for (int i = 0; i < textures.size(); ++i) {
-        initTexture(textures[i], internal_format[i], data_format[i], data_type[i], texture_size[i].width(), texture_size[i].height());
-    }
+
     return true;
 }
 
@@ -243,59 +240,41 @@ void GLRenderRaw::resizeViewport(int w, int h) {
     //computeOutParameters();
 }
 
-//void GLRenderRaw::setupTextures(int w, int h) {
-//    glEnable(GL_TEXTURE_2D);
-
-//    /* Select texture unit 1 as the active unit and bind the U texture. */
-//    glActiveTexture(GL_TEXTURE1);
-//    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 1);
-//    shader -> program -> setUniformValue(shader -> Utex, 1);
-//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-//    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_LUMINANCE, 376, 288, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Utex);
-
-//    /* Select texture unit 2 as the active unit and bind the V texture. */
-//    glActiveTexture(GL_TEXTURE2);
-//    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 2);
-//    shader -> program -> setUniformValue(shader -> Vtex, 2);
-//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-//    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_LUMINANCE, 376, 288, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Vtex);
-
-//    /* Select texture unit 0 as the active unit and bind the Y texture. */
-//    glActiveTexture(GL_TEXTURE0);
-//    shader -> program -> setUniformValue(shader -> Ytex, 0);
-//    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 0);
-//    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-//    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_LUMINANCE, 752, 576, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Ytex);
-//}
-
 void GLRenderRaw::prepareSettings() {
     mpv_matrix(0, 0) = 1.0f;
     mpv_matrix(1, 1) = 1.0f;
 
-    ColorConversion::ColorSpace cs;
     VideoSettings * settings = vFrame -> buffer -> settings();
 
     bool variousEndian = settings -> isPlanar() && settings -> bytesPerPixel(0) == 2;
-    shader -> setup(settings -> isPlanar(), variousEndian && settings -> isBigEndian(), variousEndian && !settings -> isBigEndian());
+    shader -> setup(
+                settings -> isPlanar(),
+                variousEndian && settings -> isBigEndian(),
+                variousEndian && !settings -> isBigEndian()
+    );
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH); //setupQuality?
     glClearDepth(1.0f);
 
+
+    ColorConversion::ColorSpace cs;
     if (settings -> isRGB()) {
         u_Texture.resize(1);
 
-        if (settings -> isPlanar())
-            cs = ColorConversion::GBR;
+        if (settings -> isPlanar()) // wtf
+            cs = ColorConversion::GBR; // why gbr ?
     } else {
         u_Texture.resize(settings -> channelsCount());
 
-        if (settings -> buff_width >= 1280 || settings -> buff_height > 576) //values from mpv
+        if (settings -> isBT709Colorspace() || (settings -> buff_width >= 1280 && settings -> buff_height > 576))
             cs = ColorConversion::BT709;
         else
             cs = ColorConversion::BT601;
     }
+
+    color_conversion = new ColorConversion(cs, ColorConversion::RGB);
 
     QString tex_var;
     for (int i = 0; i < u_Texture.size(); ++i) {
@@ -303,41 +282,10 @@ void GLRenderRaw::prepareSettings() {
         u_Texture[i] = shader -> program -> uniformLocation(tex_var);
     }
 
-    color_conversion = new ColorConversion(cs, ColorConversion::RGB);
-
     initTextures();
-
-
-    //    // TODO: only to kinds, packed.glsl, planar.glsl
-    //    QString frag;
-    //    if (fmt.isPlanar()) {
-    //        frag = getShaderFromFile("shaders/planar.f.glsl");
-    //    } else {
-    //        frag = getShaderFromFile("shaders/rgb.f.glsl");
-    //    }
-    //    if (frag.isEmpty())
-    //        return false;
-    //    if (fmt.isRGB()) {
-    //        frag.prepend("#define INPUT_RGB\n");
-    //    } else {
-    //        frag.prepend(QString("#define YUV%1P\n").arg(fmt.bitsPerPixel(0)));
-    //    }
-    //    if (fmt.isPlanar() && fmt.bytesPerPixel(0) == 2) {
-    //        if (fmt.isBigEndian())
-    //            frag.prepend("#define LA_16BITS_BE\n");
-    //        else
-    //            frag.prepend("#define LA_16BITS_LE\n");
-    //    }
-    //    if (cs == ColorTransform::BT601) {
-    //        frag.prepend("#define CS_BT601\n");
-    //    } else if (cs == ColorTransform::BT709) {
-    //        frag.prepend("#define CS_BT709\n");
-    //    }
 }
 
 void GLRenderRaw::initializeGL() {
-    initializeOpenGLFunctions();
-
     shader = new Shader(context());
 
     glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
@@ -351,7 +299,47 @@ void GLRenderRaw::paintGL() {
 
 
     VideoSettings * settings = vFrame -> buffer -> settings();
-    const int nb_planes = settings -> planeCount(); //number of texture id
+    const int nb_planes = settings -> planeCount();
+
+    mutex.lock();
+    AVPicture * img = vFrame -> asPicture();
+
+    if (init == false) {
+        prepareSettings();
+        resizeViewport(width(), height());
+        init = true;
+    }
+
+    shader -> program -> bind();
+
+    // all texture ids should be binded when renderering even for packed plane!
+    for (int i = 0; i < nb_planes; i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+
+        glTexSubImage2D(
+                    GL_TEXTURE_2D,
+                    0,
+                    0,
+                    0,
+                    texture_size[i].width(),
+                    texture_size[i].height(),
+                    data_format[i],
+                    data_type[i],
+                    img -> data[i]
+        );
+
+        shader -> program -> setUniformValue(u_Texture[i], (GLint)i);
+    }
+
+    mutex.unlock();
+
+    if (nb_planes < u_Texture.size()) {
+        for (int i = nb_planes; i < u_Texture.size(); ++i) {
+            shader -> program -> setUniformValue(u_Texture[i], (GLint)(nb_planes - 1));
+        }
+    }
+
 
     //    QRect roi = realROI();
     //    const int nb_planes = d.video_frame.planeCount(); //number of texture id
@@ -392,6 +380,9 @@ void GLRenderRaw::paintGL() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    // temporary comented
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glPushMatrix();
 //    glScalef((float)d.out_rect.width()/(float)d.renderer_width, (float)d.out_rect.height()/(float)d.renderer_height, 0);
     glVertexPointer(2, GL_FLOAT, 0, kVertices);
@@ -403,46 +394,27 @@ void GLRenderRaw::paintGL() {
     glDisableClientState(GL_VERTEX_ARRAY);
     glPopMatrix();
 
-//    for (int i = 0; i < textures.size(); ++i) {
-//        video_frame.unmap(&d.textures[i]);
-//    }
-
-    shader -> program -> bind();
-
-    // all texture ids should be binded when renderering even for packed plane!
-    for (int i = 0; i < nb_planes; ++i) {
-            // use glUniform1i to swap planes. swap uv: i => (3-i)%3
-            // TODO: in shader, use uniform sample2D u_Texture[], and use glUniform1iv(u_Texture, 3, {...})
-        shader -> program -> setUniformValue(u_Texture[i], (GLint)i);
-    }
-
-    if (nb_planes < u_Texture.size()) {
-        for (int i = nb_planes; i < u_Texture.size(); ++i) {
-            shader -> program -> setUniformValue(u_Texture[i], (GLint)(nb_planes - 1));
-        }
-    }
 
     //    /*
     //     * in Qt4 QMatrix4x4 stores qreal (double), while GLfloat may be float
     //     * QShaderProgram deal with this case. But compares sizeof(QMatrix4x4) and (GLfloat)*16
     //     * which seems not correct because QMatrix4x4 has a flag var
     //     */
-    GLfloat *mat = (GLfloat*)color_conversion -> matrixRef().data();
-    GLfloat glm[16];
+//    GLfloat *mat = (GLfloat*)color_conversion -> matrixRef().data();
+//    GLfloat glm[16];
 
-    #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-        if (sizeof(qreal) != sizeof(GLfloat)) {
-    #else
-        if (sizeof(float) != sizeof(GLfloat)) {
-    #endif
-            color_conversion -> matrixData(glm);
-            mat = glm;
-        }
+//    #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+//        if (sizeof(qreal) != sizeof(GLfloat)) {
+//    #else
+//        if (sizeof(float) != sizeof(GLfloat)) {
+//    #endif
+//            color_conversion -> matrixData(glm);
+//            mat = glm;
+//        }
 
     shader -> program -> setUniformValue(shader -> u_colorMatrix, color_conversion -> matrixRef());
     shader -> program -> setUniformValue(shader -> u_matrix, mpv_matrix);
     shader -> program -> setUniformValue(shader -> u_bpp, (GLfloat)settings -> bitsPerPixel(0));
-
 
     //   // uniforms done. attributes begin
 
@@ -453,139 +425,9 @@ void GLRenderRaw::paintGL() {
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
-
     shader -> program -> release();
     shader -> program -> disableAttributeArray(shader -> a_TexCoords);
     shader -> program -> disableAttributeArray(shader -> a_Position);
-
-
-    //    for (int i = 0; i < d.textures.size(); ++i) {
-    //        d.video_frame.unmap(&d.textures[i]);
-    //    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    shader -> program -> bind();
-
-    mutex.lock();
-//    QImage * img = vFrame -> asImage();
-
-//    if (init == false) {
-//        prepareSettings();
-//        resizeViewport(width(), height());
-
-//        for (int i = 0; i < 3; i++) {
-//    //        glActiveTexture(GL_TEXTURE0 + i);
-//            glBindTexture(GL_TEXTURE_2D, yuv_texture_id_[i]);
-//            shader -> program -> setUniformValue(yuv_texture_object_[i], (GLint)i);
-//            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, stream_yuv_width_[i], stream_yuv_height_[i], GL_RGBA, GL_UNSIGNED_BYTE, yuv_data_[i]);
-//        }
-//        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
-
-//        init = true;
-//    } else
-//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img -> width(), img -> height(), GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
-
-    mutex.unlock();
-
-//    shader -> program -> setAttributeArray(shader -> position_object_, GL_FLOAT, kVertexInformation, 2);
-//    shader -> program -> setAttributeArray(shader -> texture_position_object_, GL_FLOAT, kTextureCoordinateInformation, 2);
-//    shader -> program -> enableAttributeArray(shader -> position_object_);
-//    shader -> program -> enableAttributeArray(shader -> texture_position_object_);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    /* Draw image (again and again). */
-
-//    glBegin(GL_QUADS);
-//      glTexCoord2i(0,0);
-//      glVertex2i(0,0);
-//      glTexCoord2i(720,0);
-//      glVertex2i(B_WIDTH,0);
-//      glTexCoord2i(720,576);
-//      glVertex2i(B_WIDTH,B_HEIGHT);
-//      glTexCoord2i(0,576);
-//      glVertex2i(0,B_HEIGHT);
-//    glEnd();
-
-    /* Flip buffers. */
-
-//    glFlush();
-//    SDL_GL_SwapBuffers();
-
-    shader -> program -> release();
-//    shader -> program -> disableAttributeArray(shader -> texture_position_object_);
-//    shader -> program -> disableAttributeArray(shader -> position_object_);
-
-
-//    glEnable(GL_TEXTURE_2D);
-//    glDisable(GL_DEPTH_TEST);
-
-//    mutex.lock();
-//    glBindTexture(GL_TEXTURE_2D, texture);
-//    QImage * img = vFrame -> asImage();
-
-//    if (init == false) {
-//        prepareSettings();
-//        resizeViewport(width(), height());
-//        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
-//        init = true;
-//    } else
-//        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img -> width(), img -> height(), GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
-
-//    mutex.unlock();
-
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-////    glTranslatef(0.0f, 1.0f, 0.0f);
-
-//    glRotatef(180, .5f, 0, 0);
-
-//    glBegin(GL_QUADS);
-//        glTexCoord2f(0.0f, 0.0f);  glVertex2f(-1.0f, -1.0f);
-//        glTexCoord2f(1.0f, 0.0f);  glVertex2f(1.0f, -1.0f);
-//        glTexCoord2f(1.0f, 1.0f);  glVertex2f(1.0f, 1.0f);
-//        glTexCoord2f(0.0f, 1.0f);  glVertex2f(-1.0f, 1.0f);
-//    glEnd();
 
     redrawed();
 }

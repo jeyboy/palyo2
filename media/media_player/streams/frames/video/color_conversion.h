@@ -60,13 +60,13 @@ public:
 
     QMatrix4x4 matrix() const { return M; }
     const QMatrix4x4& matrixRef() const { return M; }
-    template<typename T> void matrixData(T * M) const {
-        const QMatrix4x4 &m = matrixRef();
-        M[0] = m(0,0), M[4] = m(0,1), M[8] = m(0,2), M[12] = m(0,3),
-        M[1] = m(1,0), M[5] = m(1,1), M[9] = m(1,2), M[13] = m(1,3),
-        M[2] = m(2,0), M[6] = m(2,1), M[10] = m(2,2), M[14] = m(2,3),
-        M[3] = m(3,0), M[7] = m(3,1), M[11] = m(3,2), M[15] = m(3,3);
-    }
+//    template<typename T> void matrixData(T * M) const {
+//        const QMatrix4x4 &m = matrixRef();
+//        M[0] = m(0,0), M[4] = m(0,1), M[8] = m(0,2), M[12] = m(0,3),
+//        M[1] = m(1,0), M[5] = m(1,1), M[9] = m(1,2), M[13] = m(1,3),
+//        M[2] = m(2,0), M[6] = m(2,1), M[10] = m(2,2), M[14] = m(2,3),
+//        M[3] = m(3,0), M[7] = m(3,1), M[11] = m(3,2), M[15] = m(3,3);
+//    }
 
     ColorSpace getSourceSpace() const { return in; }
     void setSourceSpace(ColorSpace source) {

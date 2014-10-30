@@ -5,5 +5,6 @@
 #include "render_interface.h"
 #include "hardware_render.h"
 #include "gl_render.h"
+#include "gl_render_raw.h"
 
 #endif // RENDERS_H

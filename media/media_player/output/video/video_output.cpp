@@ -31,6 +31,10 @@ void VideoOutput::setRender(RenderType type) {
     }
 
     switch(type) {
+        case gl_plus: {
+            screen = new GLRenderRaw(this);
+            break;
+        }
         case gl: {
             screen = new GLRender(this);
             break;

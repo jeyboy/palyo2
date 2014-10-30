@@ -235,7 +235,8 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/frames/audio_frame.h \
     media/media_player/streams/frames/video_frame.h \
     media/media_player/output/video/controls/renders/render_types.h \
-    media/media_player/utils/video_types.h
+    media/media_player/utils/video_types.h \
+    media/media_player/streams/frames/video/video_blending.h
 
 
 unix:!mac {

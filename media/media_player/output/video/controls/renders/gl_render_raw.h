@@ -1,5 +1,5 @@
-#ifndef GL_RENDER_H
-#define GL_RENDER_H
+#ifndef GL_RENDER_RAW_H
+#define GL_RENDER_RAW_H
 
 #include "media/media_player/utils/video_types.h"
 #include "media/media_player/streams/frames/video/shader.h"
@@ -47,7 +47,7 @@ private:
     //     * 1. y/u is not an integer because of alignment. then padding size of y < padding size of u, and effective size y/u != texture size y/u
     //     * 2. odd size. enlarge y
     //     */
-    QVector<QSize> texture_upload_size;
+//    QVector<QSize> texture_upload_size;
 
     //    QVector<int> effective_tex_width; //without additional width for alignment
     //    qreal effective_tex_width_ratio;
@@ -74,4 +74,4 @@ private:
     int renderer_width, renderer_height;
 };
 
-#endif // GL_RENDER_H
+#endif // GL_RENDER_RAW_H

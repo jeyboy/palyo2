@@ -44,9 +44,11 @@ struct Shader {
 
     ~Shader() { remove(); }
 
-    bool setup(bool planar = false, bool big_endian = false, bool little_endian = false) {
+    void setup(bool planar = false, bool big_endian = false, bool little_endian = false) {
         program -> addShaderFromSourceCode(QGLShader::Vertex, vertexShader());
         program -> addShaderFromSourceCode(QGLShader::Fragment, fragmentShader(planar, big_endian, little_endian));
+
+        bool res = program -> link();
 
         a_Position      = program -> attributeLocation("a_Position");
         a_TexCoords     = program -> attributeLocation("a_TexCoords");
@@ -54,7 +56,9 @@ struct Shader {
         u_bpp           = program -> uniformLocation("u_bpp");
         u_colorMatrix   = program -> uniformLocation("u_colorMatrix");
 
-        return program -> link();
+        if (!res) {
+            qWarning("Failed to link shader program...%s", program -> log().toUtf8().constData());
+        }
     }
 
     bool remove() {
