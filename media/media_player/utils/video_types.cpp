@@ -37,6 +37,62 @@ static const struct fmt_entry pixfmt_to_gl_formats[] = {
 
 
 
+//    case GST_VIDEO_FORMAT_AYUV:
+//#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+//      gl->ReadPixels (0, 0, out_width, out_height, GL_BGRA,
+//          GL_UNSIGNED_INT_8_8_8_8, download->data[0]);
+//#else
+//      gl->ReadPixels (0, 0, out_width, out_height, GL_BGRA,
+//          GL_UNSIGNED_INT_8_8_8_8_REV, download->data[0]);
+//#endif
+//      break;
+//    case GST_VIDEO_FORMAT_YUY2:
+//    case GST_VIDEO_FORMAT_UYVY:
+//#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+//      gl->ReadPixels (0, 0, GST_ROUND_UP_2 (out_width) / 2, out_height, GL_BGRA,
+//          GL_UNSIGNED_INT_8_8_8_8_REV, download->data[0]);
+//#else
+//      gl->ReadPixels (0, 0, GST_ROUND_UP_2 (out_width) / 2, out_height, GL_BGRA,
+//          GL_UNSIGNED_INT_8_8_8_8, download->data[0]);
+//#endif
+//      break;
+//    case GST_VIDEO_FORMAT_I420:
+//    {
+//      gl->ReadPixels (0, 0, out_width, out_height, GL_LUMINANCE,
+//          GL_UNSIGNED_BYTE, download->data[0]);
+
+//      gl->ReadBuffer (GL_COLOR_ATTACHMENT1);
+
+//      gl->ReadPixels (0, 0, GST_ROUND_UP_2 (out_width) / 2,
+//          GST_ROUND_UP_2 (out_height) / 2, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+//          download->data[1]);
+
+//      gl->ReadBuffer (GL_COLOR_ATTACHMENT2);
+
+//      gl->ReadPixels (0, 0, GST_ROUND_UP_2 (out_width) / 2,
+//          GST_ROUND_UP_2 (out_height) / 2, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+//          download->data[2]);
+//    }
+//      break;
+//    case GST_VIDEO_FORMAT_YV12:
+//    {
+//      gl->ReadPixels (0, 0, out_width, out_height, GL_LUMINANCE,
+//          GL_UNSIGNED_BYTE, download->data[0]);
+
+//      gl->ReadBuffer (GL_COLOR_ATTACHMENT1);
+
+//      gl->ReadPixels (0, 0, GST_ROUND_UP_2 (out_width) / 2,
+//          GST_ROUND_UP_2 (out_height) / 2, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+//          download->data[2]);
+
+//      gl->ReadBuffer (GL_COLOR_ATTACHMENT2);
+
+//      gl->ReadPixels (0, 0, GST_ROUND_UP_2 (out_width) / 2,
+//          GST_ROUND_UP_2 (out_height) / 2, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+//          download->data[1]);
+//    }
+
+
     #ifdef QT_OPENGL_ES_2
         {VideoTypes::PF_ARGB32, GL_BGRA, GL_BGRA, GL_UNSIGNED_BYTE },
         {VideoTypes::PF_RGB32,  GL_BGRA, GL_BGRA, GL_UNSIGNED_BYTE },

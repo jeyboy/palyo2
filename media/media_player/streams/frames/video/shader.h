@@ -45,6 +45,7 @@ struct Shader {
     ~Shader() { remove(); }
 
     void setup(bool planar = false, bool big_endian = false, bool little_endian = false) {
+        qDebug() << fragmentShader(planar, big_endian, little_endian);
         program -> addShaderFromSourceCode(QGLShader::Vertex, vertexShader());
         program -> addShaderFromSourceCode(QGLShader::Fragment, fragmentShader(planar, big_endian, little_endian));
 
@@ -103,41 +104,55 @@ struct Shader {
 
             return
                     //// Set default precision to medium
-                    "precision mediump int;"
-                    "precision mediump float;"
-                    "uniform sampler2D u_Texture0; "
-                    "uniform sampler2D u_Texture1; "
-                    "uniform sampler2D u_Texture2; "
-                    "varying lowp vec2 v_TexCoords;"
-                    "uniform float u_bpp;          "
-                    "uniform mat4 u_colorMatrix;   "
+                    "precision mediump int;\n"
+                    "precision mediump float;\n"
+                    "uniform sampler2D u_Texture0;\n "
+                    "uniform sampler2D u_Texture1;\n "
+                    "uniform sampler2D u_Texture2;\n "
+                    "varying lowp vec2 v_TexCoords;\n"
+                    "uniform float u_bpp;\n          "
+                    "uniform mat4 u_colorMatrix;\n   "
 
 
                     // 10, 16bit: http://msdn.microsoft.com/en-us/library/windows/desktop/bb970578%28v=vs.85%29.aspx
-                    "void main() {"
-                        // FFmpeg supports 9, 10, 12, 14, 16 bits
-                    #if LA_16BITS
-                        "float range = exp2(u_bpp) - 1.0;"
-                        #if defined(LA_16BITS_LE)
-                            "vec2 t = vec2(1.0, 256.0) * 255.0 / range;"
-                        #else
-                            "vec2 t = vec2(256.0, 1.0) * 255.0 / range;"
-                        #endif
-                    #endif //LA_16BITS // 10p in little endian: yyyyyyyy yy000000 => (L, L, L, A)
-                        "gl_FragColor = clamp(u_colorMatrix"
-                        "                     * vec4("
-                    #if LA_16BITS
-                        "                         dot(texture2D(u_Texture0, v_TexCoords).ra, t),"
-                        "                         dot(texture2D(u_Texture1, v_TexCoords).ra, t),"
-                        "                         dot(texture2D(u_Texture2, v_TexCoords).ra, t),"
-                    #else // use r, g, a to work for both yv12 and nv12. idea from xbmc
-                        "                         texture2D(u_Texture0, v_TexCoords).r,"
-                        "                         texture2D(u_Texture1, v_TexCoords).g,"
-                        "                         texture2D(u_Texture2, v_TexCoords).a,"
-                    #endif //LA_16BITS
-                        "                         1)"
-                        "                     , 0.0, 1.0);"
-                    "}";
+                    "void main() {\n"
+                    "    highp float y = texture2D(u_Texture0, v_TexCoords).r;"
+                    "    highp float u = texture2D(u_Texture1, v_TexCoords).r;"
+                    "    highp float v = texture2D(u_Texture2, v_TexCoords).r;"
+
+                    "    y = 1.1643 * (y - 0.0625);"
+                    "    u = u - 0.5;"
+                    "    v = v - 0.5;"
+
+                    "    highp float r = y + 1.5958 * v;"
+                    "    highp float g = y - 0.39173 * u - 0.81290 * v;"
+                    "    highp float b = y + 2.017 * u;"
+
+                    "    gl_FragColor = vec4(r, g, b, 1.0);"
+
+
+//                    #if LA_16BITS
+//                        "float range = exp2(u_bpp) - 1.0;\n"
+//                        #if defined(LA_16BITS_LE)
+//                            "vec2 t = vec2(1.0, 256.0) * 255.0 / range;\n"
+//                        #else
+//                            "vec2 t = vec2(256.0, 1.0) * 255.0 / range;\n"
+//                        #endif
+//                    #endif //LA_16BITS // 10p in little endian: yyyyyyyy yy000000 => (L, L, L, A)
+//                        "gl_FragColor = clamp(u_colorMatrix\n"
+//                        "                     * vec4(\n"
+//                    #if LA_16BITS
+//                        "                         dot(texture2D(u_Texture0, v_TexCoords).ra, t),\n"
+//                        "                         dot(texture2D(u_Texture1, v_TexCoords).ra, t),\n"
+//                        "                         dot(texture2D(u_Texture2, v_TexCoords).ra, t),\n"
+//                    #else // use r, g, a to work for both yv12 and nv12. idea from xbmc
+//                        "                         texture2D(u_Texture0, v_TexCoords).r,\n"
+//                        "                         texture2D(u_Texture1, v_TexCoords).g,\n"
+//                        "                         texture2D(u_Texture2, v_TexCoords).a,\n"
+//                    #endif //LA_16BITS
+//                        "                         1)\n"
+//                        "                     , 0.0, 1.0);\n"
+                    "}\n";
         } else {
             return
                     "uniform sampler2D u_Texture0;"
@@ -145,7 +160,8 @@ struct Shader {
                     "uniform mat4 u_colorMatrix;"
                     ""
                     "void main() {"
-                    "  gl_FragColor = u_colorMatrix * texture2D(u_Texture0, v_TexCoords);"
+                    "  gl_FragColor = texture2D(u_Texture0, v_TexCoords);"
+//                    "  gl_FragColor = u_colorMatrix * texture2D(u_Texture0, v_TexCoords);"
                     "}";
         }
     }

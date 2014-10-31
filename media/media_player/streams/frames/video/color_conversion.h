@@ -49,8 +49,8 @@ public:
 
     ColorConversion(ColorSpace source, ColorSpace destination) :
         hue(0)
-        , saturation(0)
-        , contrast(0)
+        , saturation(1)
+        , contrast(1)
         , brightness(0)
         , in(source)
         , out(destination)
@@ -139,9 +139,9 @@ protected:
                      0, 0, c, 0,
                      0, 0, 0, 1);
 
-        const float wr = 0.3086f;
-        const float wg = 0.6094f;
-        const float wb = 0.0820f;
+        const float wr = .3086f;  //lumR = 0.3086  or  0.2125
+        const float wg = .6094f;  //lumG = 0.6094  or  0.7154
+        const float wb = .0820f;  //lumB = 0.0820  or  0.0721
         float s = saturation + 1.0f;
         QMatrix4x4 S(
             (1.0f - s) * wr + s, (1.0f - s) * wg    , (1.0f - s) * wb    , 0.0f,
@@ -155,15 +155,25 @@ protected:
         const float h = hue * M_PI;               // hue rotation angle
         const float hc = cosf(h);
         const float hs = sinf(h);
+        const float nn = n * n;
+        const float rel = nn *(1.0f - hc);
+
         QMatrix4x4 H(     // conversion of angle/axis representation to matrix representation
-            n*n*(1.0f - hc) + hc  , n*n*(1.0f - hc) - n*hs, n*n*(1.0f - hc) + n*hs, 0.0f,
-            n*n*(1.0f - hc) + n*hs, n*n*(1.0f - hc) + hc  , n*n*(1.0f - hc) - n*hs, 0.0f,
-            n*n*(1.0f - hc) - n*hs, n*n*(1.0f - hc) + n*hs, n*n*(1.0f - hc) + hc  , 0.0f,
-                              0.0f,                   0.0f,                   0.0f, 1.0f
+            rel + hc       , rel - n * hs , rel + n * hs , 0.0f,
+            rel + n * hs   , rel + hc     , rel - n * hs , 0.0f,
+            rel - n * hs   , rel + n * hs , rel + hc     , 0.0f,
+                    0.0f   ,         0.0f ,         0.0f , 1.0f
         );
 
+//        QMatrix4x4 H(     // conversion of angle/axis representation to matrix representation
+//            nn * (1.0f - hc) + hc       , nn * (1.0f - hc) - n * hs , nn * (1.0f - hc) + n * hs , 0.0f,
+//            nn * (1.0f - hc) + n * hs   , nn * (1.0f - hc) + hc     , nn * (1.0f - hc) - n * hs , 0.0f,
+//            nn * (1.0f - hc) - n * hs   , nn * (1.0f - hc) + n * hs , nn * (1.0f - hc) + hc     , 0.0f,
+//                                 0.0f   ,                      0.0f ,                      0.0f , 1.0f
+//        );
+
         M = B * C * S * H;
-        // TODO: transform to output color space other than RGB
+
         switch (in) {
             case ColorConversion::RGB:
                 break;

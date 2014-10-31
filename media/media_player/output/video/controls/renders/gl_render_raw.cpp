@@ -118,8 +118,6 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
     glBindTexture(GL_TEXTURE_2D, tex);
 //    setupQuality();
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D
                  , 0                //level
                  , internalFormat               //internal format. 4? why GL_RGBA? GL_RGB?
@@ -129,6 +127,10 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
                  , format          //format, must the same as internal format?
                  , dataType
                  , NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBindTexture(GL_TEXTURE_2D, 0);
     return true;
 }
@@ -189,13 +191,11 @@ bool GLRenderRaw::initTextures() {
                 }
             }
             for (int i = 0; i < internal_format.size(); ++i) {
-                // xbmc use bpp not bpp(plane)
                 internal_format[i] = VideoTypes::getGLInternalFormat(data_format[i], settings -> bytesPerPixel(i));
                 data_format[i] = internal_format[i];
             }
         } else {
             glPixelStorei(GL_UNPACK_ALIGNMENT, settings -> bytesPerPixel());
-            // TODO: if no alpha, data_fmt is not GL_BGRA. align at every upload?
         }
     }
 
@@ -204,17 +204,16 @@ bool GLRenderRaw::initTextures() {
 
     texture_size.resize(nb_planes);
 
+    int bpp_gl;
     for (int i = 0; i < nb_planes; ++i) {
         texture_size[i] = QSize(vFrame -> buffer -> lineSize(i), vFrame -> buffer -> planeHeight(i));
-    }
 
-    for (int i = 0; i < nb_planes; ++i) {
         if (settings -> bytesPerPixel(i) == 2 && nb_planes == 3) { data_type[i] = GL_UNSIGNED_SHORT; }
-        int bpp_gl = VideoTypes::bytesPerGLFormat(data_format[i], data_type[i]);
+        bpp_gl = VideoTypes::bytesPerGLFormat(data_format[i], data_type[i]);
         texture_size[i].setWidth(qCeil((qreal)texture_size[i].width() / (qreal)bpp_gl));
     }
 
-    for (int i = 0; i < textures.size(); ++i)
+    for (int i = 0; i < textures.size(); ++i) {
         initTexture(
                     textures[i],
                     internal_format[i],
@@ -223,6 +222,7 @@ bool GLRenderRaw::initTextures() {
                     texture_size[i].width(),
                     texture_size[i].height()
         );
+    }
 
 
     return true;
@@ -295,7 +295,7 @@ void GLRenderRaw::paintGL() {
     if (vFrame == 0) return;
 
     glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
+//    glDisable(GL_DEPTH_TEST);
 
 
     VideoSettings * settings = vFrame -> buffer -> settings();
@@ -316,6 +316,9 @@ void GLRenderRaw::paintGL() {
     for (int i = 0; i < nb_planes; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, textures[i]);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         glTexSubImage2D(
                     GL_TEXTURE_2D,
@@ -340,81 +343,17 @@ void GLRenderRaw::paintGL() {
         }
     }
 
-
-    //    QRect roi = realROI();
-    //    const int nb_planes = d.video_frame.planeCount(); //number of texture id
-    //    int mapped = 0;
-    //    for (int i = 0; i < nb_planes; ++i) {
-    //        if (d.video_frame.map(GLTextureSurface, &d.textures[i])) {
-    //            OpenGLHelper::glActiveTexture(GL_TEXTURE0 + i);
-    //            // if mapped by SurfaceInterop, the texture may be not bound
-    //            glBindTexture(GL_TEXTURE_2D, d.textures[i]); //we've bind 0 after upload()
-    //            mapped++;
-    //        }
-    //    }
-    //    if (mapped < nb_planes) {
-    //        d.upload(roi);
-    //    }
-    //    //TODO: compute kTexCoords only if roi changed
-    //#if ROI_TEXCOORDS
-    ///*!
-    //  tex coords: ROI/frameRect()*effective_tex_width_ratio
-    //*/
-    //    const GLfloat kTexCoords[] = {
-    //        (GLfloat)roi.x()*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)roi.y()/(GLfloat)d.video_frame.height(),
-    //        (GLfloat)(roi.x() + roi.width())*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)roi.y()/(GLfloat)d.video_frame.height(),
-    //        (GLfloat)(roi.x() + roi.width())*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)(roi.y()+roi.height())/(GLfloat)d.video_frame.height(),
-    //        (GLfloat)roi.x()*(GLfloat)d.effective_tex_width_ratio/(GLfloat)d.video_frame.width(), (GLfloat)(roi.y()+roi.height())/(GLfloat)d.video_frame.height(),
-    //    };
-    //#else
-        const GLfloat kTexCoords[] = {
-                0, 0,
-                1, 0,
-                1, 1,
-                0, 1,
-        };
-    //#endif //ROI_TEXCOORDS
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    // temporary comented
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glPushMatrix();
-//    glScalef((float)d.out_rect.width()/(float)d.renderer_width, (float)d.out_rect.height()/(float)d.renderer_height, 0);
-    glVertexPointer(2, GL_FLOAT, 0, kVertices);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, kTexCoords);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glPopMatrix();
-
-
-    //    /*
-    //     * in Qt4 QMatrix4x4 stores qreal (double), while GLfloat may be float
-    //     * QShaderProgram deal with this case. But compares sizeof(QMatrix4x4) and (GLfloat)*16
-    //     * which seems not correct because QMatrix4x4 has a flag var
-    //     */
-//    GLfloat *mat = (GLfloat*)color_conversion -> matrixRef().data();
-//    GLfloat glm[16];
-
-//    #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-//        if (sizeof(qreal) != sizeof(GLfloat)) {
-//    #else
-//        if (sizeof(float) != sizeof(GLfloat)) {
-//    #endif
-//            color_conversion -> matrixData(glm);
-//            mat = glm;
-//        }
+    const GLfloat kTexCoords[] = {
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+    };
 
     shader -> program -> setUniformValue(shader -> u_colorMatrix, color_conversion -> matrixRef());
     shader -> program -> setUniformValue(shader -> u_matrix, mpv_matrix);
     shader -> program -> setUniformValue(shader -> u_bpp, (GLfloat)settings -> bitsPerPixel(0));
+    qDebug() << "!!!!!!!! " << settings -> bitsPerPixel(0);
 
     //   // uniforms done. attributes begin
 
@@ -422,6 +361,25 @@ void GLRenderRaw::paintGL() {
     shader -> program -> setAttributeArray(shader -> a_TexCoords, GL_FLOAT, kTexCoords, 2);
     shader -> program -> enableAttributeArray(shader -> a_Position);
     shader -> program -> enableAttributeArray(shader -> a_TexCoords);
+
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+
+    // temporary comented
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//    glPushMatrix();
+////    glScalef((float)d.out_rect.width()/(float)d.renderer_width, (float)d.out_rect.height()/(float)d.renderer_height, 0);
+//    glVertexPointer(2, GL_FLOAT, 0, kVertices);
+//    glEnableClientState(GL_VERTEX_ARRAY);
+//    glTexCoordPointer(2, GL_FLOAT, 0, kTexCoords);
+//    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+//    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+//    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+//    glDisableClientState(GL_VERTEX_ARRAY);
+//    glPopMatrix();
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
