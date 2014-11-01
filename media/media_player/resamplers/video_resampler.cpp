@@ -2,15 +2,22 @@
 #include "qdebug.h"
 
 // only_conversion - did not output result as QImage if possible
-VideoResampler::VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelFormat pixel_format_out) :
-      pixelFormatIn(pixel_format_in)
+VideoResampler::VideoResampler(AVCodecContext * codec_context, enum AVPixelFormat pixel_format_out) :
+      pixelFormatIn(codec_context -> pix_fmt)
     , pixelFormatOut(pixel_format_out)
-    , resampleContext(0)
     , settings(0)
+    , resampleContext(0)
 {
     img_format = VideoTypes::toQImageFormat(pixelFormatOut);
-    compatible = /*false;*/ VideoTypes::isCompatible(pixelFormatOut);
+    compatible = VideoTypes::isCompatible(pixelFormatOut);
     RGBFrame = av_frame_alloc();
+
+    settings = new VideoSettings(
+                compatible ? codec_context -> pix_fmt : pixelFormatOut,
+                codec_context -> colorspace,
+                codec_context -> width,
+                codec_context -> height
+    );
 }
 
 VideoResampler::~VideoResampler() {
@@ -19,27 +26,8 @@ VideoResampler::~VideoResampler() {
     sws_freeContext(resampleContext);
 }
 
-VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {  
-    //            if (!RGBFrame || RGBFrame -> width != width
-    //                    || RGBFrame -> height != height) {
-    //                // Determine required buffer size and allocate buffer
-    //                int numBytes = avpicture_get_size(AV_PIX_FMT_RGB24, width, height);
-
-    //                RGBFrame -> width = width;
-    //                RGBFrame -> height = height;
-
-    //                if (RGBBuffer)
-    //                    delete[] RGBBuffer;
-
-    //                RGBBuffer = new unsigned char[numBytes];
-
-    //                // Assign appropriate parts of buffer to image planes in RGBFrame
-    //                avpicture_fill((AVPicture *)RGBFrame, RGBBuffer, AV_PIX_FMT_RGB24, width, height);
-    //            }
-
+VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthOut, int heightOut) {
     if (compatible) {
-        initSettings(frame, (AVPixelFormat)frame -> format, frame -> width, frame -> height);
-
         AVPicture * newPict = new AVPicture();
         if (avpicture_alloc(newPict, (AVPixelFormat)frame -> format, frame -> width, frame -> height) == 0) {
             av_picture_copy(newPict, (AVPicture *)frame, (AVPixelFormat)frame -> format, frame -> width, frame -> height);
@@ -47,25 +35,8 @@ VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn
             qDebug() << "HUDO";
             return 0;
         }
-
-//        uint8_t * data[3];
-
-//        int size = frame -> linesize[0] * frame -> height;
-
-//        data[0] = (uint8_t*)av_malloc(size);
-//        memcpy(data[0], frame -> data[0], size);
-
-//        size = frame -> linesize[1] * frame -> height / 2;
-//        data[1] = (uint8_t*)av_malloc(size);
-//        memcpy(data[1], frame -> data[1], size);
-
-//        size = frame -> linesize[2] * frame -> height / 2;
-//        data[2] = (uint8_t*)av_malloc(size);
-//        memcpy(data[2], frame -> data[2], size);
-
-//        return data;
         return new VideoBuffer(newPict, settings);
-    } else return toQImage(frame, widthIn, heightIn, widthOut, heightOut);
+    } else return toQImage(frame, widthOut, heightOut);
 }
 
 ////TODO: this method adapted only for AV_PIX_FMT_RGB24
@@ -101,7 +72,7 @@ VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthIn, int heightIn
 //}
 
 //TODO: maybe change format linkage on GL formats ?
-VideoBuffer * VideoResampler::toQImage(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut) {
+VideoBuffer * VideoResampler::toQImage(AVFrame * frame, int widthOut, int heightOut) {
     if (img_format == QImage::Format_Invalid) return 0;
 
     QImage * img = new QImage(widthOut, heightOut, img_format);
@@ -112,8 +83,8 @@ VideoBuffer * VideoResampler::toQImage(AVFrame * frame, int widthIn, int heightI
 
     resampleContext = sws_getCachedContext(
                 resampleContext,
-                widthIn,
-                heightIn,
+                frame -> width,
+                frame -> height,
                 pixelFormatIn,
                 widthOut,
                 heightOut,
@@ -130,8 +101,7 @@ VideoBuffer * VideoResampler::toQImage(AVFrame * frame, int widthIn, int heightI
     }
 
     // Convert to RGB
-    sws_scale(resampleContext, frame -> data, frame -> linesize, 0, heightIn, RGBFrame -> data, RGBFrame -> linesize);
-    initSettings(frame, pixelFormatOut, img -> width(), img -> height());
+    sws_scale(resampleContext, frame -> data, frame -> linesize, 0, frame -> height, RGBFrame -> data, RGBFrame -> linesize);
     return new VideoBuffer(img, settings);
 }
 
@@ -162,13 +132,6 @@ void VideoResampler::setColorspaceDetails(int brightness, int contrast, int satu
     //                             , (((d.saturation + 100) << 16) + 50)/100
     //                             );
 }
-
-void VideoResampler::initSettings(AVFrame * frame, enum AVPixelFormat pixelFormat, int w, int h) {
-    if (settings == 0)
-        settings = new VideoSettings(pixelFormat, frame -> colorspace, w, h);
-}
-
-
 
 
 //            if (!RGBFrame || RGBFrame -> width != width

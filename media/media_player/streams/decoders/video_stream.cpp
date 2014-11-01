@@ -16,7 +16,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
         width = qMin((int)(width * 0.6), codec_context -> width);
         height = qMin((int)(height * 0.6), codec_context -> height);
 
-        resampler = new VideoResampler(codec_context -> pix_fmt);
+        resampler = new VideoResampler(codec_context);
         output = new BaseOutput(
                     this,
                     resampler -> isGLShaderCompatible() ? gl_plus : gl,
@@ -77,7 +77,7 @@ void VideoStream::routine() {
         }
 
         if (got_picture) {
-            buff = resampler -> proceed(frame, width, height, width, height);
+            buff = resampler -> proceed(frame, width, height);
 
             if (buff)
                 output -> proceedFrame(calcPts(new VideoFrame(buff, -1, -1, aspect_ratio)));

@@ -6,15 +6,15 @@
 
 class VideoResampler {
 public:
-    VideoResampler(enum AVPixelFormat pixel_format_in, enum AVPixelFormat pixel_format_out = AV_PIX_FMT_RGB24);
+    VideoResampler(AVCodecContext * codec_context, enum AVPixelFormat pixel_format_out = AV_PIX_FMT_RGB24);
     ~VideoResampler();
 
-    VideoBuffer * proceed(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut);
+    VideoBuffer * proceed(AVFrame * frame, int widthOut, int heightOut);
     inline bool isGLShaderCompatible() { return compatible; }
+    inline bool isQImageCompatible() { return img_format == QImage::Format_Invalid; }
 protected:
-    VideoBuffer * toQImage(AVFrame * frame, int widthIn, int heightIn, int widthOut, int heightOut);
+    VideoBuffer * toQImage(AVFrame * frame, int widthOut, int heightOut);
     void setColorspaceDetails(int brightness, int contrast, int saturation);
-    void initSettings(AVFrame * frame, enum AVPixelFormat pixelFormatOut, int w, int h);
 
 private:
     enum AVPixelFormat pixelFormatIn;
