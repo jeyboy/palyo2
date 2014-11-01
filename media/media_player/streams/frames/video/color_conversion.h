@@ -174,36 +174,25 @@ protected:
 
         M = B * C * S * H;
 
-//        switch (in) {
-//            case ColorConversion::RGB:
-//                break;
-//            case ColorConversion::GBR:
-//                M *= kGBR2RGB;
-//                break;
-//            default:
-//                M *= YUV2RGB(in);
-//                break;
-//        }
-
-//        switch (out) {
-//            case ColorConversion::RGB:
-//                break;
-//            case ColorConversion::GBR:
-//                M = kGBR2RGB.inverted() * M;
-//                break;
-//            default:
-//                M = YUV2RGB(out).inverted() * M;
-//                break;
-//        }
+        switch (in) {
+            case ColorConversion::RGB:
+                break;
+            case ColorConversion::GBR:
+                M *= kGBR2RGB;
+                break;
+            default:
+                M *= YUV2RGB(in);
+                break;
+        }
 
         switch (out) {
             case ColorConversion::RGB:
                 break;
             case ColorConversion::GBR:
-                M = kGBR2RGB * M;
+                M = kGBR2RGB.inverted() * M;
                 break;
             default:
-                M = YUV2RGB(out) * M;
+                M = YUV2RGB(out).inverted() * M;
                 break;
         }
     }

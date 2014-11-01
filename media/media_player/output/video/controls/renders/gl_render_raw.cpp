@@ -242,10 +242,8 @@ void GLRenderRaw::resizeViewport(int w, int h) {
     if (vFrame) {
         output_rect = vFrame -> calcSize(this -> rect());
         glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
-//        mpv_matrix.ortho(output_rect);
     } else {
         glViewport(0, 0, w, h);
-//        mpv_matrix.ortho(QRect(0, 0, w, h));
     }
 
 
@@ -285,8 +283,7 @@ void GLRenderRaw::prepareSettings() {
             cs = ColorConversion::BT601;
     }
 
-//    color_conversion = new ColorConversion(cs, ColorConversion::RGB);
-    color_conversion = new ColorConversion(ColorConversion::RGB, cs);
+    color_conversion = new ColorConversion(cs, ColorConversion::RGB);
 
     QString tex_var;
     for (int i = 0; i < u_Texture.size(); ++i) {
