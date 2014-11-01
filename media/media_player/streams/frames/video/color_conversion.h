@@ -49,8 +49,8 @@ public:
 
     ColorConversion(ColorSpace source, ColorSpace destination) :
         hue(0)
-        , saturation(1)
-        , contrast(1)
+        , saturation(0)
+        , contrast(0)
         , brightness(0)
         , in(source)
         , out(destination)
