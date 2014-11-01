@@ -52,17 +52,17 @@ public:
         }
     }
 
-//    quint8* plane(int num) const {
-//        if (q_image) {
-//            if (num == 0)
-//                return (quint8 *)q_image -> bits();
-//            else return 0;
-//        } else {
-//            if (num < AV_NUM_DATA_POINTERS)
-//                return av_picture -> data[num];
-//            else return 0;
-//        }
-//    }
+    quint8* plane(int num) const {
+        if (q_image) {
+            if (num == 0)
+                return (quint8 *)q_image -> bits();
+            else return 0;
+        } else {
+            if (num < AV_NUM_DATA_POINTERS)
+                return av_picture -> data[num];
+            else return 0;
+        }
+    }
 
     int planeWidth(int plane) const {
         return lineSize(plane) / setts -> bytesPerPixel(plane);
@@ -70,15 +70,15 @@ public:
 
     int planeHeight(int plane) const {
         if (plane == 0)
-            return setts -> buff_height;
-        return setts -> chromaHeight(setts -> buff_height);
+            return setts -> height;
+        return setts -> chromaHeight(setts -> height);
     }
 
     void blend_subrect(const AVSubtitleRect *rect) {
         if (q_image)
             VideoBlending::blend_subrect(q_image, rect);
         else
-            VideoBlending::blend_subrect(av_picture, setts -> buff_width, setts -> buff_height, rect);
+            VideoBlending::blend_subrect(av_picture, setts -> width, setts -> height, rect);
     }
 
     enum VideoBufferType type() const {

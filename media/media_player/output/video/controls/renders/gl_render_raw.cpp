@@ -2,6 +2,13 @@
 
 #include <QDebug>
 
+const GLfloat kTexCoords[] = {
+        0, 0,
+        1, 0,
+        1, 1,
+        0, 1,
+};
+
 GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent)
   , renderer_width(480)
   , renderer_height(320)
@@ -120,18 +127,20 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
 
     glTexImage2D(GL_TEXTURE_2D
                  , 0                //level
-                 , internalFormat               //internal format. 4? why GL_RGBA? GL_RGB?
+                 , internalFormat
                  , width
                  , height
-                 , 0                //border, ES not support
-                 , format          //format, must the same as internal format?
+                 , 0
+                 , format
                  , dataType
                  , NULL);
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBindTexture(GL_TEXTURE_2D, 0);
+
     return true;
 }
 
@@ -157,7 +166,6 @@ bool GLRenderRaw::initTextures() {
         GLint internal_fmt;
         GLenum data_fmt;
         GLenum data_t;
-
 
         if (!VideoTypes::videoFormatToGL(settings ->toVideoType(), &internal_fmt, &data_fmt, &data_t)) {
             qWarning("no opengl format found");
@@ -216,11 +224,11 @@ bool GLRenderRaw::initTextures() {
     for (int i = 0; i < textures.size(); ++i) {
         initTexture(
                     textures[i],
-                    internal_format[i],
                     data_format[i],
                     data_type[i],
                     texture_size[i].width(),
-                    texture_size[i].height()
+                    texture_size[i].height(),
+                    internal_format[i]
         );
     }
 
@@ -229,21 +237,24 @@ bool GLRenderRaw::initTextures() {
 }
 
 void GLRenderRaw::resizeViewport(int w, int h) {
+    mpv_matrix(0, 0) = mpv_matrix(1, 1) = 1.0f;
+
     if (vFrame) {
         output_rect = vFrame -> calcSize(this -> rect());
         glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
+//        mpv_matrix.ortho(output_rect);
     } else {
         glViewport(0, 0, w, h);
+//        mpv_matrix.ortho(QRect(0, 0, w, h));
     }
+
+
 
     //TODO: recalc aspect ratio matrix
     //computeOutParameters();
 }
 
 void GLRenderRaw::prepareSettings() {
-    mpv_matrix(0, 0) = 1.0f;
-    mpv_matrix(1, 1) = 1.0f;
-
     VideoSettings * settings = vFrame -> buffer -> settings();
 
     bool variousEndian = settings -> isPlanar() && settings -> bytesPerPixel(0) == 2;
@@ -268,13 +279,14 @@ void GLRenderRaw::prepareSettings() {
     } else {
         u_Texture.resize(settings -> channelsCount());
 
-        if (settings -> isBT709Colorspace() || (settings -> buff_width >= 1280 && settings -> buff_height > 576))
+        if (settings -> isBT709Colorspace() || (settings -> width >= 1280 && settings -> height > 576))
             cs = ColorConversion::BT709;
         else
             cs = ColorConversion::BT601;
     }
 
-    color_conversion = new ColorConversion(cs, ColorConversion::RGB);
+//    color_conversion = new ColorConversion(cs, ColorConversion::RGB);
+    color_conversion = new ColorConversion(ColorConversion::RGB, cs);
 
     QString tex_var;
     for (int i = 0; i < u_Texture.size(); ++i) {
@@ -331,6 +343,7 @@ void GLRenderRaw::paintGL() {
                     data_type[i],
                     img -> data[i]
         );
+//        qDebug() << glGetError();
 
         shader -> program -> setUniformValue(u_Texture[i], (GLint)i);
     }
@@ -343,17 +356,9 @@ void GLRenderRaw::paintGL() {
         }
     }
 
-    const GLfloat kTexCoords[] = {
-            0, 0,
-            1, 0,
-            1, 1,
-            0, 1,
-    };
-
     shader -> program -> setUniformValue(shader -> u_colorMatrix, color_conversion -> matrixRef());
     shader -> program -> setUniformValue(shader -> u_matrix, mpv_matrix);
     shader -> program -> setUniformValue(shader -> u_bpp, (GLfloat)settings -> bitsPerPixel(0));
-    qDebug() << "!!!!!!!! " << settings -> bitsPerPixel(0);
 
     //   // uniforms done. attributes begin
 

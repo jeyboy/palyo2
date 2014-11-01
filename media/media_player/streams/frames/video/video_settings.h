@@ -7,12 +7,12 @@
 struct VideoSettings {
     VideoSettings(AVPixelFormat format, AVColorSpace color_space, int width, int height) :
         bpps(4),
-        bpps_pad(4),
+//        bpps_pad(4),
         planes(0)
     {
         colorspace = color_space;
-        buff_width = width;
-        buff_height = height;
+        this -> width = width;
+        this -> height = height;
         descriptor = av_pix_fmt_desc_get((fmt = format));
         init();
     }
@@ -148,8 +148,6 @@ struct VideoSettings {
         }
 
         planes = qMax(av_pix_fmt_count_planes(fmt), 0);
-        bpps.resize(planes);
-        bpps_pad.resize(planes);
         initBpp();
     }
     QString name() const {
@@ -204,8 +202,10 @@ struct VideoSettings {
     ///////////////////////////////////////////////////////////////
 
     void initBpp() {
+        bpps.resize(planes);
+//        bpps_pad.resize(planes);
+
         bpp = 0;
-        bpp_pad = 0;
 
         int log2_pixels = descriptor -> log2_chroma_w + descriptor -> log2_chroma_h;
 
@@ -217,26 +217,25 @@ struct VideoSettings {
             s = c == 1 || c == 2 ? 0 : log2_pixels;
 
             bpps[comp -> plane] = (comp -> depth_minus1 + 1) << s;
-            bpps_pad[comp -> plane] = (comp -> step_minus1 + 1) << s;
+//            bpps_pad[comp -> plane] = (comp -> step_minus1 + 1) << s;
 
-            if(!(descriptor -> flags & AV_PIX_FMT_FLAG_BITSTREAM))
-                bpps_pad[comp -> plane] *= 8;
+//            if(!(descriptor -> flags & AV_PIX_FMT_FLAG_BITSTREAM))
+//                bpps_pad[comp -> plane] *= 8;
 
             bpp += bpps[comp -> plane];
-            bpp_pad += bpps_pad[comp -> plane];
+//            bpp_pad += bpps_pad[comp -> plane];
 
             bpps[comp -> plane] >>= s;
-            bpps_pad[comp -> plane] >>= s;
+//            bpps_pad[comp -> plane] >>= s;
         }
         bpp >>= log2_pixels;
-        bpp_pad >>= log2_pixels;
+//        bpp_pad >>= log2_pixels;
     }
 
     QVector<int> bpps;
-    QVector<int> bpps_pad;
 
-    int buff_width, buff_height;
-    int bpp, bpp_pad, planes;
+    int width, height;
+    int bpp, planes;
     AVColorSpace colorspace;
     AVPixelFormat fmt;
 
