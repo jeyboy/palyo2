@@ -54,7 +54,7 @@ void VideoOutput::setRender(RenderType type) {
 }
 
 void VideoOutput::titleUpdate() {
-    QString temp = MediaPlayer::instance() -> info() + " (" + fps + "fps )";
+    QString temp = MediaPlayer::instance() -> info() + " (" + renderTypeToStr(screen -> getRenderType()) + " )" + " (" + fps + "fps )";
     setWindowTitle(temp);
 }
 
