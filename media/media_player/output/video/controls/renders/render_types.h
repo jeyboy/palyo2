@@ -4,9 +4,10 @@
 #include <QString>
 
 enum RenderType {
-    hardware = 0,
-    gl = 1,
-    gl_plus = 2
+    none = -1,
+    hardware,
+    gl,
+    gl_plus
 };
 
 static QString renderTypeToStr(RenderType type) {

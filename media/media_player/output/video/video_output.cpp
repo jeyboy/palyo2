@@ -20,7 +20,7 @@ VideoOutput::VideoOutput(QObject * parent, RenderType type, int width, int heigh
 }
 
 VideoOutput::~VideoOutput() {
-
+    delete screen;
 }
 
 void VideoOutput::setRender(RenderType type) {
@@ -31,6 +31,7 @@ void VideoOutput::setRender(RenderType type) {
     }
 
     switch(type) {
+        case none: { return; }
         case gl_plus: {
             screen = new GLRenderRaw(this);
             break;
@@ -59,7 +60,10 @@ void VideoOutput::titleUpdate() {
 }
 
 void VideoOutput::setFrame(void * frame) {
-    screen -> setFrame((VideoFrame *)frame);
+    if (screen == 0)
+        delete (VideoFrame *)frame;
+    else
+        screen -> setFrame((VideoFrame *)frame);
 }
 
 void VideoOutput::fpsChanged(int newFps) {

@@ -31,13 +31,13 @@ protected:
 
     void repaint();
 
-    void computeOutParameters(qreal outAspectRatio);
+//    void computeOutParameters(qreal outAspectRatio);
     void prepareSettings();
     void initializeGL();
     void paintGL();  
 
 private:
-    QVector<GLuint> textures; //texture ids. size is plane count
+    QVector<GLuint> textures;
     QVector<QSize> texture_size;
 
     QVector<GLint> internal_format;

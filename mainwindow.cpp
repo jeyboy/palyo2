@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    MediaPlayer::instance() -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/Million.Sposobov.Poteryat'.Golovu.2014.RUS.BDRip.x264.-HELLYWOOD.mkv"), 38000);
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("K:/VIDEO/Dick Figures The Movie.mp4"), 60000);
+      MediaPlayer::instance() -> open(QUrl::fromLocalFile("K:/VIDEO/Dick Figures The Movie.mp4"), 60000);
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/New Year, New Tricks - Happy 2014!.mkv"));
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/111412158")); //short
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Shakra – Trapped.mp3"));
-      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));
+//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 

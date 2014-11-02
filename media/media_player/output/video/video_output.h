@@ -11,7 +11,7 @@ class VideoOutput : public OutputContainer {
      Q_OBJECT
 public:
     VideoOutput(QObject * parent, RenderType type, int width, int height);
-    ~VideoOutput();
+    virtual ~VideoOutput();
 
     void setRender(RenderType type);
     void setAspectRatio(int w, int h);

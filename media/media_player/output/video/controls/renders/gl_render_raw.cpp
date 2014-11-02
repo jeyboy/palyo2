@@ -53,6 +53,8 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
 }
 
 GLRenderRaw::~GLRenderRaw() {   
+    makeCurrent();
+
     if (!textures.isEmpty()) {
         glDeleteTextures(textures.size(), textures.data());
         textures.clear();
@@ -98,7 +100,7 @@ void GLRenderRaw::setQuality(const Quality & quality) {
     };
 }
 
-void GLRenderRaw::computeOutParameters(qreal outAspectRatio) {
+//void GLRenderRaw::computeOutParameters(qreal outAspectRatio) {
 //    qreal rendererAspectRatio = qreal(renderer_width) / qreal(renderer_height);
 //    if (out_aspect_ratio_mode == VideoRenderer::RendererAspectRatio) {
 //        out_aspect_ratio = rendererAspectRatio;
@@ -116,9 +118,10 @@ void GLRenderRaw::computeOutParameters(qreal outAspectRatio) {
 
 //    mpv_matrix(0, 0) = (float)out_rect.width()/(float)renderer_width;
 //    mpv_matrix(1, 1) = (float)out_rect.height()/(float)renderer_height;
-}
+//}
 
 bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat) {
+    makeCurrent();
     glBindTexture(GL_TEXTURE_2D, tex);
 //    setupQuality();
 
@@ -142,6 +145,8 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
 }
 
 bool GLRenderRaw::initTextures() {
+    makeCurrent();
+
     //http://www.berkelium.com/OpenGL/GDC99/internalformat.html
     //NV12: UV is 1 plane. 16 bits as a unit. GL_LUMINANCE4, 8, 16, ... 32?
     //GL_LUMINANCE, GL_LUMINANCE_ALPHA are deprecated in GL3, removed in GL3.1
@@ -234,6 +239,8 @@ bool GLRenderRaw::initTextures() {
 }
 
 void GLRenderRaw::resizeViewport(int w, int h) {
+    makeCurrent();
+
     mpv_matrix(0, 0) = mpv_matrix(1, 1) = 1.0f;
 
     if (vFrame) {
@@ -242,14 +249,11 @@ void GLRenderRaw::resizeViewport(int w, int h) {
     } else {
         glViewport(0, 0, w, h);
     }
-
-
-
-    //TODO: recalc aspect ratio matrix
-    //computeOutParameters();
 }
 
 void GLRenderRaw::prepareSettings() {
+    makeCurrent();
+
     VideoSettings * settings = vFrame -> buffer -> settings();
 
     bool variousEndian = settings -> isPlanar() && settings -> bytesPerPixel(0) == 2;
@@ -292,13 +296,18 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
+    makeCurrent();
+
     shader = new Shader(context());
 
-    glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
+    resizeViewport(QGLWidget::width(), QGLWidget::height());
+//    glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
 }
 
 void GLRenderRaw::paintGL() {
     if (vFrame == 0) return;
+
+    makeCurrent();
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);

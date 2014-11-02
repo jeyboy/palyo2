@@ -8,6 +8,7 @@ BaseOutput::BaseOutput(QObject * parent, RenderType type, int width, int height)
 
 BaseOutput::~BaseOutput() {
     flushData();
+    output -> setRender(none);
     delete output;
 }
 
