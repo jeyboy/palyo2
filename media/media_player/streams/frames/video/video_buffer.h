@@ -17,12 +17,18 @@ public:
         rgb
     };
 
-    VideoBuffer(QImage * img, VideoSettings * settings) : av_picture(0) {
+    VideoBuffer(QImage * img, VideoSettings * settings) : av_picture(0), is_frame(false) {
         setts = settings;
         q_image = img;
     }
 
-    VideoBuffer(AVPicture * pict, VideoSettings * settings) : q_image(0) {
+    VideoBuffer(AVFrame * frame, VideoSettings * settings) : q_image(0), is_frame(true) {
+        setts = settings;
+        av_picture = (AVPicture *)frame;
+    }
+
+
+    VideoBuffer(AVPicture * pict, VideoSettings * settings) : q_image(0), is_frame(false) {
         setts = settings;
         av_picture = pict;
     }
@@ -31,11 +37,18 @@ public:
         if (q_image)
             delete q_image;
 
-        if (av_picture)
-            avpicture_free(av_picture);
+        if (av_picture) {
+            if (is_frame) {
+                av_frame_free(((AVFrame **)&av_picture));
+            }
+            else
+                avpicture_free(av_picture);
+        }
 
 //        av_freep(descriptor);
     }
+
+    inline bool isFrame() { return is_frame; }
 
     QImage * asQImage() { return q_image; }
     AVPicture * asAVPicture() { return av_picture; }
@@ -94,6 +107,7 @@ private:
     VideoBufferType buff_type;
     QImage * q_image;
     AVPicture * av_picture;
+    bool is_frame;
 };
 
 #endif // VIDEO_BUFFER_H

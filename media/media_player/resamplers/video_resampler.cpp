@@ -26,16 +26,26 @@ VideoResampler::~VideoResampler() {
     sws_freeContext(resampleContext);
 }
 
-VideoBuffer * VideoResampler::proceed(AVFrame * frame, int widthOut, int heightOut) {
+VideoBuffer * VideoResampler::proceed(AVFrame *& frame, int widthOut, int heightOut) {
     if (compatible) {
-        AVPicture * newPict = new AVPicture();
-        if (avpicture_alloc(newPict, (AVPixelFormat)frame -> format, frame -> width, frame -> height) == 0) {
-            av_picture_copy(newPict, (AVPicture *)frame, (AVPixelFormat)frame -> format, frame -> width, frame -> height);
-        } else {
-            qDebug() << "HUDO";
-            return 0;
-        }
-        return new VideoBuffer(newPict, settings);
+        AVFrame * old_frame = frame;
+        frame = av_frame_alloc();
+//        frame -> pkt_dts = old_frame -> pkt_dts;
+//        frame -> pkt_pts = old_frame -> pkt_pts;
+//        frame -> repeat_pict = old_frame -> repeat_pict;
+        av_frame_copy_props(frame, old_frame);
+
+        return new VideoBuffer(old_frame, settings);
+
+
+//        AVPicture * newPict = new AVPicture();
+//        if (avpicture_alloc(newPict, (AVPixelFormat)frame -> format, frame -> width, frame -> height) == 0) {
+//            av_picture_copy(newPict, (AVPicture *)frame, (AVPixelFormat)frame -> format, frame -> width, frame -> height);
+//        } else {
+//            qDebug() << "HUDO";
+//            return 0;
+//        }
+//        return new VideoBuffer(newPict, settings);
     } else return toQImage(frame, widthOut, heightOut);
 }
 

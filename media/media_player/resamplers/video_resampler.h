@@ -9,7 +9,7 @@ public:
     VideoResampler(AVCodecContext * codec_context, enum AVPixelFormat pixel_format_out = AV_PIX_FMT_RGB24);
     ~VideoResampler();
 
-    VideoBuffer * proceed(AVFrame * frame, int widthOut, int heightOut);
+    VideoBuffer * proceed(AVFrame *& frame, int widthOut, int heightOut);
     inline bool isGLShaderCompatible() { return compatible; }
     inline bool isQImageCompatible() { return img_format == QImage::Format_Invalid; }
 protected:
