@@ -17,7 +17,7 @@ const GLfloat kVertices[] = {
 class GLRenderRaw : public RenderInterface, protected QOpenGLFunctions {
 public:
     GLRenderRaw(QWidget* parent = NULL);
-    ~GLRenderRaw();
+    virtual ~GLRenderRaw();
 
     void setQuality(const Quality & quality);
 
@@ -49,7 +49,6 @@ private:
 
     Shader * shader;
     ColorConversion * color_conversion;
-    int renderer_width, renderer_height;
 };
 
 #endif // GL_RENDER_RAW_H

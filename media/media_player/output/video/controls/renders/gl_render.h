@@ -6,7 +6,7 @@
 class GLRender : public RenderInterface {
 public:
     GLRender(QWidget* parent = NULL);
-    ~GLRender();
+    virtual ~GLRender();
 
     void setQuality(const Quality & quality);
 

@@ -14,7 +14,7 @@ public:
     enum Quality { best, fast, low };
 
     RenderInterface(QWidget* parent = NULL);
-    ~RenderInterface();
+    virtual ~RenderInterface();
 
     virtual void setQuality(const Quality & quality) = 0;
     void setFrame(VideoFrame * frame);

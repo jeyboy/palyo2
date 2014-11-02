@@ -6,7 +6,7 @@
 class HardwareRender : public RenderInterface {
 public:
     HardwareRender(QWidget* parent = NULL);
-    ~HardwareRender();
+    virtual ~HardwareRender();
 
     void setQuality(const Quality & quality);
     inline RenderType getRenderType() const { return hardware; }
