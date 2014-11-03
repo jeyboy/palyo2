@@ -47,6 +47,9 @@ private:
     QVector<GLint> u_Texture;
     QMatrix4x4 mpv_matrix;
 
+    int nb_planes;
+    GLfloat bipp;
+
     Shader * shader;
     ColorConversion * color_conversion;
 };

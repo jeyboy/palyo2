@@ -162,14 +162,13 @@ bool GLRenderRaw::initTextures() {
      */
 
     VideoSettings * settings = vFrame -> buffer -> settings();
-    const int nb_planes = settings -> planeCount();
 
     if (!settings -> isPlanar()) {
         GLint internal_fmt;
         GLenum data_fmt;
         GLenum data_t;
 
-        if (!VideoTypes::videoFormatToGL(settings ->toVideoType(), &internal_fmt, &data_fmt, &data_t)) {
+        if (!VideoTypes::videoFormatToGL(settings -> toVideoType(), &internal_fmt, &data_fmt, &data_t)) {
             qWarning("no opengl format found");
             return false;
         }
@@ -256,6 +255,9 @@ void GLRenderRaw::prepareSettings() {
 
     VideoSettings * settings = vFrame -> buffer -> settings();
 
+    nb_planes = settings -> planeCount();
+    bipp = settings -> bitsPerPixel(0);
+
     bool variousEndian = settings -> isPlanar() && settings -> bytesPerPixel(0) == 2;
     shader -> setup(
                 settings -> isPlanar(),
@@ -312,10 +314,6 @@ void GLRenderRaw::paintGL() {
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
 
-
-    VideoSettings * settings = vFrame -> buffer -> settings();
-    const int nb_planes = settings -> planeCount();
-
     mutex.lock();
     AVPicture * img = vFrame -> asPicture();
 
@@ -327,13 +325,9 @@ void GLRenderRaw::paintGL() {
 
     shader -> program -> bind();
 
-    // all texture ids should be binded when renderering even for packed plane!
     for (int i = 0; i < nb_planes; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, textures[i]);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         glTexSubImage2D(
                     GL_TEXTURE_2D,
@@ -361,7 +355,7 @@ void GLRenderRaw::paintGL() {
 
     shader -> program -> setUniformValue(shader -> u_colorMatrix, color_conversion -> matrixRef());
     shader -> program -> setUniformValue(shader -> u_matrix, mpv_matrix);
-    shader -> program -> setUniformValue(shader -> u_bpp, (GLfloat)settings -> bitsPerPixel(0));
+    shader -> program -> setUniformValue(shader -> u_bpp, bipp);
 
     //   // uniforms done. attributes begin
 
