@@ -43,13 +43,13 @@ void MasterClock::resetMain() {
 //    return res;
 //}
 
-bool MasterClock::skipAudioRequired() {
-    return audioClock - videoClock < -0.5;
-}
+//bool MasterClock::skipAudioRequired() {
+//    return audioClock - videoClock < -0.5;
+//}
 
-bool MasterClock::skipVideoRequired() {
-    return videoClock - audioClock < -0.5;
-}
+//bool MasterClock::skipVideoRequired() {
+//    return videoClock - audioClock < -0.5;
+//}
 
 int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
     setVideo(compClock);
@@ -65,7 +65,7 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
     mainLastDelayVal = delay;
 
     double diff = videoClockNext - audioClock;
-    qDebug() << "v - a  " << diff << " " << videoClockNext << " " << audioClock;
+//    qDebug() << "v - a  " << diff << " " << videoClockNext << " " << audioClock;
     double sync_threshold = FFMAX(AV_SYNC_THRESHOLD, delay);
     if (fabs(diff) < AV_NOSYNC_THRESHOLD) {
             if (diff <= -sync_threshold) {
@@ -83,7 +83,8 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
 
     //    av_gettime() / 1000000.0) is a internal clock
     double actual_delay = (mainClock - (av_gettime() / 1000000.0));
-    if (actual_delay < 0.010) {
+    if (actual_delay < 0.010 || actual_delay > 0.5) {
+        qDebug() << "PIPIPI " << actual_delay;
         return 0;
 //            /* Really it should skip the picture instead */
 //            actual_delay = 0.010;

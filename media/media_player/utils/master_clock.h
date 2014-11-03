@@ -25,8 +25,8 @@ public:
 
 //    int computeAudioDelay();
 
-    bool skipAudioRequired();
-    bool skipVideoRequired();
+//    bool skipAudioRequired();
+//    bool skipVideoRequired();
     int computeVideoDelay(double compClock, double compClockNext);
 
     inline double main_clock() { return mainClock; }
