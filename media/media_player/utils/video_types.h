@@ -4,9 +4,9 @@
 #include "media_player_utils.h"
 #include <QImage>
 
-#include <GL/gl.h>
-#include <GL/glext.h>
-//#include <QOpenGLFunctions>
+//#include <GL/gl.h>
+//#include <GL/glext.h>
+#include <QtOpenGL>
 
 struct VideoTypes {
     enum VideoType {

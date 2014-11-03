@@ -87,6 +87,25 @@ enum AVFrameSideDataType {
      * in ETSI TS 101 154 using AVActiveFormatDescription enum.
      */
     AV_FRAME_DATA_AFD,
+    /**
+     * Motion vectors exported by some codecs (on demand through the export_mvs
+     * flag set in the libavcodec AVCodecContext flags2 option).
+     * The data is the AVMotionVector struct defined in
+     * libavutil/motion_vector.h.
+     */
+    AV_FRAME_DATA_MOTION_VECTORS,
+    /**
+     * Recommmends skipping the specified number of samples. This is exported
+     * only if the "skip_manual" AVOption is set in libavcodec.
+     * This has the same format as AV_PKT_DATA_SKIP_SAMPLES.
+     * @code
+     * u32le number of samples to skip from start of this packet
+     * u32le number of samples to skip from end of this packet
+     * u8    reason for start skip
+     * u8    reason for end   skip (0=padding silence, 1=convergence)
+     * @endcode
+     */
+    AV_FRAME_DATA_SKIP_SAMPLES,
 };
 
 enum AVActiveFormatDescription {
@@ -155,7 +174,7 @@ typedef struct AVFrame {
      * For audio, only linesize[0] may be set. For planar audio, each channel
      * plane must be the same size.
      *
-     * For video the linesizes should be multiplies of the CPUs alignment
+     * For video the linesizes should be multiples of the CPUs alignment
      * preference, this is 16 or 32 for modern desktop CPUs.
      * Some code requires such alignment other code can be slower without
      * correct alignment, for yet other it makes no difference.
@@ -446,7 +465,6 @@ typedef struct AVFrame {
      */
     int flags;
 
-#if FF_API_AVFRAME_COLORSPACE
     /**
      * MPEG vs JPEG YUV range.
      * It must be accessed using av_frame_get_color_range() and
@@ -470,7 +488,6 @@ typedef struct AVFrame {
     enum AVColorSpace colorspace;
 
     enum AVChromaLocation chroma_location;
-#endif
 
     /**
      * frame timestamp estimated using various heuristics, in stream time base

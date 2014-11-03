@@ -1,33 +1,6 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-//#if defined(YUV_MAT_GLSL)
-////http://en.wikipedia.org/wiki/YUV calculation used
-////http://www.fourcc.org/fccyvrgb.php
-////GLSL: col first
-//// use bt601
-//    #if defined(CS_BT709)
-//    "    const mat4 yuv2rgbMatrix = mat4(
-//    "           1,      1,          1,      0,"
-//    "           0,      -0.187,     1.8556, 0,"
-//    "           1.5701, -0.4664,    0,      0,"
-//    "           0,      0,          0,      1)"
-//    #else //BT601
-//    "    const mat4 yuv2rgbMatrix = mat4("
-//    "           1,      1,      1,      0,"
-//    "           0,      -0.344, 1.773,  0,"
-//    "           1.403,  -0.714, 0,      0,"
-//    "           0,      0,      0,      1)"
-//    #endif
-//    "    * mat4("
-//    "           1,      0,      0,      0,"
-//    "           0,      1,      0,      0,"
-//    "           0,      0,      1,      0,"
-//    "           0,      -0.5,   -0.5,   1);"
-//#endif
-
-
-
 #include <QGLShaderProgram>
 
 struct Shader {

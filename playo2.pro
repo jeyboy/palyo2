@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui webkitwidgets
+QT       += core gui webkitwidgets opengl
 QT       += multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -246,7 +246,6 @@ unix:!mac {
         LDFLAGS =- lX11
         DEFINES += HAVE_X11
         SOURCES += globalshortcut/qxtglobalshortcut_x11.cpp
-#            file_registration/file_registration_x11.cpp
 
 #        LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.so)
 }
@@ -256,14 +255,13 @@ win32: {
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass_fx.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bassmix.lib)
 
-        LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -lswscale-2 -lavcodec -lavcodec-55 -lavdevice -lavdevice-55 -lavfilter -lavfilter-4 -lavformat -lavformat-55 -lavutil -lavutil-52 -lswresample -lswscale
-        LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -llibavcodec -llibavdevice -llibavfilter -llibavformat -llibavutil -llibpostproc -llibswresample -llibswscale -lpostproc -lpostproc-52 -lswresample-0
+        LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -lswscale-3 -lavcodec -lavcodec-56 -lavdevice -lavdevice-56 -lavfilter -lavfilter-5 -lavformat -lavformat-56 -lavutil -lavutil-54 -lswresample -lswscale
+        LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -llibavcodec -llibavdevice -llibavfilter -llibavformat -llibavutil -llibpostproc -llibswresample -llibswscale -lpostproc -lpostproc-53 -lswresample-1
 
         LIBS += -L"$$_PRO_FILE_PWD_/libs/portable_audio/" -lportaudio_x86
 }
 mac: {
         SOURCES += globalshortcut/qxtglobalshortcut_mac.cpp
-#            file_registration/file_registration_mac.cpp
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.dylib)
 }
 
