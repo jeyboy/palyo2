@@ -53,7 +53,6 @@ void VideoStream::routine() {
     int len, got_picture;
     int width = codec_context -> width, height = codec_context -> height;
     VideoBuffer * buff = 0;
-    VideoFrame * video_frame = 0;
     AVPacket * packet;
 
     mutex -> lock();
@@ -94,7 +93,6 @@ void VideoStream::routine() {
     }
 
 //    av_frame_unref(frame);
-//    av_freep(frame);
 
     av_free_packet(packet);
 }

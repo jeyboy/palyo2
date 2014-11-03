@@ -109,7 +109,6 @@ void AudioStream::routine() {
     }
 
     av_frame_unref(frame);
-    av_freep(frame);
 
     av_free_packet(packet);
 }

@@ -35,6 +35,8 @@ void SubtitleStream::routine() {
 
     AVPacket * packet = packets.takeFirst();
     mutex -> unlock();
+
+    av_free_packet(packet);
 }
 
 //static int subtitle_thread(void *arg)

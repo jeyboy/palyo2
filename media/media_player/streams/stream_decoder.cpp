@@ -109,7 +109,12 @@ void StreamDecoder::routine() {
 
     //        hasKeyFrame = !!(currFrame.flags & AV_PKT_FLAG_KEY);
     //        // what about marking packet as invalid and do not use isCorrupt?
-    //        isCorrupt = !!(currFrame.flags & AV_PKT_FLAG_CORRUPT);
+
+            if (!!(currFrame -> flags & AV_PKT_FLAG_CORRUPT)) {
+                qDebug() << "!!!!!!@@@ corrupt";
+                av_free_packet(currFrame);
+                continue;
+            }
 
             if (currFrame -> stream_index == audioStream -> index() && audioStream -> isValid()) {
                 audioStream -> decode(currFrame);
