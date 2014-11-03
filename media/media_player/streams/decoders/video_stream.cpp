@@ -79,6 +79,8 @@ void VideoStream::routine() {
         if (got_picture) {
             buff = resampler -> proceed(frame, width, height);
 
+//            MasterClock::instance() ->
+
             if (buff)
                 output -> proceedFrame(calcPts(new VideoFrame(buff, -1, -1, aspect_ratio)));
         } else {

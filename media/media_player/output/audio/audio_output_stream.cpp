@@ -26,8 +26,8 @@ void AudioOutputStream::routine() {
 
     AudioFrame * currFrame = 0; /*dStream -> decoded();*/
     if (MasterClock::instance() -> audio() != 0) {
-        int lo = MasterClock::instance() -> computeAudioDelay();
-        usleep(lo);
+//        int lo = MasterClock::instance() -> computeAudioDelay();
+//        usleep(lo);
     }
 
     audioIO -> write(*currFrame -> buffer);

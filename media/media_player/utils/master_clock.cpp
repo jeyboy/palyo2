@@ -36,11 +36,19 @@ void MasterClock::resetMain() {
     mainClock = (double)av_gettime() / 1000000.0;
 }
 
-int MasterClock::computeAudioDelay() {
-    int res = (audioOClock - av_gettime());
-    res -= 500;
-    if (res < 0 || res > 100000) res = 0;
-    return res;
+//int MasterClock::computeAudioDelay() {
+//    int res = (audioOClock - av_gettime());
+//    res -= 500;
+//    if (res < 0 || res > 100000) res = 0;
+//    return res;
+//}
+
+bool MasterClock::skipAudioRequired() {
+    return audioClock - videoClock < -0.5;
+}
+
+bool MasterClock::skipVideoRequired() {
+    return videoClock - audioClock < -0.5;
 }
 
 int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
