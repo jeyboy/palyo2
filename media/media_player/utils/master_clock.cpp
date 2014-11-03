@@ -83,11 +83,15 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
 
     //    av_gettime() / 1000000.0) is a internal clock
     double actual_delay = (mainClock - (av_gettime() / 1000000.0));
-    if (actual_delay < 0.010 || actual_delay > 0.5) {
-        qDebug() << "PIPIPI " << actual_delay;
+    if (actual_delay < 0.010) {
         return 0;
 //            /* Really it should skip the picture instead */
 //            actual_delay = 0.010;
+    }
+
+    if (actual_delay > 0.8) {
+        qDebug() << "PIPIPI " << actual_delay;
+        actual_delay = 0.8;
     }
 
     return actual_delay * 999 /*1000*/; // little change for delay
