@@ -27,7 +27,6 @@ public:
         av_picture = (AVPicture *)frame;
     }
 
-
     VideoBuffer(AVPicture * pict, VideoSettings * settings) : q_image(0), is_frame(false) {
         setts = settings;
         av_picture = pict;
@@ -39,7 +38,10 @@ public:
 
         if (av_picture) {
             if (is_frame) {
-                av_frame_free(((AVFrame **)&av_picture));
+                AVFrame * av_frame = ((AVFrame *)av_picture);
+
+                av_frame_unref(av_frame);
+                av_frame_free(&av_frame);
             }
             else
                 avpicture_free(av_picture);

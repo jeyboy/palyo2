@@ -6,7 +6,7 @@
 
 class VideoResampler {
 public:
-    VideoResampler(AVCodecContext * codec_context, enum AVPixelFormat pixel_format_out = AV_PIX_FMT_RGB24);
+    VideoResampler(AVCodecContext * codec_context, bool hardwareConversion = false, enum AVPixelFormat pixel_format_out = AV_PIX_FMT_RGB24);
     ~VideoResampler();
 
     VideoBuffer * proceed(AVFrame *& frame, int widthOut, int heightOut);
@@ -21,7 +21,7 @@ private:
     enum AVPixelFormat pixelFormatOut;
     AVFrame * RGBFrame;
     QImage::Format img_format;
-    bool compatible;
+    bool compatible, hardware_conversion;
     VideoSettings * settings;
 
     SwsContext* resampleContext;

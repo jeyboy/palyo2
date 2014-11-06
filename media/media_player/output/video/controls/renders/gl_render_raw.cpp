@@ -10,8 +10,10 @@ const GLfloat kTexCoords[] = {
 };
 
 GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
+    qDebug() << "LALAK";
     makeCurrent();
     initializeOpenGLFunctions();
+    qDebug() << "LALAK2";
 
     //    setAcceptDrops(true);
     setFocusPolicy(Qt::StrongFocus);
@@ -20,7 +22,7 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
     //     * Qt::WA_OpaquePaintEvent, avoiding any unnecessary overhead associated with repainting the
     //     * widget's background
     //     */
-    //    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_OpaquePaintEvent);
     //    setAttribute(Qt::WA_PaintOnScreen);
     //    setAttribute(Qt::WA_NoSystemBackground);
     //    //default: swap in qpainter dtor. we should swap before QPainter.endNativePainting()
@@ -46,23 +48,21 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
     glFmt.setOverlay(false);
     glFmt.setSampleBuffers(false);
     glFmt.setDepth(false);
-//    glFmt.setDirectRendering(true);
+    glFmt.setDirectRendering(true);
     QGLFormat::setDefaultFormat(glFmt);
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
 GLRenderRaw::~GLRenderRaw() {   
-    makeCurrent();
-
-    if (!textures.isEmpty()) {
-        glDeleteTextures(textures.size(), textures.data());
-        textures.clear();
-    }
-
     if (shader) {
         delete shader;
         shader = 0;
+    }
+
+    if (!textures.isEmpty()) {
+        while(textures.size() > 0)
+            deleteTexture(textures.takeLast());
     }
 
     if (color_conversion) {
@@ -121,6 +121,7 @@ void GLRenderRaw::setQuality(const Quality & quality) {
 //}
 
 bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat) {
+    qDebug() << "LALAK3";
     makeCurrent();
     glBindTexture(GL_TEXTURE_2D, tex);
 //    setupQuality();
@@ -145,6 +146,7 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
 }
 
 bool GLRenderRaw::initTextures() {
+    qDebug() << "LALAK4";
     makeCurrent();
 
     //http://www.berkelium.com/OpenGL/GDC99/internalformat.html
@@ -254,31 +256,24 @@ void GLRenderRaw::prepareSettings() {
     makeCurrent();
 
     VideoSettings * settings = vFrame -> buffer -> settings();
+    int textures_count;
 
     nb_planes = settings -> planeCount();
     bipp = settings -> bitsPerPixel(0);
-
-    bool variousEndian = settings -> isPlanar() && settings -> bytesPerPixel(0) == 2;
-    shader -> setup(
-                settings -> isPlanar(),
-                variousEndian && settings -> isBigEndian(),
-                variousEndian && !settings -> isBigEndian()
-    );
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH); //setupQuality?
     glClearDepth(1.0f);
 
-
     ColorConversion::ColorSpace cs;
     if (settings -> isRGB()) {
-        u_Texture.resize(1);
+        textures_count = 1;
 
         if (settings -> isPlanar()) // wtf
             cs = ColorConversion::GBR; // why gbr ?
     } else {
-        u_Texture.resize(settings -> channelsCount());
+        textures_count = settings -> channelsCount();
 
         if (settings -> isBT709Colorspace() || (settings -> width >= 1280 && settings -> height > 576))
             cs = ColorConversion::BT709;
@@ -288,11 +283,13 @@ void GLRenderRaw::prepareSettings() {
 
     color_conversion = new ColorConversion(cs, ColorConversion::RGB);
 
-    QString tex_var;
-    for (int i = 0; i < u_Texture.size(); ++i) {
-        tex_var = QString("u_Texture%1").arg(i);
-        u_Texture[i] = shader -> program -> uniformLocation(tex_var);
-    }
+    bool variousEndian = settings -> isPlanar() && settings -> bytesPerPixel(0) == 2;
+    shader -> setup(
+                textures_count,
+                settings -> isPlanar(),
+                variousEndian && settings -> isBigEndian(),
+                variousEndian && !settings -> isBigEndian()
+    );
 
     initTextures();
 }
@@ -303,7 +300,6 @@ void GLRenderRaw::initializeGL() {
     shader = new Shader(context());
 
     resizeViewport(QGLWidget::width(), QGLWidget::height());
-//    glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
 }
 
 void GLRenderRaw::paintGL() {
@@ -342,14 +338,14 @@ void GLRenderRaw::paintGL() {
         );
 //        qDebug() << glGetError();
 
-        shader -> program -> setUniformValue(u_Texture[i], (GLint)i);
+        shader -> program -> setUniformValue(shader -> u_Texture[i], (GLint)i);
     }
 
     mutex.unlock();
 
-    if (nb_planes < u_Texture.size()) {
-        for (int i = nb_planes; i < u_Texture.size(); ++i) {
-            shader -> program -> setUniformValue(u_Texture[i], (GLint)(nb_planes - 1));
+    if (nb_planes < shader -> u_Texture.size()) {
+        for (int i = nb_planes; i < shader -> u_Texture.size(); ++i) {
+            shader -> program -> setUniformValue(shader -> u_Texture[i], (GLint)(nb_planes - 1));
         }
     }
 

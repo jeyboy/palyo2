@@ -122,6 +122,7 @@ SOURCES += main.cpp\
     media/media_player/output/video/controls/renders/gl_render.cpp \
     media/media_player/output/video/controls/renders/gl_render_raw.cpp \
     media/media_player/utils/video_types.cpp
+#    nvwa/debug_new.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -236,7 +237,21 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/frames/video_frame.h \
     media/media_player/output/video/controls/renders/render_types.h \
     media/media_player/utils/video_types.h \
-    media/media_player/streams/frames/video/video_blending.h
+    media/media_player/streams/frames/video/video_blending.h \
+    media/media_player/utils/system_utils.h
+#    nvwa/_nvwa.h \
+#    nvwa/c++11.h \
+#    nvwa/class_level_lock.h \
+#    nvwa/cont_ptr_utils.h \
+#    nvwa/debug_new.h \
+#    nvwa/fast_mutex.h \
+#    nvwa/fc_queue.h \
+#    nvwa/mem_pool_base.h \
+#    nvwa/object_level_lock.h \
+#    nvwa/pctimer.h \
+#    nvwa/set_assign.h \
+#    nvwa/static_assert.h \
+#    nvwa/type_traits.h
 
 
 unix:!mac {

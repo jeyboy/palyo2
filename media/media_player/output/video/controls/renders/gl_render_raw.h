@@ -44,7 +44,6 @@ private:
     QVector<GLenum> data_format;
     QVector<GLenum> data_type;
 
-    QVector<GLint> u_Texture;
     QMatrix4x4 mpv_matrix;
 
     int nb_planes;

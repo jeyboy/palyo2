@@ -17,11 +17,19 @@ struct Shader {
 
     ~Shader() { remove(); }
 
-    void setup(bool planar = false, bool big_endian = false, bool little_endian = false) {
+    void setup(int textures_count, bool planar = false, bool big_endian = false, bool little_endian = false) {
         program -> addShaderFromSourceCode(QGLShader::Vertex, vertexShader());
         program -> addShaderFromSourceCode(QGLShader::Fragment, fragmentShader(planar, big_endian, little_endian));
 
         bool res = program -> link();
+
+        u_Texture.resize(textures_count);
+
+        QString tex_var;
+        for (int i = 0; i < u_Texture.size(); ++i) {
+            tex_var = QString("u_Texture%1").arg(i);
+            u_Texture[i] = program -> uniformLocation(tex_var);
+        }
 
         a_Position      = program -> attributeLocation("a_Position");
         a_TexCoords     = program -> attributeLocation("a_TexCoords");
@@ -145,6 +153,8 @@ struct Shader {
     GLint u_matrix;
     GLint u_colorMatrix;
     GLuint u_bpp;
+
+    QVector<GLint> u_Texture;
 };
 
 #endif // SHADER_H

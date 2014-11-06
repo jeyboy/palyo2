@@ -89,9 +89,9 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
 //            actual_delay = 0.010;
     }
 
-    if (actual_delay > 0.8) {
+    if (actual_delay > 0.6) {
         qDebug() << "PIPIPI " << actual_delay;
-        actual_delay = 0.8;
+        actual_delay = 0.6;
     }
 
     return actual_delay * 999 /*1000*/; // little change for delay

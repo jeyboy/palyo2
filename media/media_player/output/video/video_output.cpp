@@ -17,6 +17,9 @@ VideoOutput::VideoOutput(QObject * parent, RenderType type, int width, int heigh
 
     show();
     setFocus();
+
+    connect(&timer, SIGNAL(timeout()), this, SLOT(hideMouse()));
+    timer.start(5000);
 }
 
 VideoOutput::~VideoOutput() {
@@ -66,16 +69,18 @@ void VideoOutput::setFrame(void * frame) {
         screen -> setFrame((VideoFrame *)frame);
 }
 
+void VideoOutput::hideMouse() {
+    QApplication::setOverrideCursor(Qt::BlankCursor);
+    offScreenSaver();
+}
+
 void VideoOutput::fpsChanged(int newFps) {
     fps = QString::number(newFps);
 }
 
 void VideoOutput::mouseMoveEvent(QMouseEvent * event) {
-    if (panel -> getRegion().contains(event -> x(), event -> y())) {
-        panel -> setVisible(true);
-    } else {
-        panel -> setVisible(false);
-    }
+    QApplication::restoreOverrideCursor();
+    panel -> setVisible(panel -> getRegion().contains(event -> x(), event -> y()));
 }
 
 void VideoOutput::resizeEvent(QResizeEvent * event) {

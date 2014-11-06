@@ -3,6 +3,7 @@
 
 #include "controls/output_container.h"
 #include "controls/renders/renders.h"
+#include "media/media_player/utils/system_utils.h"
 
 #include <QLayout>
 #include <QWidget>
@@ -19,13 +20,19 @@ public slots:
     void fpsChanged(int fpsVal);
     void titleUpdate();
     void setFrame(void * frame);
+protected slots:
+    void hideMouse();
+
 protected:
+//    void leaveEvent(QEvent *);
     void mouseMoveEvent(QMouseEvent * event);
     void resizeEvent(QResizeEvent * event);
 //    void paintEvent(QPaintEvent *);
 private:
     QString fps;
     RenderInterface * screen;
+    QTimer timer;
+    bool trimming;
 };
 
 #endif // VIDEO_OUTPUT_H

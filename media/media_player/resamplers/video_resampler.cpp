@@ -2,9 +2,10 @@
 #include "qdebug.h"
 
 // only_conversion - did not output result as QImage if possible
-VideoResampler::VideoResampler(AVCodecContext * codec_context, enum AVPixelFormat pixel_format_out) :
+VideoResampler::VideoResampler(AVCodecContext * codec_context, bool hardwareConversion, enum AVPixelFormat pixel_format_out) :
       pixelFormatIn(codec_context -> pix_fmt)
     , pixelFormatOut(pixel_format_out)
+    , hardware_conversion(hardwareConversion)
     , settings(0)
     , resampleContext(0)
 {
@@ -13,7 +14,7 @@ VideoResampler::VideoResampler(AVCodecContext * codec_context, enum AVPixelForma
     RGBFrame = av_frame_alloc();
 
     settings = new VideoSettings(
-                compatible ? codec_context -> pix_fmt : pixelFormatOut,
+                (!hardware_conversion && compatible) ? codec_context -> pix_fmt : pixelFormatOut,
                 codec_context -> colorspace,
                 codec_context -> width,
                 codec_context -> height
@@ -27,7 +28,7 @@ VideoResampler::~VideoResampler() {
 }
 
 VideoBuffer * VideoResampler::proceed(AVFrame *& frame, int widthOut, int heightOut) {
-    if (compatible) {
+    if (!hardware_conversion && compatible) {
         AVFrame * old_frame = frame;
         frame = av_frame_alloc();
 //        frame -> pkt_dts = old_frame -> pkt_dts;
