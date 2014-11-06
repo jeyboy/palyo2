@@ -16,13 +16,11 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
     qDebug() << "LALAK2";
 
     //    setAcceptDrops(true);
-    setFocusPolicy(Qt::StrongFocus);
     //    /* To rapidly update custom widgets that constantly paint over their entire areas with
     //     * opaque content, e.g., video streaming widgets, it is better to set the widget's
     //     * Qt::WA_OpaquePaintEvent, avoiding any unnecessary overhead associated with repainting the
     //     * widget's background
     //     */
-    setAttribute(Qt::WA_OpaquePaintEvent);
     //    setAttribute(Qt::WA_PaintOnScreen);
     //    setAttribute(Qt::WA_NoSystemBackground);
     //    //default: swap in qpainter dtor. we should swap before QPainter.endNativePainting()
@@ -60,10 +58,8 @@ GLRenderRaw::~GLRenderRaw() {
         shader = 0;
     }
 
-    if (!textures.isEmpty()) {
-        while(textures.size() > 0)
-            deleteTexture(textures.takeLast());
-    }
+    glDeleteTextures(textures.size(), textures.data());
+    textures.clear();
 
     if (color_conversion) {
         delete color_conversion;
