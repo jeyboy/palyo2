@@ -45,6 +45,8 @@ public slots:
     void showAttCurrTabDialog();
 
 private slots:
+    void showError(QString);
+
     void showActiveElem();
 
     void showSettingsDialog();

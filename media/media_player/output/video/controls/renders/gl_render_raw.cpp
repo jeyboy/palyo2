@@ -117,7 +117,6 @@ void GLRenderRaw::setQuality(const Quality & quality) {
 //}
 
 bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat) {
-    qDebug() << "LALAK3";
     makeCurrent();
     glBindTexture(GL_TEXTURE_2D, tex);
 //    setupQuality();
@@ -142,7 +141,6 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
 }
 
 bool GLRenderRaw::initTextures() {
-    qDebug() << "LALAK4";
     makeCurrent();
 
     //http://www.berkelium.com/OpenGL/GDC99/internalformat.html

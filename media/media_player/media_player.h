@@ -40,8 +40,10 @@ public:
 
     QWidget * getScreenWidget() const;
 
+signals:
+    void errorOccured(QString error);
+
 public slots:
-//    void errorOcurred();
     void play();
     void resume();
     void pause();
@@ -66,6 +68,7 @@ private:
     int64_t item_duration;
 
     AVFormatContext *context;
+    QString errorStr;
 
     static MediaPlayer * self;
 };

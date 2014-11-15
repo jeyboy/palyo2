@@ -11,12 +11,12 @@ MediaPlayer * MediaPlayer::instance(QObject * parent) {
 }
 
 MediaPlayer::~MediaPlayer() {
-    if (decoder) {
-        decoder -> stop();
-        decoder -> wait();
-    }
+//    if (decoder) {
+//        decoder -> stop();
+//        decoder -> wait();
+//    }
 
-    delete decoder;
+//    delete decoder;
 
     qDebug() << "player";
     stop();
@@ -29,9 +29,9 @@ bool MediaPlayer::open(QUrl url, int64_t position_millis, int64_t duration_milli
     stop();
 
     bool res = openContext(url);
-    item_duration = qMin(context -> duration, duration_millis * 1000);
 
     if (res) {
+        item_duration = qMin(context -> duration, duration_millis * 1000);
         decoder = new StreamDecoder(this, context);
         res &= decoder -> isValid();
     }
@@ -40,6 +40,7 @@ bool MediaPlayer::open(QUrl url, int64_t position_millis, int64_t duration_milli
         seekMillis(position_millis);
         pause();
     }
+
     return res;
 }
 
@@ -148,8 +149,10 @@ bool MediaPlayer::openContext(QUrl & url) {
     QString path;
     if ((isRemote = url.isLocalFile())) {
         path = url.toLocalFile();
-        if (!QFile(path).exists())
+        if (!QFile(path).exists()) {
+            emit errorOccured(errorStr = "File not exist");
             return false;
+        }
     } else {
         avformat_network_init();
         path = url.toString();
@@ -160,16 +163,19 @@ bool MediaPlayer::openContext(QUrl & url) {
     av_dict_set(&options, "pixel_format", "rgb24", 0);
 
     if (avformat_open_input(&context, path.toUtf8().data(), NULL, &options) < 0) {
-        abort();
+        abort(); // ?
         av_dict_free(&options);
+        emit errorOccured(errorStr = "Did not open context of file");
         return false;
     }
     av_dict_free(&options);
 
     av_dump_format(context, 0, path.toUtf8().data(), false);
 
-    if (avformat_find_stream_info(context, NULL) < 0)
+    if (avformat_find_stream_info(context, NULL) < 0) {
+        emit errorOccured(errorStr = "Did not find stream info");
         return false;
+    }
 
     return true;
 }
@@ -179,8 +185,9 @@ void MediaPlayer::closeContext() {
         decoder -> stop();
         decoder -> wait();
         delete decoder;
-        decoder = 0;
     }
+
+    decoder = 0;
 
     if (context)
         avformat_close_input(&context);
@@ -194,7 +201,8 @@ void MediaPlayer::closeContext() {
 MediaPlayer::MediaPlayer(QObject * parent) : QObject(parent)
   , decoder(0)
   , isRemote(false)
-  , context(0) {
+  , context(0)
+  , errorStr("") {
 
     av_register_all();
     avcodec_register_all();

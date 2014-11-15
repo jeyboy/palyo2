@@ -2,12 +2,62 @@
 #define SYSTEM_UTILS_H
 
 #ifdef Q_OS_WIN
-    #include <Windows.h>
+    #include <windows.h>
+    #include <psapi.h>
+
     #pragma comment(lib, "user32.lib")
     static bool * screensaverState;
 #elif Q_OS_LYNUX
     #include <QProcess>
 #endif
+
+
+static QString procMemoryUsage() {
+    #ifdef Q_OS_WIN
+        PROCESS_MEMORY_COUNTERS_EX pmc;
+        pmc.cb = sizeof(pmc);
+        GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+        return QString::number(pmc.PrivateUsage);
+    #else
+        return QString("pont");
+    #endif
+}
+
+static QString memoryUsage() {
+    #ifdef Q_OS_WIN
+        qDebug() << "*** WIN memory usage";
+
+        MEMORYSTATUSEX memory_status;
+        ZeroMemory(&memory_status, sizeof(MEMORYSTATUSEX));
+        memory_status.dwLength = sizeof(MEMORYSTATUSEX);
+        if (GlobalMemoryStatusEx(&memory_status)) {
+            return QString("RAM: %1 MB").arg(memory_status.ullTotalPhys / (1024 * 1024));
+        } else {
+            return QString("Unknown RAM");
+        }
+
+    #elif Q_OS_MAC
+        qDebug() << "*** MAC memory usage";
+
+        QProcess p;
+        p.start("sysctl", QStringList() << "kern.version" << "hw.physmem");
+        p.waitForFinished();
+        QString system_info = p.readAllStandardOutput();
+        p.close();
+
+    #elif Q_OS_LYNUX
+        qDebug() << "*** LYNUX memory usage";
+
+        QProcess p;
+        p.start("awk", QStringList() << "/MemTotal/ { print $2 }" << "/proc/meminfo");
+        p.waitForFinished();
+        QString memory = p.readAllStandardOutput();
+        system_info.append(QString("; RAM: %1 MB").arg(memory.toLong() / 1024));
+        p.close();
+    #else
+        qDebug() << "*** This sistem did not support for memory usage monitoring";
+    #endif
+}
 
 static void restoreScreenSaver() {
     #ifdef Q_OS_WIN

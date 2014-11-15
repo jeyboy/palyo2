@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "misc/screen.h"
+#include "media/media_player/utils/system_utils.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initialization();
 
     MediaPlayer::instance(this);
+    connect(MediaPlayer::instance(this), SIGNAL(errorOccured(QString)), this, SLOT(showError(QString)));
 
 //    Play media from Internet services using the quvi project.
 //    The demuxer accepts a ‘format’ option to request a specific quality. It is by default set to best.
@@ -26,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    MediaPlayer::instance() -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/Million.Sposobov.Poteryat'.Golovu.2014.RUS.BDRip.x264.-HELLYWOOD.mkv"), 38000);
-      MediaPlayer::instance() -> open(QUrl::fromLocalFile("K:/VIDEO/Dick Figures The Movie.mp4"), 60000);
+      MediaPlayer::instance() -> open(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"), 60000);
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/New Year, New Tricks - Happy 2014!.mkv"));
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/111412158")); //short
 //    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
@@ -48,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 
     MediaPlayer::instance() -> play();
+    qDebug() << "HUY: " << procMemoryUsage();
 }
 
 void MainWindow::locationCorrection() {
@@ -195,8 +198,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 MainWindow::~MainWindow() {
-    MediaPlayer::instance() -> stop();
-    MediaPlayer::instance() -> close();
+//    MediaPlayer::instance() -> close(); // this called by parent deletion
 
     delete ui;
 
@@ -228,6 +230,10 @@ QMenu * MainWindow::createPopupMenu () {
 /////////////////////////////////////////////////////////////////////////////////////
 ///SLOTS
 /////////////////////////////////////////////////////////////////////////////////////
+
+void MainWindow::showError(QString message) {
+    qDebug() << message;
+}
 
 void MainWindow::nextItemTriggered() {
     if (ui -> tabber -> currentTab())
