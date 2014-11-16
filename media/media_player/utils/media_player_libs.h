@@ -2,10 +2,10 @@
 #define MEDIA_PLAYER_LIBS_H
 
 #include <inttypes.h>
-#include <math.h>
-#include <limits.h>
-#include <signal.h>
-#include <stdint.h>
+//#include <math.h>
+//#include <limits.h>
+//#include <signal.h>
+//#include <stdint.h>
 
 #include "libavutil/avstring.h"
 #include "libavutil/colorspace.h"

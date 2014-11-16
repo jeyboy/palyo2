@@ -394,7 +394,7 @@ QMimeData * Model::mimeData(const QModelIndexList &indexes) const {
     return mimeData;
 }
 
-bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parentIndex) {
+bool Model::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/, int /*row*/, int /*column*/, const QModelIndex & /*parentIndex*/) {
 //    if (action == Qt::CopyAction) {
 
 //    } else {

@@ -51,13 +51,13 @@ void VkModel::refreshWall() {
 //}
 
 
-QModelIndex VkModel::dropProcession(const QList<QUrl> & list) {
+QModelIndex VkModel::dropProcession(const QList<QUrl> & /*list*/) {
 //    ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path());
 //    filesRoutine(index, list);
 //    return model -> index(index);
 }
 
-void VkModel::filesRoutine(ModelItem * index, QFileInfo currFile){
+void VkModel::filesRoutine(ModelItem * /*index*/, QFileInfo /*currFile*/){
 //    QFileInfoList fileList = folderFiles(currFile);
 
 //    foreach(QFileInfo file, fileList) {
@@ -73,7 +73,7 @@ void VkModel::filesRoutine(ModelItem * index, QFileInfo currFile){
 //    }
 }
 
-void VkModel::filesRoutine(ModelItem * index, QList<QUrl> list){
+void VkModel::filesRoutine(ModelItem * /*index*/, QList<QUrl> /*list*/){
 //    foreach(QUrl url, list) {
 //        QFileInfo file = QFileInfo(url.toLocalFile());
 //        if (file.isDir()) {

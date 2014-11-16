@@ -1,16 +1,141 @@
-﻿Построение начато 19.01.2014 15:09:46.
-     1>Проект "F:\Programing\QT\playo2\playo2.vcxproj" в узле 2 (целевые объекты Build).
-     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(345,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
-     1>ClCompile:
-         F:\Visual studio 2012\VC\bin\CL.exe /c /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtMultimediaWidgets /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtMultimedia /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtWidgets /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtNetwork /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtGui /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtANGLE /I..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\include\QtCore /Idebug /I. /I"..\..\..\IDES\Qt5.2.0x86\5.2.0\msvc2012\mkspecs\win32-msvc2012" /I.\GeneratedFiles /Zi /nologo /W3 /WX- /Od /Oy- /D _WINDOWS /D UNICODE /D WIN32 /D QT_MULTIMEDIAWIDGETS_LIB /D QT_MULTIMEDIA_LIB /D QT_WIDGETS_LIB /D QT_NETWORK_LIB /D QT_GUI_LIB /D QT_CORE_LIB /D QT_OPENGL_ES_2 /D QT_OPENGL_ES_2_ANGLE /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt -Zm200 -w34100 -w34189 mainwindow.cpp
-         mainwindow.cpp
-       Link:
-         F:\Visual studio 2012\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"debug\\playo2.exe" /NOLOGO /LIBPATH:F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib /LIBPATH:F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib qtmaind.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5MultimediaWidgetsd.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Multimediad.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Widgetsd.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Networkd.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Guid.lib F:\IDES\Qt5.2.0x86\5.2.0\msvc2012\lib\Qt5Cored.lib libEGLd.lib libGLESv2d.lib gdi32.lib user32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"debug\playo2.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /SAFESEH "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" Win32\Debug\moc_mainwindow.obj
-         Win32\Debug\main.obj
-         Win32\Debug\mainwindow.obj
-         playo2.vcxproj -> F:\Programing\QT\playo2\debug\playo2.exe
-     1>Построение проекта "F:\Programing\QT\playo2\playo2.vcxproj" завершено (целевые объекты Build).
+﻿Построение начато 16.11.2014 21:53:17.
+Проект "C:\Users\JB\Desktop\playo2\playo2.vcxproj" в узле 2 (целевые объекты Build).
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Ilibs\taglib\include /Ilibs\bass\include /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtMultimediaWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWebKitWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtMultimedia /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWebKit /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtNetwork /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtGui /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtCore /Idebug /I. /I"..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\mkspecs\win32-msvc2012" /I.\GeneratedFiles /IC:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\include\QtOpenGL /Zi /nologo /W3 /WX- /Od /Oy- /D _WINDOWS /D UNICODE /D WIN32 /D TAGLIB_NO_CONFIG /D QT_MULTIMEDIAWIDGETS_LIB /D QT_WEBKITWIDGETS_LIB /D QT_MULTIMEDIA_LIB /D QT_WEBKIT_LIB /D QT_WIDGETS_LIB /D QT_NETWORK_LIB /D QT_GUI_LIB /D QT_CORE_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt -Zm200 -w34100 -w34189 Debug\moc_api_process.cpp Debug\moc_audio_player.cpp Debug\moc_captchadialog.cpp Debug\moc_clickable_label.cpp Debug\moc_custom_network_access_manager.cpp Debug\moc_download.cpp Debug\moc_hotkey_delegate.cpp Debug\moc_hotkey_editor.cpp Debug\moc_hotkey_manager.cpp Debug\moc_hotkey_model.cpp Debug\moc_ip_checker.cpp Debug\moc_level_tree_breadcrumb_model.cpp Debug\moc_level_tree_breadcrumb_view.cpp Debug\moc_level_tree_model.cpp Debug\moc_level_tree_view.cpp Debug\moc_library.cpp Debug\moc_list_model.cpp Debug\moc_list_view.cpp Debug\moc_mainwindow.cpp Debug\moc_model.cpp Debug\moc_model_item_delegate.cpp Debug\moc_notify_timer.cpp Debug\moc_player.cpp Debug\moc_qxtglobalshortcut.cpp Debug\moc_relationdialog.cpp Debug\moc_settings_dialog.cpp Debug\moc_single_application.cpp Debug\moc_slider.cpp Debug\moc_soundcloud_api.cpp Debug\moc_soundcloud_model.cpp Debug\moc_soundcloud_view.cpp Debug\moc_spectrum.cpp Debug\moc_tab.cpp Debug\moc_tabber.cpp Debug\moc_tabdialog.cpp Debug\moc_toolbar.cpp Debug\moc_toolbarbutton.cpp Debug\moc_toolbarbuttondialog.cpp Debug\moc_toolbardialog.cpp Debug\moc_toolbars.cpp Debug\moc_tree_model.cpp Debug\moc_tree_view.cpp Debug\moc_view.cpp Debug\moc_vk_api.cpp Debug\moc_vk_model.cpp Debug\moc_vk_view.cpp Debug\moc_web_api.cpp Debug\moc_web_dialog.cpp Debug\moc_web_model.cpp web\api_process.cpp media\audio_player.cpp dialogs\captchadialog.cpp override\clickable_label.cpp override\custom_network_access_manager.cpp misc\data_store.cpp model\web\deleted_list.cpp web\download.cpp media\duration.cpp model\file_item.cpp model\folder_item.cpp misc\format.cpp media\genre.cpp model\hotkey_model\hotkey_delegate.cpp model\hotkey_model\hotkey_editor.cpp misc\hotkey_manager.cpp model\hotkey_model\hotkey_model.cpp model\hotkey_model\hotkey_model_item.cpp misc\icon_provider.cpp web\ip_checker.cpp model\level_tree_breadcrumb\level_tree_breadcrumb_model.cpp model\level_tree_breadcrumb\level_tree_breadcrumb_view.cpp model\level_tree\level_tree_model.cpp model\level_tree\level_tree_view.cpp media\library.cpp model\list\list_model.cpp model\list\list_view.cpp main.cpp mainwindow.cpp media\mediainfo.cpp model\model.cpp model\model_item.cpp model\model_item_delegate.cpp model\model_item_state.cpp override\notify_timer.cpp media\player.cpp globalshortcut\qxtglobalshortcut.cpp globalshortcut\qxtglobalshortcut_win.cpp dialogs\relationdialog.cpp misc\settings.cpp dialogs\settings_dialog.cpp single_application.cpp override\slider.cpp web\socials\soundcloud_api.cpp model\web\soundcloud\soundcloud_file.cpp model\web\soundcloud\soundcloud_model.cpp model\web\soundcloud\soundcloud_playlist.cpp model\web\soundcloud\soundcloud_view.cpp override\spectrum.cpp override\tab.cpp override\tabber.cpp dialogs\tabdialog.cpp web\auth_chemas\teu_auth.cpp override\toolbar.cpp override\toolbarbutton.cpp dialogs\toolbarbuttondialog.cpp dialogs\toolbardialog.cpp toolbars.cpp model\tree\tree_model.cpp model\tree\tree_view.cpp model\view.cpp web\socials\vk_api.cpp web\socials\vk_api_private.cpp model\web\vk\vk_file.cpp model\web\vk\vk_folder.cpp model\web\vk\vk_model.cpp model\web\vk\vk_view.cpp web\web_api.cpp dialogs\web_dialog.cpp model\web\web_model.cpp
+  moc_api_process.cpp
+  moc_audio_player.cpp
+  moc_captchadialog.cpp
+  moc_clickable_label.cpp
+  moc_custom_network_access_manager.cpp
+  moc_download.cpp
+  moc_hotkey_delegate.cpp
+  moc_hotkey_editor.cpp
+  moc_hotkey_manager.cpp
+  moc_hotkey_model.cpp
+  moc_ip_checker.cpp
+  moc_level_tree_breadcrumb_model.cpp
+  moc_level_tree_breadcrumb_view.cpp
+  moc_level_tree_model.cpp
+  moc_level_tree_view.cpp
+  moc_library.cpp
+  moc_list_model.cpp
+  moc_list_view.cpp
+  moc_mainwindow.cpp
+c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(72): warning C4005: LA_16BITS: изменение макроопределения
+          c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(70): см. предыдущее определение "LA_16BITS"
+  moc_model.cpp
+  Создание кода...
+  Компиляция...
+  moc_model_item_delegate.cpp
+  moc_notify_timer.cpp
+  moc_player.cpp
+  moc_qxtglobalshortcut.cpp
+  moc_relationdialog.cpp
+  moc_settings_dialog.cpp
+  moc_single_application.cpp
+  moc_slider.cpp
+  moc_soundcloud_api.cpp
+  moc_soundcloud_model.cpp
+  moc_soundcloud_view.cpp
+  moc_spectrum.cpp
+  moc_tab.cpp
+  moc_tabber.cpp
+  moc_tabdialog.cpp
+  moc_toolbar.cpp
+  moc_toolbarbutton.cpp
+  moc_toolbarbuttondialog.cpp
+  moc_toolbardialog.cpp
+  moc_toolbars.cpp
+  Создание кода...
+  Компиляция...
+  moc_tree_model.cpp
+  moc_tree_view.cpp
+  moc_view.cpp
+  moc_vk_api.cpp
+  moc_vk_model.cpp
+  moc_vk_view.cpp
+  moc_web_api.cpp
+  moc_web_dialog.cpp
+  moc_web_model.cpp
+  api_process.cpp
+  audio_player.cpp
+  captchadialog.cpp
+  clickable_label.cpp
+  custom_network_access_manager.cpp
+  data_store.cpp
+  deleted_list.cpp
+  download.cpp
+  duration.cpp
+  file_item.cpp
+  folder_item.cpp
+  Создание кода...
+  Компиляция...
+  format.cpp
+  genre.cpp
+  hotkey_delegate.cpp
+  hotkey_editor.cpp
+  hotkey_manager.cpp
+  hotkey_model.cpp
+  hotkey_model_item.cpp
+  icon_provider.cpp
+  ip_checker.cpp
+  level_tree_breadcrumb_model.cpp
+  level_tree_breadcrumb_view.cpp
+  level_tree_model.cpp
+  level_tree_view.cpp
+  library.cpp
+  list_model.cpp
+  list_view.cpp
+  main.cpp
+c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(72): warning C4005: LA_16BITS: изменение макроопределения
+          c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(70): см. предыдущее определение "LA_16BITS"
+  mainwindow.cpp
+c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(72): warning C4005: LA_16BITS: изменение макроопределения
+          c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(70): см. предыдущее определение "LA_16BITS"
+  mediainfo.cpp
+c:\users\jb\desktop\playo2\libs\taglib\include\tiostream.h(53): warning C4251: TagLib::FileName::m_name: class "std::basic_string<_Elem,_Traits,_Alloc>" должен иметь dll-интерфейс для использования клиентами class "TagLib::FileName"
+          with
+          [
+              _Elem=char,
+              _Traits=std::char_traits<char>,
+              _Alloc=std::allocator<char>
+          ]
+c:\users\jb\desktop\playo2\libs\taglib\include\tiostream.h(54): warning C4251: TagLib::FileName::m_wname: class "std::basic_string<_Elem,_Traits,_Alloc>" должен иметь dll-интерфейс для использования клиентами class "TagLib::FileName"
+          with
+          [
+              _Elem=wchar_t,
+              _Traits=std::char_traits<wchar_t>,
+              _Alloc=std::allocator<wchar_t>
+          ]
+  model.cpp
+  Создание кода...
+  Компиляция...
+  model_item.cpp
+  model_item_delegate.cpp
+  model_item_state.cpp
+  notify_timer.cpp
+  player.cpp
+  qxtglobalshortcut.cpp
+  qxtglobalshortcut_win.cpp
+  relationdialog.cpp
+  settings.cpp
+  settings_dialog.cpp
+  single_application.cpp
+  slider.cpp
+  soundcloud_api.cpp
+  soundcloud_file.cpp
+  soundcloud_model.cpp
+  soundcloud_playlist.cpp
+  soundcloud_view.cpp
+  spectrum.cpp
+  tab.cpp
+  tabber.cpp
+c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(72): warning C4005: LA_16BITS: изменение макроопределения
+          c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(70): см. предыдущее определение "LA_16BITS"
+  Создание кода...
+c:\users\jb\desktop\playo2\model\web\soundcloud\soundcloud_model.cpp(31): error C4716: SoundcloudModel::dropProcession: должна возвращать значение
+Построение проекта "C:\Users\JB\Desktop\playo2\playo2.vcxproj" завершено (целевые объекты Build) с ошибкой.
 
-Построение успешно завершено.
+Сбой построения.
 
-Затраченное время: 00:00:01.93
+Затраченное время: 00:03:40.60

@@ -151,6 +151,7 @@ QDockWidget * MainWindow::createDockWidget() {
 //    dock->setWidget(customerList);
 //    addDockWidget(Qt::RightDockWidgetArea, dock);
 //    viewMenu->addAction(dock->toggleViewAction());
+	return 0;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent * event) {

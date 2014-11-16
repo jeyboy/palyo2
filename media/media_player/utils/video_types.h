@@ -6,7 +6,20 @@
 
 //#include <GL/gl.h>
 //#include <GL/glext.h>
-#include <QtOpenGL>
+
+
+//#include <QtOpenGL/QtOpenGLDepends>
+#include <GL/GL.h>
+//#include "qglbuffer.h"
+//#include "qglcolormap.h"
+//#include "qglframebufferobject.h"
+//#include "qglfunctions.h"
+//#include "qglpixelbuffer.h"
+//#include "qglshaderprogram.h"
+//#include "qtopenglglobal.h"
+//#include "qtopenglversion.h"
+
+//#include <QtOpenGL>
 
 struct VideoTypes {
     enum VideoType {

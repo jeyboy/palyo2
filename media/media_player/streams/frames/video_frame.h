@@ -4,6 +4,7 @@
 #include <QTransform>
 #include "media/media_player/utils/master_clock.h"
 #include "./video/video_buffer.h"
+#include "qmath.h"
 
 struct VideoFrame {
     VideoFrame() {
@@ -43,10 +44,10 @@ struct VideoFrame {
 
     QRect calcSize(QRect defSize) {
         int h = defSize.height();
-        int w = ((int)rint(h * aspect_ratio)) & -3;
+        int w = ((int)qRound(h * aspect_ratio)) & -3;
         if (w > defSize.width()) {
             w = defSize.width();
-            h = ((int)rint(w / aspect_ratio)) & -3;
+            h = ((int)qRound(w / aspect_ratio)) & -3;
         }
 
         QRect rect(defSize.left() + (defSize.width() - w) / 2, defSize.top() + (defSize.height() - h) / 2, w, h);

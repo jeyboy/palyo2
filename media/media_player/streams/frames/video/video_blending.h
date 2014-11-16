@@ -35,7 +35,7 @@
 //TODO: not completed for rgb and not tested
 class VideoBlending {
 public:
-    static void blend_subrect(QImage * image, const AVSubtitleRect *rect) {
+    static void blend_subrect(QImage * /*image*/, const AVSubtitleRect * /*rect*/) {
 
     }
 

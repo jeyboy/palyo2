@@ -1,7 +1,8 @@
 #include "audio_player.h"
 #include "misc/settings.h"
-#include "math.h"
+//#include "math.h"
 #include <QDebug>
+#include <qmath.h>
 
 //Get the percentage downloaded of an internet file stream, or the buffer level when streaming in blocks.
 //QWORD len=BASS_StreamGetFilePosition(stream, BASS_FILEPOS_END); // file/buffer length
@@ -354,7 +355,9 @@ float AudioPlayer::getBpmValue(QUrl uri) {
 // did not work :(
 float AudioPlayer::calcBpm(int channel) {
     int ret, C = 1.1;
-    int history_lim = 43, bands_count = 32, fft_length = 1024, cadr_len = fft_length / bands_count;
+	const int fft_length = 1024;
+	int bands_count = 32;
+    int history_lim = 43, cadr_len = fft_length / bands_count;
     float history_aprox = 1.0 / history_lim, beats = 0;
     float energy_aprox = (float)bands_count / fft_length;
 
@@ -425,10 +428,11 @@ QVector<int> AudioPlayer::getSpectrum() {
 }
 
 QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
-    int layerLimit = 1024, gLimit = layerLimit * channelsCount;
+    int layerLimit = 1024;
+	const int gLimit = layerLimit * channelsCount;
     int spectrumMultiplicity = Settings::instance() -> getSpectrumMultiplier();
     int workSpectrumBandsCount = getCalcSpectrumBandsCount();
-    float fft[gLimit];
+    float * fft = new float[gLimit];
     BASS_ChannelGetData(chan, fft, BASS_DATA_FFT2048 | BASS_DATA_FFT_INDIVIDUAL | BASS_DATA_FFT_REMOVEDC);
 
     QList<QVector<int> > res;
@@ -461,6 +465,7 @@ QList<QVector<int> > AudioPlayer::getComplexSpectrum() {
         }
     }
 
+	delete [] fft;
     return res;
 }
 
@@ -487,7 +492,7 @@ void AudioPlayer::play() {
 
             if (chan) {
                 BASS_ChannelSetAttribute(chan, BASS_ATTRIB_VOL, volumeVal);
-                duration = round(BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE))) * 1000;
+				duration = qRound(BASS_ChannelBytes2Seconds(chan, BASS_ChannelGetLength(chan, BASS_POS_BYTE))) * 1000;
                 durationChanged(duration);
 
                 BASS_CHANNELINFO info;
@@ -500,8 +505,8 @@ void AudioPlayer::play() {
                 spectrumTimer -> start(Settings::instance() -> getSpectrumFreqRate()); // 25 //40 Hz
                 notifyTimer -> start(notifyInterval);
 
-                syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
-                syncDownloadHandle = BASS_ChannelSetSync(chan, BASS_SYNC_DOWNLOAD, 0, &endTrackDownloading, this);
+                //syncHandle = BASS_ChannelSetSync(chan, BASS_SYNC_END, 0, &endTrackSync, this);
+                //syncDownloadHandle = BASS_ChannelSetSync(chan, BASS_SYNC_DOWNLOAD, 0, &endTrackDownloading, this);
             } else {
                 qDebug() << "Can't play file";
             }

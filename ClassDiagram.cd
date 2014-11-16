@@ -1,0 +1,1012 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Ui_CaptchaDialog" Collapsed="true">
+    <Position X="17.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAQAIAQAAIAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_captchadialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui_MainWindow" Collapsed="true">
+    <Position X="5.25" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAEAAAAAAAQAIAAAAAAAAEAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_mainwindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui_RelationDialog" Collapsed="true">
+    <Position X="10.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAQAAAAAAAgAAAAAAAQAKAAAACAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_relationdialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui_SettingsDialog" Collapsed="true">
+    <Position X="2.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>70AIYiABBwQAABAgAEAEiDQrgASEZOUhCKMAQPBgADA=</HashCode>
+      <FileName>GeneratedFiles\ui_settings_dialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui_TabDialog" Collapsed="true">
+    <Position X="14.25" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MAAgAAIAAAAAABAAAAEAAAAICAQAIEEAACAAEAAAEAA=</HashCode>
+      <FileName>GeneratedFiles\ui_tabdialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui_ToolbarButtonDialog" Collapsed="true">
+    <Position X="14.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAgAIAAAAAABQAAAAAAAAAAAQAIAAAAAAAABAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_toolbarbuttondialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui_ToolbarDialog" Collapsed="true">
+    <Position X="14.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAIAAAAAABAAAAAAAAAAAAQAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_toolbardialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui_WebDialog" Collapsed="true">
+    <Position X="14.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQBIAAAAIAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_web_dialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataStore" Collapsed="true">
+    <Position X="26.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAABAgICIAAAAACAAAQAAAAAAAAAEAQECAAAAAAA=</HashCode>
+      <FileName>misc\data_store.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DeletedList" Collapsed="true">
+    <Position X="13.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAgAAAAAAAAIAAAEAAAgAAAAAEAAAEAAABAAAAAA=</HashCode>
+      <FileName>model\web\deleted_list.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Duration" Collapsed="true">
+    <Position X="30.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAACAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>media\duration.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileItem" Collapsed="true">
+    <Position X="2.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAIAAgAAAAAAAAAAQAAAAQACAAQAAA=</HashCode>
+      <FileName>model\file_item.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FolderItem" Collapsed="true">
+    <Position X="6" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAgAgACAACAAAIAADCBAACgIAAhAQEBAAACAAQAAA=</HashCode>
+      <FileName>model\folder_item.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Format" Collapsed="true">
+    <Position X="32" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>misc\format.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Genre" Collapsed="true">
+    <Position X="19.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAEAAAIAAABCAABACAAAAIAAACAAAAA=</HashCode>
+      <FileName>media\genre.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HotkeyModelItem" Collapsed="true">
+    <Position X="28.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAFAAAgASACCAABAAADAAAAAgIAABAACIAAQAQAAAAE=</HashCode>
+      <FileName>model\hotkey_model\hotkey_model_item.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IconProvider" Collapsed="true">
+    <Position X="30.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAMAAAAEAAEAAABAAEBAAMAAQAAAAAA=</HashCode>
+      <FileName>misc\icon_provider.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MediaInfo" Collapsed="true">
+    <Position X="23.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAZAwIAAIEDAAIAIgCACAAAAgAQIAEASAAQQAAA=</HashCode>
+      <FileName>media\mediainfo.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ModelItem" Collapsed="true">
+    <Position X="7.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAFQAAoASAASIMBIAIDCRBAnSIAIgKwGRgEXCIgQAEQ=</HashCode>
+      <FileName>model\model_item.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ModelItemState" Collapsed="true">
+    <Position X="26.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JgAAMAAoEAABACAAIAAEgiCQACIGgSgAQAEAAAAAAAE=</HashCode>
+      <FileName>model\model_item_state.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QxtPrivate&lt;PUB&gt;" Collapsed="true">
+    <Position X="17.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAQAAQAAAAAAAAAAAAgAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>globalshortcut\qxtglobal.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QxtPrivateInterface&lt;PUB, PVT&gt;" Collapsed="true">
+    <Position X="32" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAEAAAAgAAQAAAAAAAAAAiAAAQAAA=</HashCode>
+      <FileName>globalshortcut\qxtglobal.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QxtGlobalShortcutPrivate" Collapsed="true">
+    <Position X="17.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQEBAAAgAAAAACAHOEAAAAAAAAAEEAAIAAAAIAAAA=</HashCode>
+      <FileName>globalshortcut\qxtglobalshortcut_p.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Settings" Collapsed="true">
+    <Position X="21.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QgAicMANdUADhDNuQhwLCGcbIBD0UYnvuopoImBmAMA=</HashCode>
+      <FileName>misc\settings.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SliderStyle" Collapsed="true">
+    <Position X="28.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>override\slider_style.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundcloudFile" Collapsed="true">
+    <Position X="9.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIEAAIAAAAQAAAAAAAAAgAggAACEAQAAA=</HashCode>
+      <FileName>model\web\soundcloud\soundcloud_file.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundcloudPlaylist" Collapsed="true">
+    <Position X="5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAEAAIAAAAAAAAAIAQAAgAAgAACAAQAAA=</HashCode>
+      <FileName>model\web\soundcloud\soundcloud_playlist.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Stylesheets" Collapsed="true">
+    <Position X="32" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAIAAAAAAAAAEAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>misc\stylesheets.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TeuAuth" Collapsed="true">
+    <Position X="6.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EQEAAAAgAAEBAAAAAAAAAAAAAAAiAAAAiAAAAAAAAAA=</HashCode>
+      <FileName>web\auth_chemas\teu_auth.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TreeViewStyle" Collapsed="true">
+    <Position X="19.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAgAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>override\tree_view_style.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VkApiPrivate" Collapsed="true">
+    <Position X="21.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAQQAYEAAAIEBAAACAAAAAEgAQAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>web\socials\vk_api_private.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VkFile" Collapsed="true">
+    <Position X="11.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAIEAAAQAAAAABAAAgAggAACAAQAAA=</HashCode>
+      <FileName>model\web\vk\vk_file.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VkFolder" Collapsed="true">
+    <Position X="7.25" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAIAAIAAAAAAIAAAAgAAgAACAAUAAA=</HashCode>
+      <FileName>model\web\vk\vk_folder.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ApiProcess" Collapsed="true">
+    <Position X="19.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAEAAAAAAAEgAAAAAAAAAAFQAAAAAYAAAAAAAAA=</HashCode>
+      <FileName>web\api_process.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AudioPlayer" Collapsed="true">
+    <Position X="17.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>6UIEMAMAAIhALgDAoYABVJVCoAnkcMQkAC6AgAAAJAI=</HashCode>
+      <FileName>media\audio_player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CaptchaDialog" Collapsed="true">
+    <Position X="21.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAIAAQAAAAAAAAAAQAQAAAAAAAAAAAA=</HashCode>
+      <FileName>dialogs\captchadialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClickableLabel" Collapsed="true">
+    <Position X="23.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAIAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>override\clickable_label.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CustomNetworkAccessManager" Collapsed="true">
+    <Position X="25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAAAAAQAAgAAAAAAAAAAA=</HashCode>
+      <FileName>override\custom_network_access_manager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Download" Collapsed="true">
+    <Position X="28.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oAAAAAAAAAkAgAEgAAFAAAAEAADYAAAAYJEYAAABAEA=</HashCode>
+      <FileName>web\download.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HotkeyDelegate" Collapsed="true">
+    <Position X="21.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgIAAAABAAAAAAAAAAAAAAAAAAAEAAAAAAAAAQAAAA=</HashCode>
+      <FileName>model\hotkey_model\hotkey_delegate.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HotkeyEditor" Collapsed="true">
+    <Position X="23.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAQAAAAABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>model\hotkey_model\hotkey_editor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HotkeyManager" Collapsed="true">
+    <Position X="25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAACAAAAAAAAEAAAAECAAAAABAAQAAAIAAAAAAEAA=</HashCode>
+      <FileName>misc\hotkey_manager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HotkeyModel" Collapsed="true">
+    <Position X="26.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAMAAAAASAAAAAJACAEoAAAQAAABAAAAAAAQAAABAAQ=</HashCode>
+      <FileName>model\hotkey_model\hotkey_model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IpChecker" Collapsed="true">
+    <Position X="32" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBAAQAAAABAAABEAAAAACAAAKABACQQEAIAoAAABAAA=</HashCode>
+      <FileName>web\ip_checker.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LevelTreeBreadcrumbModel" Collapsed="true">
+    <Position X="3.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAgAAAAAAAAAIAACAAAAAAAAAAIA=</HashCode>
+      <FileName>model\level_tree_breadcrumb\level_tree_breadcrumb_model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LevelTreeBreadcrumbView" Collapsed="true">
+    <Position X="2.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>model\level_tree_breadcrumb\level_tree_breadcrumb_view.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LevelTreeModel" Collapsed="true">
+    <Position X="6" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>model\level_tree\level_tree_model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LevelTreeView" Collapsed="true">
+    <Position X="5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>model\level_tree\level_tree_view.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library" Collapsed="true">
+    <Position X="19.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAECNAAMCAKBUBCACAEgAAQCBQCAAASJBQAAEAKAM=</HashCode>
+      <FileName>media\library.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ListModel" Collapsed="true">
+    <Position X="8.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAIA=</HashCode>
+      <FileName>model\list\list_model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ListView" Collapsed="true">
+    <Position X="7.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>model\list\list_view.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainWindow" Collapsed="true">
+    <Position X="21.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAIEEEAIEAIQCICAoEEEAwCSAEAAAIQAAAkAAAA=</HashCode>
+      <FileName>mainwindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model" Collapsed="true">
+    <Position X="7.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EQMGKEAwSEAIAAJEhgRsAAAQAAABBIgAAAIQAEABAIQ=</HashCode>
+      <FileName>model\model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ModelItemDelegate" Collapsed="true">
+    <Position X="25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAiIAgAQAAAAAAgAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>model\model_item_delegate.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NotifyTimer" Collapsed="true">
+    <Position X="28.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAgAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>override\notify_timer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="17.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMMAgGAAAQILABUACQCIQgAJgQIQAbIBAIQFMYAAMAg=</HashCode>
+      <FileName>media\player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QxtGlobalShortcut" Collapsed="true">
+    <Position X="30.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAQAAAAAEgAAAAAAAAEACAAAAAAAAAAA=</HashCode>
+      <FileName>globalshortcut\qxtglobalshortcut.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RelationDialog" Collapsed="true">
+    <Position X="19.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgBAAAAAAAAAEAEAAAAAAAAAAAAEAAAgACAGAAAAAQA=</HashCode>
+      <FileName>dialogs\relationdialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SettingsDialog" Collapsed="true">
+    <Position X="23.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIJAAAAIQEEgAJABiAACAAAIBCAICACAQAACAMBAA=</HashCode>
+      <FileName>dialogs\settings_dialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SingleApplication" Collapsed="true">
+    <Position X="25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAIAAAAAgAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>single_application.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Slider" Collapsed="true">
+    <Position X="26.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAABAAAAABAAAAAAAAQAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>override\slider.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundcloudApi" Collapsed="true">
+    <Position X="3.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAMmAAAIDAAEAAAAgSAAABABgAAQAAJIAAAAAAEA=</HashCode>
+      <FileName>web\socials\soundcloud_api.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundcloudModel" Collapsed="true">
+    <Position X="9.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAgABAAAAAIAAIA=</HashCode>
+      <FileName>model\web\soundcloud\soundcloud_model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundcloudView" Collapsed="true">
+    <Position X="11.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAQ=</HashCode>
+      <FileName>model\web\soundcloud\soundcloud_view.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Spectrum" Collapsed="true">
+    <Position X="30.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAUgAAAAAAAAABACgAAAAEAAAEAAgAAAAAAAAAAA=</HashCode>
+      <FileName>override\spectrum.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tab" Collapsed="true">
+    <Position X="19.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAgAAAAAAOAAAAABCAAAAFAAQAECAAAAAA=</HashCode>
+      <FileName>override\tab.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tabber" Collapsed="true">
+    <Position X="21.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAYLAAAAAAAABAAAASABAAAAhAAAAAAAAAAA=</HashCode>
+      <FileName>override\tabber.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TabDialog" Collapsed="true">
+    <Position X="23.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAIEAAAAAAAIAAAAgAAgABAAAAEAAAAAAA=</HashCode>
+      <FileName>dialogs\tabdialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ToolBar" Collapsed="true">
+    <Position X="25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAAAAAAAEAAAAAAAIBAAAAAAEAAAA=</HashCode>
+      <FileName>override\toolbar.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ToolbarButton" Collapsed="true">
+    <Position X="26.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIEAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>override\toolbarbutton.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ToolbarButtonDialog" Collapsed="true">
+    <Position X="28.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAIgAAAAAABAAAAEAAABAAA=</HashCode>
+      <FileName>dialogs\toolbarbuttondialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ToolbarDialog" Collapsed="true">
+    <Position X="30.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAAAAAAAABAAAAEAAEAAAA=</HashCode>
+      <FileName>dialogs\toolbardialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ToolBars" Collapsed="true">
+    <Position X="32" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAoSAAQyRIiQDAEAAAAAACQQAEBgmNAAGIAAkoAwIAA=</HashCode>
+      <FileName>toolbars.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TreeModel" Collapsed="true">
+    <Position X="10.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAIA=</HashCode>
+      <FileName>model\tree\tree_model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TreeView" Collapsed="true">
+    <Position X="10.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAIAAAA=</HashCode>
+      <FileName>model\tree\tree_view.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="View" Collapsed="true">
+    <Position X="7.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>iFCACKggGEBIAAUEAGBEIWgBAKSw5AEIAAAkGAEJAAA=</HashCode>
+      <FileName>model\view.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VkApi" Collapsed="true">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gIAAAIAAAIJDAgEAAEAAQQAAgABiIAAAAYIACIAAAAA=</HashCode>
+      <FileName>web\socials\vk_api.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VkModel" Collapsed="true">
+    <Position X="11.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAEAAAAAAAAAAAAAAgACAAAAgAAAIAAAAAAIA=</HashCode>
+      <FileName>model\web\vk\vk_model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VkView" Collapsed="true">
+    <Position X="9.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAQAAAAAAAACAAAAAA=</HashCode>
+      <FileName>model\web\vk\vk_view.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebApi" Collapsed="true">
+    <Position X="3.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wAAEQAAIAAMBAAAAAAkARAAEAgAkCAAAIAAMAACBAAA=</HashCode>
+      <FileName>web\web_api.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebDialog" Collapsed="true">
+    <Position X="23.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAACAAAAAAAIA=</HashCode>
+      <FileName>dialogs\web_dialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WebModel" Collapsed="true">
+    <Position X="10.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAABAAAAAAAgAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>model\web\web_model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui::CaptchaDialog" Collapsed="true">
+    <Position X="17.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_captchadialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui::MainWindow" Collapsed="true">
+    <Position X="5.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_mainwindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui::RelationDialog" Collapsed="true">
+    <Position X="10.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_relationdialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui::SettingsDialog" Collapsed="true">
+    <Position X="2.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_settings_dialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui::TabDialog" Collapsed="true">
+    <Position X="14.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_tabdialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui::ToolbarButtonDialog" Collapsed="true">
+    <Position X="14.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_toolbarbuttondialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui::ToolbarDialog" Collapsed="true">
+    <Position X="14.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_toolbardialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ui::WebDialog" Collapsed="true">
+    <Position X="14.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratedFiles\ui_web_dialog.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="qt_meta_stringdata_ApiProcess_t" Collapsed="true">
+    <Position X="26.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_api_process.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_AudioPlayer_t" Collapsed="true">
+    <Position X="28.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_audio_player.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_CaptchaDialog_t" Collapsed="true">
+    <Position X="30.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_captchadialog.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_ClickableLabel_t" Collapsed="true">
+    <Position X="32" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_clickable_label.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_CustomNetworkAccessManager_t" Collapsed="true">
+    <Position X="19.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_custom_network_access_manager.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_Download_t" Collapsed="true">
+    <Position X="21.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_download.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_HotkeyDelegate_t" Collapsed="true">
+    <Position X="23.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_hotkey_delegate.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_HotkeyEditor_t" Collapsed="true">
+    <Position X="25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_hotkey_editor.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_HotkeyManager_t" Collapsed="true">
+    <Position X="26.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_hotkey_manager.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_HotkeyModel_t" Collapsed="true">
+    <Position X="28.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_hotkey_model.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_IpChecker_t" Collapsed="true">
+    <Position X="30.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_ip_checker.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_LevelTreeBreadcrumbModel_t" Collapsed="true">
+    <Position X="32" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_level_tree_breadcrumb_model.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_LevelTreeBreadcrumbView_t" Collapsed="true">
+    <Position X="19.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_level_tree_breadcrumb_view.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_LevelTreeModel_t" Collapsed="true">
+    <Position X="21.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_level_tree_model.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_LevelTreeView_t" Collapsed="true">
+    <Position X="23.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_level_tree_view.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_Library_t" Collapsed="true">
+    <Position X="25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_library.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_ListModel_t" Collapsed="true">
+    <Position X="26.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_list_model.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_ListView_t" Collapsed="true">
+    <Position X="28.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_list_view.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_MainWindow_t" Collapsed="true">
+    <Position X="30.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_mainwindow.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_Model_t" Collapsed="true">
+    <Position X="32" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_model.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_ModelItemDelegate_t" Collapsed="true">
+    <Position X="19.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_model_item_delegate.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_NotifyTimer_t" Collapsed="true">
+    <Position X="21.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_notify_timer.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_Player_t" Collapsed="true">
+    <Position X="23.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_player.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_QxtGlobalShortcut_t" Collapsed="true">
+    <Position X="25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_qxtglobalshortcut.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_RelationDialog_t" Collapsed="true">
+    <Position X="26.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_relationdialog.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_SettingsDialog_t" Collapsed="true">
+    <Position X="28.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_settings_dialog.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_SingleApplication_t" Collapsed="true">
+    <Position X="30.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_single_application.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_Slider_t" Collapsed="true">
+    <Position X="32" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_slider.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_SoundcloudApi_t" Collapsed="true">
+    <Position X="19.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_soundcloud_api.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_SoundcloudModel_t" Collapsed="true">
+    <Position X="21.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_soundcloud_model.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_SoundcloudView_t" Collapsed="true">
+    <Position X="23.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_soundcloud_view.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_Spectrum_t" Collapsed="true">
+    <Position X="25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_spectrum.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_Tab_t" Collapsed="true">
+    <Position X="26.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_tab.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_Tabber_t" Collapsed="true">
+    <Position X="28.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_tabber.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_TabDialog_t" Collapsed="true">
+    <Position X="30.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_tabdialog.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_ToolBar_t" Collapsed="true">
+    <Position X="32" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_toolbar.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_ToolbarButton_t" Collapsed="true">
+    <Position X="19.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_toolbarbutton.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_ToolbarButtonDialog_t" Collapsed="true">
+    <Position X="21.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_toolbarbuttondialog.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_ToolbarDialog_t" Collapsed="true">
+    <Position X="23.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_toolbardialog.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_ToolBars_t" Collapsed="true">
+    <Position X="25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_toolbars.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_TreeModel_t" Collapsed="true">
+    <Position X="26.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_tree_model.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_TreeView_t" Collapsed="true">
+    <Position X="28.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_tree_view.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_View_t" Collapsed="true">
+    <Position X="30.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_view.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_VkApi_t" Collapsed="true">
+    <Position X="32" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_vk_api.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_VkModel_t" Collapsed="true">
+    <Position X="19.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_vk_model.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_VkView_t" Collapsed="true">
+    <Position X="21.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_vk_view.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_WebApi_t" Collapsed="true">
+    <Position X="23.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_web_api.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_WebDialog_t" Collapsed="true">
+    <Position X="25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_web_dialog.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="qt_meta_stringdata_WebModel_t" Collapsed="true">
+    <Position X="26.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <FileName>Debug\moc_web_model.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="FuncContainer" Collapsed="true">
+    <Position X="23.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAABAACAAAAAAA=</HashCode>
+      <FileName>misc\func_container.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ApiFuncContainer" Collapsed="true">
+    <Position X="19.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAEAAABAAAAAAAAAAAAAEAAAAAAAAAAAg=</HashCode>
+      <FileName>web\api_process.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="DownloadPosition" Collapsed="true">
+    <Position X="21.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQIAAAACAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>web\download.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HotkeySlot" Collapsed="true">
+    <Position X="25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAAEAAAACAAAAAAA=</HashCode>
+      <FileName>misc\hotkey_manager.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="CBHash" Collapsed="true">
+    <Position X="19.75" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>dialogs\tabdialog.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

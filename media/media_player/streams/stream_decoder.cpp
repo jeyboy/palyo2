@@ -6,7 +6,9 @@ StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : 
     , state(Initialization)
     , videoStream(0)
     , audioStream(0)
-    , subtitleStream(0) {
+    , subtitleStream(0)
+	, ac(0)
+    , vc(0) {
 
     currFrame = new AVPacket();
     context = currContext;
