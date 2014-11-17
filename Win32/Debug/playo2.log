@@ -1,7 +1,57 @@
-﻿Построение начато 16.11.2014 21:53:17.
+﻿Построение начато 17.11.2014 4:28:13.
 Проект "C:\Users\JB\Desktop\playo2\playo2.vcxproj" в узле 2 (целевые объекты Build).
+CustomBuild:
+  Moc'ing api_process.h...
+  Moc'ing audio_player.h...
+  Moc'ing captchadialog.h...
+  Moc'ing clickable_label.h...
+  Moc'ing custom_network_access_manager.h...
+  Moc'ing download.h...
+  Moc'ing hotkey_delegate.h...
+  Moc'ing hotkey_editor.h...
+  Moc'ing hotkey_manager.h...
+  Moc'ing hotkey_model.h...
+  Moc'ing ip_checker.h...
+  Moc'ing level_tree_breadcrumb_model.h...
+  Moc'ing level_tree_breadcrumb_view.h...
+  Moc'ing level_tree_model.h...
+  Moc'ing level_tree_view.h...
+  Moc'ing library.h...
+  Moc'ing list_model.h...
+  Moc'ing list_view.h...
+  Moc'ing mainwindow.h...
+  Moc'ing model.h...
+  Moc'ing model_item_delegate.h...
+  Moc'ing notify_timer.h...
+  Moc'ing player.h...
+  Moc'ing qxtglobalshortcut.h...
+  Moc'ing relationdialog.h...
+  Moc'ing settings_dialog.h...
+  Moc'ing single_application.h...
+  Moc'ing slider.h...
+  Moc'ing soundcloud_api.h...
+  Moc'ing soundcloud_model.h...
+  Moc'ing soundcloud_view.h...
+  Moc'ing spectrum.h...
+  Moc'ing tab.h...
+  Moc'ing tabber.h...
+  Moc'ing tabdialog.h...
+  Moc'ing toolbar.h...
+  Moc'ing toolbarbutton.h...
+  Moc'ing toolbarbuttondialog.h...
+  Moc'ing toolbardialog.h...
+  Moc'ing toolbars.h...
+  Moc'ing tree_model.h...
+  Moc'ing tree_view.h...
+  Moc'ing view.h...
+  Moc'ing vk_api.h...
+  Moc'ing vk_model.h...
+  Moc'ing vk_view.h...
+  Moc'ing web_api.h...
+  Moc'ing web_dialog.h...
+  Moc'ing web_model.h...
 ClCompile:
-  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Ilibs\taglib\include /Ilibs\bass\include /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtMultimediaWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWebKitWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtMultimedia /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWebKit /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtNetwork /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtGui /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtCore /Idebug /I. /I"..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\mkspecs\win32-msvc2012" /I.\GeneratedFiles /IC:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\include\QtOpenGL /Zi /nologo /W3 /WX- /Od /Oy- /D _WINDOWS /D UNICODE /D WIN32 /D TAGLIB_NO_CONFIG /D QT_MULTIMEDIAWIDGETS_LIB /D QT_WEBKITWIDGETS_LIB /D QT_MULTIMEDIA_LIB /D QT_WEBKIT_LIB /D QT_WIDGETS_LIB /D QT_NETWORK_LIB /D QT_GUI_LIB /D QT_CORE_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt -Zm200 -w34100 -w34189 Debug\moc_api_process.cpp Debug\moc_audio_player.cpp Debug\moc_captchadialog.cpp Debug\moc_clickable_label.cpp Debug\moc_custom_network_access_manager.cpp Debug\moc_download.cpp Debug\moc_hotkey_delegate.cpp Debug\moc_hotkey_editor.cpp Debug\moc_hotkey_manager.cpp Debug\moc_hotkey_model.cpp Debug\moc_ip_checker.cpp Debug\moc_level_tree_breadcrumb_model.cpp Debug\moc_level_tree_breadcrumb_view.cpp Debug\moc_level_tree_model.cpp Debug\moc_level_tree_view.cpp Debug\moc_library.cpp Debug\moc_list_model.cpp Debug\moc_list_view.cpp Debug\moc_mainwindow.cpp Debug\moc_model.cpp Debug\moc_model_item_delegate.cpp Debug\moc_notify_timer.cpp Debug\moc_player.cpp Debug\moc_qxtglobalshortcut.cpp Debug\moc_relationdialog.cpp Debug\moc_settings_dialog.cpp Debug\moc_single_application.cpp Debug\moc_slider.cpp Debug\moc_soundcloud_api.cpp Debug\moc_soundcloud_model.cpp Debug\moc_soundcloud_view.cpp Debug\moc_spectrum.cpp Debug\moc_tab.cpp Debug\moc_tabber.cpp Debug\moc_tabdialog.cpp Debug\moc_toolbar.cpp Debug\moc_toolbarbutton.cpp Debug\moc_toolbarbuttondialog.cpp Debug\moc_toolbardialog.cpp Debug\moc_toolbars.cpp Debug\moc_tree_model.cpp Debug\moc_tree_view.cpp Debug\moc_view.cpp Debug\moc_vk_api.cpp Debug\moc_vk_model.cpp Debug\moc_vk_view.cpp Debug\moc_web_api.cpp Debug\moc_web_dialog.cpp Debug\moc_web_model.cpp web\api_process.cpp media\audio_player.cpp dialogs\captchadialog.cpp override\clickable_label.cpp override\custom_network_access_manager.cpp misc\data_store.cpp model\web\deleted_list.cpp web\download.cpp media\duration.cpp model\file_item.cpp model\folder_item.cpp misc\format.cpp media\genre.cpp model\hotkey_model\hotkey_delegate.cpp model\hotkey_model\hotkey_editor.cpp misc\hotkey_manager.cpp model\hotkey_model\hotkey_model.cpp model\hotkey_model\hotkey_model_item.cpp misc\icon_provider.cpp web\ip_checker.cpp model\level_tree_breadcrumb\level_tree_breadcrumb_model.cpp model\level_tree_breadcrumb\level_tree_breadcrumb_view.cpp model\level_tree\level_tree_model.cpp model\level_tree\level_tree_view.cpp media\library.cpp model\list\list_model.cpp model\list\list_view.cpp main.cpp mainwindow.cpp media\mediainfo.cpp model\model.cpp model\model_item.cpp model\model_item_delegate.cpp model\model_item_state.cpp override\notify_timer.cpp media\player.cpp globalshortcut\qxtglobalshortcut.cpp globalshortcut\qxtglobalshortcut_win.cpp dialogs\relationdialog.cpp misc\settings.cpp dialogs\settings_dialog.cpp single_application.cpp override\slider.cpp web\socials\soundcloud_api.cpp model\web\soundcloud\soundcloud_file.cpp model\web\soundcloud\soundcloud_model.cpp model\web\soundcloud\soundcloud_playlist.cpp model\web\soundcloud\soundcloud_view.cpp override\spectrum.cpp override\tab.cpp override\tabber.cpp dialogs\tabdialog.cpp web\auth_chemas\teu_auth.cpp override\toolbar.cpp override\toolbarbutton.cpp dialogs\toolbarbuttondialog.cpp dialogs\toolbardialog.cpp toolbars.cpp model\tree\tree_model.cpp model\tree\tree_view.cpp model\view.cpp web\socials\vk_api.cpp web\socials\vk_api_private.cpp model\web\vk\vk_file.cpp model\web\vk\vk_folder.cpp model\web\vk\vk_model.cpp model\web\vk\vk_view.cpp web\web_api.cpp dialogs\web_dialog.cpp model\web\web_model.cpp
+  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Ilibs\taglib\include /Ilibs\bass\include /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtMultimediaWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWebKitWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtMultimedia /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWebKit /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtNetwork /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtGui /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtCore /Idebug /I. /I"..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\mkspecs\win32-msvc2012" /I.\GeneratedFiles /IC:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\include\QtOpenGL /Ilibs\ffmpeg\include /Zi /nologo /W3 /WX- /Od /Oy- /D _WINDOWS /D UNICODE /D WIN32 /D TAGLIB_NO_CONFIG /D QT_MULTIMEDIAWIDGETS_LIB /D QT_WEBKITWIDGETS_LIB /D QT_MULTIMEDIA_LIB /D QT_WEBKIT_LIB /D QT_WIDGETS_LIB /D QT_NETWORK_LIB /D QT_GUI_LIB /D QT_CORE_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt -Zm200 -w34100 -w34189 Debug\moc_api_process.cpp Debug\moc_audio_player.cpp Debug\moc_captchadialog.cpp Debug\moc_clickable_label.cpp Debug\moc_custom_network_access_manager.cpp Debug\moc_download.cpp Debug\moc_hotkey_delegate.cpp Debug\moc_hotkey_editor.cpp Debug\moc_hotkey_manager.cpp Debug\moc_hotkey_model.cpp Debug\moc_ip_checker.cpp Debug\moc_level_tree_breadcrumb_model.cpp Debug\moc_level_tree_breadcrumb_view.cpp Debug\moc_level_tree_model.cpp Debug\moc_level_tree_view.cpp Debug\moc_library.cpp Debug\moc_list_model.cpp Debug\moc_list_view.cpp Debug\moc_mainwindow.cpp Debug\moc_model.cpp Debug\moc_model_item_delegate.cpp Debug\moc_notify_timer.cpp Debug\moc_player.cpp Debug\moc_qxtglobalshortcut.cpp Debug\moc_relationdialog.cpp Debug\moc_settings_dialog.cpp Debug\moc_single_application.cpp Debug\moc_slider.cpp Debug\moc_soundcloud_api.cpp Debug\moc_soundcloud_model.cpp Debug\moc_soundcloud_view.cpp Debug\moc_spectrum.cpp Debug\moc_tab.cpp Debug\moc_tabber.cpp Debug\moc_tabdialog.cpp Debug\moc_toolbar.cpp Debug\moc_toolbarbutton.cpp Debug\moc_toolbarbuttondialog.cpp Debug\moc_toolbardialog.cpp Debug\moc_toolbars.cpp Debug\moc_tree_model.cpp Debug\moc_tree_view.cpp Debug\moc_view.cpp Debug\moc_vk_api.cpp Debug\moc_vk_model.cpp Debug\moc_vk_view.cpp Debug\moc_web_api.cpp Debug\moc_web_dialog.cpp Debug\moc_web_model.cpp web\api_process.cpp media\audio_player.cpp dialogs\captchadialog.cpp override\clickable_label.cpp override\custom_network_access_manager.cpp misc\data_store.cpp model\web\deleted_list.cpp web\download.cpp media\duration.cpp model\file_item.cpp model\folder_item.cpp misc\format.cpp media\genre.cpp model\hotkey_model\hotkey_delegate.cpp model\hotkey_model\hotkey_editor.cpp misc\hotkey_manager.cpp model\hotkey_model\hotkey_model.cpp model\hotkey_model\hotkey_model_item.cpp misc\icon_provider.cpp web\ip_checker.cpp model\level_tree_breadcrumb\level_tree_breadcrumb_model.cpp model\level_tree_breadcrumb\level_tree_breadcrumb_view.cpp model\level_tree\level_tree_model.cpp model\level_tree\level_tree_view.cpp media\library.cpp model\list\list_model.cpp model\list\list_view.cpp main.cpp mainwindow.cpp media\mediainfo.cpp model\model.cpp model\model_item.cpp model\model_item_delegate.cpp model\model_item_state.cpp override\notify_timer.cpp media\player.cpp globalshortcut\qxtglobalshortcut.cpp globalshortcut\qxtglobalshortcut_win.cpp dialogs\relationdialog.cpp misc\settings.cpp dialogs\settings_dialog.cpp single_application.cpp override\slider.cpp web\socials\soundcloud_api.cpp model\web\soundcloud\soundcloud_file.cpp model\web\soundcloud\soundcloud_model.cpp model\web\soundcloud\soundcloud_playlist.cpp model\web\soundcloud\soundcloud_view.cpp override\spectrum.cpp override\tab.cpp override\tabber.cpp dialogs\tabdialog.cpp web\auth_chemas\teu_auth.cpp override\toolbar.cpp override\toolbarbutton.cpp dialogs\toolbarbuttondialog.cpp dialogs\toolbardialog.cpp toolbars.cpp model\tree\tree_model.cpp model\tree\tree_view.cpp model\view.cpp web\socials\vk_api.cpp web\socials\vk_api_private.cpp model\web\vk\vk_file.cpp model\web\vk\vk_folder.cpp model\web\vk\vk_model.cpp model\web\vk\vk_view.cpp web\web_api.cpp dialogs\web_dialog.cpp model\web\web_model.cpp
   moc_api_process.cpp
   moc_audio_player.cpp
   moc_captchadialog.cpp
@@ -133,9 +183,177 @@ c:\users\jb\desktop\playo2\libs\taglib\include\tiostream.h(54): warning C4251: T
 c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(72): warning C4005: LA_16BITS: изменение макроопределения
           c:\users\jb\desktop\playo2\media/media_player/streams/frames/video/shader.h(70): см. предыдущее определение "LA_16BITS"
   Создание кода...
-c:\users\jb\desktop\playo2\model\web\soundcloud\soundcloud_model.cpp(31): error C4716: SoundcloudModel::dropProcession: должна возвращать значение
+  Компиляция...
+  tabdialog.cpp
+  teu_auth.cpp
+  toolbar.cpp
+  toolbarbutton.cpp
+  toolbarbuttondialog.cpp
+  toolbardialog.cpp
+  toolbars.cpp
+  tree_model.cpp
+  tree_view.cpp
+  view.cpp
+  vk_api.cpp
+web\socials\vk_api.cpp(182): warning C4100: responseSlot: неиспользованный формальный параметр
+  vk_api_private.cpp
+  vk_file.cpp
+  vk_folder.cpp
+  vk_model.cpp
+  vk_view.cpp
+  web_api.cpp
+  web_dialog.cpp
+  web_model.cpp
+  Создание кода...
+  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Ilibs\taglib\include /Ilibs\bass\include /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtMultimediaWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWebKitWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtMultimedia /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWebKit /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtWidgets /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtNetwork /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtGui /I..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\include\QtCore /Idebug /I. /I"..\..\..\..\qt_vs\qt5.3.2\5.3\msvc2012_opengl\mkspecs\win32-msvc2012" /I.\GeneratedFiles /IC:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\include\QtOpenGL /Ilibs\ffmpeg\include /Zi /nologo /W3 /WX- /Od /Oy- /D _WINDOWS /D UNICODE /D WIN32 /D TAGLIB_NO_CONFIG /D QT_MULTIMEDIAWIDGETS_LIB /D QT_WEBKITWIDGETS_LIB /D QT_MULTIMEDIA_LIB /D QT_WEBKIT_LIB /D QT_WIDGETS_LIB /D QT_NETWORK_LIB /D QT_GUI_LIB /D QT_CORE_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt -Zm200 -w34100 -w34189 GeneratedFiles\qrc_picts.cpp
+  qrc_picts.cpp
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"debug\\playo2.exe" /NOLOGO /LIBPATH:C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib /LIBPATH:C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib /LIBPATH:C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib glu32.lib opengl32.lib gdi32.lib user32.lib C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib\qtmaind.lib C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib\Qt5Cored.lib "C:/Users/JB/Desktop/playo2/libs/taglib/taglib-project.lib" C:/Users/JB/Desktop/playo2/libs/bass/bass.lib C:/Users/JB/Desktop/playo2/libs/bass/bass_fx.lib C:/Users/JB/Desktop/playo2/libs/bass/bassmix.lib C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib\Qt5MultimediaWidgetsd.lib C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib\Qt5WebKitWidgetsd.lib C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib\Qt5Multimediad.lib C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib\Qt5WebKitd.lib C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib\Qt5Widgetsd.lib C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib\Qt5Networkd.lib C:\Qt_VS\Qt5.3.2\5.3\msvc2012_opengl\lib\Qt5Guid.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"debug\playo2.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /SAFESEH "/SAFESEH:NO" Win32\Debug\moc_api_process.obj
+  Win32\Debug\moc_audio_player.obj
+  Win32\Debug\moc_captchadialog.obj
+  Win32\Debug\moc_clickable_label.obj
+  Win32\Debug\moc_custom_network_access_manager.obj
+  Win32\Debug\moc_download.obj
+  Win32\Debug\moc_hotkey_delegate.obj
+  Win32\Debug\moc_hotkey_editor.obj
+  Win32\Debug\moc_hotkey_manager.obj
+  Win32\Debug\moc_hotkey_model.obj
+  Win32\Debug\moc_ip_checker.obj
+  Win32\Debug\moc_level_tree_breadcrumb_model.obj
+  Win32\Debug\moc_level_tree_breadcrumb_view.obj
+  Win32\Debug\moc_level_tree_model.obj
+  Win32\Debug\moc_level_tree_view.obj
+  Win32\Debug\moc_library.obj
+  Win32\Debug\moc_list_model.obj
+  Win32\Debug\moc_list_view.obj
+  Win32\Debug\moc_mainwindow.obj
+  Win32\Debug\moc_model.obj
+  Win32\Debug\moc_model_item_delegate.obj
+  Win32\Debug\moc_notify_timer.obj
+  Win32\Debug\moc_player.obj
+  Win32\Debug\moc_qxtglobalshortcut.obj
+  Win32\Debug\moc_relationdialog.obj
+  Win32\Debug\moc_settings_dialog.obj
+  Win32\Debug\moc_single_application.obj
+  Win32\Debug\moc_slider.obj
+  Win32\Debug\moc_soundcloud_api.obj
+  Win32\Debug\moc_soundcloud_model.obj
+  Win32\Debug\moc_soundcloud_view.obj
+  Win32\Debug\moc_spectrum.obj
+  Win32\Debug\moc_tab.obj
+  Win32\Debug\moc_tabber.obj
+  Win32\Debug\moc_tabdialog.obj
+  Win32\Debug\moc_toolbar.obj
+  Win32\Debug\moc_toolbarbutton.obj
+  Win32\Debug\moc_toolbarbuttondialog.obj
+  Win32\Debug\moc_toolbardialog.obj
+  Win32\Debug\moc_toolbars.obj
+  Win32\Debug\moc_tree_model.obj
+  Win32\Debug\moc_tree_view.obj
+  Win32\Debug\moc_view.obj
+  Win32\Debug\moc_vk_api.obj
+  Win32\Debug\moc_vk_model.obj
+  Win32\Debug\moc_vk_view.obj
+  Win32\Debug\moc_web_api.obj
+  Win32\Debug\moc_web_dialog.obj
+  Win32\Debug\moc_web_model.obj
+  Win32\Debug\qrc_picts.obj
+  Win32\Debug\api_process.obj
+  Win32\Debug\audio_player.obj
+  Win32\Debug\captchadialog.obj
+  Win32\Debug\clickable_label.obj
+  Win32\Debug\custom_network_access_manager.obj
+  Win32\Debug\data_store.obj
+  Win32\Debug\deleted_list.obj
+  Win32\Debug\download.obj
+  Win32\Debug\duration.obj
+  Win32\Debug\file_item.obj
+  Win32\Debug\folder_item.obj
+  Win32\Debug\format.obj
+  Win32\Debug\genre.obj
+  Win32\Debug\hotkey_delegate.obj
+  Win32\Debug\hotkey_editor.obj
+  Win32\Debug\hotkey_manager.obj
+  Win32\Debug\hotkey_model.obj
+  Win32\Debug\hotkey_model_item.obj
+  Win32\Debug\icon_provider.obj
+  Win32\Debug\ip_checker.obj
+  Win32\Debug\level_tree_breadcrumb_model.obj
+  Win32\Debug\level_tree_breadcrumb_view.obj
+  Win32\Debug\level_tree_model.obj
+  Win32\Debug\level_tree_view.obj
+  Win32\Debug\library.obj
+  Win32\Debug\list_model.obj
+  Win32\Debug\list_view.obj
+  Win32\Debug\main.obj
+  Win32\Debug\mainwindow.obj
+  Win32\Debug\mediainfo.obj
+  Win32\Debug\model.obj
+  Win32\Debug\model_item.obj
+  Win32\Debug\model_item_delegate.obj
+  Win32\Debug\model_item_state.obj
+  Win32\Debug\notify_timer.obj
+  Win32\Debug\player.obj
+  Win32\Debug\qxtglobalshortcut.obj
+  Win32\Debug\qxtglobalshortcut_win.obj
+  Win32\Debug\relationdialog.obj
+  Win32\Debug\settings.obj
+  Win32\Debug\settings_dialog.obj
+  Win32\Debug\single_application.obj
+  Win32\Debug\slider.obj
+  Win32\Debug\soundcloud_api.obj
+  Win32\Debug\soundcloud_file.obj
+  Win32\Debug\soundcloud_model.obj
+  Win32\Debug\soundcloud_playlist.obj
+  Win32\Debug\soundcloud_view.obj
+  Win32\Debug\spectrum.obj
+  Win32\Debug\tab.obj
+  Win32\Debug\tabber.obj
+  Win32\Debug\tabdialog.obj
+  Win32\Debug\teu_auth.obj
+  Win32\Debug\toolbar.obj
+  Win32\Debug\toolbarbutton.obj
+  Win32\Debug\toolbarbuttondialog.obj
+  Win32\Debug\toolbardialog.obj
+  Win32\Debug\toolbars.obj
+  Win32\Debug\tree_model.obj
+  Win32\Debug\tree_view.obj
+  Win32\Debug\view.obj
+  Win32\Debug\vk_api.obj
+  Win32\Debug\vk_api_private.obj
+  Win32\Debug\vk_file.obj
+  Win32\Debug\vk_folder.obj
+  Win32\Debug\vk_model.obj
+  Win32\Debug\vk_view.obj
+  Win32\Debug\web_api.obj
+  Win32\Debug\web_dialog.obj
+  Win32\Debug\web_model.obj
+level_tree_breadcrumb_model.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: static class Extensions * __cdecl Extensions::instance(void)" (?instance@Extensions@@SAPAV1@XZ) в функции "protected: void __thiscall LevelTreeBreadcrumbModel::filesRoutine(class ModelItem *,class QFileInfo)" (?filesRoutine@LevelTreeBreadcrumbModel@@IAEXPAVModelItem@@VQFileInfo@@@Z)
+level_tree_model.obj : error LNK2001: неразрешенный внешний символ ""public: static class Extensions * __cdecl Extensions::instance(void)" (?instance@Extensions@@SAPAV1@XZ)"
+list_model.obj : error LNK2001: неразрешенный внешний символ ""public: static class Extensions * __cdecl Extensions::instance(void)" (?instance@Extensions@@SAPAV1@XZ)"
+tree_model.obj : error LNK2001: неразрешенный внешний символ ""public: static class Extensions * __cdecl Extensions::instance(void)" (?instance@Extensions@@SAPAV1@XZ)"
+level_tree_breadcrumb_model.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: class QList<class QFileInfo> __thiscall Extensions::folderFiles(class QFileInfo)" (?folderFiles@Extensions@@QAE?AV?$QList@VQFileInfo@@@@VQFileInfo@@@Z) в функции "protected: void __thiscall LevelTreeBreadcrumbModel::filesRoutine(class ModelItem *,class QFileInfo)" (?filesRoutine@LevelTreeBreadcrumbModel@@IAEXPAVModelItem@@VQFileInfo@@@Z)
+level_tree_model.obj : error LNK2001: неразрешенный внешний символ ""public: class QList<class QFileInfo> __thiscall Extensions::folderFiles(class QFileInfo)" (?folderFiles@Extensions@@QAE?AV?$QList@VQFileInfo@@@@VQFileInfo@@@Z)"
+list_model.obj : error LNK2001: неразрешенный внешний символ ""public: class QList<class QFileInfo> __thiscall Extensions::folderFiles(class QFileInfo)" (?folderFiles@Extensions@@QAE?AV?$QList@VQFileInfo@@@@VQFileInfo@@@Z)"
+tree_model.obj : error LNK2001: неразрешенный внешний символ ""public: class QList<class QFileInfo> __thiscall Extensions::folderFiles(class QFileInfo)" (?folderFiles@Extensions@@QAE?AV?$QList@VQFileInfo@@@@VQFileInfo@@@Z)"
+level_tree_breadcrumb_model.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: class QList<class QFileInfo> __thiscall Extensions::folderDirectories(class QFileInfo)" (?folderDirectories@Extensions@@QAE?AV?$QList@VQFileInfo@@@@VQFileInfo@@@Z) в функции "protected: void __thiscall LevelTreeBreadcrumbModel::filesRoutine(class ModelItem *,class QFileInfo)" (?filesRoutine@LevelTreeBreadcrumbModel@@IAEXPAVModelItem@@VQFileInfo@@@Z)
+level_tree_model.obj : error LNK2001: неразрешенный внешний символ ""public: class QList<class QFileInfo> __thiscall Extensions::folderDirectories(class QFileInfo)" (?folderDirectories@Extensions@@QAE?AV?$QList@VQFileInfo@@@@VQFileInfo@@@Z)"
+list_model.obj : error LNK2001: неразрешенный внешний символ ""public: class QList<class QFileInfo> __thiscall Extensions::folderDirectories(class QFileInfo)" (?folderDirectories@Extensions@@QAE?AV?$QList@VQFileInfo@@@@VQFileInfo@@@Z)"
+tree_model.obj : error LNK2001: неразрешенный внешний символ ""public: class QList<class QFileInfo> __thiscall Extensions::folderDirectories(class QFileInfo)" (?folderDirectories@Extensions@@QAE?AV?$QList@VQFileInfo@@@@VQFileInfo@@@Z)"
+level_tree_breadcrumb_model.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: bool __thiscall Extensions::respondToExtension(class QString)const " (?respondToExtension@Extensions@@QBE_NVQString@@@Z) в функции "protected: void __thiscall LevelTreeBreadcrumbModel::filesRoutine(class ModelItem *,class QList<class QUrl>)" (?filesRoutine@LevelTreeBreadcrumbModel@@IAEXPAVModelItem@@V?$QList@VQUrl@@@@@Z)
+level_tree_model.obj : error LNK2001: неразрешенный внешний символ ""public: bool __thiscall Extensions::respondToExtension(class QString)const " (?respondToExtension@Extensions@@QBE_NVQString@@@Z)"
+list_model.obj : error LNK2001: неразрешенный внешний символ ""public: bool __thiscall Extensions::respondToExtension(class QString)const " (?respondToExtension@Extensions@@QBE_NVQString@@@Z)"
+tree_model.obj : error LNK2001: неразрешенный внешний символ ""public: bool __thiscall Extensions::respondToExtension(class QString)const " (?respondToExtension@Extensions@@QBE_NVQString@@@Z)"
+mainwindow.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: static class MediaPlayer * __cdecl MediaPlayer::instance(class QObject *)" (?instance@MediaPlayer@@SAPAV1@PAVQObject@@@Z) в функции "public: __thiscall MainWindow::MainWindow(class QWidget *)" (??0MainWindow@@QAE@PAVQWidget@@@Z)
+mainwindow.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: bool __thiscall MediaPlayer::open(class QUrl,__int64,__int64)" (?open@MediaPlayer@@QAE_NVQUrl@@_J1@Z) в функции "public: __thiscall MainWindow::MainWindow(class QWidget *)" (??0MainWindow@@QAE@PAVQWidget@@@Z)
+mainwindow.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: void __thiscall MediaPlayer::play(void)" (?play@MediaPlayer@@QAEXXZ) в функции "public: __thiscall MainWindow::MainWindow(class QWidget *)" (??0MainWindow@@QAE@PAVQWidget@@@Z)
+mainwindow.obj : error LNK2001: неразрешенный внешний символ ""private: static class Extensions * Extensions::self" (?self@Extensions@@0PAV1@A)"
+model.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: __thiscall ExtensionDialog::ExtensionDialog(class QWidget *)" (??0ExtensionDialog@@QAE@PAVQWidget@@@Z) в функции "public: virtual bool __thiscall Model::dropMimeData(class QMimeData const *,enum Qt::DropAction,int,int,class QModelIndex const &)" (?dropMimeData@Model@@UAE_NPBVQMimeData@@W4DropAction@Qt@@HHABVQModelIndex@@@Z)
+model.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: virtual __thiscall ExtensionDialog::~ExtensionDialog(void)" (??1ExtensionDialog@@UAE@XZ) в функции "public: virtual bool __thiscall Model::dropMimeData(class QMimeData const *,enum Qt::DropAction,int,int,class QModelIndex const &)" (?dropMimeData@Model@@UAE_NPBVQMimeData@@W4DropAction@Qt@@HHABVQModelIndex@@@Z)
+model_item.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: static void __cdecl Rand::shuffle(class QList<class ModelItem *> *)" (?shuffle@Rand@@SAXPAV?$QList@PAVModelItem@@@@@Z) в функции "public: void __thiscall ModelItem::shuffle(void)" (?shuffle@ModelItem@@QAEXXZ)
+debug\\playo2.exe : fatal error LNK1120: неразрешенных внешних элементов: 11
 Построение проекта "C:\Users\JB\Desktop\playo2\playo2.vcxproj" завершено (целевые объекты Build) с ошибкой.
 
 Сбой построения.
 
-Затраченное время: 00:03:40.60
+Затраченное время: 00:05:01.74

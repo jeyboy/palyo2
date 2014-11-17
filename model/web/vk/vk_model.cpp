@@ -55,6 +55,7 @@ QModelIndex VkModel::dropProcession(const QList<QUrl> & /*list*/) {
 //    ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path());
 //    filesRoutine(index, list);
 //    return model -> index(index);
+	return QModelIndex();
 }
 
 void VkModel::filesRoutine(ModelItem * /*index*/, QFileInfo /*currFile*/){

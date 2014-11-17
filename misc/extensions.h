@@ -6,7 +6,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include "misc/data_store.h"
-#include <QDebug>
+//#include <QDebug>
 
 class Extensions {
 public:

@@ -564,6 +564,30 @@
     <ClCompile Include="GeneratedFiles\qrc_picts.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="media\media_player\media_player.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_media_player.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_media_player.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="media\media_player\utils\master_clock.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\moc_master_clock.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_master_clock.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="media\media_player\utils\video_types.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="misc\extensions.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="web\api_process.h">
@@ -791,6 +815,12 @@
     <CustomBuild Include="model\web\web_model.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="media\media_player\media_player.h">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="media\media_player\utils\master_clock.h">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="dialogs\captchadialog.ui">
@@ -985,6 +1015,27 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_web_dialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="media\media_player\streams\frames\audio_frame.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="media\media_player\resamplers\audio_resampler.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="media\media_player\utils\media_player_libs.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="media\media_player\utils\media_player_utils.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="media\media_player\utils\system_utils.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="media\media_player\utils\video_types.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="misc\extensions.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
