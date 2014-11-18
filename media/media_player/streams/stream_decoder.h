@@ -64,8 +64,7 @@ private:
     QString defaultLang;
     enum DecoderState state;
 
-    int ac = 0;
-    int vc = 0;
+    int ac, vc;
 
     AVFormatContext * context;
     AVPacket * currFrame;

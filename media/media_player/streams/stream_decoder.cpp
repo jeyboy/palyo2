@@ -2,6 +2,8 @@
 #include <qDebug>
 
 StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : Stream(parent)
+    , ac(0)
+    , vc(0)
     , defaultLang("rus")
     , state(Initialization)
     , videoStream(0)
@@ -116,11 +118,11 @@ void StreamDecoder::routine() {
                 continue;
             }
 
-            if (currFrame -> stream_index == audioStream -> index() && audioStream -> isValid()) {
+            if (audioStream -> isValid() && currFrame -> stream_index == audioStream -> index()) {
                 audioStream -> decode(currFrame);
                 ac++;
             }
-            else if (currFrame -> stream_index == videoStream -> index() && videoStream -> isValid()) {
+            else if (videoStream -> isValid() && currFrame -> stream_index == videoStream -> index()) {
                 videoStream -> decode(currFrame);
                 vc++;
             }

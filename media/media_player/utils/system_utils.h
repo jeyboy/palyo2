@@ -12,13 +12,14 @@
 #endif
 
 
-static QString procMemoryUsage() {
+static QString procMemoryUsage(float del = 1) {
     #ifdef Q_OS_WIN
         PROCESS_MEMORY_COUNTERS_EX pmc;
         pmc.cb = sizeof(pmc);
         GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-        return QString::number(pmc.PrivateUsage);
+        return QString::number(pmc.PrivateUsage / del);
     #else
+        Q_UNUSED(del);
         return QString("pont");
     #endif
 }
