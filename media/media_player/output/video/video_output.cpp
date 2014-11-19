@@ -70,6 +70,7 @@ void VideoOutput::setFrame(void * frame) {
 }
 
 void VideoOutput::hideMouse() {
+    if (!isFullScreen()) return;
     QApplication::setOverrideCursor(Qt::BlankCursor);
     offScreenSaver();
 }
