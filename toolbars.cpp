@@ -380,6 +380,7 @@ QToolButton * ToolBars::initiateVkButton() {
         vkToolButton -> setToolTip("VKontakte(vk.com)");
 
         QMenu * vkMenu = new QMenu(vkToolButton);
+        vkMenu -> addAction("Reconect", parent(), SLOT(openVKTabDialog()));
         vkMenu -> addAction("Open your tab", parent(), SLOT(showVKTabDialog()));
         vkMenu -> addAction("Open friend/group tab", parent(), SLOT(showVKRelTabDialog()));
         vkToolButton -> setMenu(vkMenu);
@@ -405,6 +406,7 @@ QToolButton * ToolBars::initiateSoundcloudButton() {
         soundcloudToolButton -> setPopupMode(QToolButton::InstantPopup);
 
         QMenu * vkMenu = new QMenu(soundcloudToolButton);
+        vkMenu -> addAction("Reconect", parent(), SLOT(openSoundcloudTabDialog()));
         vkMenu -> addAction("Open your tab", parent(), SLOT(showSoundcloudTabDialog()));
         vkMenu -> addAction("Open friend/group tab", parent(), SLOT(showSoundcloudRelTabDialog()));
         soundcloudToolButton -> setMenu(vkMenu);
