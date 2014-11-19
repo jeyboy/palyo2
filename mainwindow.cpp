@@ -248,32 +248,36 @@ void MainWindow::showSoundcloudRelTabDialog() {
     }
 }
 
+void MainWindow::openVKTabDialog() {
+    WebDialog dialog(this, VkApi::instance(), "VK auth");
+    if (dialog.exec() == QDialog::Accepted) {
+        ui -> tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
+        ToolBars::instance(this) -> initiateVkButton();
+    } else {
+        QMessageBox::information(this, "VK", VkApi::instance() -> getError());
+    }
+}
+
 void MainWindow::showVKTabDialog() {
     if (VkApi::instance() -> isConnected()) {
         ui -> tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
+    } else openVKTabDialog();
+}
+
+void MainWindow::openSoundcloudTabDialog() {
+    WebDialog dialog(this, SoundcloudApi::instance(), "Soundcloud auth");
+    if (dialog.exec() == QDialog::Accepted) {
+        ui -> tabber -> addTab("SC [YOU]", TabDialog::soundcloudSettings());
+        ToolBars::instance(this) -> initiateSoundcloudButton();
     } else {
-        WebDialog dialog(this, VkApi::instance(), "VK auth");
-        if (dialog.exec() == QDialog::Accepted) {
-            ui -> tabber -> addTab("VK [YOU]", TabDialog::VKSettings());
-            ToolBars::instance(this) -> initiateVkButton();
-        } else {
-            QMessageBox::information(this, "VK", VkApi::instance() -> getError());
-        }
+        QMessageBox::information(this, "Soundcloud", SoundcloudApi::instance() -> getError());
     }
 }
 
 void MainWindow::showSoundcloudTabDialog() {
     if (SoundcloudApi::instance() -> isConnected()) {
         ui -> tabber -> addTab("SC [YOU]", TabDialog::soundcloudSettings());
-    } else {
-        WebDialog dialog(this, SoundcloudApi::instance(), "Soundcloud auth");
-        if (dialog.exec() == QDialog::Accepted) {
-            ui -> tabber -> addTab("SC [YOU]", TabDialog::soundcloudSettings());
-            ToolBars::instance(this) -> initiateSoundcloudButton();
-        } else {
-            QMessageBox::information(this, "Soundcloud", SoundcloudApi::instance() -> getError());
-        }
-    }
+    } else openSoundcloudTabDialog();
 }
 
 void MainWindow::outputActiveItem(ModelItem *, ModelItem * to) {

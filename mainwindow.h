@@ -50,7 +50,9 @@ private slots:
     void showVKRelTabDialog();
     void showSoundcloudRelTabDialog();
 
+    void openVKTabDialog();
     void showVKTabDialog();
+    void openSoundcloudTabDialog();
     void showSoundcloudTabDialog();
 
     void showAttTabDialog(Tab * tab = 0);
