@@ -11,6 +11,8 @@ public:
     VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     ~VideoStream();
 
+    int calcDelay();
+
     bool isBlocked();
     void flushData();
     void suspendStream();

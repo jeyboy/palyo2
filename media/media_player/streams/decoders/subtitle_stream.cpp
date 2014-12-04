@@ -10,6 +10,10 @@ SubtitleStream::SubtitleStream(QObject * parent, AVFormatContext * context, int 
     }
 }
 
+int SubtitleStream::calcDelay() {
+    return 50;//frames.size() == 0 ? 0 : frames.size();
+}
+
 void SubtitleStream::suspend() {
     MediaStream::suspend();
 }

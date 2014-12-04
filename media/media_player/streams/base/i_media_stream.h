@@ -8,13 +8,13 @@
 //#define FRAMES_LIMIT 25
 //#define PACKETS_LIMIT 12
 
-#define FRAMES_LIMIT 30
-#define PACKETS_LIMIT 5
+//#define FRAMES_LIMIT 30
+//#define PACKETS_LIMIT 5
 
 class IMediaStream {
 
 public:
-    IMediaStream(AVFormatContext * context, int streamIndex) {
+    IMediaStream(AVFormatContext * context, int streamIndex) : packetsBufferLen(5), framesBufferLen(30) {
         stream = 0;
         codec_context = 0;
         codec = 0;
@@ -55,7 +55,7 @@ public:
 
         is_lossless = codec -> capabilities & CODEC_CAP_LOSSLESS;
         is_vbr = codec -> capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE;
-
+        is_planar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
 
         AVDictionary *opts = NULL;
 
@@ -91,7 +91,7 @@ public:
 
     inline int index() const { return uindex; }
 
-    inline bool isBlocked() { return valid && packets.size() > PACKETS_LIMIT; }
+    inline bool isBlocked() { return valid && packets.size() > packetsBufferLen; }
     inline bool isValid() const { return valid; }
 
     inline bool hasPackets() { return !packets.isEmpty(); }
@@ -113,7 +113,11 @@ public:
     }
 
 protected:
+    int packetsBufferLen;
+    int framesBufferLen;
+
     bool valid;
+    bool is_planar;
     bool is_attachment;
     bool is_lossless;
     bool is_vbr;

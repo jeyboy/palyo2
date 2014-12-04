@@ -15,6 +15,8 @@ public:
     AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     ~AudioStream();
 
+    int calcDelay();
+
     bool isBlocked();
 
     void flushData();
@@ -36,6 +38,7 @@ protected:
 
 private:
     int defaultChannelLayout;
+    int framesPerBuffer;
 
     bool resampleRequire;
     AudioResampler * resampler;

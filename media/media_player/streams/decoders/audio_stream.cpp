@@ -23,6 +23,11 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
         QAudioFormat format;
         fillFormat(format);
 
+        framesPerBuffer = is_planar ? codec_context -> channels : 1;
+        packetsBufferLen = framesPerBuffer * 5;
+        framesBufferLen = framesPerBuffer * 10;
+
+
         output = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, parent);
 //        output -> setNotifyInterval(20);
         output -> setVolume(1.0);
@@ -39,8 +44,12 @@ AudioStream::~AudioStream() {
     flushData();
 }
 
+int AudioStream::calcDelay() {
+    return frames.size() == 0 ? 0 : (frames.size() / framesPerBuffer) * 4;
+}
+
 bool AudioStream::isBlocked() {
-    return MediaStream::isBlocked() || frames.size() >= FRAMES_LIMIT;
+    return MediaStream::isBlocked() || frames.size() >= framesBufferLen;
 }
 
 void AudioStream::suspendStream() {
@@ -69,7 +78,7 @@ void AudioStream::routine() {
     if (pauseRequired) return;
 
     // TODO: mutex required for frames
-    if (isEmpty || frames.size() >= FRAMES_LIMIT) {
+    if (isEmpty || frames.size() >= framesBufferLen) {
         msleep(2);
         return;
     }

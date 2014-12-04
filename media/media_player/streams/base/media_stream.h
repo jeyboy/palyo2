@@ -11,6 +11,7 @@ public:
     virtual ~MediaStream();
 
     inline bool requirePreload() { return !valid || (valid && packets.isEmpty()); }
+    virtual int calcDelay() = 0;
 public slots:
     void rejectEof();
     void eofDetected();

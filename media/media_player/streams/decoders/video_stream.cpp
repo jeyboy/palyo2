@@ -13,6 +13,9 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
         int width, height;
         Screen::screenSize(width, height);
 
+//        packetsBufferLen = 5;
+//        framesBufferLen = 30;
+
         width = qMin((int)(width * 0.6), codec_context -> width);
         height = qMin((int)(height * 0.6), codec_context -> height);
 
@@ -37,8 +40,12 @@ VideoStream::~VideoStream() {
     delete resampler;  
 }
 
+int VideoStream::calcDelay() {
+    return output == 0 || is_attachment ? 50 : output -> bufferSize();
+}
+
 bool VideoStream::isBlocked() {
-    return MediaStream::isBlocked() || (output && output -> bufferSize() >= FRAMES_LIMIT);
+    return MediaStream::isBlocked() && (output && output -> bufferSize() >= framesBufferLen);
 }
 
 void VideoStream::routine() {
@@ -47,7 +54,7 @@ void VideoStream::routine() {
     if (!pauseRequired && isEmpty && eof) suspend();
     if (pauseRequired) return;
 
-    if (isEmpty || output -> bufferSize() >= FRAMES_LIMIT) {
+    if (isEmpty || output -> bufferSize() >= framesBufferLen) {
         msleep(2);
         return;
     }

@@ -93,13 +93,19 @@ void StreamDecoder::setVolume(uint val) {
 //TODO: while eof Stream::run delay must be minimal
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
-    if (videoStream -> isBlocked() || audioStream -> isBlocked() || pauseRequired) {
-        msleep(10);
+    qDebug() << "decoder";
+    int del = qMin(videoStream -> calcDelay(), audioStream -> calcDelay());
+    // del is to small
+
+    if (del > 2 || pauseRequired) {
+        qDebug() << "!!!!!!!!!!!!!!!!!!!!!! " << del;
+        msleep(del);
         return;
     }
 
     int status;
-    bool preload = audioStream -> requirePreload() && videoStream -> requirePreload();
+    bool preload = del == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
+    qDebug() << "decoder proceed " << preload;
     state = Process;
 
     while (true) {
