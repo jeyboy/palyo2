@@ -27,10 +27,12 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
 }
 
 VideoStream::~VideoStream() {
-    flushData();
-    output -> setRender(none);
-    delete output;
-    delete resampler;  
+    if (valid) {
+        flushData();
+        output -> setRender(none);
+        delete output;
+        delete resampler;
+    }
 }
 
 int VideoStream::calcDelay() {
@@ -45,10 +47,21 @@ void VideoStream::routine() {
     bool isEmpty = packets.isEmpty();
 
     if (!pauseRequired && isEmpty && eof) suspend();
+
+    if (is_attachment && isEmpty) {
+        msleep(100);
+        return;
+    }
+
     if (pauseRequired) return;
 
-    if (isEmpty || frames.size() >= framesBufferLen) {
+    if (isEmpty) {
         msleep(2);
+        return;
+    }
+
+    if (frames.size() >= framesBufferLen) {
+        msleep(frames.size() / 2);
         return;
     }
 

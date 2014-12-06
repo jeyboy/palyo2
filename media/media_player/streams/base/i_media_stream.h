@@ -55,7 +55,7 @@ public:
 
         is_lossless = codec -> capabilities & CODEC_CAP_LOSSLESS;
         is_vbr = codec -> capabilities & CODEC_CAP_VARIABLE_FRAME_SIZE;
-        is_planar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
+        is_planar = av_sample_fmt_is_planar(codec_context -> sample_fmt); /*&& codec_context -> channels > AV_NUM_DATA_POINTERS */
 
         AVDictionary *opts = NULL;
 

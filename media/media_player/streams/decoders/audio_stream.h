@@ -40,6 +40,7 @@ protected:
 private:
     int defaultChannelLayout;
     int framesPerBuffer;
+    int sleep_correlation;
 
     bool resampleRequire;
     AudioResampler * resampler;

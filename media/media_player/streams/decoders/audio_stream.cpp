@@ -2,6 +2,7 @@
 
 AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
     : QIODevice(parent), MediaStream(context, streamIndex, parent, priority)
+    , sleep_correlation(10)
     , defaultChannelLayout(AV_CH_LAYOUT_STEREO)
     , resampleRequire(false)
     , resampler(0) {
@@ -21,10 +22,9 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
         QAudioFormat format;
         fillFormat(format);
 
-        framesPerBuffer = is_planar ? codec_context -> channels : 1;
-        packetsBufferLen = framesPerBuffer * 5;
-        framesBufferLen = framesPerBuffer * 10;
-
+        framesPerBuffer = codec_context -> channels; //is_planar ? codec_context -> channels : 1;
+        packetsBufferLen = framesPerBuffer * 10;
+        framesBufferLen = framesPerBuffer * 15;
 
         output = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, parent);
 //        output -> setNotifyInterval(20);
@@ -71,14 +71,24 @@ void AudioStream::flushData() {
 }
 
 void AudioStream::routine() {
+    qDebug() << " $$$ " << sleep_correlation;
+    if (pauseRequired) return;
+
     bool isEmpty = packets.isEmpty();
 
     if (!pauseRequired && isEmpty && eof) suspendStream();
-    if (pauseRequired) return;
 
     // TODO: mutex required for frames
-    if (isEmpty || frames.size() >= framesBufferLen) {
-        msleep(2);
+    if (isEmpty) {
+        qDebug() << " AUDIO EMPTY";
+        msleep(sleep_correlation);
+        return;
+    }
+
+    if (frames.size() >= framesBufferLen) {
+        qDebug() << " AUDIO FULL";
+        sleep_correlation = time_buff * 50; // take half of time buff // 2
+        msleep(sleep_correlation);
         return;
     }
 
