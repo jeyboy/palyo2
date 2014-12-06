@@ -17,7 +17,7 @@ public:
     virtual ~RenderInterface();
 
     virtual void setQuality(const Quality & quality) = 0;
-    void setFrame(VideoFrame * frame);
+//    void setFrame(VideoFrame * frame);
     virtual void resizeViewport(int w, int h) = 0;
     virtual enum RenderType getRenderType() const = 0;
 
@@ -25,8 +25,10 @@ signals:
     void closed();
     void updated();
     void fpsChanged(int val);
+    void frameNeeded(void *&);
 
 private slots:
+    void frameInit();
     void fpsCalculation();
 
 protected:
@@ -43,6 +45,7 @@ protected:
     VideoFrame * vFrame;
     QMutex mutex;
     QTimer timer;
+    QTimer frameTimer;
 };
 
 #endif // RENDER_INTERFACE_H

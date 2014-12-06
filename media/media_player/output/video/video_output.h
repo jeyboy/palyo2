@@ -19,7 +19,7 @@ public:
 public slots:
     void fpsChanged(int fpsVal);
     void titleUpdate();
-    void setFrame(void * frame);
+//    void setFrame(void * frame);
 protected slots:
     void hideMouse();
 

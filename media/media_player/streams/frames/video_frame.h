@@ -25,6 +25,8 @@ struct VideoFrame {
     QImage * asImage() { return buffer -> asQImage(); }
     AVPicture * asPicture() { return buffer -> asAVPicture(); }
 
+    bool skip() { return buffer == 0;}
+
     uint calcDelay() {
         uint res = 40;
 

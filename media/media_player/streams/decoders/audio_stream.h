@@ -21,11 +21,12 @@ public:
 
     void flushData();
     void suspendStream();
-    void resumeStream();
+    void resumeStream();   
 
     uint getVolume() const;
     void setVolume(uint val);
 
+    void nextFrame(void *& ret) { ret = 0; qDebug() << "STTTTTTTTTTTTTTTUUUUUUUUUUUUUUUUUBBBBBBBBBBB"; } // stub
 protected:
     void routine();
     qint64 readData(char *data, qint64 maxlen);

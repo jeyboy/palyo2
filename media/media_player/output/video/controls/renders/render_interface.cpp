@@ -2,9 +2,6 @@
 
 #include <QDebug>
 
-//TODO: hide mouse cursor after some watch time
-//TODO: try to move cursor, when it hidden, for monitor sleep blocking
-
 RenderInterface::RenderInterface(QWidget* parent) : QGLWidget(parent)
   , fpsCounter(0)
   , vFrame(0) {
@@ -15,6 +12,7 @@ RenderInterface::RenderInterface(QWidget* parent) : QGLWidget(parent)
 
     setAttribute(Qt::WA_OpaquePaintEvent, true);
     setAttribute(Qt::WA_PaintOnScreen, true);
+    frameInit();
     fpsCalculation();
 }
 
@@ -24,23 +22,29 @@ RenderInterface::~RenderInterface() {
     mutex.unlock();
 }
 
-void RenderInterface::setFrame(VideoFrame * frame) {
-    if (frame) {
-        mutex.lock();
-        delete vFrame;
-        vFrame = frame;
-        mutex.unlock();
-        emit updated();
-        repaint();
-    }
-}
-
 //void RenderInterface::repaint() {
 //    QWidget::repaint();
 //    paintFrame();
 //}
 
 void RenderInterface::redrawed() { fpsCounter++; }
+
+void RenderInterface::frameInit() {
+    VideoFrame * frame = 0;
+    emit frameNeeded((void *&)frame);
+    if (frame) {
+        if (!frame -> skip()) {
+            qDebug() << "frame inited";
+            mutex.lock();
+            delete vFrame;
+            vFrame = frame;
+            mutex.unlock();
+            emit updated();
+            repaint();
+        }
+        frameTimer.singleShot(frame -> calcDelay(), this, SLOT(frameInit()));
+    } else frameTimer.singleShot(5, this, SLOT(frameInit()));
+}
 
 void RenderInterface::fpsCalculation() {
     emit fpsChanged(fpsCounter);

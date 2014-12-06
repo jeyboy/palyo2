@@ -22,30 +22,23 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
         RenderType type = gl_plus;
 
         resampler = new VideoResampler(codec_context, type == hardware || type == gl);
-        output = new BaseOutput(
-                    this,
-                    type == hardware || type == gl ? type : (resampler -> isGLShaderCompatible() ? gl_plus : gl),
-                    width,
-                    height);
+        output = new VideoOutput(this, type == hardware || type == gl ? type : (resampler -> isGLShaderCompatible() ? gl_plus : gl), width, height);
     }
 }
 
 VideoStream::~VideoStream() {
-    if (output) {
-        output -> stop();
-        output -> wait();
-    }
-
+    flushData();
+    output -> setRender(none);
     delete output;
     delete resampler;  
 }
 
 int VideoStream::calcDelay() {
-    return output == 0 || is_attachment ? 50 : output -> bufferSize();
+    return output == 0 || is_attachment ? 50 : frames.size();
 }
 
 bool VideoStream::isBlocked() {
-    return MediaStream::isBlocked() && (output && output -> bufferSize() >= framesBufferLen);
+    return MediaStream::isBlocked() && (output && frames.size() >= framesBufferLen);
 }
 
 void VideoStream::routine() {
@@ -54,7 +47,7 @@ void VideoStream::routine() {
     if (!pauseRequired && isEmpty && eof) suspend();
     if (pauseRequired) return;
 
-    if (isEmpty || output -> bufferSize() >= framesBufferLen) {
+    if (isEmpty || frames.size() >= framesBufferLen) {
         msleep(2);
         return;
     }
@@ -94,7 +87,8 @@ void VideoStream::routine() {
 //                float packet_time = packet -> duration * av_q2d(stream -> time_base);
 //                time_buff += packet_time;
 //                qDebug() << "vdur " << time_buff;
-                output -> proceedFrame(calcPts(new VideoFrame(buff, -1, -1, aspect_ratio)));
+
+                frames.append(calcPts(new VideoFrame(buff, -1, -1, aspect_ratio)));
             }
         } else {
             qWarning("Could not get a full picture from this frame");
@@ -113,19 +107,33 @@ void VideoStream::routine() {
 }
 
 void VideoStream::suspendStream() {
-    output -> suspend();
+//    output -> suspend();
     MediaStream::suspendStream();
 }
 
 void VideoStream::resumeStream() {
     MasterClock::instance() -> resetMain();
-    output -> resume();
+//    output -> resume();
     MediaStream::resume();
+}
+
+void VideoStream::changeRenderType(RenderType type) {
+    output -> setRender(type);
+}
+
+void VideoStream::nextFrame(void *& ret) {
+//    mutex -> lock();
+    if (pauseRequired)
+        ret = new VideoFrame(); // create skip frame
+    else if (!frames.isEmpty())
+        ret = frames.takeFirst();
+//    mutex -> unlock();
 }
 
 void VideoStream::flushData() {
     MediaStream::dropPackets();
-    output -> flushData();
+    qDeleteAll(frames);
+    frames.clear();
     avcodec_flush_buffers(codec_context);
 }
 

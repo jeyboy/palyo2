@@ -12,6 +12,9 @@ VideoOutput::VideoOutput(QObject * parent, RenderType type, int width, int heigh
     setLayout(newLayout);
     setRender(type);
 
+    if (screen)
+        connect(screen, SIGNAL(frameNeeded(void*&)), parent, SLOT(nextFrame(void *&)));
+
     panel -> show();
     panel -> raise();
 
@@ -62,12 +65,12 @@ void VideoOutput::titleUpdate() {
     setWindowTitle(temp);
 }
 
-void VideoOutput::setFrame(void * frame) {
-    if (screen == 0)
-        delete (VideoFrame *)frame;
-    else
-        screen -> setFrame((VideoFrame *)frame);
-}
+//void VideoOutput::setFrame(void * frame) {
+//    if (screen == 0)
+//        delete (VideoFrame *)frame;
+//    else
+//        screen -> setFrame((VideoFrame *)frame);
+//}
 
 void VideoOutput::hideMouse() {
     if (!isFullScreen()) return;

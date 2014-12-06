@@ -13,6 +13,8 @@ public:
     void suspend();
     void resume();
     void flushData();
+
+    void nextFrame(void *& ret) { ret = 0; qDebug() << "STTTTTTTTTTTTTTTUUUUUUUUUUUUUUUUUBBBBBBBBBBB"; } // stub
 protected:
     void routine();
 };

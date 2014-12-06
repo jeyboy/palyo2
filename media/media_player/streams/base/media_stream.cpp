@@ -1,8 +1,9 @@
 #include "media_stream.h"
 
 MediaStream::MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority)
-    : IMediaStream(context, streamIndex), Stream(parent)
-  , eof(false) {
+    : IMediaStream(context, streamIndex)
+    , Stream(parent)
+    , eof(false) {
 
     if (valid) {
         connect(parent, SIGNAL(eofRejectRequired()), this, SLOT(rejectEof()), Qt::DirectConnection);

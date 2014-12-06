@@ -116,7 +116,6 @@ SOURCES += main.cpp\
     media/media_player/output/video/controls/control_panel.cpp \
     media/media_player/output/video/controls/output_container.cpp \
     media/media_player/output/video/video_output.cpp \
-    media/media_player/output/video/base_output.cpp \
     media/media_player/output/video/controls/renders/render_interface.cpp \
     media/media_player/output/video/controls/renders/hardware_render.cpp \
     media/media_player/output/video/controls/renders/gl_render.cpp \
@@ -223,7 +222,6 @@ HEADERS  += mainwindow.h \
     media/media_player/output/video/controls/control_panel.h \
     media/media_player/output/video/controls/output_container.h \
     media/media_player/output/video/video_output.h \
-    media/media_player/output/video/base_output.h \
     media/media_player/output/video/controls/renders/render_interface.h \
     media/media_player/output/video/controls/renders/hardware_render.h \
     media/media_player/output/video/controls/renders/gl_render.h \
