@@ -34,7 +34,6 @@ void RenderInterface::frameInit() {
     emit frameNeeded((void *&)frame);
     if (frame) {
         if (!frame -> skip()) {
-            qDebug() << "frame inited";
             mutex.lock();
             delete vFrame;
             vFrame = frame;
