@@ -8,10 +8,12 @@ struct AudioFrame {
     AudioFrame() {
         buffer = new QByteArray(4096, 0);
         bufferPTS = 0;
+        time_length = 0;
     }
-    AudioFrame(QByteArray * data, double pts) {
+    AudioFrame(QByteArray * data, double pts, float length) {
         buffer = data;
         bufferPTS = pts;
+        time_length = length;
     }
 
     ~AudioFrame() {
@@ -20,6 +22,7 @@ struct AudioFrame {
 
     QByteArray * buffer;
     double bufferPTS;
+    float time_length;
 };
 
 #endif // AUDIO_FRAME_H

@@ -50,7 +50,6 @@ MainWindow::MainWindow(QWidget *parent) :
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 
     MediaPlayer::instance() -> play();
-    qDebug() << "HUY: " << procMemoryUsage();
 }
 
 void MainWindow::locationCorrection() {

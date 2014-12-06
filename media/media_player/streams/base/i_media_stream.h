@@ -14,7 +14,7 @@
 class IMediaStream {
 
 public:
-    IMediaStream(AVFormatContext * context, int streamIndex) : packetsBufferLen(5), framesBufferLen(30) {
+    IMediaStream(AVFormatContext * context, int streamIndex) : time_buff(0), packetsBufferLen(5), framesBufferLen(30) {
         stream = 0;
         codec_context = 0;
         codec = 0;
@@ -89,6 +89,10 @@ public:
         delete codec;
     }
 
+    int calcDelay() {
+        return time_buff == 0 ? 0 : time_buff * 80; // take only 8/10 from the time buffer for delay
+    }
+
     inline int index() const { return uindex; }
 
     inline bool isBlocked() { return valid && packets.size() > packetsBufferLen; }
@@ -109,10 +113,13 @@ public:
             while(packets.size() > 0)
                 av_free_packet(packets.takeFirst());
             packets.clear();// maybe not ?
+            time_buff = 0;
         mutex -> unlock();
     }
 
 protected:
+    float time_buff;
+
     int packetsBufferLen;
     int framesBufferLen;
 

@@ -90,8 +90,12 @@ void VideoStream::routine() {
 
 //            MasterClock::instance() ->
 
-            if (buff)
+            if (buff) {
+//                float packet_time = packet -> duration * av_q2d(stream -> time_base);
+//                time_buff += packet_time;
+//                qDebug() << "vdur " << time_buff;
                 output -> proceedFrame(calcPts(new VideoFrame(buff, -1, -1, aspect_ratio)));
+            }
         } else {
             qWarning("Could not get a full picture from this frame");
 //            char bla[AV_ERROR_MAX_STRING_SIZE];
@@ -145,7 +149,7 @@ double VideoStream::syncPts(AVFrame *src_frame) {
     /* update the video clock */
     double frame_delay = av_q2d(codec_context -> time_base);
     /* if we are repeating a frame, adjust clock accordingly */
-    frame_delay += src_frame -> repeat_pict * (frame_delay * 0.5);
+    frame_delay += src_frame -> repeat_pict * frame_delay;// * 0.5);
     return /*MasterClock::instance() -> video() + */frame_delay;
 //    MasterClock::instance() -> iterateVideo(frame_delay);
 }

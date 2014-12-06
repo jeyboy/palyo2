@@ -93,7 +93,7 @@ void StreamDecoder::setVolume(uint val) {
 //TODO: while eof Stream::run delay must be minimal
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
-    qDebug() << "decoder";
+//    qDebug() << "decoder";
     int del = qMin(videoStream -> calcDelay(), audioStream -> calcDelay());
     // del is to small
 
@@ -105,7 +105,7 @@ void StreamDecoder::routine() {
 
     int status;
     bool preload = del == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
-    qDebug() << "decoder proceed " << preload;
+//    qDebug() << "decoder proceed " << preload;
     state = Process;
 
     while (true) {

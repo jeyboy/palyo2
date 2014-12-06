@@ -15,7 +15,7 @@ public:
     AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
     ~AudioStream();
 
-    int calcDelay();
+//    int calcDelay();
 
     bool isBlocked();
 

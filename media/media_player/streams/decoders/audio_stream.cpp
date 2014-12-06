@@ -7,9 +7,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int stream
     , resampler(0) {
 
     if (valid) {
-        //TODO: planar flag need for build of correct visualisation
-
-//        isPlanar = (codec_context -> channels > AV_NUM_DATA_POINTERS && av_sample_fmt_is_planar(codec_context -> sample_fmt));
+        // if (is_planar)
         //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
         //              << "frame->data. Therefore, to access the audio data, you need to use\n"
         //              << "frame->extended_data to access the audio data. It's planar, so\n"
@@ -44,9 +42,10 @@ AudioStream::~AudioStream() {
     flushData();
 }
 
-int AudioStream::calcDelay() {
-    return frames.size() == 0 ? 0 : (frames.size() / framesPerBuffer) * 4;
-}
+//int AudioStream::calcDelay() {
+////    return frames.size() == 0 ? 0 : (frames.size() / framesPerBuffer) * 4;
+//    return time_buff == 0 ? 0 : time_buff * 80; // take only 8/10 from the time buffer for delay
+//}
 
 bool AudioStream::isBlocked() {
     return MediaStream::isBlocked() || frames.size() >= framesBufferLen;
@@ -107,7 +106,9 @@ void AudioStream::routine() {
                     memcpy(ar -> data(), (const char*)frame -> data[0], frame -> linesize[0]);
                 }
 
-                frames.append(new AudioFrame(ar, calcPts(packet)));
+                float packet_time = packet -> duration * av_q2d(stream -> time_base);
+                time_buff += packet_time;
+                frames.append(new AudioFrame(ar, calcPts(packet), packet_time));
             } else {
                 qDebug() << "Could not get audio data from this frame";
             }
@@ -140,6 +141,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
             memcpy(out, currFrame -> buffer -> data(), currFrame -> buffer -> size());
             reslen += currFrame -> buffer -> size();
             out += currFrame -> buffer -> size();
+            time_buff -= currFrame -> time_length;
             MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
             delete currFrame;
         }
