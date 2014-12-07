@@ -237,7 +237,9 @@ HEADERS  += mainwindow.h \
     media/media_player/utils/video_types.h \
     media/media_player/streams/frames/video/video_blending.h \
     media/media_player/utils/system_utils.h \
-    memory_profiler/memory_profiler.h
+    memory_profiler/memory_profiler.h \
+    media/media_player/output/audio/spectrum.h \
+    media/media_player/output/audio/audio_info.h
 
 unix:!mac {
         QT += gui-private

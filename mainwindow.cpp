@@ -46,8 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Shakra – Trapped.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
-      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
+      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
+//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 
     MediaPlayer::instance() -> play();
 }

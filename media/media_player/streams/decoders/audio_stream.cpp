@@ -80,13 +80,11 @@ void AudioStream::routine() {
 
     // TODO: mutex required for frames
     if (isEmpty) {
-        qDebug() << " AUDIO EMPTY";
         msleep(sleep_correlation);
         return;
     }
 
     if (frames.size() >= framesBufferLen) {
-        qDebug() << " AUDIO FULL";
         sleep_correlation = time_buff * 50; // take half of time buff // 2
         msleep(sleep_correlation);
         return;

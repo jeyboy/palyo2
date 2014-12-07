@@ -12,7 +12,7 @@ public:
 
     inline bool requirePreload() { return !valid || (valid && packets.isEmpty()); }
 public slots:
-    virtual void nextFrame(void *& ret) { ret = 0; qDebug() << "STTTTTTTTTTTTTTTUUUUUUUUUUUUUUUUUBBBBBBBBBBB"; } // stub
+    virtual void nextFrame(void *& ret) { ret = 0; } // stub
     void rejectEof();
     void eofDetected();
     virtual void suspendStream();

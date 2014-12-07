@@ -4,6 +4,7 @@
 #include "media/media_player/resamplers/audio_resampler.h"
 #include "media/media_player/streams/base/media_stream.h"
 #include "../frames/audio_frame.h"
+#include "media/media_player/output/audio/spectrum.h"
 
 //#include <QAudioDeviceInfo>
 #include <QAudioOutput>
@@ -26,7 +27,7 @@ public:
     uint getVolume() const;
     void setVolume(uint val);
 
-    void nextFrame(void *& ret) { ret = 0; qDebug() << "STTTTTTTTTTTTTTTUUUUUUUUUUUUUUUUUBBBBBBBBBBB"; } // stub
+    void nextFrame(void *& ret) { ret = 0; } // stub
 protected:
     void routine();
     qint64 readData(char *data, qint64 maxlen);
