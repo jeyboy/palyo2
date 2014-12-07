@@ -71,7 +71,6 @@ void AudioStream::flushData() {
 }
 
 void AudioStream::routine() {
-    qDebug() << " $$$ " << sleep_correlation;
     if (pauseRequired) return;
 
     bool isEmpty = packets.isEmpty();
@@ -138,6 +137,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
 
     if (!pauseRequired && !frames.isEmpty()) {
         char * out = data;
+        int k = 0;
         while(!frames.isEmpty()) {
             currFrame = frames.takeFirst();
 
@@ -151,9 +151,11 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
             out += currFrame -> buffer -> size();
             time_buff -= currFrame -> time_length;
             MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+            k++;
             delete currFrame;
         }
 
+        qDebug() << "puted " << k;
         return reslen;
     }
 

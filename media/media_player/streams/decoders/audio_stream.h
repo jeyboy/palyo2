@@ -4,7 +4,6 @@
 #include "media/media_player/resamplers/audio_resampler.h"
 #include "media/media_player/streams/base/media_stream.h"
 #include "../frames/audio_frame.h"
-#include "media/media_player/output/audio/spectrum.h"
 
 //#include <QAudioDeviceInfo>
 #include <QAudioOutput>
