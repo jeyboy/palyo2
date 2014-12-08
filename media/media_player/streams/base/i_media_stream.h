@@ -40,14 +40,25 @@ public:
         codec_context = stream -> codec;
         codec = avcodec_find_decoder(codec_context -> codec_id);
 
-//        //wtf
+//        //glitches with some video
 //        if (codec -> capabilities & CODEC_CAP_TRUNCATED)
 //            codec_context -> flags |= CODEC_FLAG_TRUNCATED;
 
-//        codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
-//        codec_context -> flags2 |= CODEC_FLAG2_FAST;
-//        if(codec -> capabilities & CODEC_CAP_DR1)
-//            codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
+//        int stream_lowres = ?;
+        //    if(stream_lowres > av_codec_get_max_lowres(codec)){
+        //        av_log(avctx, AV_LOG_WARNING, "The maximum value for lowres supported by the decoder is %d\n",
+        //                av_codec_get_max_lowres(codec));
+        //        stream_lowres = av_codec_get_max_lowres(codec);
+        //    }
+//        av_codec_set_lowres(codec_context, stream_lowres);
+//        if (stream_lowres) codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
+
+//        bool fast = true;
+//        if (fast)
+//          codec_context -> flags2 |= CODEC_FLAG2_FAST;
+
+        if(codec -> capabilities & CODEC_CAP_DR1)
+            codec_context -> flags |= CODEC_FLAG_EMU_EDGE;
         //////
 
         valid = codec != 0;
@@ -61,6 +72,16 @@ public:
 
         if (codec_context -> codec_type == AVMEDIA_TYPE_VIDEO || codec_context -> codec_type == AVMEDIA_TYPE_AUDIO)
             av_dict_set(&opts, "refcounted_frames", "1", 0);
+
+        //    opts = filter_codec_opts(codec_opts, avctx->codec_id, ic, ic->streams[stream_index], codec);
+        //    if (!av_dict_get(opts, "threads", NULL, 0))
+        //        av_dict_set(&opts, "threads", "auto", 0);
+        //    if (stream_lowres)
+        //        av_dict_set(&opts, "lowres", av_asprintf("%d", stream_lowres), AV_DICT_DONT_STRDUP_VAL);
+        //    if (avctx->codec_type == AVMEDIA_TYPE_VIDEO || avctx->codec_type == AVMEDIA_TYPE_AUDIO)
+        //        av_dict_set(&opts, "refcounted_frames", "1", 0);
+        //    if (avcodec_open2(avctx, codec, &opts) < 0)
+        //        return -1;
 
         valid = avcodec_open2(codec_context, codec, &opts) > -1;
         av_dict_free(&opts);
@@ -90,7 +111,7 @@ public:
     }
 
     int calcDelay() {
-        return time_buff == 0 ? 0 : time_buff * 80; // take only 8/10 from the time buffer for delay
+        return time_buff == 0 ? 0 : time_buff * 60; // take only 8/10 from the time buffer for delay
     }
 
     inline int index() const { return uindex; }

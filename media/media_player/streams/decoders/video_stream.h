@@ -27,7 +27,7 @@ protected:
     void routine();
     VideoFrame * calcPts(VideoFrame * videoFrame);
     double syncPts(AVFrame *src_frame);
-    double calcAspectRatio();
+    void calcAspectRatio();
 private:   
     double aspect_ratio;
 

@@ -71,7 +71,7 @@ void AudioStream::flushData() {
 }
 
 void AudioStream::routine() {
-    qDebug() << " $$$ " << sleep_correlation;
+//    qDebug() << " $$$ " << sleep_correlation;
     if (pauseRequired) return;
 
     bool isEmpty = packets.isEmpty();
@@ -86,7 +86,7 @@ void AudioStream::routine() {
     }
 
     if (frames.size() >= framesBufferLen) {
-        qDebug() << " AUDIO FULL";
+//        qDebug() << " AUDIO FULL";
         sleep_correlation = time_buff * 50; // take half of time buff // 2
         msleep(sleep_correlation);
         return;
