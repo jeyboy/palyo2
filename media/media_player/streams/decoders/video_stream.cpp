@@ -87,14 +87,12 @@ void VideoStream::routine() {
         len = avcodec_decode_video2(codec_context, frame, &got_picture, packet);
 
         if (len < 0) {
-            qDebug() << "Error while decoding video frame";
+            qDebug() << "Error while decoding video frame: " << len;
             break;
         }
 
         if (got_picture) {
             buff = resampler -> proceed(frame, width, height);
-
-//            MasterClock::instance() ->
 
             if (buff) {
 //                float packet_time = packet -> duration * av_q2d(stream -> time_base);
@@ -104,7 +102,7 @@ void VideoStream::routine() {
                 frames.append(calcPts(new VideoFrame(buff, -1, -1, aspect_ratio)));
             }
         } else {
-            qWarning("Could not get a full picture from this frame");
+            qWarning("Could not get a full picture from this frame: %d", len);
 //            char bla[AV_ERROR_MAX_STRING_SIZE];
 //            qWarning("Could not get a full picture from this frame %s", av_make_error_string(bla, AV_ERROR_MAX_STRING_SIZE, len));
 //            delete [] bla;
@@ -120,13 +118,11 @@ void VideoStream::routine() {
 }
 
 void VideoStream::suspendStream() {
-//    output -> suspend();
     MediaStream::suspendStream();
 }
 
 void VideoStream::resumeStream() {
     MasterClock::instance() -> resetMain();
-//    output -> resume();
     MediaStream::resume();
 }
 
@@ -175,7 +171,7 @@ double VideoStream::syncPts(AVFrame *src_frame) {
 //    MasterClock::instance() -> iterateVideo(frame_delay);
 }
 
-double VideoStream::calcAspectRatio() {
+void VideoStream::calcAspectRatio() {
     aspect_ratio = 0;
 
     if(codec_context -> sample_aspect_ratio.num != 0) {
