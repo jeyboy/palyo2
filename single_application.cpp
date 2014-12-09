@@ -1,4 +1,5 @@
 #include "single_application.h"
+#include <typeinfo>
 
 SingleApplication::SingleApplication(int &argc, char *argv[], const QString uniqueKey) : QApplication(argc, argv) {
     // fix for linux crashed app memory clear
@@ -70,4 +71,22 @@ bool SingleApplication::sendMessage(const QString &message) {
     memcpy(to, from, qMin(sharedMemory.size(), byteArray.size()));
     sharedMemory.unlock();
     return true;
+}
+
+bool SingleApplication::notify(QObject* receiver, QEvent* event) {
+    try {
+        return QApplication::notify(receiver, event);
+    } catch (std::exception &e) {
+        qFatal("Error %s sending event %s to object %s (%s)",
+            e.what(), typeid(*event).name(), qPrintable(receiver -> objectName()),
+            typeid(*receiver).name());
+    } catch (...) {
+        qFatal("Error <unknown> sending event %s to object %s (%s)",
+            typeid(*event).name(), qPrintable(receiver -> objectName()),
+            typeid(*receiver).name());
+    }
+
+    // qFatal aborts, so this isn't really necessary
+    // but you might continue if you use a different logging lib
+    return false;
 }

@@ -30,8 +30,6 @@ public:
         int i = 0;
 
         QList<QVector<int> > res;
-        for (x = 0; x < nb_display_channels; x++)
-            res.append(QVector<int>());
 
         FFTComplex *data[nb_display_channels];
         for (int ch = 0; ch < nb_display_channels; ch++) {
@@ -50,10 +48,12 @@ public:
 
             av_fft_permute(fft, data[ch]);
             av_fft_calc(fft, data[ch]);
-            spectrumLayout(data[ch]);
+            QVector<int> part;
+            spectrumLayout(part, data[ch]);
+            res.append(part);
         }
 
-
+        return ret;
 
 
 
@@ -93,8 +93,7 @@ public:
     }
 
 protected:
-    QVector<int> channelSpectrumLayout(FFTComplex * data) {
-        QVector<int> res;
+    void channelSpectrumLayout(QVector<int> & res, FFTComplex * data) {
         float peak;
         int b0 = 0, x, y;
 
