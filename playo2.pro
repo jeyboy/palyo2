@@ -121,7 +121,9 @@ SOURCES += main.cpp\
     media/media_player/output/video/controls/renders/gl_render.cpp \
     media/media_player/output/video/controls/renders/gl_render_raw.cpp \
     media/media_player/utils/video_types.cpp \ 
-    memory_profiler/memory_profiler.cpp
+    memory_profiler/memory_profiler.cpp \
+    media/media_player/utils/web/custom_network_access_manager.cpp \
+    media/media_player/utils/web/web_object.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -237,7 +239,9 @@ HEADERS  += mainwindow.h \
     media/media_player/utils/video_types.h \
     media/media_player/streams/frames/video/video_blending.h \
     media/media_player/utils/system_utils.h \
-    memory_profiler/memory_profiler.h
+    memory_profiler/memory_profiler.h \
+    media/media_player/utils/web/custom_network_access_manager.h \
+    media/media_player/utils/web/web_object.h
 
 unix:!mac {
         QT += gui-private

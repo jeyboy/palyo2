@@ -146,6 +146,44 @@ void MediaPlayer::setVolume(uint val) {
 
 ////////////// PROTECTED //////////////////////////////////
 
+bool MediaPlayer::openCustomContext(QUrl & url) {
+    size_t avio_ctx_buffer_size = 4096;
+
+    if (!(context = avformat_alloc_context())) {
+        ret = AVERROR(ENOMEM);
+        goto end;
+    }
+
+    avio_ctx_buffer = av_malloc(avio_ctx_buffer_size);
+    if (!avio_ctx_buffer) {
+        ret = AVERROR(ENOMEM);
+        goto end;
+    }
+
+    avio_context = avio_alloc_context(avio_ctx_buffer, avio_ctx_buffer_size, 0, &bd, &read_packet, NULL, NULL);
+    if (!avio_ctx) {
+        ret = AVERROR(ENOMEM);
+        goto end;
+    }
+
+    context -> pb = avio_context;
+
+    ret = avformat_open_input(&context, NULL, NULL, NULL);
+    if (ret < 0) {
+        fprintf(stderr, "Could not open input\n");
+        goto end;
+    }
+
+    if (avformat_find_stream_info(context, NULL) < 0) {
+        emit errorOccured(errorStr = "Did not find stream info");
+        return false;
+    }
+
+    av_dump_format(context, 0, path.toUtf8().data(), false);
+
+    return true;
+}
+
 bool MediaPlayer::openContext(QUrl & url) {
     QString path;
     if ((isRemote = url.isLocalFile())) {
@@ -164,19 +202,19 @@ bool MediaPlayer::openContext(QUrl & url) {
     av_dict_set(&options, "pixel_format", "rgb24", 0);
 
     if (avformat_open_input(&context, path.toUtf8().data(), NULL, &options) < 0) {
-        abort(); // ?
+//        abort(); // ?
         av_dict_free(&options);
         emit errorOccured(errorStr = "Did not open context of file");
         return false;
     }
     av_dict_free(&options);
 
-    av_dump_format(context, 0, path.toUtf8().data(), false);
-
     if (avformat_find_stream_info(context, NULL) < 0) {
         emit errorOccured(errorStr = "Did not find stream info");
         return false;
     }
+
+    av_dump_format(context, 0, path.toUtf8().data(), false);
 
     return true;
 }
@@ -193,6 +231,11 @@ void MediaPlayer::closeContext() {
     if (context)
         avformat_close_input(&context);
 
+    if (avio_context) {
+        av_freep(&avio_context -> buffer);
+        av_freep(&avio_context);
+    }
+
     if (isRemote)
         avformat_network_deinit();
 }
@@ -203,6 +246,8 @@ MediaPlayer::MediaPlayer(QObject * parent) : QObject(parent)
   , decoder(0)
   , isRemote(false)
   , context(0)
+  , avio_context(0)
+  , avio_ctx_buffer(0)
   , errorStr("") {
 
     av_register_all();

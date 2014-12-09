@@ -56,6 +56,8 @@ public slots:
     void setVolume(uint val);
 
 protected:
+    bool openCustomContext(QUrl & url);
+
     bool openContext(QUrl & url);
     void closeContext();
 
@@ -68,6 +70,9 @@ private:
     int64_t item_duration;
 
     AVFormatContext *context;
+    AVIOContext *avio_context;
+    uint8_t * avio_ctx_buffer;
+
     QString errorStr;
 
     static MediaPlayer * self;
