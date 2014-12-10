@@ -2,6 +2,8 @@
 #define WEB_OBJECT_H
 
 #include <qurl>
+#include <qfile>
+#include <QtConcurrent/QtConcurrent>
 #include "custom_network_access_manager.h"
 
 class WebObject : QObject {
@@ -16,19 +18,30 @@ public:
 
     QString & lastError() const;
 
+    void open();
+    bool openSync();
+
 protected:
-    void open(QUrl & url);
+    void downloadProc(QUrl savePath);
+    void initRequest();
+    void closeConnection();
 
 signals:
-    void response(void *);
+    void start();
+    void end(bool);
+    void progress(float percentage);
 
 protected slots:
+    void download(QUrl savePath);
     void proceedResponse();
     void onError(QNetworkReply::NetworkError);
+    void onError(QString);
 
 private:
+    int bufferLength;
     QString error;
     QNetworkReply * m_http;
+    QUrl obj_url;
     static CustomNetworkAccessManager webManager;
 };
 
