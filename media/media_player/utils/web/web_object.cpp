@@ -1,7 +1,11 @@
 #include "web_object.h"
 
-WebObject::WebObject(QUrl & url) : bufferLength(1024 * 1024) /*1 mb*/ {
+/// \brief WebObject::WebObject
+/// \param related_to - added to the signals
+/// \param url
+WebObject::WebObject(void * related_to, QUrl & url, uint buffer_length = 1024 * 1024) : bufferLength(buffer_length) /*1 mb*/ {
     obj_url = url;
+    relation = related_to;
 }
 
 WebObject::~WebObject() {
@@ -27,8 +31,15 @@ bool WebObject::openSync() {
     loop.exec();
 
     bool state = m_http -> isOpen();
-    emit end(state);
+    emit end(relation, state);
     return state;
+}
+
+qint64 WebObject::lenght() const {
+    if (!m_http && !openSync())
+        return 0;
+    else
+        m_http -> bytesAvailable();
 }
 
 void WebObject::download(QUrl savePath) {
@@ -38,8 +49,28 @@ void WebObject::download(QUrl savePath) {
     QtConcurrent::run(this, &WebObject::downloadProc, savePath);
 }
 
+int WebObject::read(void * buf, int & length) {
+    if (!m_http && !openSync())
+        return 0;
+
+    if (m_http -> atEnd())
+        return 0;
+    else
+        return m_http -> read(buf, length);
+}
+
+int WebObject::seek(qint64 newPos = -1) {
+    if (!m_http && !openSync())
+        return 0;
+
+    if (m_http -> seek(newPos))
+        return newPos;
+    else
+        return m_http -> pos();
+}
+
 void WebObject::downloadProc(QUrl savePath) {
-    emit start();
+    emit start(relation);
 
     if (!m_http && !openSync())
         return;
@@ -69,7 +100,7 @@ void WebObject::downloadProc(QUrl savePath) {
                     pos += buffer.length();
                     file.write(buffer);
 
-                    emit progress((pos / limit) * 100);
+                    emit progress(relation, (pos / limit) * 100);
                 }
 
                 catch(...) {
@@ -78,13 +109,13 @@ void WebObject::downloadProc(QUrl savePath) {
             }
 
             file.close();
-            emit end(true);
+            emit end(relation, true);
         }
     }
 }
 
 void WebObject::initRequest() {
-    emit start();
+    emit start(relation);
     closeConnection();
     m_http = manager() -> get(QNetworkRequest(obj_url));
 }
@@ -106,13 +137,13 @@ void WebObject::proceedResponse() {
         QUrl url = possibleRedirectUrl.toUrl();
         open(url);
     } else {
-        emit end(true);
+        emit end(relation, true);
     }
 }
 
 void WebObject::onError(QString er) {
     error = er;
-    emit end(false);
+    emit end(relation, false);
 }
 
 void WebObject::onError(QNetworkReply::NetworkError er) {
@@ -155,5 +186,5 @@ void WebObject::onError(QNetworkReply::NetworkError er) {
         case QNetworkReply::UnknownServerError: { error = "Server: unknow error"; }
     }
 
-    emit end(false);
+    emit end(relation, false);
 }

@@ -13,13 +13,16 @@ public:
         return webManager;
     }
 
-    WebObject(QUrl & url);
+    WebObject(void * related_to, QUrl & url);
     ~WebObject();
 
     QString & lastError() const;
 
     void open();
     bool openSync();
+    qint64 lenght() const;
+    int read(void * buf, int & length);
+    int seek(qint64 newPos = -1);
 
 protected:
     void downloadProc(QUrl savePath);
@@ -27,9 +30,9 @@ protected:
     void closeConnection();
 
 signals:
-    void start();
-    void end(bool);
-    void progress(float percentage);
+    void start(void *);
+    void end(void *, bool);
+    void progress(void *, float percentage);
 
 protected slots:
     void download(QUrl savePath);
@@ -38,6 +41,7 @@ protected slots:
     void onError(QString);
 
 private:
+    void * relation;
     int bufferLength;
     QString error;
     QNetworkReply * m_http;

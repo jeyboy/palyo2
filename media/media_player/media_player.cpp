@@ -1,6 +1,26 @@
 #include "media_player.h"
 #include "media/duration.h"
 
+int read_packet(void *opaque, uint8_t *buf, int buf_size) {
+    WebObject * obj = (WebObject *)opaque;
+    return obj -> read(buf, buf_size);
+}
+//int write_packet(void *opaque, uint8_t *buf, int buf_size) {}
+int64_t seek(void *opaque, int64_t offset, int whence) {
+    WebObject * obj = (WebObject *)opaque;
+
+    switch (whence) {
+        case AVSEEK_SIZE: { return obj -> lenght(); }
+        case SEEK_SET: { return obj -> seek(offset); }
+        case SEEK_CUR: { return obj -> seek(); }
+        case SEEK_END: { return obj -> seek(obj -> lenght()); }
+        default: {
+            qDebug("Some troubles (O_o)");
+        }
+    }
+}
+
+
 MediaPlayer * MediaPlayer::self = 0;
 
 MediaPlayer * MediaPlayer::instance(QObject * parent) {
@@ -147,6 +167,14 @@ void MediaPlayer::setVolume(uint val) {
 ////////////// PROTECTED //////////////////////////////////
 
 bool MediaPlayer::openCustomContext(QUrl & url) {
+    obj = new WebObject(0, url);
+
+    if (!obj -> openSync()) {
+        errorStr = obj -> lastError();
+        delete obj;
+        return false;
+    }
+
     size_t avio_ctx_buffer_size = 4096;
 
     if (!(context = avformat_alloc_context())) {
@@ -167,6 +195,7 @@ bool MediaPlayer::openCustomContext(QUrl & url) {
     }
 
     context -> pb = avio_context;
+    context -> flags = AVFMT_FLAG_CUSTOM_IO | AVFMT_FLAG_NONBLOCK;
 
     ret = avformat_open_input(&context, NULL, NULL, NULL);
     if (ret < 0) {
@@ -248,7 +277,8 @@ MediaPlayer::MediaPlayer(QObject * parent) : QObject(parent)
   , context(0)
   , avio_context(0)
   , avio_ctx_buffer(0)
-  , errorStr("") {
+  , errorStr("")
+  , obj(0) {
 
     av_register_all();
     avcodec_register_all();

@@ -6,6 +6,7 @@
 
 #include "streams/stream_decoder.h"
 #include "utils/master_clock.h"
+#include "utils/web/web_object.h"
 
 class MediaPlayer : public QObject {
     Q_OBJECT
@@ -72,6 +73,7 @@ private:
     AVFormatContext *context;
     AVIOContext *avio_context;
     uint8_t * avio_ctx_buffer;
+    WebObject * obj;
 
     QString errorStr;
 
