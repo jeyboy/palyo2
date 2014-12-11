@@ -9,11 +9,11 @@
 class WebObject : QObject {
     Q_OBJECT
 public:
-    static CustomNetworkAccessManager & manager() const {
+    static CustomNetworkAccessManager & manager() {
         return webManager;
     }
 
-    WebObject(void * related_to, QUrl & url);
+    WebObject(void * related_to, QUrl & url, uint buffer_length = 1024 * 1024);
     ~WebObject();
 
     QString & lastError() const;
@@ -22,7 +22,8 @@ public:
     bool openSync();
     qint64 lenght() const;
     int read(void * buf, int & length);
-    int seek(qint64 newPos = -1);
+    qint64 seek(qint64 newPos = -1);
+    qint64 pos() const;
 
 protected:
     void downloadProc(QUrl savePath);

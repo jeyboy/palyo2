@@ -3,7 +3,7 @@
 /// \brief WebObject::WebObject
 /// \param related_to - added to the signals
 /// \param url
-WebObject::WebObject(void * related_to, QUrl & url, uint buffer_length = 1024 * 1024) : bufferLength(buffer_length) /*1 mb*/ {
+WebObject::WebObject(void * related_to, QUrl & url, uint buffer_length) : bufferLength(buffer_length) /*1 mb*/ {
     obj_url = url;
     relation = related_to;
 }
@@ -16,7 +16,7 @@ WebObject::~WebObject() {
     }
 }
 
-QString & WebObject::lastError() const { return error; }
+QString WebObject::lastError() const { return error; }
 
 void WebObject::open() {
     initRequest();
@@ -38,8 +38,10 @@ bool WebObject::openSync() {
 qint64 WebObject::lenght() const {
     if (!m_http && !openSync())
         return 0;
-    else
-        m_http -> bytesAvailable();
+    else {
+        qint64 ret = m_http -> bytesAvailable();
+        return ret > 0 ? ret : -1;
+    }
 }
 
 void WebObject::download(QUrl savePath) {
@@ -59,7 +61,14 @@ int WebObject::read(void * buf, int & length) {
         return m_http -> read(buf, length);
 }
 
-int WebObject::seek(qint64 newPos = -1) {
+qint64 WebObject::pos() const {
+    if (!m_http && !openSync())
+        return 0;
+
+    return m_http -> pos();
+}
+
+qint64 WebObject::seek(qint64 newPos = -1) {
     if (!m_http && !openSync())
         return 0;
 

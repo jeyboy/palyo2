@@ -6,14 +6,15 @@ int read_packet(void *opaque, uint8_t *buf, int buf_size) {
     return obj -> read(buf, buf_size);
 }
 //int write_packet(void *opaque, uint8_t *buf, int buf_size) {}
-int64_t seek(void *opaque, int64_t offset, int whence) {
+int64_t seek_stream(void *opaque, int64_t offset, int whence) {
     WebObject * obj = (WebObject *)opaque;
+    qDebug() << "************** " << offset;
 
     switch (whence) {
         case AVSEEK_SIZE: { return obj -> lenght(); }
         case SEEK_SET: { return obj -> seek(offset); }
-        case SEEK_CUR: { return obj -> seek(); }
-        case SEEK_END: { return obj -> seek(obj -> lenght()); }
+        case SEEK_CUR: { return obj -> seek(obj -> pos() + offset); }
+        case SEEK_END: { return obj -> seek(obj -> lenght() - offset); }
         default: {
             qDebug("Some troubles (O_o)");
         }
@@ -60,7 +61,8 @@ bool MediaPlayer::open(QUrl url, int64_t position_millis, int64_t duration_milli
         if (position_millis > 0)
             seekMillis(position_millis);
         pause();
-    }
+    } else
+        closeContext();
 
     return res;
 }
@@ -178,29 +180,28 @@ bool MediaPlayer::openCustomContext(QUrl & url) {
     size_t avio_ctx_buffer_size = 4096;
 
     if (!(context = avformat_alloc_context())) {
-        ret = AVERROR(ENOMEM);
-        goto end;
+        emit errorOccured(errorStr = "Did not create context");
+        return false;
     }
 
-    avio_ctx_buffer = av_malloc(avio_ctx_buffer_size);
+    avio_ctx_buffer = (uint8_t *)av_malloc(avio_ctx_buffer_size);
     if (!avio_ctx_buffer) {
-        ret = AVERROR(ENOMEM);
-        goto end;
+        emit errorOccured(errorStr = "Did not create buffer");
+        return false;
     }
 
-    avio_context = avio_alloc_context(avio_ctx_buffer, avio_ctx_buffer_size, 0, &bd, &read_packet, NULL, NULL);
-    if (!avio_ctx) {
-        ret = AVERROR(ENOMEM);
-        goto end;
+    avio_context = avio_alloc_context(avio_ctx_buffer, avio_ctx_buffer_size, 0, obj, &read_packet, NULL, &seek_stream);
+    if (!avio_context) {
+        emit errorOccured(errorStr = "Did not create custom context");
+        return false;
     }
 
     context -> pb = avio_context;
     context -> flags = AVFMT_FLAG_CUSTOM_IO | AVFMT_FLAG_NONBLOCK;
 
-    ret = avformat_open_input(&context, NULL, NULL, NULL);
-    if (ret < 0) {
-        fprintf(stderr, "Could not open input\n");
-        goto end;
+    if (avformat_open_input(&context, NULL, NULL, NULL) < 0) {
+        emit errorOccured(errorStr = "Could not open input");
+        return false;
     }
 
     if (avformat_find_stream_info(context, NULL) < 0) {
@@ -208,22 +209,29 @@ bool MediaPlayer::openCustomContext(QUrl & url) {
         return false;
     }
 
-    av_dump_format(context, 0, path.toUtf8().data(), false);
+    av_dump_format(context,
+                   0,
+                   (url.isLocalFile() ? url.toLocalFile() : url.toString()).toUtf8().data(),
+                   false);
 
     return true;
 }
 
 bool MediaPlayer::openContext(QUrl & url) {
     QString path;
-    if ((isRemote = url.isLocalFile())) {
+    if ((isRemote = !url.isLocalFile())) {
+//        avformat_network_init();
+//        path = url.toString();
+
+        bool ret = openCustomContext(url);
+        if (!ret) closeContext();
+        return ret;
+    } else {
         path = url.toLocalFile();
         if (!QFile(path).exists()) {
             emit errorOccured(errorStr = "File not exist");
             return false;
         }
-    } else {
-        avformat_network_init();
-        path = url.toString();
     }
 
     AVDictionary *options = NULL;
@@ -264,6 +272,8 @@ void MediaPlayer::closeContext() {
         av_freep(&avio_context -> buffer);
         av_freep(&avio_context);
     }
+
+    delete obj;
 
     if (isRemote)
         avformat_network_deinit();
