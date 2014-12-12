@@ -2,13 +2,14 @@
 #include "media/duration.h"
 
 int read_packet(void *opaque, uint8_t *buf, int buf_size) {
+    qDebug() << "************** READ " << buf_size;
     WebObject * obj = (WebObject *)opaque;
     return obj -> read(buf, buf_size);
 }
 //int write_packet(void *opaque, uint8_t *buf, int buf_size) {}
 int64_t seek_stream(void *opaque, int64_t offset, int whence) {
     WebObject * obj = (WebObject *)opaque;
-    qDebug() << "************** " << offset;
+    qDebug() << "************** SEEK " << offset;
 
     switch (whence) {
         case AVSEEK_SIZE: { return obj -> lenght(); }
@@ -89,6 +90,10 @@ double MediaPlayer::_position() {
 int MediaPlayer::bitrate() {
     if (context == 0) return -1;
     return context -> bit_rate;
+}
+
+QString MediaPlayer::lastError() const {
+    return errorStr;
 }
 
 QString MediaPlayer::filename() {
@@ -220,12 +225,12 @@ bool MediaPlayer::openCustomContext(QUrl & url) {
 bool MediaPlayer::openContext(QUrl & url) {
     QString path;
     if ((isRemote = !url.isLocalFile())) {
-//        avformat_network_init();
-//        path = url.toString();
+        avformat_network_init();
+        path = url.toString();
 
-        bool ret = openCustomContext(url);
-        if (!ret) closeContext();
-        return ret;
+//        bool ret = openCustomContext(url);
+//        if (!ret) closeContext();
+//        return ret;
     } else {
         path = url.toLocalFile();
         if (!QFile(path).exists()) {

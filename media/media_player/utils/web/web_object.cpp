@@ -132,6 +132,8 @@ void WebObject::downloadProc(QUrl savePath) {
 void WebObject::initRequest(QUrl url) {
     closeConnection();
     m_http = webManager.get(QNetworkRequest(url));
+    connect(m_http, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+    connect(m_http, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(onSslErrors(QList<QSslError>)));
 }
 
 void WebObject::closeConnection() {
@@ -158,6 +160,10 @@ void WebObject::proceedResponse() {
 void WebObject::onError(QString er) {
     error = er;
     emit end(relation, false);
+}
+
+void WebObject::onSslErrors(const QList<QSslError> &errors) {
+    qDebug() << "SSL ERROR";
 }
 
 void WebObject::onError(QNetworkReply::NetworkError er) {

@@ -34,6 +34,7 @@ signals:
 protected slots:
     void download(QUrl savePath);
     void proceedResponse();
+    void onSslErrors(const QList<QSslError> &errors);
     void onError(QNetworkReply::NetworkError);
     void onError(QString);
 

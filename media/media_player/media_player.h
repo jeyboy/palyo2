@@ -31,6 +31,7 @@ public:
 
     int bitrate();
 
+    QString lastError() const;
     QString filename();
 
     QString info();
