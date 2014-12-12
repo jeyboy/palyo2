@@ -135,7 +135,7 @@ void WebObject::downloadProc(QUrl savePath) {
 void WebObject::initRequest(QUrl url) {
     emit start(relation);
     closeConnection();
-    m_http = manager().get(QNetworkRequest(url));
+    m_http = webManager.get(QNetworkRequest(url));
 }
 
 void WebObject::closeConnection() {

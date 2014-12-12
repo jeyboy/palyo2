@@ -9,10 +9,6 @@
 class WebObject : QObject {
     Q_OBJECT
 public:
-    static CustomNetworkAccessManager & manager() {
-        return WebObject::webManager;
-    }
-
     WebObject(void * related_to, QUrl & url, uint buffer_length = 1024 * 1024);
     ~WebObject();
 
@@ -47,9 +43,7 @@ private:
     QString error;
     QNetworkReply * m_http;
     QUrl obj_url;
-    static CustomNetworkAccessManager webManager;
+    CustomNetworkAccessManager webManager;
 };
-
-//WebObject WebObject::webManager = CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
 
 #endif // WEB_OBJECT_H
