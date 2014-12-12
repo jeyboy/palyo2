@@ -3,28 +3,26 @@
 /// \brief WebObject::WebObject
 /// \param related_to - added to the signals
 /// \param url
-WebObject::WebObject(void * related_to, QUrl & url, uint buffer_length) : bufferLength(buffer_length) /*1 mb*/ {
+WebObject::WebObject(void * related_to, QUrl & url, uint buffer_length) : bufferLength(buffer_length), error(""), m_http(0) /*1 mb*/ {
     obj_url = url;
     relation = related_to;
 }
 
 WebObject::~WebObject() {
-    if (m_http) {
-        m_http -> close();
-        delete m_http;
-        m_http = 0;
-    }
+    closeConnection();
 }
 
 QString WebObject::lastError() const { return error; }
 
 void WebObject::open(QUrl url) {
+    emit start(relation);
     if (!url.isEmpty()) obj_url = url;
     initRequest(obj_url);
     QObject::connect(m_http, SIGNAL(finished()), this, SLOT(proceedResponse()));
 }
 
 bool WebObject::openSync(QUrl url) {
+    emit start(relation);
     if (!url.isEmpty()) obj_url = url;
     initRequest(obj_url);
 
@@ -34,7 +32,6 @@ bool WebObject::openSync(QUrl url) {
 
     QVariant possibleRedirectUrl = m_http -> attribute(QNetworkRequest::RedirectionTargetAttribute);
     if (possibleRedirectUrl.isValid()) {
-        delete m_http;
         QUrl url = possibleRedirectUrl.toUrl();
         openSync(url);
         return false;
@@ -133,14 +130,14 @@ void WebObject::downloadProc(QUrl savePath) {
 }
 
 void WebObject::initRequest(QUrl url) {
-    emit start(relation);
     closeConnection();
     m_http = webManager.get(QNetworkRequest(url));
 }
 
 void WebObject::closeConnection() {
     if (m_http) {
-        m_http -> close();
+        if (m_http -> isOpen())
+            m_http -> close();
         delete m_http;
         m_http = 0;
     }
