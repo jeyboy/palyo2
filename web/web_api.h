@@ -9,7 +9,7 @@
 #include <QUrl>
 #include <QPixmap>
 
-#include "override/custom_network_access_manager.h"
+#include "media/media_player/utils/web/custom_network_access_manager.h"
 
 class WebApi : public QObject {
     Q_OBJECT   

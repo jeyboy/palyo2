@@ -18,24 +18,33 @@ WebObject::~WebObject() {
 
 QString WebObject::lastError() const { return error; }
 
-void WebObject::open() {
-    initRequest();
+void WebObject::open(QUrl url) {
+    if (!url.isEmpty()) obj_url = url;
+    initRequest(obj_url);
     QObject::connect(m_http, SIGNAL(finished()), this, SLOT(proceedResponse()));
 }
 
-bool WebObject::openSync() {
-    initRequest();
+bool WebObject::openSync(QUrl url) {
+    if (!url.isEmpty()) obj_url = url;
+    initRequest(obj_url);
 
     QEventLoop loop;
     connect(m_http, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
-    bool state = m_http -> isOpen();
-    emit end(relation, state);
-    return state;
+    QVariant possibleRedirectUrl = m_http -> attribute(QNetworkRequest::RedirectionTargetAttribute);
+    if (possibleRedirectUrl.isValid()) {
+        delete m_http;
+        QUrl url = possibleRedirectUrl.toUrl();
+        openSync(url);
+        return false;
+    } else {
+        emit end(relation, true);
+        return true;
+    }
 }
 
-qint64 WebObject::lenght() const {
+qint64 WebObject::lenght() {
     if (!m_http && !openSync())
         return 0;
     else {
@@ -58,17 +67,17 @@ int WebObject::read(void * buf, int & length) {
     if (m_http -> atEnd())
         return 0;
     else
-        return m_http -> read(buf, length);
+        return m_http -> read((char *)buf, length);
 }
 
-qint64 WebObject::pos() const {
+qint64 WebObject::pos() {
     if (!m_http && !openSync())
         return 0;
 
     return m_http -> pos();
 }
 
-qint64 WebObject::seek(qint64 newPos = -1) {
+qint64 WebObject::seek(qint64 newPos) {
     if (!m_http && !openSync())
         return 0;
 
@@ -123,10 +132,10 @@ void WebObject::downloadProc(QUrl savePath) {
     }
 }
 
-void WebObject::initRequest() {
+void WebObject::initRequest(QUrl url) {
     emit start(relation);
     closeConnection();
-    m_http = manager() -> get(QNetworkRequest(obj_url));
+    m_http = manager().get(QNetworkRequest(url));
 }
 
 void WebObject::closeConnection() {
@@ -142,7 +151,6 @@ void WebObject::proceedResponse() {
     QVariant possibleRedirectUrl = reply -> attribute(QNetworkRequest::RedirectionTargetAttribute);
     if (possibleRedirectUrl.isValid()) {
         delete reply;
-
         QUrl url = possibleRedirectUrl.toUrl();
         open(url);
     } else {

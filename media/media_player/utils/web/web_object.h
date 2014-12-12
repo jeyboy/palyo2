@@ -10,24 +10,24 @@ class WebObject : QObject {
     Q_OBJECT
 public:
     static CustomNetworkAccessManager & manager() {
-        return webManager;
+        return WebObject::webManager;
     }
 
     WebObject(void * related_to, QUrl & url, uint buffer_length = 1024 * 1024);
     ~WebObject();
 
-    QString & lastError() const;
+    QString lastError() const;
 
-    void open();
-    bool openSync();
-    qint64 lenght() const;
+    void open(QUrl url = QUrl());
+    bool openSync(QUrl url = QUrl());
+    qint64 lenght();
     int read(void * buf, int & length);
     qint64 seek(qint64 newPos = -1);
-    qint64 pos() const;
+    qint64 pos();
 
 protected:
     void downloadProc(QUrl savePath);
-    void initRequest();
+    void initRequest(QUrl url);
     void closeConnection();
 
 signals:

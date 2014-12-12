@@ -17,7 +17,7 @@ CustomNetworkAccessManager * WebApi::manager() const {
 }
 
 CustomNetworkAccessManager * WebApi::createManager() {
-    return new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
+    return new CustomNetworkAccessManager();
 }
 
 QPixmap WebApi::openRemoteImage(QString url) {

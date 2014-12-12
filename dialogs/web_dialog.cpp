@@ -9,7 +9,7 @@ WebDialog::WebDialog(QWidget *parent, WebApi * apiClass, QString title) :
   setWindowTitle(title);
   api = apiClass;
 
-  CustomNetworkAccessManager *networkAccessManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
+  CustomNetworkAccessManager *networkAccessManager = new CustomNetworkAccessManager();
   QWebView* view = ui -> webView;
   view -> page() -> setNetworkAccessManager(networkAccessManager);
 

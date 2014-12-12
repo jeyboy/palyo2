@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QUrl>
-#include "override/custom_network_access_manager.h"
+#include "media/media_player/utils/web/custom_network_access_manager.h"
 
 //TODO: add ip check by timer
 class IpChecker : public QObject {
@@ -41,7 +41,7 @@ protected:
         initialized = !ip.isEmpty();
         noInternet = false;
         inProgress = false;
-        netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
+        netManager = new CustomNetworkAccessManager();
 
         ipChecking();
 

@@ -84,7 +84,6 @@ SOURCES += main.cpp\
     override/clickable_label.cpp \
     override/tabber.cpp \
     override/tab.cpp \
-    override/custom_network_access_manager.cpp \
     override/slider.cpp \
     single_application.cpp \
     web/download.cpp \
@@ -185,7 +184,6 @@ HEADERS  += mainwindow.h \
     override/clickable_label.h\
     override/tabber.h \
     override/tab.h \
-    override/custom_network_access_manager.h \
     override/slider.h \
     single_application.h \
     misc/func_container.h \
