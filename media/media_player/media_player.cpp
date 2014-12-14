@@ -25,7 +25,7 @@ bool MediaPlayer::open(QUrl url) {
     return openMicro(url);
 }
 bool MediaPlayer::openMillis(QUrl url, int position_millis, int duration_millis) {
-    return openMicro(url, position_millis * 1000, duration_millis * 1000);
+    return openMicro(url, (int64_t)position_millis * 1000, (int64_t)duration_millis * 1000);
 }
 bool MediaPlayer::openMicro(QUrl url, int64_t position_micromillis, int64_t duration_micromillis) {
     stop();
@@ -85,7 +85,7 @@ QString MediaPlayer::filename() {
 }
 
 QString MediaPlayer::info() {
-    return Duration::fromMillis(positionMicro() / 1000) + " / " + Duration::fromMillis(durationMicro() / 1000);
+    return Duration::fromMillis(positionMillis()) + " / " + Duration::fromMillis(durationMillis());
 }
 
 bool MediaPlayer::tags(QHash<QString, QString> & ret) {
