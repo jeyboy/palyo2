@@ -33,7 +33,7 @@ bool MediaPlayer::openMicro(QUrl url, int64_t position_micromillis, int64_t dura
     bool res = openContext(url);
 
     if (res) {
-        item_duration = qMin(context -> duration, duration_micromillis);
+        item_duration = qMin(context -> duration, duration_micromillis > 0 ? duration_micromillis : INT64_MAX);
         decoder = new StreamDecoder(this, context, clock);
         res &= decoder -> isValid();
     }
