@@ -10,10 +10,8 @@ const GLfloat kTexCoords[] = {
 };
 
 GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
-    qDebug() << "LALAK";
     makeCurrent();
     initializeOpenGLFunctions();
-    qDebug() << "LALAK2";
 
     //    setAcceptDrops(true);
     //    /* To rapidly update custom widgets that constantly paint over their entire areas with
@@ -135,6 +133,7 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE); // Linux ?
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return true;
@@ -289,6 +288,8 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
+    RenderInterface::initializeGL();
+
     makeCurrent();
 
     shader = new Shader(context());

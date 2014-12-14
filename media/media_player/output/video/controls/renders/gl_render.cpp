@@ -69,6 +69,8 @@ void GLRender::resizeViewport(int w, int h) {
 }
 
 void GLRender::initializeGL() {
+    RenderInterface::initializeGL();
+
     glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -79,7 +81,6 @@ void GLRender::initializeGL() {
 
     //bind the texture ID
     glBindTexture(GL_TEXTURE_2D, texture);
-//    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 void GLRender::paintGL() {
@@ -93,8 +94,9 @@ void GLRender::paintGL() {
     QImage * img = vFrame -> asImage();
 
     if (init == false) {
+//        glPixelStorei(GL_UNPACK_ALIGNMENT, vFrame -> buffer -> settings() -> bytesPerPixel());
         resizeViewport(width(), height());
-        glTexImage2D(GL_TEXTURE_2D, 0, 3, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
         init = true;
     } else
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, img -> width(), img -> height(), GL_RGB, GL_UNSIGNED_BYTE, img -> bits());

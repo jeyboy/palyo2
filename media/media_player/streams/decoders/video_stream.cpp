@@ -19,7 +19,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
         width = qMin((int)(width * 0.6), codec_context -> width);
         height = qMin((int)(height * 0.6), codec_context -> height);
 
-        RenderType type = is_attachment ? hardware : gl_plus;
+        RenderType type = gl_plus;
 
         resampler = new VideoResampler(codec_context, type == hardware || type == gl);
         output = new VideoOutput(this, type == hardware || type == gl ? type : (resampler -> isGLShaderCompatible() ? gl_plus : gl), width, height);

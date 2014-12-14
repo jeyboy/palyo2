@@ -22,6 +22,19 @@ RenderInterface::~RenderInterface() {
     mutex.unlock();
 }
 
+void RenderInterface::initializeGL() {
+    //glPixelStorei(GL_UNPACK_SWAP_BYTES,   GL_FALSE);
+    //glPixelStorei(GL_UNPACK_LSB_FIRST,    GL_FALSE);
+    //glPixelStorei(GL_UNPACK_ROW_LENGTH,   0);
+    //glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, 0);
+    //glPixelStorei(GL_UNPACK_SKIP_ROWS,    0);
+    //glPixelStorei(GL_UNPACK_SKIP_PIXELS,  0);
+    //glPixelStorei(GL_UNPACK_SKIP_IMAGES,  0);
+    glPixelStorei(GL_UNPACK_ALIGNMENT,    1); // 1,2,4,8
+
+
+}
+
 //void RenderInterface::repaint() {
 //    QWidget::repaint();
 //    paintFrame();

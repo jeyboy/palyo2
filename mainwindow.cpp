@@ -39,15 +39,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
+    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
 //    qDebug() << MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/116023228")); //asterix 2
 //    qDebug() << MediaPlayer::instance() -> open(QUrl("https://cs1-43v4.vk-cdn.net/p12/f97b321ed3ed8a.mp3?extra=b8mi7AY_T_njmTpycZLbdJnNCoI1hgzvLkAJIA83H16rdNecFzZqMVHLtCcj7liPcl0CnVn7xFTDKEkx7xDG_FSznd8nUZ3S"));
+//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/FlameMakers - Álmok szigetén (Club Hupák Remix).mp3"));
+
 
 
 
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/test.mp4"));
 //    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
-      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
+//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Shakra – Trapped.mp3"));
 //      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));
 
