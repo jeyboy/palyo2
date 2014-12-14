@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 
 #include "control_panel.h"
+#include "media/media_player/utils/master_clock.h"
 
 class OutputContainer : public QWidget {
      Q_OBJECT
@@ -14,6 +15,7 @@ public:
 protected:
     bool event(QEvent *);
 
+    MasterClock * clock;
     ControlPanel * panel;
 };
 

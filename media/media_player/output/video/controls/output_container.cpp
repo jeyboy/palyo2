@@ -2,8 +2,8 @@
 #include "media/media_player/media_player.h"
 #include <QDebug>
 
-OutputContainer::OutputContainer(MasterClock * clock, QWidget * parent) : QWidget(parent) {
-    panel = new ControlPanel((MediaPlayer * )clock -> player, this);
+OutputContainer::OutputContainer(MasterClock * clock, QWidget * parent) : QWidget(parent), clock(clock) {
+    panel = new ControlPanel(clock, this);
 }
 
 bool OutputContainer::event(QEvent * event) {
@@ -11,12 +11,12 @@ bool OutputContainer::event(QEvent * event) {
         QMouseEvent * mouseEvent = static_cast <QMouseEvent *> (event);
 
         if (mouseEvent -> button() == Qt::LeftButton) {
-            if (MediaPlayer::instance() -> isPlayed()) {
-                MediaPlayer::instance() -> pause();
+            if (((MediaPlayer * )clock -> mediaPlayer()) -> isPlayed()) {
+                ((MediaPlayer * )clock -> mediaPlayer()) -> pause();
 //                panel -> update pause button
             }
             else {
-                MediaPlayer::instance() -> play();
+                ((MediaPlayer * )clock -> mediaPlayer()) -> play();
 //                panel -> update play button
             }
         }

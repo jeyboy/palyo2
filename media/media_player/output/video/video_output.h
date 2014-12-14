@@ -29,6 +29,7 @@ protected:
     void resizeEvent(QResizeEvent * event);
 //    void paintEvent(QPaintEvent *);
 private:
+    MasterClock * clock;
     QString fps;
     RenderInterface * screen;
     QTimer timer;

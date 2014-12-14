@@ -2,6 +2,7 @@
 #include "media/media_player/media_player.h"
 
 VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type, int width, int height) : OutputContainer(clock)
+    , clock(clock)
     , screen(0) {
 
     setMouseTracking(true);
@@ -61,7 +62,7 @@ void VideoOutput::setRender(RenderType type) {
 }
 
 void VideoOutput::titleUpdate() {
-    QString temp = MediaPlayer::instance() -> info() + " (" + renderTypeToStr(screen -> getRenderType()) + " )" + " (" + fps + "fps )" + " (" + (procMemoryUsage(1024 * 1024)) + " Mb )";
+    QString temp = ((MediaPlayer *)clock -> mediaPlayer()) -> info() + " (" + renderTypeToStr(screen -> getRenderType()) + " )" + " (" + fps + "fps )" + " (" + (procMemoryUsage(1024 * 1024)) + " Mb )";
     setWindowTitle(temp);
 }
 

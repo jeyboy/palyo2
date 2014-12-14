@@ -1,6 +1,7 @@
 #include "control_panel.h"
+#include "media/media_player/media_player.h"
 
-ControlPanel::ControlPanel(MediaPlayer * player, QWidget * parent) : QWidget(parent), player(player) {
+ControlPanel::ControlPanel(MasterClock * clock, QWidget * parent) : QWidget(parent), clock(clock) {
 //    setAttribute(Qt::WA_OpaquePaintEvent);
 //    setAttribute(Qt::WA_PaintOnScreen);
 //    setAttribute(Qt::WA_NoSystemBackground);
@@ -20,19 +21,19 @@ ControlPanel::ControlPanel(MediaPlayer * player, QWidget * parent) : QWidget(par
     QPushButton * play = new QPushButton(QIcon(":play"), "", this);
     play -> setMaximumSize(40, 50);
     play -> setMinimumWidth(40);
-    connect(play, SIGNAL(clicked()), player, SLOT(play()));
+    connect(play, SIGNAL(clicked()), (MediaPlayer *)clock -> mediaPlayer(), SLOT(play()));
     layout() -> addWidget(play);
 
     QPushButton * pause = new QPushButton(QIcon(":pause"), "", this);
     pause -> setMaximumSize(40, 50);
     pause -> setMinimumWidth(40);
-    connect(pause, SIGNAL(clicked()), player, SLOT(pause()));
+    connect(pause, SIGNAL(clicked()), (MediaPlayer *)clock -> mediaPlayer(), SLOT(pause()));
     layout() -> addWidget(pause);
 
     QPushButton * stop = new QPushButton(QIcon(":stop"), "", this);
     stop -> setMaximumSize(40, 50);
     stop -> setMinimumWidth(40);
-    connect(stop, SIGNAL(clicked()), player, SLOT(stop()));
+    connect(stop, SIGNAL(clicked()), (MediaPlayer *)clock -> mediaPlayer(), SLOT(stop()));
     layout() -> addWidget(stop);
 
     timer = new QLabel(this);
@@ -44,9 +45,9 @@ ControlPanel::ControlPanel(MediaPlayer * player, QWidget * parent) : QWidget(par
     slider -> setOrientation(Qt::Horizontal);
     slider -> setMinimumSize(100, 30);
 
-    slider -> setMaximum(player -> durationMillis());
-    connect(player, SIGNAL(positionChangedMillis(int)), this, SLOT(sliderUpdate(int)));
-    connect(slider, SIGNAL(valueChanged(int)), player, SLOT(seekMillis(int)));
+    slider -> setMaximum(((MediaPlayer *) clock -> mediaPlayer()) -> durationMillis());
+    connect((MediaPlayer *)clock -> mediaPlayer(), SIGNAL(positionChangedMillis(int)), this, SLOT(sliderUpdate(int)));
+    connect(slider, SIGNAL(valueChanged(int)), (MediaPlayer *)clock -> mediaPlayer(), SLOT(seekMillis(int)));
 
     layout() -> addWidget(slider);
 }
@@ -66,6 +67,6 @@ void ControlPanel::sliderUpdate(int pos) {
     slider -> setValue(pos);
     slider -> blockSignals(false);
 
-    QString temp = MediaPlayer::instance() -> info();
+    QString temp = ((MediaPlayer *) clock -> mediaPlayer()) -> info();
     timer -> setText(temp);
 }
