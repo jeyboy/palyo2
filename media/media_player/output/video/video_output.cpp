@@ -1,7 +1,7 @@
 #include "video_output.h"
 #include "media/media_player/media_player.h"
 
-VideoOutput::VideoOutput(QObject * parent, RenderType type, int width, int height) : OutputContainer()
+VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type, int width, int height) : OutputContainer(clock)
     , screen(0) {
 
     setMouseTracking(true);

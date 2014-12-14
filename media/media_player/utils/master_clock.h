@@ -2,23 +2,19 @@
 #define MASTER_CLOCK_H
 
 //#include <QMutex>
-#include "media_player_utils.h"
+#include "media/media_player/utils/media_player_utils.h"
 
 /* no AV sync correction is done if below the AV sync threshold */
 #define AV_SYNC_THRESHOLD 0.01
 /* no AV correction is done if too big error */
 #define AV_NOSYNC_THRESHOLD 10.0
 
-class MasterClock : public QObject {
-    Q_OBJECT
+class MasterClock/* : public QObject*/ {
+//    Q_OBJECT
 public:
-    ~MasterClock();
+    MasterClock(void * parent);
 
-    static void create();
-    static MasterClock * instance();
-    static void close() {
-        delete self;
-    }
+    ~MasterClock();
 
     void reset();
     void resetMain();
@@ -29,43 +25,30 @@ public:
 //    bool skipVideoRequired();
     int computeVideoDelay(double compClock, double compClockNext);
 
-    inline double main_clock() { return mainClock; }
-    inline void setMain(double newClock) { mainClock = newClock; }
-    inline void iterateMain(double offset) { mainClock += offset; }
+    inline void * mediaPlayer() const { return player; }
 
-    inline double audio() { return audioClock; }
-    inline void setAudio(double newClock) {
-        audioOClock = av_gettime() + (newClock - audioClock) * 1000000;
-        audioClock = newClock;
-        emit positionUpdated(audioClock);
-        emit __positionUpdated(audioClock * 1000);
-    }
-    inline void iterateAudio(double offset) {
-        audioOClock = av_gettime() + (offset * 1000000);
-        audioClock += offset;
-        emit positionUpdated(audioClock);
-        emit __positionUpdated(audioClock * 1000);
-    }
+    // sync by audio clock
+    inline double position() const { return audioClock; }
 
-    inline double video() { return videoClock; }
-    inline void setVideo(double newClock) { videoClock = newClock; }
-    inline void iterateVideo(double offset) { videoClock += offset; }
+    double main_clock();
+    void setMain(double newClock);
+    void iterateMain(double offset);
 
-    inline void setVideoSync(double newClock) { videoSyncClock = newClock; }
-    inline void setVideoNext(double newClock) { videoClockNext = newClock; }
+    double audio();
+    void setAudio(double newClock);
+    void iterateAudio(double offset);
 
-    inline double subtitle() { return subtitlesClock; }
-    inline void setSubtitle(double newClock) { subtitlesClock = newClock; }
-    inline void iterateSubtitle(double offset) { subtitlesClock += offset; }
-signals:
-    void positionUpdated(double);
-    void __positionUpdated(int);
+    double video();
+    void setVideo(double newClock);
+    void iterateVideo(double offset);
 
+    void setVideoNext(double newClock);
+
+    double subtitle();
+    void setSubtitle(double newClock);
+    void iterateSubtitle(double offset);
 private:
-
-    MasterClock();
-
-    static MasterClock * self;
+    void * player;
 
     double mainClock;
     double mainLastPtsVal;
@@ -77,7 +60,7 @@ private:
 
     volatile double videoClock;
     volatile double videoClockNext;
-    volatile double videoSyncClock;
+//    volatile double videoSyncClock;
 
     volatile double subtitlesClock;
 };

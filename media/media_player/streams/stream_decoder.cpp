@@ -1,7 +1,7 @@
 #include "stream_decoder.h"
 #include <qDebug>
 
-StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : Stream(parent)
+StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock) : Stream(parent)
     , ac(0)
     , vc(0)
     , defaultLang("rus")
@@ -12,9 +12,9 @@ StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext) : 
 
     currFrame = new AVPacket();
     context = currContext;
-    findStreams();
+    findStreams(clock);
 
-    MasterClock::instance() -> reset();
+    clock -> reset();
 
     if (isValid()) {
         suspend();
@@ -45,11 +45,6 @@ StreamDecoder::~StreamDecoder() {
 
     av_free_packet(currFrame);
     delete currFrame;
-}
-
-double StreamDecoder::position() {
-    return MasterClock::instance() -> audio();
-//    return qMax(MasterClock::instance() -> audio(), MasterClock::instance() -> video());
 }
 
 void StreamDecoder::seek(int64_t target) {
@@ -159,10 +154,8 @@ int StreamDecoder::langStream() {
 
     for(uint i = 0; i < context -> nb_streams; i++) {
         if (context -> streams[i] -> codec -> codec_type != AVMEDIA_TYPE_AUDIO) continue;
-        qDebug() << "-----------------------------";
         dict = context -> streams[i] -> metadata;
         while ((tag = av_dict_get(dict, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-            qDebug() << tag -> key << " " << tag -> value;
             if (QString(tag -> key) == "language" && QString(tag -> value) == defaultLang)
                 return i;
 //            delete tag;
@@ -178,10 +171,10 @@ uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {
     return video -> index();
 }
 
-void StreamDecoder::findStreams() {
-    videoStream = new VideoStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
-    audioStream = new AudioStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, langStream(), bestStream(audioStream, videoStream), NULL, 0));
-    subtitleStream = new SubtitleStream(this, context, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
+void StreamDecoder::findStreams(MasterClock * clock) {
+    videoStream = new VideoStream(this, context, clock, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
+    audioStream = new AudioStream(this, context, clock, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, langStream(), bestStream(audioStream, videoStream), NULL, 0));
+    subtitleStream = new SubtitleStream(this, context, clock, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
 //        emit errorOccurred("No one audio or video streams founds");

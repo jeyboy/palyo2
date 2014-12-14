@@ -16,8 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initialization();
 
-    MediaPlayer::instance(this);
-    connect(MediaPlayer::instance(this), SIGNAL(errorOccured(QString)), this, SLOT(showError(QString)));
+    player = new MediaPlayer(this);
+    connect(player, SIGNAL(errorOccured(QString)), this, SLOT(showError(QString)));
 
 //    Play media from Internet services using the quvi project.
 //    The demuxer accepts a ‘format’ option to request a specific quality. It is by default set to best.
@@ -25,36 +25,36 @@ MainWindow::MainWindow(QWidget *parent) :
 //    FFmpeg needs to be built with --enable-libquvi for this demuxer to be enabled.
 //    http://quvi.sourceforge.net/r/howto/install/
 //    To play/convert videos directly from Youtube, using FFmpeg, you need to compile your ffmpeg with ​libquvi support.
-//    MediaPlayer::instance() -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
+//    player -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/Million.Sposobov.Poteryat'.Golovu.2014.RUS.BDRip.x264.-HELLYWOOD.mkv"), 38000);
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"), 60000);
-//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/New Year, New Tricks - Happy 2014!.mkv"));
-//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/111412158")); //short
-//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
+//      player -> open(QUrl::fromLocalFile("G:/Million.Sposobov.Poteryat'.Golovu.2014.RUS.BDRip.x264.-HELLYWOOD.mkv"), 38000);
+//      player -> open(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"), 60000);
+//    player -> open(QUrl::fromLocalFile("G:/test/test3/New Year, New Tricks - Happy 2014!.mkv"));
+//    player -> open(QUrl("http://www.ex.ua/get/111412158")); //short
+//    player -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
 
-//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47935441"));
+//    player -> open(QUrl("http://www.ex.ua/get/47935441"));
 
-//    MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/47933391"));
-
-
-
-    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
-//    qDebug() << MediaPlayer::instance() -> open(QUrl("http://www.ex.ua/get/116023228")); //asterix 2
-//    qDebug() << MediaPlayer::instance() -> open(QUrl("https://cs1-43v4.vk-cdn.net/p12/f97b321ed3ed8a.mp3?extra=b8mi7AY_T_njmTpycZLbdJnNCoI1hgzvLkAJIA83H16rdNecFzZqMVHLtCcj7liPcl0CnVn7xFTDKEkx7xDG_FSznd8nUZ3S"));
-//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/FlameMakers - Álmok szigetén (Club Hupák Remix).mp3"));
+//    player -> open(QUrl("http://www.ex.ua/get/47933391"));
 
 
 
+//    player -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
+//    qDebug() << player -> open(QUrl("http://www.ex.ua/get/116023228")); //asterix 2
+//    qDebug() << player -> open(QUrl("https://cs1-43v4.vk-cdn.net/p12/f97b321ed3ed8a.mp3?extra=b8mi7AY_T_njmTpycZLbdJnNCoI1hgzvLkAJIA83H16rdNecFzZqMVHLtCcj7liPcl0CnVn7xFTDKEkx7xDG_FSznd8nUZ3S"));
+//    player -> open(QUrl::fromLocalFile("G:/test/FlameMakers - Álmok szigetén (Club Hupák Remix).mp3"));
 
-//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/test.mp4"));
-//    MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Shakra – Trapped.mp3"));
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));
-//      MediaPlayer::instance() -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 
-    MediaPlayer::instance() -> play();
+
+
+//    player -> open(QUrl::fromLocalFile("G:/test/test3/test.mp4"));
+    player -> open(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
+//      player -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
+//      player -> open(QUrl::fromLocalFile("G:/test/test3/Shakra – Trapped.mp3"));
+//      player -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));
+//      player -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
+
+    player -> play();
 }
 
 void MainWindow::locationCorrection() {
@@ -202,8 +202,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 MainWindow::~MainWindow() {
-//    MediaPlayer::instance() -> close(); // this called by parent deletion
-
     delete ui;
 
     ///////////////////////////////////////////////

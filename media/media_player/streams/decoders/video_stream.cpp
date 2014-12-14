@@ -2,8 +2,8 @@
 #include "misc/screen.h"
 #include "media/media_player/output/video/controls/renders/render_types.h"
 
-VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
-    : MediaStream(context, streamIndex, parent, priority)
+VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterClock * clock, int streamIndex, Priority priority)
+    : MediaStream(context, clock, streamIndex, parent, priority)
     , output(0)
     , resampler(0){
 
@@ -22,7 +22,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, int stream
         RenderType type = gl_plus;
 
         resampler = new VideoResampler(codec_context, type == hardware || type == gl);
-        output = new VideoOutput(this, type == hardware || type == gl ? type : (resampler -> isGLShaderCompatible() ? gl_plus : gl), width, height);
+        output = new VideoOutput(this, clock, type == hardware || type == gl ? type : (resampler -> isGLShaderCompatible() ? gl_plus : gl), width, height);
     }
 }
 
@@ -99,7 +99,7 @@ void VideoStream::routine() {
 //                time_buff += packet_time;
 //                qDebug() << "vdur " << time_buff;
 
-                frames.append(calcPts(new VideoFrame(buff, -1, -1, aspect_ratio)));
+                frames.append(calcPts(new VideoFrame(clock, buff, -1, -1, aspect_ratio)));
             }
         } else {
             qWarning("Could not get a full picture from this frame: %d", len);
@@ -122,7 +122,7 @@ void VideoStream::suspendStream() {
 }
 
 void VideoStream::resumeStream() {
-    MasterClock::instance() -> resetMain();
+    clock -> resetMain();
     MediaStream::resume();
 }
 
@@ -133,7 +133,7 @@ void VideoStream::changeRenderType(RenderType type) {
 void VideoStream::nextFrame(void *& ret) {
 //    mutex -> lock();
     if (pauseRequired)
-        ret = new VideoFrame(); // create skip frame
+        ret = new VideoFrame(clock); // create skip frame
     else if (!frames.isEmpty())
         ret = frames.takeFirst();
 //    mutex -> unlock();

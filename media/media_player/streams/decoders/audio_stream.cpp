@@ -1,7 +1,7 @@
 #include "audio_stream.h"
 
-AudioStream::AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
-    : QIODevice(parent), MediaStream(context, streamIndex, parent, priority)
+AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterClock * clock, int streamIndex, Priority priority)
+    : QIODevice(parent), MediaStream(context, clock, streamIndex, parent, priority)
     , sleep_correlation(10)
     , defaultChannelLayout(AV_CH_LAYOUT_STEREO)
     , resampleRequire(false)
@@ -152,7 +152,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
             reslen += currFrame -> buffer -> size();
             out += currFrame -> buffer -> size();
             time_buff -= currFrame -> time_length;
-            MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+            clock -> setAudio(currFrame -> bufferPTS);
             k++;
             delete currFrame;
         }

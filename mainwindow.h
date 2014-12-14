@@ -79,6 +79,7 @@ protected:
     QMenu* createPopupMenu();
 
 private:
+    MediaPlayer * player;
     Ui::MainWindow *ui;
     QSystemTrayIcon m_tray;
 

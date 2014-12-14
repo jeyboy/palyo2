@@ -25,13 +25,13 @@ void AudioOutputStream::routine() {
     AudioStream * dStream = (AudioStream *) stream;
 
     AudioFrame * currFrame = 0; /*dStream -> decoded();*/
-    if (MasterClock::instance() -> audio() != 0) {
-//        int lo = MasterClock::instance() -> computeAudioDelay();
-//        usleep(lo);
-    }
+//    if (MasterClock::instance() -> audio() != 0) {
+////        int lo = MasterClock::instance() -> computeAudioDelay();
+////        usleep(lo);
+//    }
 
     audioIO -> write(*currFrame -> buffer);
-    MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
+//    MasterClock::instance() -> setAudio(currFrame -> bufferPTS);
 
     delete currFrame;
 }

@@ -1,7 +1,7 @@
 #include "subtitle_stream.h"
 
-SubtitleStream::SubtitleStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority)
-    : MediaStream(context, streamIndex, parent, priority) {
+SubtitleStream::SubtitleStream(QObject * parent, AVFormatContext * context, MasterClock * clock, int streamIndex, Priority priority)
+    : MediaStream(context, clock, streamIndex, parent, priority) {
 
     if (valid) {
         connect(parent, SIGNAL(flushData()), this, SLOT(flushData()), Qt::BlockingQueuedConnection);

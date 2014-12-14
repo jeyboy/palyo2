@@ -2,8 +2,8 @@
 #include "media/media_player/media_player.h"
 #include <QDebug>
 
-OutputContainer::OutputContainer(QWidget * parent) : QWidget(parent) {
-    panel = new ControlPanel(this);
+OutputContainer::OutputContainer(MasterClock * clock, QWidget * parent) : QWidget(parent) {
+    panel = new ControlPanel((MediaPlayer * )clock -> player, this);
 }
 
 bool OutputContainer::event(QEvent * event) {

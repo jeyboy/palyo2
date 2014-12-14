@@ -7,7 +7,7 @@
 class MediaStream : public Stream, public IMediaStream {
     Q_OBJECT
 public:
-    MediaStream(AVFormatContext * context, int streamIndex, QObject * parent, Priority priority = InheritPriority);
+    MediaStream(AVFormatContext * context, MasterClock * clock, int streamIndex, QObject * parent, Priority priority = InheritPriority);
     virtual ~MediaStream();
 
     inline bool requirePreload() { return !valid || (valid && packets.isEmpty()); }
@@ -21,6 +21,7 @@ public slots:
 
 protected:
     virtual void routine() {} // stub
+    MasterClock * clock;
 
     bool eof;
 };

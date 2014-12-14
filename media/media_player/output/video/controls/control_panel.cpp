@@ -1,7 +1,6 @@
 #include "control_panel.h"
-#include "media/media_player/media_player.h"
 
-ControlPanel::ControlPanel(QWidget * parent) : QWidget(parent) {
+ControlPanel::ControlPanel(MediaPlayer * player, QWidget * parent) : QWidget(parent), player(player) {
 //    setAttribute(Qt::WA_OpaquePaintEvent);
 //    setAttribute(Qt::WA_PaintOnScreen);
 //    setAttribute(Qt::WA_NoSystemBackground);
@@ -21,19 +20,19 @@ ControlPanel::ControlPanel(QWidget * parent) : QWidget(parent) {
     QPushButton * play = new QPushButton(QIcon(":play"), "", this);
     play -> setMaximumSize(40, 50);
     play -> setMinimumWidth(40);
-    connect(play, SIGNAL(clicked()), MediaPlayer::instance(), SLOT(play()));
+    connect(play, SIGNAL(clicked()), player, SLOT(play()));
     layout() -> addWidget(play);
 
     QPushButton * pause = new QPushButton(QIcon(":pause"), "", this);
     pause -> setMaximumSize(40, 50);
     pause -> setMinimumWidth(40);
-    connect(pause, SIGNAL(clicked()), MediaPlayer::instance(), SLOT(pause()));
+    connect(pause, SIGNAL(clicked()), player, SLOT(pause()));
     layout() -> addWidget(pause);
 
     QPushButton * stop = new QPushButton(QIcon(":stop"), "", this);
     stop -> setMaximumSize(40, 50);
     stop -> setMinimumWidth(40);
-    connect(stop, SIGNAL(clicked()), MediaPlayer::instance(), SLOT(stop()));
+    connect(stop, SIGNAL(clicked()), player, SLOT(stop()));
     layout() -> addWidget(stop);
 
     timer = new QLabel(this);
@@ -45,9 +44,9 @@ ControlPanel::ControlPanel(QWidget * parent) : QWidget(parent) {
     slider -> setOrientation(Qt::Horizontal);
     slider -> setMinimumSize(100, 30);
 
-    slider -> setMaximum(MediaPlayer::instance() -> __duration());
-    connect(MasterClock::instance(), SIGNAL(__positionUpdated(int)), this, SLOT(sliderUpdate(int)));
-    connect(slider, SIGNAL(valueChanged(int)), MediaPlayer::instance(), SLOT(seekMillis(int)));
+    slider -> setMaximum(player -> durationMillis());
+    connect(player, SIGNAL(positionChangedMillis(int)), this, SLOT(sliderUpdate(int)));
+    connect(slider, SIGNAL(valueChanged(int)), player, SLOT(seekMillis(int)));
 
     layout() -> addWidget(slider);
 }

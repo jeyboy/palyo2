@@ -8,7 +8,7 @@
 
 class VideoStream : public MediaStream {
 public:
-    VideoStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
+    VideoStream(QObject * parent, AVFormatContext * context, MasterClock * clock, int streamIndex, Priority priority = InheritPriority);
     ~VideoStream();
 
     int calcDelay();

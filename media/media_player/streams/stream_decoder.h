@@ -1,7 +1,7 @@
 #ifndef STREAM_DECODER_H
 #define STREAM_DECODER_H
 
-#include "media/media_player/utils/media_player_utils.h"
+//#include "media/media_player/utils/media_player_utils.h"
 
 #include "decoders/audio_stream.h"
 #include "decoders/video_stream.h"
@@ -19,7 +19,7 @@ public:
         Suspended = 4
     };
 
-    StreamDecoder(QObject * parent, AVFormatContext * currContext);
+    StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock);
     ~StreamDecoder();
 
     DecoderState getState() const { return state; }
@@ -32,7 +32,6 @@ public:
     inline bool hasVideo() const { return videoStream -> isValid(); }
     inline bool hasSubtitles() const { return subtitleStream -> isValid(); }
 
-    double position();
     void seek(int64_t target);
 
     void suspend();
@@ -59,7 +58,7 @@ protected:
 private:
     int langStream();
     uint bestStream(AudioStream * audio, VideoStream * video);
-    void findStreams();
+    void findStreams(MasterClock * clock);
 
     QString defaultLang;
     enum DecoderState state;

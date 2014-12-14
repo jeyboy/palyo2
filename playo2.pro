@@ -122,7 +122,8 @@ SOURCES += main.cpp\
     media/media_player/utils/video_types.cpp \ 
     memory_profiler/memory_profiler.cpp \
     media/media_player/utils/web/custom_network_access_manager.cpp \
-    media/media_player/utils/web/web_object.cpp
+    media/media_player/utils/web/web_object.cpp \
+    media/media_player/contexts/custom_context.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -242,7 +243,9 @@ HEADERS  += mainwindow.h \
     media/media_player/output/audio/rdft_spectrum.h \
     media/media_player/output/audio/fft_spectrum.h \
     media/media_player/utils/web/custom_network_access_manager.h \
-    media/media_player/utils/web/web_object.h
+    media/media_player/utils/web/web_object.h \
+    media/media_player/contexts/custom_context.h \
+    media/media_player/streams/frames/video/video_buffer_proxy.h
 
 unix:!mac {
         QT += gui-private

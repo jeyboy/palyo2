@@ -5,7 +5,7 @@
 
 class SubtitleStream : public MediaStream {
 public:
-    SubtitleStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
+    SubtitleStream(QObject * parent, AVFormatContext * context, MasterClock * clock, int streamIndex, Priority priority = InheritPriority);
 
 //    int calcDelay();
 
@@ -14,7 +14,7 @@ public:
     void resume();
     void flushData();
 
-    void nextFrame(void *& ret) { ret = 0; qDebug() << "STTTTTTTTTTTTTTTUUUUUUUUUUUUUUUUUBBBBBBBBBBB"; } // stub
+    void nextFrame(void *& ret) { ret = 0; } // stub
 protected:
     void routine();
 };

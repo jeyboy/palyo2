@@ -12,7 +12,7 @@
 
 class AudioStream : public QIODevice, public MediaStream {
 public:
-    AudioStream(QObject * parent, AVFormatContext * context, int streamIndex, Priority priority = InheritPriority);
+    AudioStream(QObject * parent, AVFormatContext * context, MasterClock * clock, int streamIndex, Priority priority = InheritPriority);
     ~AudioStream();
 
 //    int calcDelay();

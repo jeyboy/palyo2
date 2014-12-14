@@ -10,7 +10,7 @@
 class OutputContainer : public QWidget {
      Q_OBJECT
 public:
-    OutputContainer(QWidget* parent = NULL);
+    OutputContainer(MasterClock * clock, QWidget* parent = NULL);
 protected:
     bool event(QEvent *);
 

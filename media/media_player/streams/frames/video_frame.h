@@ -6,12 +6,12 @@
 #include "./video/video_buffer.h"
 
 struct VideoFrame {
-    VideoFrame() {
+    VideoFrame(MasterClock * clock) : clock(clock) {
         buffer = 0;
         pts = -1;
     }
 
-    VideoFrame(VideoBuffer * buff, double framePts, double nextPts, double aspectRatio) {
+    VideoFrame(MasterClock * clock, VideoBuffer * buff, double framePts, double nextPts, double aspectRatio) : clock(clock) {
         aspect_ratio = aspectRatio;
         buffer = buff;
         pts = framePts;
@@ -31,9 +31,9 @@ struct VideoFrame {
         uint res = 40;
 
         if (pts > -1) {
-            res = MasterClock::instance() -> computeVideoDelay(
-                pts == 0 ? MasterClock::instance() -> video() : pts,
-                MasterClock::instance() -> video() + next_pts
+            res = clock -> computeVideoDelay(
+                pts == 0 ? clock -> video() : pts,
+                clock -> video() + next_pts
             );
         }
 
@@ -55,6 +55,7 @@ struct VideoFrame {
         return rect;
     }
 
+    MasterClock * clock;
     VideoBuffer * buffer;
     double pts, next_pts, aspect_ratio;
 };
