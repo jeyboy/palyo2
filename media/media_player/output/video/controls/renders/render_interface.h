@@ -32,6 +32,7 @@ private slots:
     void fpsCalculation();
 
 protected:
+    void initializeGL();
     void redrawed();
 
 //    virtual void paintFrame() = 0;

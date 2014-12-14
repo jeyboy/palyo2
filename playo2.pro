@@ -84,7 +84,6 @@ SOURCES += main.cpp\
     override/clickable_label.cpp \
     override/tabber.cpp \
     override/tab.cpp \
-    override/custom_network_access_manager.cpp \
     override/slider.cpp \
     single_application.cpp \
     web/download.cpp \
@@ -121,7 +120,9 @@ SOURCES += main.cpp\
     media/media_player/output/video/controls/renders/gl_render.cpp \
     media/media_player/output/video/controls/renders/gl_render_raw.cpp \
     media/media_player/utils/video_types.cpp \ 
-    memory_profiler/memory_profiler.cpp
+    memory_profiler/memory_profiler.cpp \
+    media/media_player/utils/web/custom_network_access_manager.cpp \
+    media/media_player/utils/web/web_object.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -183,7 +184,6 @@ HEADERS  += mainwindow.h \
     override/clickable_label.h\
     override/tabber.h \
     override/tab.h \
-    override/custom_network_access_manager.h \
     override/slider.h \
     single_application.h \
     misc/func_container.h \
@@ -240,7 +240,9 @@ HEADERS  += mainwindow.h \
     memory_profiler/memory_profiler.h \
     media/media_player/output/audio/audio_info.h \
     media/media_player/output/audio/rdft_spectrum.h \
-    media/media_player/output/audio/fft_spectrum.h
+    media/media_player/output/audio/fft_spectrum.h \
+    media/media_player/utils/web/custom_network_access_manager.h \
+    media/media_player/utils/web/web_object.h
 
 unix:!mac {
         QT += gui-private

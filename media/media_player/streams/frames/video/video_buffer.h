@@ -61,8 +61,9 @@ public:
                 return q_image -> byteCount(); //q_image -> width() * q_image -> height();
             else return -1;
         } else {
-            if (num < AV_NUM_DATA_POINTERS)
+            if (num < AV_NUM_DATA_POINTERS) {
                 return av_picture -> linesize[num];
+            }
             else return -1;
         }
     }

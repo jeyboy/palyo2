@@ -8,7 +8,7 @@
 
 #include "model/model.h"
 #include "model/model_item.h"
-#include "override/custom_network_access_manager.h"
+#include "media/media_player/utils/web/custom_network_access_manager.h"
 
 struct DownloadPosition {
     DownloadPosition(Model * _model, ModelItem * _item, QUrl _savePath) {
@@ -69,7 +69,7 @@ protected:
 
 private:
     Download() {
-        netManager = new CustomNetworkAccessManager(QSsl::TlsV1SslV3, QSslSocket::VerifyNone);
+        netManager = new CustomNetworkAccessManager();
         downloads = new QHash<void *, DownloadPosition *>();
         queue = new QList<ModelItem *>();
 

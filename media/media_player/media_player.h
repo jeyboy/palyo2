@@ -6,6 +6,7 @@
 
 #include "streams/stream_decoder.h"
 #include "utils/master_clock.h"
+#include "utils/web/web_object.h"
 
 class MediaPlayer : public QObject {
     Q_OBJECT
@@ -30,6 +31,7 @@ public:
 
     int bitrate();
 
+    QString lastError() const;
     QString filename();
 
     QString info();
@@ -56,6 +58,8 @@ public slots:
     void setVolume(uint val);
 
 protected:
+    bool openCustomContext(QUrl & url);
+
     bool openContext(QUrl & url);
     void closeContext();
 
@@ -68,6 +72,10 @@ private:
     int64_t item_duration;
 
     AVFormatContext *context;
+    AVIOContext *avio_context;
+    uint8_t * avio_ctx_buffer;
+    WebObject * obj;
+
     QString errorStr;
 
     static MediaPlayer * self;
