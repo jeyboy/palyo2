@@ -4,9 +4,7 @@ SubtitleStream::SubtitleStream(QObject * parent, AVFormatContext * context, Mast
     : MediaStream(context, clock, streamIndex, parent, priority) {
 
     if (valid) {
-        connect(parent, SIGNAL(flushData()), this, SLOT(flushData()), Qt::BlockingQueuedConnection);
-        connect(parent, SIGNAL(suspendRequired()), this, SLOT(suspend()));
-        connect(parent, SIGNAL(resumeRequired()), this, SLOT(resume()));
+
     }
 }
 

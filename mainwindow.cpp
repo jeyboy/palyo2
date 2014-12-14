@@ -27,8 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //    To play/convert videos directly from Youtube, using FFmpeg, you need to compile your ffmpeg with ​libquvi support.
 //    player -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
-//      player -> open(QUrl::fromLocalFile("G:/Million.Sposobov.Poteryat'.Golovu.2014.RUS.BDRip.x264.-HELLYWOOD.mkv"), 38000);
-//      player -> open(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"), 60000);
+      player -> openMillis(QUrl::fromLocalFile("G:/Million.Sposobov.Poteryat'.Golovu.2014.RUS.BDRip.x264.-HELLYWOOD.mkv"), 38000);
+//      player -> openMillis(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"), 60000);
 //    player -> open(QUrl::fromLocalFile("G:/test/test3/New Year, New Tricks - Happy 2014!.mkv"));
 //    player -> open(QUrl("http://www.ex.ua/get/111412158")); //short
 //    player -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 //    player -> open(QUrl::fromLocalFile("G:/test/test3/test.mp4"));
-    player -> open(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
+//    player -> open(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/Shakra – Trapped.mp3"));
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));

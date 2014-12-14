@@ -288,7 +288,7 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
-    RenderInterface::initializeGL();
+//    RenderInterface::initializeGL();
 
     makeCurrent();
 
