@@ -170,11 +170,11 @@ struct VideoSettings {
 //        return bpp_pad;
 //    }
 
-//    int bitsPerPixelPadded(int plane) const {
-//        if (plane >= bpps.size())
-//            return 0;
-//        return bpps_pad[plane];
-//    }
+    int bitsPerPixelPadded(int plane) const {
+        if (plane >= bpps_pad.size())
+            return 0;
+        return bpps_pad[plane];
+    }
 
     int bitsPerPixel(int plane) const {
         if (plane >= bpps.size())
@@ -203,7 +203,7 @@ struct VideoSettings {
 
     void initBpp() {
         bpps.resize(planes);
-//        bpps_pad.resize(planes);
+        bpps_pad.resize(planes);
 
         bpp = 0;
 
@@ -217,25 +217,25 @@ struct VideoSettings {
             s = c == 1 || c == 2 ? 0 : log2_pixels;
 
             bpps[comp -> plane] = (comp -> depth_minus1 + 1) << s;
-//            bpps_pad[comp -> plane] = (comp -> step_minus1 + 1) << s;
+            bpps_pad[comp -> plane] = (comp -> step_minus1 + 1) << s;
 
-//            if(!(descriptor -> flags & AV_PIX_FMT_FLAG_BITSTREAM))
-//                bpps_pad[comp -> plane] *= 8;
+            if(!(descriptor -> flags & AV_PIX_FMT_FLAG_BITSTREAM))
+                bpps_pad[comp -> plane] *= comp -> plane == 0 ? 8 : 4; // maybe 4 only for fmt 420P ?
 
             bpp += bpps[comp -> plane];
-//            bpp_pad += bpps_pad[comp -> plane];
+            bpp_pad += bpps_pad[comp -> plane];
 
             bpps[comp -> plane] >>= s;
-//            bpps_pad[comp -> plane] >>= s;
+            bpps_pad[comp -> plane] >>= s;
         }
         bpp >>= log2_pixels;
-//        bpp_pad >>= log2_pixels;
+        bpp_pad >>= log2_pixels;
     }
 
-    QVector<int> bpps;
+    QVector<int> bpps, bpps_pad;
 
     int width, height;
-    int bpp, planes;
+    int bpp, bpp_pad, planes;
     AVColorSpace colorspace;
     AVPixelFormat fmt;
 

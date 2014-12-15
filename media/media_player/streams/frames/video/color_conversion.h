@@ -127,52 +127,56 @@ protected:
         //http://www.graficaobscura.com/matrix/index.html
         //http://beesbuzz.biz/code/hsv_color_transforms.php
 
-        float b = brightness;
-        QMatrix4x4 B(1, 0, 0, b,
-                     0, 1, 0, b,
-                     0, 0, 1, b,
-                     0, 0, 0, 1);
+        M = QMatrix4x4(  1, 0, 0, brightness,
+                         0, 1, 0, brightness,
+                         0, 0, 1, brightness,
+                         0, 0, 0, 1);
 
-        float c = contrast + 1.0;
-        QMatrix4x4 C(c, 0, 0, 0,
-                     0, c, 0, 0,
-                     0, 0, c, 0,
-                     0, 0, 0, 1);
 
-        const float wr = .3086f;  //lumR = 0.3086  or  0.2125
-        const float wg = .6094f;  //lumG = 0.6094  or  0.7154
-        const float wb = .0820f;  //lumB = 0.0820  or  0.0721
-        float s = saturation + 1.0f;
-        QMatrix4x4 S(
-            (1.0f - s) * wr + s, (1.0f - s) * wg    , (1.0f - s) * wb    , 0.0f,
-            (1.0f - s) * wr    , (1.0f - s) * wg + s, (1.0f - s) * wb    , 0.0f,
-            (1.0f - s) * wr    , (1.0f - s) * wg    , (1.0f - s) * wb + s, 0.0f,
-                           0.0f,                0.0f,                0.0f, 1.0f
-        );
+        if (contrast != 0) {
+            float c = contrast + 1.0;
+            M *= QMatrix4x4( c, 0, 0, 0,
+                             0, c, 0, 0,
+                             0, 0, c, 0,
+                             0, 0, 0, 1);
+        }
 
-        // Hue
-        const float n = 1.0f / sqrtf(3.0f);       // normalized hue rotation axis: sqrt(3)*(1 1 1)
-        const float h = hue * M_PI;               // hue rotation angle
-        const float hc = cosf(h);
-        const float hs = sinf(h);
-        const float nn = n * n;
-        const float rel = nn *(1.0f - hc);
+        if (saturation != 0) {
+            const float wr = .3086f;  //lumR = 0.3086  or  0.2125
+            const float wg = .6094f;  //lumG = 0.6094  or  0.7154
+            const float wb = .0820f;  //lumB = 0.0820  or  0.0721
+            float s = saturation + 1.0f;
+            M *= QMatrix4x4(
+                (1.0f - s) * wr + s, (1.0f - s) * wg    , (1.0f - s) * wb    , 0.0f,
+                (1.0f - s) * wr    , (1.0f - s) * wg + s, (1.0f - s) * wb    , 0.0f,
+                (1.0f - s) * wr    , (1.0f - s) * wg    , (1.0f - s) * wb + s, 0.0f,
+                               0.0f,                0.0f,                0.0f, 1.0f
+            );
+        }
 
-        QMatrix4x4 H(     // conversion of angle/axis representation to matrix representation
-            rel + hc       , rel - n * hs , rel + n * hs , 0.0f,
-            rel + n * hs   , rel + hc     , rel - n * hs , 0.0f,
-            rel - n * hs   , rel + n * hs , rel + hc     , 0.0f,
-                    0.0f   ,         0.0f ,         0.0f , 1.0f
-        );
+        if (hue != 0) {
+            // Hue
+            const float n = 1.0f / sqrtf(3.0f);       // normalized hue rotation axis: sqrt(3)*(1 1 1)
+            const float h = hue * M_PI;               // hue rotation angle
+            const float hc = cosf(h);
+            const float hs = sinf(h);
+            const float nn = n * n;
+            const float rel = nn *(1.0f - hc);
 
-//        QMatrix4x4 H(     // conversion of angle/axis representation to matrix representation
-//            nn * (1.0f - hc) + hc       , nn * (1.0f - hc) - n * hs , nn * (1.0f - hc) + n * hs , 0.0f,
-//            nn * (1.0f - hc) + n * hs   , nn * (1.0f - hc) + hc     , nn * (1.0f - hc) - n * hs , 0.0f,
-//            nn * (1.0f - hc) - n * hs   , nn * (1.0f - hc) + n * hs , nn * (1.0f - hc) + hc     , 0.0f,
-//                                 0.0f   ,                      0.0f ,                      0.0f , 1.0f
-//        );
+            M *= QMatrix4x4(     // conversion of angle/axis representation to matrix representation
+                rel + hc       , rel - n * hs , rel + n * hs , 0.0f,
+                rel + n * hs   , rel + hc     , rel - n * hs , 0.0f,
+                rel - n * hs   , rel + n * hs , rel + hc     , 0.0f,
+                        0.0f   ,         0.0f ,         0.0f , 1.0f
+            );
 
-        M = B * C * S * H;
+    //        QMatrix4x4 H(     // conversion of angle/axis representation to matrix representation
+    //            nn * (1.0f - hc) + hc       , nn * (1.0f - hc) - n * hs , nn * (1.0f - hc) + n * hs , 0.0f,
+    //            nn * (1.0f - hc) + n * hs   , nn * (1.0f - hc) + hc     , nn * (1.0f - hc) - n * hs , 0.0f,
+    //            nn * (1.0f - hc) - n * hs   , nn * (1.0f - hc) + n * hs , nn * (1.0f - hc) + hc     , 0.0f,
+    //                                 0.0f   ,                      0.0f ,                      0.0f , 1.0f
+    //        );
+        }
 
         switch (in) {
             case ColorConversion::RGB:

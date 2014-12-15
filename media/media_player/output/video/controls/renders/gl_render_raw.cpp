@@ -117,7 +117,6 @@ void GLRenderRaw::setQuality(const Quality & quality) {
 bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat) {
     makeCurrent();
     glBindTexture(GL_TEXTURE_2D, tex);
-//    setupQuality();
 
     glTexImage2D(GL_TEXTURE_2D
                  , 0                //level
@@ -133,7 +132,9 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE); // Linux ?
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE); // Linux ?
+
+//    setQuality(best);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return true;
@@ -229,6 +230,8 @@ bool GLRenderRaw::initTextures() {
     }
 
 
+    qDebug() << texture_size;
+
     return true;
 }
 
@@ -288,7 +291,7 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
-//    RenderInterface::initializeGL();
+    RenderInterface::initializeGL();
 
     makeCurrent();
 
@@ -319,6 +322,7 @@ void GLRenderRaw::paintGL() {
     for (int i = 0; i < nb_planes; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, texture_size[i].width() + vFrame -> buffer -> pad(i));
 
         glTexSubImage2D(
                     GL_TEXTURE_2D,

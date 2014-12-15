@@ -55,6 +55,13 @@ public:
     QImage * asQImage() { return q_image; }
     AVPicture * asAVPicture() { return av_picture; }
 
+    int pad(int num) const {
+        if (num < setts -> bpps_pad.size()) {
+            return setts -> bpps_pad[num] * 2;
+        }
+        else return -1;
+    }
+
     int lineSize(int num) const {
         if (q_image) {
             if (num == 0)
@@ -62,7 +69,7 @@ public:
             else return -1;
         } else {
             if (num < AV_NUM_DATA_POINTERS) {
-                return av_picture -> linesize[num];
+                return av_picture -> linesize[num] - pad(num);
             }
             else return -1;
         }
