@@ -45,6 +45,7 @@ StreamDecoder::~StreamDecoder() {
 
     av_free_packet(currFrame);
     delete currFrame;
+    qDebug() << "decoder @";
 }
 
 void StreamDecoder::seek(int64_t target) {

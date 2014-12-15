@@ -9,7 +9,7 @@ const GLfloat kTexCoords[] = {
         0, 1,
 };
 
-GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent) {
+GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), color_conversion(0) {
     makeCurrent();
     initializeOpenGLFunctions();
 

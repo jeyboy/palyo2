@@ -27,7 +27,7 @@ VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type,
 }
 
 VideoOutput::~VideoOutput() {
-    delete screen;
+//    delete screen;
 }
 
 void VideoOutput::setRender(RenderType type) {

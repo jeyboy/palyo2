@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    To play/convert videos directly from Youtube, using FFmpeg, you need to compile your ffmpeg with ​libquvi support.
 //    player -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
-      player -> openMillis(QUrl::fromLocalFile("G:/Million.Sposobov.Poteryat'.Golovu.2014.RUS.BDRip.x264.-HELLYWOOD.mkv"), 38000);
+//      player -> openMillis(QUrl::fromLocalFile("G:/Million.Sposobov.Poteryat'.Golovu.2014.RUS.BDRip.x264.-HELLYWOOD.mkv"), 38000);
 //      player -> openMillis(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"), 60000);
 //    player -> open(QUrl::fromLocalFile("G:/test/test3/New Year, New Tricks - Happy 2014!.mkv"));
 //    player -> open(QUrl("http://www.ex.ua/get/111412158")); //short
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-//    player -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
+    player -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
 //    qDebug() << player -> open(QUrl("http://www.ex.ua/get/116023228")); //asterix 2
 //    qDebug() << player -> open(QUrl("https://cs1-43v4.vk-cdn.net/p12/f97b321ed3ed8a.mp3?extra=b8mi7AY_T_njmTpycZLbdJnNCoI1hgzvLkAJIA83H16rdNecFzZqMVHLtCcj7liPcl0CnVn7xFTDKEkx7xDG_FSznd8nUZ3S"));
 //    player -> open(QUrl::fromLocalFile("G:/test/FlameMakers - Álmok szigetén (Club Hupák Remix).mp3"));
@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/Shakra – Trapped.mp3"));
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));
-//      player -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
+      player -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 
     player -> play();
 }
