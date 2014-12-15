@@ -217,7 +217,7 @@ struct VideoSettings {
             s = c == 1 || c == 2 ? 0 : log2_pixels;
 
             bpps[comp -> plane] = (comp -> depth_minus1 + 1) << s;
-            bpps_pad[comp -> plane] = (comp -> step_minus1 + 1) << s;
+            bpps_pad[comp -> plane] = ((comp -> step_minus1 + 1 + comp -> offset_plus1) << s);
 
             if(!(descriptor -> flags & AV_PIX_FMT_FLAG_BITSTREAM))
                 bpps_pad[comp -> plane] *= comp -> plane == 0 ? 8 : 4; // maybe 4 only for fmt 420P ?
@@ -230,6 +230,8 @@ struct VideoSettings {
         }
         bpp >>= log2_pixels;
         bpp_pad >>= log2_pixels;
+
+        qDebug() << bpps_pad;
     }
 
     QVector<int> bpps, bpps_pad;
