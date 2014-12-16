@@ -33,8 +33,8 @@ void SubtitleStream::flushData() {
 
 void SubtitleStream::routine() {
     if (packets.isEmpty()) {
-        semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
-        msleep(2);
+//        semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
+        msleep(50); // 2
         return;
     }
 

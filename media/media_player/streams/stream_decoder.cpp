@@ -93,6 +93,7 @@ void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
 //    qDebug() << "decoder";
 
+    qDebug() << "WWWWWW " << audioStream -> calcDelay() << " " << videoStream -> calcDelay() << semaphore -> available();
     semaphore -> acquire(1);
 
     if (pauseRequired)
@@ -139,7 +140,7 @@ void StreamDecoder::routine() {
             pauseRequired = true;
             state = EofDetected;
             emit eofDetectRequired();
-//            semaphore -> release(1);
+            semaphore -> release(1);
 
             break;
         }

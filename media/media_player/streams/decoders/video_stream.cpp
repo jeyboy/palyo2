@@ -57,7 +57,8 @@ void VideoStream::routine() {
     if (pauseRequired) return;
 
     if (isEmpty) {
-        semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
+        if (frames.size() <=  framesBufferLen / 2)
+            semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
         msleep(2);
         return;
     }
