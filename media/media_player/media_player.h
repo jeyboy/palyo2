@@ -71,6 +71,7 @@ private:
     CustomContext * custom_context;
 
     QString errorStr;
+    QSemaphore * semaphore;
 };
 
 #endif // MEDIA_PLAYER_H

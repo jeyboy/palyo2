@@ -1,6 +1,6 @@
 #include "audio_stream.h"
 
-AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterClock * clock, int streamIndex, Priority priority)
+AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority)
     : QIODevice(parent), MediaStream(context, clock, streamIndex, parent, priority)
     , sleep_correlation(10)
     , defaultChannelLayout(AV_CH_LAYOUT_STEREO)
@@ -8,6 +8,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterCloc
     , resampler(0) {
 
     if (valid) {
+        setSemaphore(sema);
         // if (is_planar)
         //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
         //              << "frame->data. Therefore, to access the audio data, you need to use\n"
@@ -80,6 +81,7 @@ void AudioStream::routine() {
 
     // TODO: mutex required for frames
     if (isEmpty) {
+        semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
         msleep(sleep_correlation);
         return;
     }
@@ -157,7 +159,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
             delete currFrame;
         }
 
-        qDebug() << "puted " << k;
+//        qDebug() << "puted " << k;
         return reslen;
     }
 

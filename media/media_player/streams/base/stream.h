@@ -5,6 +5,7 @@
 #include "media/media_player/utils/master_clock.h"
 
 #include <QThread>
+#include <QSemaphore>
 
 class Stream : public QThread {
 public:
@@ -17,12 +18,16 @@ public:
     void suspend();
     void resume();
 
+    void setSemaphore(QSemaphore *);
+
 protected:
     virtual void routine() = 0;
 
     bool exitRequired;
     bool pauseRequired;
     bool skip;
+
+    QSemaphore * semaphore;
 };
 
 #endif // STREAM_H

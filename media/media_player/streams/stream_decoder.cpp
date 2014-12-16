@@ -1,7 +1,7 @@
 #include "stream_decoder.h"
 #include <qDebug>
 
-StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock) : Stream(parent)
+StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock, QSemaphore * sema) : Stream(parent)
     , ac(0)
     , vc(0)
     , defaultLang("rus")
@@ -12,6 +12,7 @@ StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, Ma
 
     currFrame = new AVPacket();
     context = currContext;
+    setSemaphore(sema);
     findStreams(clock);
 
     clock -> reset();
@@ -23,6 +24,7 @@ StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, Ma
 }
 
 StreamDecoder::~StreamDecoder() {
+    semaphore -> release(1);
     qDebug() << "decoder";
 
     if (videoStream -> isValid()) {
@@ -90,15 +92,14 @@ void StreamDecoder::setVolume(uint val) {
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
 //    qDebug() << "decoder";
-    int del = qMin(videoStream -> calcDelay(), audioStream -> calcDelay());
-    if (del > 2 || pauseRequired) {
-        msleep(del);
+
+    semaphore -> acquire(1);
+
+    if (pauseRequired)
         return;
-    }
 
     int status;
-    bool preload = del == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
-    qDebug() << "decoder proceed " << preload;
+//    bool preload = qMin(videoStream -> calcDelay(), audioStream -> calcDelay()) == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
     state = Process;
 
     while (true) {
@@ -125,8 +126,9 @@ void StreamDecoder::routine() {
                 videoStream -> decode(currFrame);
                 vc++;
             }
-    //        else if (currFrame -> stream_index == subtitleStream -> index())
+    //        else if (currFrame -> stream_index == subtitleStream -> index()) {
     //            subtitleStream -> decode(currFrame);
+//            }
             else
                 av_free_packet(currFrame);
 
@@ -137,11 +139,13 @@ void StreamDecoder::routine() {
             pauseRequired = true;
             state = EofDetected;
             emit eofDetectRequired();
+//            semaphore -> release(1);
 
             break;
         }
 
-        if (!preload || (videoStream -> isBlocked() || audioStream -> isBlocked())) {
+        if (/*!preload || *//*semaphore -> available() == 0 || */(videoStream -> isBlocked() || audioStream -> isBlocked())) {
+//            semaphore -> release(1);
             return;
         }
     }
@@ -173,9 +177,9 @@ uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {
 }
 
 void StreamDecoder::findStreams(MasterClock * clock) {
-    videoStream = new VideoStream(this, context, clock, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
-    audioStream = new AudioStream(this, context, clock, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, langStream(), bestStream(audioStream, videoStream), NULL, 0));
-    subtitleStream = new SubtitleStream(this, context, clock, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
+    videoStream = new VideoStream(this, context, clock, semaphore, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
+    audioStream = new AudioStream(this, context, clock, semaphore, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, langStream(), bestStream(audioStream, videoStream), NULL, 0));
+    subtitleStream = new SubtitleStream(this, context, clock, semaphore, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
 //        emit errorOccurred("No one audio or video streams founds");

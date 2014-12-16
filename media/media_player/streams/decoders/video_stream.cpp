@@ -2,12 +2,13 @@
 #include "misc/screen.h"
 #include "media/media_player/output/video/controls/renders/render_types.h"
 
-VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterClock * clock, int streamIndex, Priority priority)
+VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority)
     : MediaStream(context, clock, streamIndex, parent, priority)
     , output(0)
     , resampler(0){
 
     if (valid) {
+        setSemaphore(sema);
         calcAspectRatio();
 
         int width, height;
@@ -56,6 +57,7 @@ void VideoStream::routine() {
     if (pauseRequired) return;
 
     if (isEmpty) {
+        semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
         msleep(2);
         return;
     }

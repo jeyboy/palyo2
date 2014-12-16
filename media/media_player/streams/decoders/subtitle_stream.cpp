@@ -1,11 +1,15 @@
 #include "subtitle_stream.h"
 
-SubtitleStream::SubtitleStream(QObject * parent, AVFormatContext * context, MasterClock * clock, int streamIndex, Priority priority)
+SubtitleStream::SubtitleStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority)
     : MediaStream(context, clock, streamIndex, parent, priority) {
 
     if (valid) {
-
+        setSemaphore(sema);
     }
+}
+
+SubtitleStream::~SubtitleStream() {
+
 }
 
 //int SubtitleStream::calcDelay() {
@@ -28,13 +32,13 @@ void SubtitleStream::flushData() {
 }
 
 void SubtitleStream::routine() {
-    mutex -> lock();
     if (packets.isEmpty()) {
-        mutex -> unlock();
+        semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
         msleep(2);
         return;
     }
 
+    mutex -> lock();
     AVPacket * packet = packets.takeFirst();
     mutex -> unlock();
 

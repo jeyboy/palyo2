@@ -19,7 +19,7 @@ public:
         Suspended = 4
     };
 
-    StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock);
+    StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock, QSemaphore * sema);
     ~StreamDecoder();
 
     DecoderState getState() const { return state; }

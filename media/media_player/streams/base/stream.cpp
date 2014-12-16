@@ -4,7 +4,8 @@
 Stream::Stream(QObject * parent) : QThread(parent)
   , exitRequired(false)
   , pauseRequired(false)
-  , skip(false) {
+  , skip(false)
+  , semaphore(0) {
 }
 
 Stream::~Stream() {
@@ -27,3 +28,7 @@ void Stream::stop() { exitRequired = true; }
 void Stream::suspend() { pauseRequired = true; }
 
 void Stream::resume() { pauseRequired = false; }
+
+void Stream::setSemaphore(QSemaphore * sema) {
+    semaphore = sema;
+}

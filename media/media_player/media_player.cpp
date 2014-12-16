@@ -7,7 +7,8 @@ MediaPlayer::MediaPlayer(QObject * parent) : QObject(parent)
   , isRemote(false)
   , context(0)
   , custom_context(0)
-  , errorStr("") {
+  , errorStr("")
+  , semaphore(new QSemaphore(1)){
 
     av_register_all();
     avcodec_register_all();
@@ -17,8 +18,9 @@ MediaPlayer::~MediaPlayer() {
     qDebug() << "player";
     stop();
 
-//    delete context;
     delete clock;
+
+    delete semaphore;
 }
 
 bool MediaPlayer::open(QUrl url) {
@@ -34,7 +36,7 @@ bool MediaPlayer::openMicro(QUrl url, int64_t position_micromillis, int64_t dura
 
     if (res) {
         item_duration = qMin(context -> duration, duration_micromillis > 0 ? duration_micromillis : INT64_MAX);
-        decoder = new StreamDecoder(this, context, clock);
+        decoder = new StreamDecoder(this, context, clock, semaphore);
         res &= decoder -> isValid();
     }
 
@@ -201,6 +203,7 @@ bool MediaPlayer::openContext(QUrl & url) {
 void MediaPlayer::closeContext() {
     if (decoder) {
         decoder -> stop();
+        semaphore -> release(4);
         decoder -> wait();
         delete decoder;
     }
