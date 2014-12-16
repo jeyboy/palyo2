@@ -147,6 +147,8 @@ void StreamDecoder::routine() {
 
         if (/*!preload || *//*semaphore -> available() == 0 || */(videoStream -> isBlocked() || audioStream -> isBlocked())) {
 //            semaphore -> release(1);
+            if (semaphore -> available() > 0)
+                semaphore -> acquire(1);
             return;
         }
     }

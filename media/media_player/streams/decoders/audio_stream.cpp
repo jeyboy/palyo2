@@ -81,7 +81,7 @@ void AudioStream::routine() {
 
     // TODO: mutex required for frames
     if (isEmpty) {
-        if (frames.size() <=  framesBufferLen / 2)
+        if (frames.size() <= framesBufferLen / 2)
             semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
         msleep(sleep_correlation);
         return;
