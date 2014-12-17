@@ -123,7 +123,9 @@ SOURCES += main.cpp\
     memory_profiler/memory_profiler.cpp \
     media/media_player/utils/web/custom_network_access_manager.cpp \
     media/media_player/utils/web/web_object.cpp \
-    media/media_player/contexts/custom_context.cpp
+    media/media_player/contexts/custom_context.cpp \
+    media/media_player/utils/queue/queue_cell.cpp \
+    media/media_player/utils/queue/queue.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -245,7 +247,9 @@ HEADERS  += mainwindow.h \
     media/media_player/utils/web/custom_network_access_manager.h \
     media/media_player/utils/web/web_object.h \
     media/media_player/contexts/custom_context.h \
-    media/media_player/streams/frames/video/video_buffer_proxy.h
+    media/media_player/streams/frames/video/video_buffer_proxy.h \
+    media/media_player/utils/queue/queue.h \
+    media/media_player/utils/queue/queue_cell.h
 
 unix:!mac {
         QT += gui-private
