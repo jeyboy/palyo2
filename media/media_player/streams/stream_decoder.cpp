@@ -100,7 +100,7 @@ void StreamDecoder::routine() {
         return;
 
     int status;
-//    bool preload = qMin(videoStream -> calcDelay(), audioStream -> calcDelay()) == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
+    bool preload = qMin(videoStream -> calcDelay(), audioStream -> calcDelay()) == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
     state = Process;
 
     while (true) {
@@ -145,7 +145,7 @@ void StreamDecoder::routine() {
             break;
         }
 
-        if (/*!preload || *//*semaphore -> available() == 0 || */(videoStream -> isBlocked() || audioStream -> isBlocked())) {
+        if (!preload || (preload && (videoStream -> isBlocked() || audioStream -> isBlocked()))) {
 //            semaphore -> release(1);
             if (semaphore -> available() > 0)
                 semaphore -> acquire(1);

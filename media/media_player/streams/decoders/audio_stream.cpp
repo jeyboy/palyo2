@@ -75,24 +75,27 @@ void AudioStream::routine() {
 //    qDebug() << " $$$ " << sleep_correlation;
     if (pauseRequired) return;
 
+    mutex -> lock();
     bool isEmpty = packets.isEmpty();
+    mutex -> unlock();
 
     if (!pauseRequired && isEmpty && eof) suspendStream();
 
     // TODO: mutex required for frames
-    if (isEmpty) {
+    if (isEmpty && frames.size() <= framesBufferLen / 2) {
         if (frames.size() <= framesBufferLen / 2)
             semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
         msleep(sleep_correlation);
         return;
     }
 
-    if (frames.size() >= framesBufferLen) {
-//        qDebug() << " AUDIO FULL";
-        sleep_correlation = time_buff * 50; // take half of time buff // 2
-        msleep(sleep_correlation);
-        return;
-    }
+//    if (frames.size() >= framesBufferLen) {
+////        qDebug() << " AUDIO FULL";
+//        sleep_correlation = time_buff * 50; // take half of time buff // 2
+//        msleep(sleep_correlation);
+//        return;
+//    } else if (frames.size() >= framesBufferLen / 2)
+//        msleep(time_buff * 80);
 
     int len, got_frame;
     AVPacket * packet = 0;

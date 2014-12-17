@@ -45,7 +45,9 @@ bool VideoStream::isBlocked() {
 }
 
 void VideoStream::routine() {
+    mutex -> lock();
     bool isEmpty = packets.isEmpty();
+    mutex -> unlock();
 
     if (!pauseRequired && isEmpty && eof) suspend();
 
@@ -56,17 +58,18 @@ void VideoStream::routine() {
 
     if (pauseRequired) return;
 
-    if (isEmpty) {
+    if (isEmpty && frames.size() <= framesBufferLen / 2) {
         if (frames.size() <=  framesBufferLen / 2)
             semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
         msleep(2);
         return;
     }
 
-    if (frames.size() >= framesBufferLen) {
-        msleep(frames.size() / 2);
-        return;
-    }
+//    if (frames.size() >= framesBufferLen) {
+//        msleep(frames.size() / 2);
+//        return;
+//     } else if (frames.size() <= framesBufferLen / 2)
+//        msleep(time_buff * 80);
 
     int len, got_picture;
     int width = codec_context -> width, height = codec_context -> height;
