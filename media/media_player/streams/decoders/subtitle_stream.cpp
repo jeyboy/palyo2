@@ -28,15 +28,12 @@ void SubtitleStream::flushData() {
 }
 
 void SubtitleStream::routine() {
-    mutex -> lock();
     if (packets.isEmpty()) {
-        mutex -> unlock();
         msleep(2);
         return;
     }
 
     AVPacket * packet = packets.takeFirst();
-    mutex -> unlock();
 
     av_free_packet(packet);
 }

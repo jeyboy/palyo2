@@ -4,7 +4,6 @@
 #include "media/media_player/utils/queue/queue.h"
 #include "media/media_player/utils/media_player_utils.h"
 #include "media/media_player/utils/master_clock.h"
-#include <QMutex>
 
 //#define FRAMES_LIMIT 25
 //#define PACKETS_LIMIT 12
@@ -20,7 +19,6 @@ public:
         codec_context = 0;
         codec = 0;
         frame = 0;
-        mutex = 0;
 
         //TODO: emit error
         valid = !(streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND);
@@ -89,19 +87,16 @@ public:
         if (!valid) return;
 
         frame = av_frame_alloc();
-        mutex = new QMutex();
     }
 
     ~IMediaStream() {
-        delete mutex;
-
         if (frame)
             av_frame_free(&frame);
 
-        foreach(AVPacket * pack, packets)
-            av_free_packet(pack);
 
-        packets.clear();
+        packets.clear(av_free_packet);
+//        foreach(AVPacket * pack, packets)
+//            av_free_packet(pack);
 
         if (codec_context) {
             avcodec_close(codec_context);
@@ -124,19 +119,17 @@ public:
     inline bool requirePreload() { return packets.isEmpty(); }
 
     void decode(AVPacket * newPacket) {
-        mutex -> lock();
-            packets.append(newPacket);
-        mutex -> unlock();
+        packets.append(newPacket);
     }
 
     void dropPackets() {
         if (!valid) return;
-        mutex -> lock();
-            while(packets.size() > 0)
-                av_free_packet(packets.takeFirst());
-            packets.clear();// maybe not ?
-            time_buff = 0;
-        mutex -> unlock();
+
+        packets.clear(av_free_packet);
+
+//        while(packets.size() > 0)
+//            av_free_packet(packets.takeFirst());
+        time_buff = 0;
     }
 
 protected:
@@ -151,14 +144,13 @@ protected:
     bool is_lossless;
     bool is_vbr;
 
-    QMutex * mutex;
     AVStream * stream;
     int uindex;
     AVCodecContext * codec_context;
     AVCodec * codec;
     AVFrame * frame;
 
-    QList<AVPacket*> packets;
+    Queue<AVPacket*> packets;
 };
 
 #endif // I_MEDIA_STREAM_H

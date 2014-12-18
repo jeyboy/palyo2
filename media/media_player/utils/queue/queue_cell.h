@@ -6,17 +6,47 @@
 template <class T>
 class QueueCell {
 public:
-    QueueCell(T * value, QueueCell<T> * prev_cell);
-    ~QueueCell();
+    QueueCell(T value, QueueCell<T> * next_cell) : prev(0), next(0), val(value) {
+        if (next = next_cell) {
+            if (next -> prev) {
+                next -> prev -> next = this;
+                this -> prev = next -> prev;
+            }
 
-    inline T * value() { return val; }
+            next -> prev = this;
+        }
+    }
 
-    void dequeue();
+    QueueCell(QueueCell<T> * prev_cell, T value) : prev(0), next(0), val(value) {
+        if (prev = prev_cell) {
+            next = prev -> next;
+            prev -> next = this;
+        }
+
+        if (next) {
+            next -> prev = this;
+        }
+    }
+    ~QueueCell() {
+
+    }
+
+    inline T value() { return val; }
+    inline QueueCell<T> * getPrev() const { return prev; }
+    inline QueueCell<T> * getNext() const { return next; }
+
+    void dequeue() {
+        if (next)
+            next -> prev = prev;
+
+        if (prev)
+            prev -> next = next;
+    }
 
 private:
     QueueCell<T> * prev;
     QueueCell<T> * next;
-    T * val;
+    T val;
 };
 
 #endif // QUEUE_CELL_H

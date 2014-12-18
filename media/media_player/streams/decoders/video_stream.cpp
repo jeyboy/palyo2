@@ -70,9 +70,7 @@ void VideoStream::routine() {
     VideoBuffer * buff = 0;
     AVPacket * packet;
 
-    mutex -> lock();
     packet = packets.takeFirst();
-    mutex -> unlock();
 
 //    ///////// packet length correction
 //    QByteArray encoded;
@@ -141,7 +139,6 @@ void VideoStream::nextFrame(void *& ret) {
 
 void VideoStream::flushData() {
     MediaStream::dropPackets();
-    qDeleteAll(frames);
     frames.clear();
     avcodec_flush_buffers(codec_context);
 }

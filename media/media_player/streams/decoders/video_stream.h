@@ -32,7 +32,7 @@ private:
     double aspect_ratio;
 
     VideoOutput * output;
-    QList<VideoFrame *> frames;
+    Queue<VideoFrame*> frames;
     VideoResampler * resampler;
 };
 

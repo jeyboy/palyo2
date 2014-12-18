@@ -123,9 +123,7 @@ SOURCES += main.cpp\
     memory_profiler/memory_profiler.cpp \
     media/media_player/utils/web/custom_network_access_manager.cpp \
     media/media_player/utils/web/web_object.cpp \
-    media/media_player/contexts/custom_context.cpp \
-    media/media_player/utils/queue/queue_cell.cpp \
-    media/media_player/utils/queue/queue.cpp
+    media/media_player/contexts/custom_context.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \

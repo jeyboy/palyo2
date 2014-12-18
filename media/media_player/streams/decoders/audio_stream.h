@@ -46,7 +46,7 @@ private:
     AudioResampler * resampler;
 
     QAudioOutput * output;
-    QList<AudioFrame *> frames;
+    Queue<AudioFrame *> frames;
 };
 
 #endif // AUDIO_STREAM_H

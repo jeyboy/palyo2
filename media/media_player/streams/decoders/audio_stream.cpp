@@ -65,7 +65,6 @@ void AudioStream::setVolume(uint val) { output -> setVolume((qreal)val / 1000); 
 
 void AudioStream::flushData() {
     MediaStream::dropPackets();
-    qDeleteAll(frames);
     frames.clear();
     avcodec_flush_buffers(codec_context);
 }
@@ -94,9 +93,7 @@ void AudioStream::routine() {
     int len, got_frame;
     AVPacket * packet = 0;
 
-    mutex -> lock();
     packet = packets.takeFirst();
-    mutex -> unlock();
 
     while (packet -> size > 0) {
         len = avcodec_decode_audio4(codec_context, frame, &got_frame, packet);
@@ -144,7 +141,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
             currFrame = frames.takeFirst();
 
             if (reslen + currFrame -> buffer -> size() > maxlen) {
-                frames.push_front(currFrame);
+                frames.prepend(currFrame);
                 break;
             }
 
