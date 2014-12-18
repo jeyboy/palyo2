@@ -1,6 +1,7 @@
 #ifndef I_MEDIA_STREAM_H
 #define I_MEDIA_STREAM_H
 
+#include "media/media_player/utils/queue/queue.h"
 #include "media/media_player/utils/media_player_utils.h"
 #include "media/media_player/utils/master_clock.h"
 #include <QMutex>
