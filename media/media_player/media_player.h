@@ -16,7 +16,7 @@ public:
     MediaPlayer(QObject * parent);
     ~MediaPlayer();
 
-    QHash<QString, QString> * getInfo(QUrl url);
+    QHash<QString, QHash<QString, QString> *> * getInfo(QUrl url);
 
     bool open(QUrl url);
     bool openMillis(QUrl url, int position_millis = 0, int duration_millis = 2147483647);
@@ -59,10 +59,13 @@ public slots:
     void setVolume(uint val);
 
 protected:
+    void initAttributes();
     bool openContext(QUrl & url);
     void closeContext();
 
 private:
+    QHash<QString, QHash<QString, QString> *> * attributes;
+
     MasterClock * clock;
     StreamDecoder * decoder;
 

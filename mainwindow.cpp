@@ -55,9 +55,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //      player -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
 
 
-//    qDebug() << *player -> getInfo(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
-//    qDebug() << *player -> getInfo(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
-//    qDebug() << *player -> getInfo(QUrl("http://www.ex.ua/get/116023228"));
+    qDebug() << *player -> getInfo(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
+    qDebug() << *player -> getInfo(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
+    qDebug() << *player -> getInfo(QUrl("http://www.ex.ua/get/116023228"));
 
     player -> play();
 }

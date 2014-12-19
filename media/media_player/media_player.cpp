@@ -2,6 +2,7 @@
 #include "media/duration.h"
 
 MediaPlayer::MediaPlayer(QObject * parent) : QObject(parent)
+  , attributes(0)
   , clock(new MasterClock(this))
   , decoder(0)
   , isRemote(false)
@@ -21,14 +22,13 @@ MediaPlayer::~MediaPlayer() {
     delete clock;
 }
 
-QHash<QString, QString> * MediaPlayer::getInfo(QUrl url) {
-    QHash<QString, QString> * ret = 0;
+QHash<QString, QHash<QString, QString> *> * MediaPlayer::getInfo(QUrl url) {
+    QHash<QString, QHash<QString, QString> *> * ret = 0;
 
     onlyInfo = true;
-    if (openMicro(url)) {
-        ret = new QHash<QString, QString>();
-        tags(*ret);
-    }
+    if (openMicro(url))
+        ret = new QHash<QString, QHash<QString, QString> *>(*attributes);
+
     closeContext();
     onlyInfo = false;
 
@@ -100,18 +100,6 @@ QString MediaPlayer::info() {
     return Duration::fromMillis(positionMillis()) + " / " + Duration::fromMillis(durationMillis());
 }
 
-bool MediaPlayer::tags(QHash<QString, QString> & ret) {
-    if (context) {
-        AVDictionaryEntry * tag = 0;
-        while ((tag = av_dict_get(context -> metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-            ret.insert(tag -> key, tag -> value);
-        }
-        return true;
-    }
-
-    return false;
-}
-
 bool MediaPlayer::isPlayed() const {
     if (decoder == 0) return false;
     return decoder -> isActive();
@@ -167,6 +155,44 @@ void MediaPlayer::setVolume(uint val) {
 
 ////////////// PROTECTED //////////////////////////////////
 
+void MediaPlayer::initAttributes() {
+    attributes = new QHash<QString, QHash<QString, QString> *>();
+
+    if (context) {
+        QHash<QString, QString> * part = new QHash<QString, QString>();
+        AVDictionaryEntry * tag = 0;
+        while ((tag = av_dict_get(context -> metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+            part -> insert(tag -> key, tag -> value);
+        }
+        attributes -> insert("main", part);
+
+        AVDictionary * dict;
+        QString stream_type;
+
+        for(uint i = 0; i < context -> nb_streams; i++) {
+            switch(context -> streams[i] -> codec -> codec_type) {
+                case AVMEDIA_TYPE_VIDEO:        { stream_type = "video"; }
+                case AVMEDIA_TYPE_AUDIO:        { stream_type = "audio"; }
+                case AVMEDIA_TYPE_DATA:         { stream_type = "data"; }
+                case AVMEDIA_TYPE_SUBTITLE:     { stream_type = "subtitle"; }
+                case AVMEDIA_TYPE_ATTACHMENT:   { stream_type = "attachment"; }
+                default: continue;
+            }
+
+            part = new QHash<QString, QString>();
+            part -> insert("index", QString::number(i));
+
+//            if (context -> streams[i] -> codec -> codec_type != AVMEDIA_TYPE_AUDIO) continue;
+            dict = context -> streams[i] -> metadata;
+            while ((tag = av_dict_get(dict, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+                part -> insert(tag -> key, tag -> value);
+            }
+
+            attributes -> insertMulti(stream_type, part);
+        }
+    }
+}
+
 bool MediaPlayer::openContext(QUrl & url) {
     QString path;
     if ((isRemote = !url.isLocalFile())) {
@@ -205,11 +231,17 @@ bool MediaPlayer::openContext(QUrl & url) {
     }
 
     av_dump_format(context, 0, path.toUtf8().data(), false);
+    initAttributes();
 
     return true;
 }
 
 void MediaPlayer::closeContext() {
+    if (attributes) {
+        qDeleteAll(*attributes);
+        delete attributes;
+    }
+
     if (decoder) {
         decoder -> stop();
         decoder -> wait();
