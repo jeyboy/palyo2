@@ -1,8 +1,6 @@
 #ifndef QUEUE_CELL_H
 #define QUEUE_CELL_H
 
-#include "media/media_player/utils/media_player_utils.h"
-
 template <class T>
 class QueueCell {
 public:

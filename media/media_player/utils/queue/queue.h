@@ -9,38 +9,39 @@ template <class T>
 class Queue/* : public QObject*/ {
 //    Q_OBJECT
 public:
-    Queue() : mutex(new QMutex()), root(0), tail(0), count(0) {
-
+    Queue() : mutex(new QMutex()), root(new QueueCell<T>((QueueCell<T> *)0, 0)), tail(new QueueCell<T>(root, 0)), count(0) {
     }
 
     ~Queue() {
         clear();
         delete mutex;
+        delete root;
+        delete tail;
     }
 
     void clear() {
-        QueueCell<T> * iter;
+        QueueCell<T> * iter = tail -> getPrev(), * temp;
 
         mutex -> lock();
-        while(tail) {
-            iter = tail -> getPrev();
-            delete tail -> value();
-            delete tail;
-            tail = iter;
+        while(iter != root) {
+            temp = iter -> getPrev();
+            delete iter -> value();
+            delete iter;
+            iter = temp;
         }
         count = 0;
         mutex -> unlock();
     }
 
     void clear(void (*f)(T data)){
-        QueueCell<T> * iter;
+        QueueCell<T> * iter = tail -> getPrev(), * temp;
 
         mutex -> lock();
-        while(tail) {
-            iter = tail -> getPrev();
+        while(iter != root) {
+            temp = iter -> getPrev();
             f(tail -> value());
-            delete tail;
-            tail = iter;
+            delete iter;
+            iter = temp;
         }
         count = 0;
         mutex -> unlock();
@@ -48,9 +49,7 @@ public:
 
     QueueCell<T> * append(T val) {
         mutex -> lock();
-        tail = new QueueCell<T>(tail, val);
-        if (!root) root = tail;
-        qDebug() << root << " " << tail;
+        new QueueCell<T>(val, tail);
         count++;
         mutex -> unlock();
         return tail;
@@ -58,21 +57,18 @@ public:
 
     QueueCell<T> * prepend(T val) {
         mutex -> lock();
-        root = new QueueCell<T>(val, root);
-        if (!root -> getNext()) tail = root;
+        new QueueCell<T>(root, val);
         count++;
         mutex -> unlock();
-        return tail;
+        return root -> getNext();
     }
 
     T take(QueueCell<T> * cell) {
+        if (cell == root || cell == tail) return 0;
+
         mutex -> lock();
         T val = cell -> value();
         cell -> dequeue();
-
-        if (cell == root) root = root -> getNext();
-        else if (cell == tail) tail = tail -> getPrev();
-
         count--;
         mutex -> unlock();
         delete cell;
@@ -80,7 +76,7 @@ public:
     }
 
     T takeFirst() {
-        return take(root);
+        return take(root -> getNext());
     }
 
     inline int size() const {
