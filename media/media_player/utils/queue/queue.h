@@ -3,6 +3,7 @@
 
 #include "queue_cell.h"
 #include <qmutex.h>
+#include <qdebug.h>
 
 template <class T>
 class Queue/* : public QObject*/ {
@@ -47,8 +48,9 @@ public:
 
     QueueCell<T> * append(T val) {
         mutex -> lock();
-        tail = new QueueCell<T>(val, tail);
+        tail = new QueueCell<T>(tail, val);
         if (!root) root = tail;
+        qDebug() << root << " " << tail;
         count++;
         mutex -> unlock();
         return tail;
@@ -56,8 +58,8 @@ public:
 
     QueueCell<T> * prepend(T val) {
         mutex -> lock();
-        root = new QueueCell<T>(val, 0);
-        if (!root) root = tail;
+        root = new QueueCell<T>(val, root);
+        if (!root -> getNext()) tail = root;
         count++;
         mutex -> unlock();
         return tail;
