@@ -16,6 +16,8 @@ public:
     MediaPlayer(QObject * parent);
     ~MediaPlayer();
 
+    QHash<QString, QString> * getInfo(QUrl url);
+
     bool open(QUrl url);
     bool openMillis(QUrl url, int position_millis = 0, int duration_millis = 2147483647);
     bool openMicro(QUrl url, int64_t position_micromillis = 0, int64_t duration_micromillis = INT64_MAX);
@@ -64,7 +66,7 @@ private:
     MasterClock * clock;
     StreamDecoder * decoder;
 
-    bool isRemote;
+    bool isRemote, onlyInfo;
     int64_t item_duration;
 
     AVFormatContext *context;

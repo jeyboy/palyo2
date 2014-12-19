@@ -5,6 +5,7 @@ MediaPlayer::MediaPlayer(QObject * parent) : QObject(parent)
   , clock(new MasterClock(this))
   , decoder(0)
   , isRemote(false)
+  , onlyInfo(false)
   , context(0)
   , custom_context(0)
   , errorStr("") {
@@ -17,8 +18,21 @@ MediaPlayer::~MediaPlayer() {
     qDebug() << "player";
     stop();
 
-//    delete context;
     delete clock;
+}
+
+QHash<QString, QString> * MediaPlayer::getInfo(QUrl url) {
+    QHash<QString, QString> * ret = 0;
+
+    onlyInfo = true;
+    if (openMicro(url)) {
+        ret = new QHash<QString, QString>();
+        tags(*ret);
+    }
+    closeContext();
+    onlyInfo = false;
+
+    return ret;
 }
 
 bool MediaPlayer::open(QUrl url) {
@@ -32,25 +46,23 @@ bool MediaPlayer::openMicro(QUrl url, int64_t position_micromillis, int64_t dura
 
     bool res = openContext(url);
 
-    if (res) {
-        item_duration = qMin(context -> duration, duration_micromillis > 0 ? duration_micromillis : INT64_MAX);
-        decoder = new StreamDecoder(this, context, clock);
-        res &= decoder -> isValid();
-    }
+    if (!onlyInfo) {
+        if (res) {
+            item_duration = qMin(context -> duration, duration_micromillis > 0 ? duration_micromillis : INT64_MAX);
+            decoder = new StreamDecoder(this, context, clock);
+            res &= decoder -> isValid();
+        }
 
-    if (res) {
-        if (position_micromillis > 0)
-            seekMicro(position_micromillis);
-        pause();
-    } else
-        closeContext();
+        if (res) {
+            if (position_micromillis > 0)
+                seekMicro(position_micromillis);
+            pause();
+        } else
+            closeContext();
+    }
 
     return res;
 }
-
-
-
-/////////////////  need to choose one type   ///////////////////
 
 //TODO: get correct duration needed
 int64_t MediaPlayer::durationMicro() {
@@ -93,7 +105,6 @@ bool MediaPlayer::tags(QHash<QString, QString> & ret) {
         AVDictionaryEntry * tag = 0;
         while ((tag = av_dict_get(context -> metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
             ret.insert(tag -> key, tag -> value);
-            delete tag;
         }
         return true;
     }
