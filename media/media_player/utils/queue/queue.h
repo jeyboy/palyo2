@@ -64,8 +64,8 @@ public:
     }
 
     T take(QueueCell<T> * cell) {
-        T val = cell -> value();
         mutex -> lock();
+        T val = cell -> value();
         cell -> dequeue();
 
         if (cell == root) root = root -> getNext();
@@ -81,8 +81,18 @@ public:
         return take(root);
     }
 
-    inline int size() const { return count; }
-    inline bool isEmpty() const { return count == 0; }
+    inline int size() const {
+        mutex -> lock();
+        int c = count;
+        mutex -> unlock();
+        return c;
+    }
+    inline bool isEmpty() const {
+        mutex -> lock();
+        int c = count;
+        mutex -> unlock();
+        return c == 0;
+    }
 
 private:
     QMutex * mutex;

@@ -6,8 +6,8 @@
 template <class T>
 class QueueCell {
 public:
-    QueueCell(T value, QueueCell<T> * next_cell) : prev(0), next(0), val(value) {
-        if (next = next_cell) {
+    QueueCell(T value, QueueCell<T> * next_cell) : prev(0), next(next_cell), val(value) {
+        if (next) {
             if (next -> prev) {
                 next -> prev -> next = this;
                 this -> prev = next -> prev;
@@ -17,8 +17,8 @@ public:
         }
     }
 
-    QueueCell(QueueCell<T> * prev_cell, T value) : prev(0), next(0), val(value) {
-        if (prev = prev_cell) {
+    QueueCell(QueueCell<T> * prev_cell, T value) : prev(prev_cell), next(0), val(value) {
+        if (prev) {
             next = prev -> next;
             prev -> next = this;
         }
