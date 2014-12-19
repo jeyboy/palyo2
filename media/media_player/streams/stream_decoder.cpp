@@ -4,14 +4,14 @@
 StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock) : Stream(parent)
     , ac(0)
     , vc(0)
+    , context(currContext)
+    , currFrame(new AVPacket())
     , defaultLang("rus")
     , state(Initialization)
     , videoStream(0)
     , audioStream(0)
     , subtitleStream(0) {
 
-    currFrame = new AVPacket();
-    context = currContext;
     findStreams(clock);
 
     clock -> reset();
@@ -89,7 +89,7 @@ void StreamDecoder::setVolume(uint val) {
 //TODO: while eof Stream::run delay must be minimal
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
-//    qDebug() << "decoder";
+
     int del = qMin(videoStream -> calcDelay(), audioStream -> calcDelay());
     if (del > 2 || pauseRequired) {
         msleep(del);
@@ -101,7 +101,7 @@ void StreamDecoder::routine() {
     qDebug() << "decoder proceed " << preload;
     state = Process;
 
-    while (true) {
+    while (!skip) {
         if (pauseRequired) return;
 
         status = av_read_frame(context, currFrame);
@@ -141,9 +141,8 @@ void StreamDecoder::routine() {
             break;
         }
 
-        if (!preload || (videoStream -> isBlocked() || audioStream -> isBlocked())) {
+        if (!preload || (videoStream -> isBlocked() || audioStream -> isBlocked()))
             return;
-        }
     }
 }
 
@@ -159,7 +158,6 @@ int StreamDecoder::langStream() {
         while ((tag = av_dict_get(dict, "", tag, AV_DICT_IGNORE_SUFFIX))) {
             if (QString(tag -> key) == "language" && QString(tag -> value) == defaultLang)
                 return i;
-//            delete tag;
         }
     }
 
