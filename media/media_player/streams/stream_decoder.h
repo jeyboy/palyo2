@@ -3,6 +3,8 @@
 
 //#include "media/media_player/utils/media_player_utils.h"
 
+#include "../utils/media_attributes.h"
+
 #include "decoders/audio_stream.h"
 #include "decoders/video_stream.h"
 #include "decoders/subtitle_stream.h"

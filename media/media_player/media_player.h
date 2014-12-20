@@ -16,7 +16,7 @@ public:
     MediaPlayer(QObject * parent);
     ~MediaPlayer();
 
-    QHash<QString, QHash<QString, QString> *> * getInfo(QUrl url);
+    MediaAttributes * getInfo(QUrl url);
 
     bool open(QUrl url);
     bool openMillis(QUrl url, int position_millis = 0, int duration_millis = 2147483647);
@@ -34,7 +34,6 @@ public:
     QString filename();
 
     QString info();
-    bool tags(QHash<QString, QString> &);
 
     bool isPlayed() const;
     bool isPaused() const;
@@ -59,12 +58,11 @@ public slots:
     void setVolume(uint val);
 
 protected:
-    void initAttributes();
     bool openContext(QUrl & url);
     void closeContext();
 
 private:
-    QHash<QString, QHash<QString, QString> *> * attributes;
+    MediaAttributes * attributes;
 
     MasterClock * clock;
     StreamDecoder * decoder;
@@ -72,7 +70,7 @@ private:
     bool isRemote, onlyInfo;
     int64_t item_duration;
 
-    AVFormatContext *context;
+    AVFormatContext * context;
     CustomContext * custom_context;
 
     QString errorStr;

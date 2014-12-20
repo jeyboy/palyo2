@@ -245,7 +245,8 @@ HEADERS  += mainwindow.h \
     media/media_player/utils/web/custom_network_access_manager.h \
     media/media_player/utils/web/web_object.h \
     media/media_player/contexts/custom_context.h \
-    media/media_player/streams/frames/video/video_buffer_proxy.h
+    media/media_player/streams/frames/video/video_buffer_proxy.h \
+    media/media_player/utils/media_attributes.h
 
 unix:!mac {
         QT += gui-private
