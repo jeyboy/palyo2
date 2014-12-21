@@ -40,7 +40,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <property name="usesScrollButtons">
       <bool>false</bool>
@@ -708,8 +708,8 @@ text color</string>
       <widget class="QPushButton" name="spectrumColor">
        <property name="geometry">
         <rect>
-         <x>90</x>
-         <y>180</y>
+         <x>40</x>
+         <y>200</y>
          <width>31</width>
          <height>23</height>
         </rect>
@@ -766,8 +766,8 @@ text color</string>
       <widget class="QPushButton" name="spectrumColor2">
        <property name="geometry">
         <rect>
-         <x>220</x>
-         <y>180</y>
+         <x>140</x>
+         <y>200</y>
          <width>31</width>
          <height>23</height>
         </rect>
@@ -779,7 +779,7 @@ text color</string>
       <widget class="QLabel" name="label_20">
        <property name="geometry">
         <rect>
-         <x>140</x>
+         <x>120</x>
          <y>180</y>
          <width>81</width>
          <height>21</height>
@@ -832,6 +832,32 @@ text color</string>
        </property>
        <property name="text">
         <string>Signal multiplier</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="spectrumColor3">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>200</y>
+         <width>31</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_22">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>180</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Custom color 3</string>
        </property>
       </widget>
      </widget>

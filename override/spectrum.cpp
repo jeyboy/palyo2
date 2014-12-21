@@ -59,15 +59,21 @@ void Spectrum::paintCombo() {
 
     QLinearGradient g(bar_width / 2, verticalPadd(), bar_width / 2, workHeight());
 
+    QColor c1, c2, c3;
     if (Settings::instance() -> getMonocolorSpectrum()) {
-        g.setColorAt(0, Settings::instance() -> getSpectrumColor2());
-        g.setColorAt(1, Settings::instance() -> getSpectrumColor());
+        c3 = Settings::instance() -> getSpectrumColor3();
+        c2 = Settings::instance() -> getSpectrumColor2();
+        c1 = Settings::instance() -> getSpectrumColor();
     } else {
-        g.setColorAt(0.1, Qt::red);
-        g.setColorAt(0.5, Qt::yellow);
-        g.setColorAt(0.6, Qt::yellow);
-        g.setColorAt(1, Qt::darkGreen);
+        c3 = QColor::fromRgb(0, 170, 255);
+        c2 = QColor::fromRgb(0, 136, 199);
+        c1 = QColor::fromRgb(0, 115, 165);
     }
+
+    g.setColorAt(0.1, c3);
+    g.setColorAt(0.5, c2);
+    g.setColorAt(0.6, c2);
+    g.setColorAt(1, c1);
 
     for(int loop1 = 0; loop1 < peaks[0].length(); loop1++) {
         peak = peaks[0][loop1];
@@ -150,23 +156,26 @@ void Spectrum::paintDuo() {
         QLinearGradient g(bar_width / 2, first_bar_place - bar_height, bar_width / 2, first_bar_place);
         QLinearGradient gg(bar_width / 2, sec_bar_place + bar_height, bar_width / 2, sec_bar_place);
 
+        QColor c1, c2, c3;
         if (Settings::instance() -> getMonocolorSpectrum()) {
-            g.setColorAt(0, Settings::instance() -> getSpectrumColor2());
-            g.setColorAt(1, Settings::instance() -> getSpectrumColor());
-
-            gg.setColorAt(0, Settings::instance() -> getSpectrumColor2());
-            gg.setColorAt(1, Settings::instance() -> getSpectrumColor());
+            c3 = Settings::instance() -> getSpectrumColor3();
+            c2 = Settings::instance() -> getSpectrumColor2();
+            c1 = Settings::instance() -> getSpectrumColor();
         } else {
-            g.setColorAt(0.1, Qt::red);
-            g.setColorAt(0.5, Qt::yellow);
-            g.setColorAt(0.6, Qt::yellow);
-            g.setColorAt(1, Qt::darkGreen);
-
-            gg.setColorAt(0.1, Qt::red);
-            gg.setColorAt(0.5, Qt::yellow);
-            gg.setColorAt(0.6, Qt::yellow);
-            gg.setColorAt(1, Qt::darkGreen);
+            c3 = QColor::fromRgb(0, 170, 255);
+            c2 = QColor::fromRgb(0, 136, 199);
+            c1 = QColor::fromRgb(0, 115, 165);
         }
+
+        gg.setColorAt(0.1, c3);
+        gg.setColorAt(0.5, c2);
+        gg.setColorAt(0.6, c2);
+        gg.setColorAt(1, c1);
+
+        g.setColorAt(0.1, c3);
+        g.setColorAt(0.5, c2);
+        g.setColorAt(0.6, c2);
+        g.setColorAt(1, c1);
 
         for(int pair = 0; pair < peaks.length(); pair += 2) {
             if (peaks.length() > pair + 1) {

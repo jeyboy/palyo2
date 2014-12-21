@@ -86,6 +86,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
   spectrumColor2 = Settings::instance() -> getSpectrumColor2();
   ui -> spectrumColor2 -> setStyleSheet("background-color: " + spectrumColor2.name() + ";");
 
+  spectrumColor3 = Settings::instance() -> getSpectrumColor3();
+  ui -> spectrumColor3 -> setStyleSheet("background-color: " + spectrumColor3.name() + ";");
+
   ui -> spectrumMonocolorUse -> setChecked(Settings::instance() -> getMonocolorSpectrum());
 
   ui -> spectrumBarsCount -> setValue(Settings::instance() -> getSpectrumBarsCount());
@@ -201,6 +204,7 @@ void SettingsDialog::on_acceptButton_clicked() {
 
     Settings::instance() -> setSpectrumColor(spectrumColor);
     Settings::instance() -> setSpectrumColor2(spectrumColor2);
+    Settings::instance() -> setSpectrumColor3(spectrumColor3);
     Settings::instance() -> setMonocolorSpectrum(ui -> spectrumMonocolorUse -> isChecked());
 
     Settings::instance() -> setSpectrumBarsCount(ui -> spectrumBarsCount -> value());
@@ -279,6 +283,11 @@ void SettingsDialog::on_spectrumColor_clicked() {
 void SettingsDialog::on_spectrumColor2_clicked() {
     if (execColorDialog(spectrumColor2))
         ui -> spectrumColor2 -> setStyleSheet("background-color: " + spectrumColor2.name() + ";");
+}
+
+void SettingsDialog::on_spectrumColor3_clicked() {
+    if (execColorDialog(spectrumColor3))
+        ui -> spectrumColor3 -> setStyleSheet("background-color: " + spectrumColor3.name() + ";");
 }
 
 bool SettingsDialog::execColorDialog(QColor & color) {

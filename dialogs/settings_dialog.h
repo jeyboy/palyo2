@@ -56,12 +56,14 @@ private slots:
 
     void on_spectrumColor2_clicked();
 
+    void on_spectrumColor3_clicked();
+
 private:
     bool execColorDialog(QColor & color);
 
     Ui::SettingsDialog *ui;
     bool iconSizeChanged;
-    QColor defaultColor, listenedColor, likedColor, playedColor, folderColor, spectrumColor, spectrumColor2;
+    QColor defaultColor, listenedColor, likedColor, playedColor, folderColor, spectrumColor, spectrumColor2, spectrumColor3;
     QColor itemTextColor, selectedItemTextColor, itemInfoTextColor, selectedItemInfoTextColor;
 };
 
