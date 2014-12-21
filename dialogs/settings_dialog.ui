@@ -40,7 +40,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="usesScrollButtons">
       <bool>false</bool>
@@ -638,7 +638,7 @@ text color</string>
         </rect>
        </property>
        <property name="minimum">
-        <number>5</number>
+        <number>1</number>
        </property>
        <property name="maximum">
         <number>100</number>
@@ -673,7 +673,7 @@ text color</string>
         <number>5</number>
        </property>
        <property name="maximum">
-        <number>80</number>
+        <number>512</number>
        </property>
        <property name="value">
         <number>18</number>
