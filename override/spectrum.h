@@ -22,8 +22,9 @@ protected slots:
     void dataUpdated(QList<QVector<int> >);
 
 protected:
-    int verticalPadd();
-    int paddWidth();
+    inline int verticalPadd() { return 5; }
+    inline int paddWidth() { return 2; }
+
     void paintEvent(QPaintEvent *event);
     void paintCombo();
     void paintDuo();
@@ -31,6 +32,7 @@ protected:
 private:
     QList<QVector<int> > peaks;
     int bars_count;
+    bool isWave;
 };
 
 #endif // SPECTRUM_H

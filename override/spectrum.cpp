@@ -1,7 +1,7 @@
 #include "spectrum.h"
 #include "media/player.h"
 
-Spectrum::Spectrum(QWidget *parent) : QToolBar("Spectrum", parent) {
+Spectrum::Spectrum(QWidget *parent) : QToolBar("Spectrum", parent), isWave(false) {
     setObjectName("tool_Spectrum");
     setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
 
@@ -33,18 +33,9 @@ void Spectrum::heightChanged(int newHeight) {
 }
 
 void Spectrum::dataUpdated(QList<QVector<int> > bars) {
-//    qDebug() << bars;
     peaks = bars;
     if (isVisible())
         repaint();
-}
-
-int Spectrum::verticalPadd() {
-    return 5;
-}
-
-int Spectrum::paddWidth() {
-    return 2;
 }
 
 void Spectrum::paintEvent(QPaintEvent *event) {
@@ -68,17 +59,23 @@ void Spectrum::paintCombo() {
 
     QLinearGradient g(bar_width / 2, verticalPadd(), bar_width / 2, workHeight());
 
+    QColor c1, c2, c3;
     if (Settings::instance() -> getMonocolorSpectrum()) {
-        g.setColorAt(0, Settings::instance() -> getSpectrumColor2());
-        g.setColorAt(1, Settings::instance() -> getSpectrumColor());
+        c3 = Settings::instance() -> getSpectrumColor3();
+        c2 = Settings::instance() -> getSpectrumColor2();
+        c1 = Settings::instance() -> getSpectrumColor();
     } else {
-        g.setColorAt(0.1, Qt::red);
-        g.setColorAt(0.5, Qt::yellow);
-        g.setColorAt(0.6, Qt::yellow);
-        g.setColorAt(1, Qt::darkGreen);
+        c3 = QColor::fromRgb(0, 170, 255);
+        c2 = QColor::fromRgb(0, 136, 199);
+        c1 = QColor::fromRgb(0, 115, 165);
     }
 
-    for(int loop1 = 0; loop1 < peaks[0].count(); loop1++) {
+    g.setColorAt(0.1, c3);
+    g.setColorAt(0.5, c2);
+    g.setColorAt(0.6, c2);
+    g.setColorAt(1, c1);
+
+    for(int loop1 = 0; loop1 < peaks[0].length(); loop1++) {
         peak = peaks[0][loop1];
         rect.setCoords(accumulate, height() - 6 - peak, (accumulate + bar_width), height() - 6);
         painter.fillRect(rect, g);
@@ -100,65 +97,126 @@ void Spectrum::paintDuo() {
     float bar_height = workHeight() + 3, first_bar_place =  bar_height + verticalPadd() + 1, sec_bar_place = bar_height + verticalPadd() + 3; // 2px gap between vertical bars
     QRectF rect;
 
-    QLinearGradient g(bar_width / 2, first_bar_place - bar_height, bar_width / 2, first_bar_place);
-    QLinearGradient gg(bar_width / 2, sec_bar_place + bar_height, bar_width / 2, sec_bar_place);
+    if (isWave) { // waves
+        painter.setRenderHint(QPainter::Antialiasing, true);
 
-    if (Settings::instance() -> getMonocolorSpectrum()) {
-        g.setColorAt(0, Settings::instance() -> getSpectrumColor2());
-        g.setColorAt(1, Settings::instance() -> getSpectrumColor());
+        for(int pair = 0; pair < peaks.length(); pair += 2) {
+            peaks[pair].prepend(0);
+            peaks[pair + 1].prepend(0);
 
-        gg.setColorAt(0, Settings::instance() -> getSpectrumColor2());
-        gg.setColorAt(1, Settings::instance() -> getSpectrumColor());
-    } else {
-        g.setColorAt(0.1, Qt::red);
-        g.setColorAt(0.5, Qt::yellow);
-        g.setColorAt(0.6, Qt::yellow);
-        g.setColorAt(1, Qt::darkGreen);
+            if (peaks.length() > pair + 1) {
+                {
+                    QPainterPath lpath;
+                    QPainterPath rpath;
 
-        gg.setColorAt(0.1, Qt::red);
-        gg.setColorAt(0.5, Qt::yellow);
-        gg.setColorAt(0.6, Qt::yellow);
-        gg.setColorAt(1, Qt::darkGreen);
-    }
+                    lpath.moveTo(accumulate, first_bar_place - peaks[pair][0]);
+                    rpath.moveTo(accumulate, sec_bar_place + peaks[pair + 1][0]);
 
-    for(int pair = 0; pair < peaks.length(); pair += 2) {
-        if (peaks.length() > pair + 1) {
-            for(int loop1 = 0; loop1 < peaks[pair].count(); loop1++) {
-                temp_acc = (accumulate + bar_width);
+                    for(int loop1 = 0; loop1 < peaks[pair].length() - 2; loop1++) {
+                        temp_acc = (accumulate + bar_width);
 
-                peak = peaks[pair][loop1];
-                rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
-                painter.setRenderHint(QPainter::Antialiasing, true);
-                painter.fillRect(rect, g);
-                painter.setRenderHint(QPainter::Antialiasing, false);
-                painter.drawRect(rect);
+                        lpath.quadTo(
+                                    accumulate, first_bar_place - peaks[pair][loop1],
+                                    accumulate + padd + bar_width, first_bar_place - peaks[pair][loop1 + 1]
+//                                    accumulate + (padd + bar_width) * 2, first_bar_place - peaks[pair][loop1 + 2]
+                                    );
+                        rpath.quadTo(
+                                    accumulate, sec_bar_place + peaks[pair + 1][loop1],
+                                    accumulate + padd + bar_width, sec_bar_place + peaks[pair + 1][loop1 + 1]
+//                                    accumulate + (padd + bar_width) * 2, sec_bar_place + peaks[pair + 1][loop1 + 2]
+                                    );
 
+                        accumulate = temp_acc + padd;
+                    }
 
-                peak2 = peaks[pair + 1][loop1];
-                rect.setCoords(accumulate, sec_bar_place, temp_acc, sec_bar_place + peak2);
-                painter.setRenderHint(QPainter::Antialiasing, true);
-                painter.fillRect(rect, gg);
-                painter.setRenderHint(QPainter::Antialiasing, false);
-                painter.drawRect(rect);
+                    painter.drawPath(lpath);
+                    painter.drawPath(rpath);
+                }
+            } else {
+                {
+                    QPainterPath lpath;
+                    lpath.moveTo(accumulate, first_bar_place - peaks[pair][0]);
 
-                accumulate = temp_acc + padd;
+                    for(int loop1 = 1; loop1 < peaks[pair].length() - 2; loop1++) {
+                        temp_acc = (accumulate + bar_width);
+                        lpath.quadTo(
+                                    accumulate, first_bar_place - peaks[pair][loop1],
+                                    accumulate + padd + bar_width, first_bar_place - peaks[pair][loop1 + 1]
+//                                    accumulate + (padd + bar_width) * 2, first_bar_place - peaks[pair][loop1 + 2]
+                                    );
+                        accumulate = temp_acc + padd;
+                    }
+
+                    painter.drawPath(lpath);
+                }
             }
-        } else {
-            for(int loop1 = 0; loop1 < peaks[pair].count(); loop1++) {
-                temp_acc = (accumulate + bar_width);
-
-                peak = peaks[pair][loop1];
-                rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
-                painter.setRenderHint(QPainter::Antialiasing, true);
-                painter.fillRect(rect, g);
-                painter.setRenderHint(QPainter::Antialiasing, false);
-                painter.drawRect(rect);
-
-                accumulate = temp_acc + padd;
-            }
+            accumulate += beetween_space;
         }
-        accumulate += beetween_space;
+    } else { // bars
+        QLinearGradient g(bar_width / 2, first_bar_place - bar_height, bar_width / 2, first_bar_place);
+        QLinearGradient gg(bar_width / 2, sec_bar_place + bar_height, bar_width / 2, sec_bar_place);
+
+        QColor c1, c2, c3;
+        if (Settings::instance() -> getMonocolorSpectrum()) {
+            c3 = Settings::instance() -> getSpectrumColor3();
+            c2 = Settings::instance() -> getSpectrumColor2();
+            c1 = Settings::instance() -> getSpectrumColor();
+        } else {
+            c3 = QColor::fromRgb(0, 170, 255);
+            c2 = QColor::fromRgb(0, 136, 199);
+            c1 = QColor::fromRgb(0, 115, 165);
+        }
+
+        gg.setColorAt(0.1, c3);
+        gg.setColorAt(0.5, c2);
+        gg.setColorAt(0.6, c2);
+        gg.setColorAt(1, c1);
+
+        g.setColorAt(0.1, c3);
+        g.setColorAt(0.5, c2);
+        g.setColorAt(0.6, c2);
+        g.setColorAt(1, c1);
+
+        for(int pair = 0; pair < peaks.length(); pair += 2) {
+            if (peaks.length() > pair + 1) {
+                for(int loop1 = 0; loop1 < peaks[pair].length(); loop1++) {
+                    temp_acc = (accumulate + bar_width);
+
+                    peak = peaks[pair][loop1];
+                    rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
+                    painter.setRenderHint(QPainter::Antialiasing, true);
+                    painter.fillRect(rect, g);
+                    painter.setRenderHint(QPainter::Antialiasing, false);
+                    painter.drawRect(rect);
+
+
+                    peak2 = peaks[pair + 1][loop1];
+                    rect.setCoords(accumulate, sec_bar_place, temp_acc, sec_bar_place + peak2);
+                    painter.setRenderHint(QPainter::Antialiasing, true);
+                    painter.fillRect(rect, gg);
+                    painter.setRenderHint(QPainter::Antialiasing, false);
+                    painter.drawRect(rect);
+
+                    accumulate = temp_acc + padd;
+                }
+            } else {
+                for(int loop1 = 0; loop1 < peaks[pair].length(); loop1++) {
+                    temp_acc = (accumulate + bar_width);
+
+                    peak = peaks[pair][loop1];
+                    rect.setCoords(accumulate, first_bar_place - peak, temp_acc, first_bar_place);
+                    painter.setRenderHint(QPainter::Antialiasing, true);
+                    painter.fillRect(rect, g);
+                    painter.setRenderHint(QPainter::Antialiasing, false);
+                    painter.drawRect(rect);
+
+                    accumulate = temp_acc + padd;
+                }
+            }
+            accumulate += beetween_space;
+        }
     }
+
     painter.restore();
 }
 

@@ -22,7 +22,10 @@ bool Extensions::respondToExtension(QString ext) const {
 }
 
 QStringList Extensions::activeFilterList() const {
-    return filters.value(activeFilter, filters.values().first());
+    if (filters.isEmpty())
+        return QStringList();
+    else
+        return filters.value(activeFilter, filters.values().first());
 }
 
 QStringList Extensions::filterList(const QString & name) const {
