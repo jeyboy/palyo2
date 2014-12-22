@@ -76,8 +76,8 @@ SOURCES += main.cpp\
     media/player.cpp \
     media/mediainfo.cpp \
     media/library.cpp \
-    media/genre.cpp \
-    media/duration.cpp \
+    media/media_player/utils/genre.cpp \
+    media/media_player/utils/duration.cpp \
     override/toolbar.cpp \
     override/toolbarbutton.cpp \
     override/notify_timer.cpp \
@@ -176,8 +176,8 @@ HEADERS  += mainwindow.h \
     media/player.h \
     media/mediainfo.h \
     media/library.h \
-    media/genre.h \
-    media/duration.h \
+    media/media_player/utils/genre.h \
+    media/media_player/utils/duration.h \
     override/toolbar.h \
     override/toolbarbutton.h \
     override/slider_style.h \

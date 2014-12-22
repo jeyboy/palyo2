@@ -80,6 +80,7 @@ private:
         genres -> insert(26,  "Ambient");
         genres -> insertMulti(27,  "Trip-Hop");
         genres -> insertMulti(27,  "TripHop");
+        genres -> insertMulti(27,  "Trip");
         genres -> insert(28,  "Vocal");
         genres -> insert(29,  "Jazz & Funk");
         genres -> insert(30,  "Fusion");

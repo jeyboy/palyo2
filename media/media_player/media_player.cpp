@@ -1,5 +1,5 @@
 #include "media_player.h"
-#include "media/duration.h"
+#include "media/media_player/utils/duration.h"
 
 MediaPlayer::MediaPlayer(QObject * parent) : QObject(parent)
   , attributes(0)

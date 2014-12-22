@@ -11,9 +11,9 @@
 #include <QApplication>
 #include <QVector>
 
-#include "genre.h"
+#include "media/media_player/utils/genre.h"
 #include "mediainfo.h"
-#include "duration.h"
+#include "media/media_player/utils/duration.h"
 
 #include "model/model_item.h"
 
