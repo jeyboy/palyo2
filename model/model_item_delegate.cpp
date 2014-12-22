@@ -421,7 +421,8 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
                         if(!elem_state)
                             painter -> setPen(option2.palette.color(QPalette::Dark));
                         painter -> drawEllipse(pseudoIcoRect);
-//                        painter -> drawArc(pseudoIcoRect, -80 * 16, 160 * 16);
+//                        painter -> drawArc(pseudoIcoRect, -75 * 16, 150 * 16);
+//                        painter -> drawRoundedRect(pseudoIcoRect, angle, angle);
                         painter -> setPen(textColor);
 
                         if (ext.length() > 3) {
