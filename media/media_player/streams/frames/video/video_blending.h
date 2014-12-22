@@ -4,14 +4,14 @@
 #define ALPHA_BLEND(a, oldp, newp, s)\
 ((((oldp << s) * (255 - (a))) + (newp * (a))) / (255 << s))
 
-//#define RGBA_IN(r, g, b, a, s)\
-//{\
-//    unsigned int v = ((const uint32_t *)(s))[0];\
-//    a = (v >> 24) & 0xff;\
-//    r = (v >> 16) & 0xff;\
-//    g = (v >> 8) & 0xff;\
-//    b = v & 0xff;\
-//}
+/*#define RGBA_IN(r, g, b, a, s)\
+{\
+    unsigned int v = ((const uint32_t *)(s))[0];\
+    a = (v >> 24) & 0xff;\
+    r = (v >> 16) & 0xff;\
+    g = (v >> 8) & 0xff;\
+    b = v & 0xff;\
+}*/
 
 #define YUVA_IN(y, u, v, a, s, pal)\
 {\
@@ -35,7 +35,7 @@
 //TODO: not completed for rgb and not tested
 class VideoBlending {
 public:
-    static void blend_subrect(QImage * image, const AVSubtitleRect *rect) {
+    static void blend_subrect(QImage * /*image*/, const AVSubtitleRect * /*rect*/) {
 
     }
 

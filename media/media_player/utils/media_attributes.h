@@ -71,7 +71,7 @@ struct MediaAttributes {
 
             AttributeChapter * chapter;
             AVChapter * ch;
-            for (int i = 0; i < context -> nb_chapters; i++) {
+            for (unsigned int i = 0; i < context -> nb_chapters; i++) {
                 ch = context -> chapters[i];
                 chapter = new AttributeChapter(i, ch -> start * av_q2d(ch -> time_base), ch -> end * av_q2d(ch -> time_base));
                 dumpMetadata(
@@ -86,7 +86,7 @@ struct MediaAttributes {
             AttributeProgram * program;
             if (context -> nb_programs) {
                 int total = 0;
-                for (int j = 0; j < context -> nb_programs; j++) {
+                for (unsigned int j = 0; j < context -> nb_programs; j++) {
                     AVDictionaryEntry * name = av_dict_get(context -> programs[j] -> metadata, "name", NULL, 0);
                     program = new AttributeProgram(context -> programs[j] -> id, QString(name ? name -> value : ""));
                     dumpMetadata(
@@ -96,7 +96,7 @@ struct MediaAttributes {
                     );
 
 
-                    for (int k = 0; k < context -> programs[j] -> nb_stream_indexes; k++)
+                    for (unsigned int k = 0; k < context -> programs[j] -> nb_stream_indexes; k++)
                         program -> streams.append(dumpStream(context, context -> programs[j] -> stream_index[k], is_output));
 
                     total += context -> programs[j] -> nb_stream_indexes;
@@ -169,16 +169,16 @@ struct MediaAttributes {
             *codec_separator = av_strdup(separator);
 
         avcodec_string(buf, sizeof(buf), st -> codec, is_output);
-        AttributeStream * stream = new AttributeStream(i, QString("%s").arg(buf));
+        AttributeStream * stream = new AttributeStream(i, QString("%1").arg(buf));
 
         if (use_format_separator)
             av_freep(codec_separator);
 
         if (flags & AVFMT_SHOW_IDS)
-            stream -> attrs.insert("id", QString("[0x%x]").arg(st -> id));
+            stream -> attrs.insert("id", QString().sprintf("[0x%x]", st -> id));
 
-        stream -> attrs.insert("time ratio", QString("%%d/%d").arg(st -> time_base.num, st -> time_base.den));
-        stream -> attrs.insert("frames_count", QString("%d").arg(st -> codec_info_nb_frames));
+        stream -> attrs.insert("time ratio", QString("%1/%2").arg(st -> time_base.num).arg(st -> time_base.den));
+        stream -> attrs.insert("frames_count", QString("%1").arg(st -> codec_info_nb_frames));
 
         if (st -> sample_aspect_ratio.num && av_cmp_q(st -> sample_aspect_ratio, st -> codec -> sample_aspect_ratio)) {
             AVRational display_aspect_ratio;
@@ -190,7 +190,7 @@ struct MediaAttributes {
                1024 * 1024
             );
 
-            stream -> attrs.insert("aspect_ratio", QString("%s").arg(buf));
+            stream -> attrs.insert("aspect_ratio", QString("%1").arg(buf));
 
            av_log(NULL, AV_LOG_INFO, ", SAR %d:%d DAR %d:%d",
            st -> sample_aspect_ratio.num, st -> sample_aspect_ratio.den,
@@ -207,11 +207,11 @@ struct MediaAttributes {
 //                av_log(NULL, AV_LOG_INFO, "%s", separator);
 
             if (fps)
-                stream -> attrs.insert("average_frame_rate", fpsStr(av_q2d(st -> avg_frame_rate), tbr || tbn || tbc ? "fps, " : "fps"));
+                stream -> attrs.insert("average_frame_rate", fpsStr(av_q2d(st -> avg_frame_rate), (tbr || tbn || tbc ? "fps, " : "fps")));
             if (tbr)
-                stream -> attrs.insert("real_frame_rate", fpsStr(av_q2d(st -> r_frame_rate), tbn || tbc ? "tbr, " : "tbr"));
+                stream -> attrs.insert("real_frame_rate", fpsStr(av_q2d(st -> r_frame_rate), (tbn || tbc ? "tbr, " : "tbr")));
             if (tbn)
-                stream -> attrs.insert("time_base", fpsStr(1 / av_q2d(st -> time_base), tbc ? "tbn, " : "tbn"));
+                stream -> attrs.insert("time_base", fpsStr(1 / av_q2d(st -> time_base), (tbc ? "tbn, " : "tbn")));
             if (tbc)
                 stream -> attrs.insert("codec_time_base", fpsStr(1 / av_q2d(st -> codec -> time_base), "tbc"));
         }
@@ -263,11 +263,11 @@ struct MediaAttributes {
     QString fpsStr(double d, QString postfix) {
         uint64_t v = lrintf(d * 100);
         if (v % 100)
-            return QString("%3.2f %s").arg(d).arg(postfix);
+            return QString().sprintf("%3.2f ", d) + (postfix);
         else if (v % (100 * 1000))
-            return QString("%1.0f %s").arg(d).arg(postfix);
+            return QString().sprintf("%1.0f ", d) + (postfix);
         else
-            return QString("%1.0fk %s").arg(d / 1000).arg(postfix);
+            return QString().sprintf("%1.0fk ", d / 1000) + (postfix);
     }
 
     void dumpMetadata(AVDictionary * dict, QHash<QString, QString> & data, QString & language) {

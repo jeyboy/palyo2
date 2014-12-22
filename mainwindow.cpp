@@ -57,26 +57,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     MediaAttributes * attrs;
     attrs = player -> getInfo(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
-    qDebug() << attrs -> common;
-    qDebug() << attrs -> audios;
-    qDebug() << attrs -> videos;
-    qDebug() << attrs -> subtitles;
+    qDebug() << attrs -> operator QString();
     qDebug() << "-------------------------";
     delete attrs;
 
     attrs = player -> getInfo(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
-    qDebug() << attrs -> common;
-    qDebug() << attrs -> audios;
-    qDebug() << attrs -> videos;
-    qDebug() << attrs -> subtitles;
+    qDebug() << attrs -> operator QString();
     qDebug() << "-------------------------";
     delete attrs;
 
     attrs = player -> getInfo(QUrl("http://www.ex.ua/get/116023228"));
-    qDebug() << attrs -> common;
-    qDebug() << attrs -> audios;
-    qDebug() << attrs -> videos;
-    qDebug() << attrs -> subtitles;
+    qDebug() << attrs -> operator QString();
     qDebug() << "-------------------------";
     delete attrs;
 
@@ -181,6 +172,7 @@ QDockWidget * MainWindow::createDockWidget() {
 //    dock->setWidget(customerList);
 //    addDockWidget(Qt::RightDockWidgetArea, dock);
 //    viewMenu->addAction(dock->toggleViewAction());
+    return 0;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent * event) {
