@@ -351,7 +351,10 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             break;
     }
 
-    painter -> setPen(option2.palette.color(QPalette::Dark));
+    if (elem_state)
+        painter -> setPen(Settings::instance() -> getSelectedItemTextColor());
+    else
+        painter -> setPen(option2.palette.color(QPalette::Dark));
     painter -> setBrush(fill_color);
     int angle = option2.rect.height() / 2.2;
     QRect bodyRect = option2.rect;
@@ -415,8 +418,11 @@ void ModelItemDelegate::usuall(QPainter* painter, const QStyleOptionViewItem& op
             //            QPen pen(textColor);
             //            pen.setWidth(2);
             //            painter -> setPen(pen);
-                        painter -> setPen(option2.palette.color(QPalette::Dark));
+                        if(!elem_state)
+                            painter -> setPen(option2.palette.color(QPalette::Dark));
                         painter -> drawEllipse(pseudoIcoRect);
+//                        painter -> drawArc(pseudoIcoRect, -75 * 16, 150 * 16);
+//                        painter -> drawRoundedRect(pseudoIcoRect, angle, angle);
                         painter -> setPen(textColor);
 
                         if (ext.length() > 3) {
