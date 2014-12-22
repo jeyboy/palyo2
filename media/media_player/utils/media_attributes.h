@@ -150,7 +150,74 @@ struct MediaAttributes {
     }
 
     operator QString() {
-        return "lalka";
+        QString str = "Common: \n";
+
+        foreach(QString key, common.keys())
+            str += "\t" + key + " : " + common.value(key) + "\n";
+
+        str += "\n Streams: \n";
+
+        if (!videos.isEmpty()) {
+            foreach(AttributeStream * video, videos) {
+                str += "\tVIDEO: " + QString::number(video -> index) + " | " + video -> name + " | " + video -> language + "\n";
+                foreach(QString key, video -> attrs.keys())
+                    str += "\t\t" + key + " : " + video -> attrs.value(key) + "\n";
+            }
+
+            str += "\n ------------------------------- \n";
+        }
+
+        if (!audios.isEmpty()) {
+            foreach(AttributeStream * audio, audios) {
+                str += "\tAUDIO: " + QString::number(audio -> index) + " | " + audio -> name + " | " + audio -> language + "\n";
+                foreach(QString key, audio -> attrs.keys())
+                    str += "\t\t" + key + " : " + audio -> attrs.value(key) + "\n";
+            }
+
+            str += "\n ------------------------------- \n";
+        }
+
+        if (!subtitles.isEmpty()) {
+            foreach(AttributeStream * subtitle, subtitles) {
+                str += "\tSUBTITLE: " + QString::number(subtitle -> index) + " | " + subtitle -> name + " | " + subtitle -> language + "\n";
+                foreach(QString key, subtitle -> attrs.keys())
+                    str += "\t\t" + key + " : " + subtitle -> attrs.value(key) + "\n";
+            }
+        }
+
+        if (!chapters.isEmpty() || !programs.isEmpty()) {
+            str += "\n ------------------------------- \n------------------------------- \n Elements: \n";
+
+            if (!chapters.isEmpty()) {
+                foreach(AttributeChapter * chapter, chapters) {
+                    str += "\tCharapter: " + QString::number(chapter -> index) + " | " + chapter -> start_time + " | " + chapter -> end_time + "\n";
+                    foreach(QString key, chapter -> attrs.keys())
+                        str += "\t\t" + key + " : " + chapter -> attrs.value(key) + "\n";
+                }
+
+                if (!programs.isEmpty())
+                    str += "\n ------------------------------- \n";
+            }
+
+            if (!programs.isEmpty()) {
+                foreach(AttributeProgram * program, programs) {
+                    str += "\tProgram: " + QString::number(program -> index) + " | " + program -> name + "\n";
+                    foreach(QString key, program -> attrs.keys())
+                        str += "\t\t" + key + " : " + program -> attrs.value(key) + "\n";
+
+                    str += "\n";
+
+
+                    foreach(AttributeStream * stream, program -> streams) {
+                        str += "\t\tStream: " + QString::number(stream -> index) + " | " + stream -> name + " | " + stream -> language + "\n";
+                        foreach(QString key, stream -> attrs.keys())
+                            str += "\t\t\t" + key + " : " + stream -> attrs.value(key) + "\n";
+                    }
+                }
+            }
+        }
+
+        return str;
     }
 
     AttributeStream * dumpStream(AVFormatContext * context, int i, int is_output = 1) {
