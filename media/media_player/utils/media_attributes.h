@@ -347,12 +347,20 @@ struct MediaAttributes {
         }
     }
 
+    int streamIndexOfLang(QString lang, AVMediaType stream_type = AVMEDIA_TYPE_AUDIO) {
+        QList<QString> langs;
+        langs.append(lang);
+
+        return streamIndexOfLang(langs, stream_type);
+    }
+
     int streamIndexOfLang(QList<QString> langs, AVMediaType stream_type = AVMEDIA_TYPE_AUDIO) {
         QList<AttributeStream *> & pointer = audios;
 
         switch(stream_type) {
-            case AVMEDIA_TYPE_VIDEO:        { pointer = videos; }
-            case AVMEDIA_TYPE_SUBTITLE:     { pointer = subtitles; }
+            case AVMEDIA_TYPE_AUDIO:        { break; }
+            case AVMEDIA_TYPE_VIDEO:        { pointer = videos; break; }
+            case AVMEDIA_TYPE_SUBTITLE:     { pointer = subtitles; break; }
             default: { return -1; }
         }
 

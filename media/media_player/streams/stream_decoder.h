@@ -21,7 +21,7 @@ public:
         Suspended = 4
     };
 
-    StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock);
+    StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock, MediaAttributes * attrs);
     ~StreamDecoder();
 
     DecoderState getState() const { return state; }
@@ -61,6 +61,8 @@ private:
     int langStream();
     uint bestStream(AudioStream * audio, VideoStream * video);
     void findStreams(MasterClock * clock);
+
+    MediaAttributes * attributes;
 
     QString defaultLang;
     enum DecoderState state;

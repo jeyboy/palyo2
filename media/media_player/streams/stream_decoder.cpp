@@ -1,7 +1,8 @@
 #include "stream_decoder.h"
 #include <qDebug>
 
-StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock) : Stream(parent)
+StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock, MediaAttributes * attrs) : Stream(parent)
+    , attributes(attrs)
     , ac(0)
     , vc(0)
     , context(currContext)
@@ -149,19 +150,23 @@ void StreamDecoder::routine() {
 ///////////////////////// Private //////////////////////////////////
 
 int StreamDecoder::langStream() {
-    AVDictionaryEntry * tag = 0;
-    AVDictionary * dict;
+    int l = attributes -> streamIndexOfLang(defaultLang);
+    qDebug() << "HHHHHHHHHHH " << l;
+    return l;
 
-    for(uint i = 0; i < context -> nb_streams; i++) {
-        if (context -> streams[i] -> codec -> codec_type != AVMEDIA_TYPE_AUDIO) continue;
-        dict = context -> streams[i] -> metadata;
-        while ((tag = av_dict_get(dict, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-            if (QString(tag -> key) == "language" && QString(tag -> value) == defaultLang)
-                return i;
-        }
-    }
+//    AVDictionaryEntry * tag = 0;
+//    AVDictionary * dict;
 
-    return -1;
+//    for(uint i = 0; i < context -> nb_streams; i++) {
+//        if (context -> streams[i] -> codec -> codec_type != AVMEDIA_TYPE_AUDIO) continue;
+//        dict = context -> streams[i] -> metadata;
+//        while ((tag = av_dict_get(dict, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+//            if (QString(tag -> key) == "language" && QString(tag -> value) == defaultLang)
+//                return i;
+//        }
+//    }
+
+//    return -1;
 }
 
 uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {

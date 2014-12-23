@@ -51,7 +51,7 @@ bool MediaPlayer::openMicro(QUrl url, int64_t position_micromillis, int64_t dura
     if (!onlyInfo) {
         if (res) {
             item_duration = qMin(context -> duration, duration_micromillis > 0 ? duration_micromillis : INT64_MAX);
-            decoder = new StreamDecoder(this, context, clock);
+            decoder = new StreamDecoder(this, context, clock, attributes);
             res &= decoder -> isValid();
         }
 
@@ -182,7 +182,6 @@ bool MediaPlayer::openContext(QUrl & url) {
     av_dict_set(&options, "pixel_format", "rgb24", 0);
 
     if (avformat_open_input(&context, path.toUtf8().data(), NULL, &options) < 0) {
-//        abort(); // ?
         av_dict_free(&options);
         emit errorOccured(errorStr = "Did not open context of file");
         return false;
