@@ -347,7 +347,7 @@ struct MediaAttributes {
         }
     }
 
-    int streamIndexOfLang(AVMediaType stream_type, QList<QString> langs) {
+    int streamIndexOfLang(QList<QString> langs, AVMediaType stream_type = AVMEDIA_TYPE_AUDIO) {
         QList<AttributeStream *> & pointer = audios;
 
         switch(stream_type) {
