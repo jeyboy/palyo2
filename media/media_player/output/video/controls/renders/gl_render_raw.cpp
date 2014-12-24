@@ -295,9 +295,9 @@ void GLRenderRaw::initializeGL() {
 
     makeCurrent();
 
-    shader = new Shader(context());
+    shader = new Shader(this);
 
-    resizeViewport(QGLWidget::width(), QGLWidget::height());
+    resizeViewport(QOpenGLWidget::width(), QOpenGLWidget::height());
 }
 
 void GLRenderRaw::paintGL() {

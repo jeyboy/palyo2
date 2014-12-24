@@ -5,8 +5,8 @@
 
 struct Shader {
 
-    Shader(const QGLContext * ctx) :
-          program(new QGLShaderProgram(ctx))
+    Shader(QObject * parent) :
+          program(new QGLShaderProgram(parent))
           , a_Position(-1)
           , a_TexCoords(-1)
           , u_matrix(-1)

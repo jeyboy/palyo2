@@ -111,7 +111,7 @@ public:
     }
 
     int calcDelay() {
-        return time_buff == 0 ? 0 : time_buff * 60; // take only 8/10 from the time buffer for delay
+        return time_buff == 0 ? 0 : time_buff * 60; // take only 6/10 from the time buffer for delay
     }
 
     inline int index() const { return uindex; }

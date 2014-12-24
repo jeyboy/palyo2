@@ -52,7 +52,7 @@ StreamDecoder::~StreamDecoder() {
 void StreamDecoder::seek(int64_t target) {
     skip = true;
     suspend();
-    state = Seeking;
+    emit stateChanged(state = Seeking);
     emit flushDataRequired();
     avformat_seek_file(context, -1, INT64_MIN, target, INT64_MAX, 0);
     emit eofRejectRequired();
@@ -61,11 +61,12 @@ void StreamDecoder::seek(int64_t target) {
 }
 
 void StreamDecoder::suspend() {
-    state = Suspended;
+    emit stateChanged(state = Suspended);
     Stream::suspend();
     emit suspendRequired();
 }
 void StreamDecoder::resume() {
+    emit stateChanged(state = Resumed);
     Stream::resume();
     emit resumeRequired();
 }
@@ -100,7 +101,7 @@ void StreamDecoder::routine() {
     int status;
     bool preload = del == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
     qDebug() << "decoder proceed " << preload;
-    state = Process;
+    emit stateChanged(state = Process);
 
     while (!skip) {
         if (pauseRequired) return;
@@ -136,7 +137,7 @@ void StreamDecoder::routine() {
             qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
 
             pauseRequired = true;
-            state = EofDetected;
+            emit stateChanged(state = EofDetected);
             emit eofDetectRequired();
 
             break;
@@ -182,6 +183,6 @@ void StreamDecoder::findStreams(MasterClock * clock) {
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
 //        emit errorOccurred("No one audio or video streams founds");
-        state = NoData;
+        emit stateChanged(state = NoData);
     }
 }

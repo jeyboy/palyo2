@@ -27,7 +27,7 @@ GLRender::GLRender(QWidget* parent) : RenderInterface(parent) {
 }
 
 GLRender::~GLRender() {
-    deleteTexture(texture);
+    glDeleteTextures(1, &texture);
 }
 
 void GLRender::setQuality(const Quality & quality) {
@@ -71,7 +71,7 @@ void GLRender::resizeViewport(int w, int h) {
 void GLRender::initializeGL() {
     RenderInterface::initializeGL();
 
-    glViewport(0, 0, QGLWidget::width(), QGLWidget::height());
+    glViewport(0, 0, QOpenGLWidget::width(), QOpenGLWidget::height());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-1, 1, -1, 1, 0, 1);

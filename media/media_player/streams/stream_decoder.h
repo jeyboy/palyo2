@@ -18,7 +18,8 @@ public:
         Process = 1,
         EofDetected = 2,
         Seeking = 3,
-        Suspended = 4
+        Suspended = 4,
+        Resumed = 5
     };
 
     StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock, MediaAttributes * attrs);
@@ -44,6 +45,7 @@ public:
     uint getVolume() const;
     void setVolume(uint val);
 signals:
+    void stateChanged(DecoderState);
     void flushDataRequired();
     void eofDetectRequired();
     void eofRejectRequired();

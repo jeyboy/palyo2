@@ -4,11 +4,10 @@
 #include "media/media_player/streams/frames/video_frame.h"
 #include "render_types.h"
 
-#include <QGLWidget>
 #include <QMutex>
 #include <QTimer>
 
-class RenderInterface : public QGLWidget {
+class RenderInterface : public QOpenGLWidget {
      Q_OBJECT
 public:
     enum Quality { best, fast, low };
