@@ -1,12 +1,12 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <QGLShaderProgram>
+#include <QOpenGLShaderProgram>
 
 struct Shader {
 
     Shader(QObject * parent) :
-          program(new QGLShaderProgram(parent))
+          program(new QOpenGLShaderProgram(parent))
           , a_Position(-1)
           , a_TexCoords(-1)
           , u_matrix(-1)
@@ -18,8 +18,8 @@ struct Shader {
     ~Shader() { remove(); }
 
     void setup(int textures_count, bool planar = false, bool big_endian = false, bool little_endian = false) {
-        program -> addShaderFromSourceCode(QGLShader::Vertex, vertexShader());
-        program -> addShaderFromSourceCode(QGLShader::Fragment, fragmentShader(planar, big_endian, little_endian));
+        program -> addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShader());
+        program -> addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShader(planar, big_endian, little_endian));
 
         bool res = program -> link();
 
@@ -146,7 +146,7 @@ struct Shader {
         }
     }
 
-    QGLShaderProgram * program;
+    QOpenGLShaderProgram * program;
 
     GLint a_Position;
     GLint a_TexCoords;

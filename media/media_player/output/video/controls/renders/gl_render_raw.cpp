@@ -10,9 +10,6 @@ const GLfloat kTexCoords[] = {
 };
 
 GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), color_conversion(0) {
-    makeCurrent();
-    initializeOpenGLFunctions();
-
     //    setAcceptDrops(true);
     //    /* To rapidly update custom widgets that constantly paint over their entire areas with
     //     * opaque content, e.g., video streaming widgets, it is better to set the widget's
@@ -29,33 +26,16 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), 
 
 
 ////    setAutoBufferSwap(true);
-////    setAutoFillBackground(false);
-
-////    QGL::setPreferredPaintEngine(QPaintEngine::OpenGL2);
-
-////    glFormat = GL_RGB;  //  QImage RGBA is BGRA
-////    glType = GL_UNSIGNED_BYTE;
-
-    QGLFormat glFmt;
-    glFmt.setSwapInterval(1); // 1= vsync on
-//    glFmt.setAlpha(GL_RGBA==glFormat);
-//    glFmt.setRgba(GL_RGBA==glFormat);
-    glFmt.setDoubleBuffer(true); // default
-    glFmt.setOverlay(false);
-    glFmt.setSampleBuffers(false);
-    glFmt.setDepth(false);
-    glFmt.setDirectRendering(true);
-    QGLFormat::setDefaultFormat(glFmt);
-
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    setAutoFillBackground(false);
 }
 
-GLRenderRaw::~GLRenderRaw() {   
+GLRenderRaw::~GLRenderRaw() {
     if (shader) {
         delete shader;
         shader = 0;
     }
 
+//    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
     glDeleteTextures(textures.size(), textures.data());
     textures.clear();
 
@@ -66,6 +46,8 @@ GLRenderRaw::~GLRenderRaw() {
 }
 
 void GLRenderRaw::setQuality(const Quality & quality) {
+//    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
+
     switch(quality) {
         case RenderInterface::best : {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -229,9 +211,6 @@ bool GLRenderRaw::initTextures() {
         );
     }
 
-
-    qDebug() << texture_size;
-
     return true;
 }
 
@@ -291,9 +270,10 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
+//    glClearColor(0.0, 0.0, 0.0, 0.0);
     RenderInterface::initializeGL();
 
-    makeCurrent();
+//    makeCurrent();
 
     shader = new Shader(this);
 
@@ -318,10 +298,11 @@ void GLRenderRaw::paintGL() {
     }
 
     shader -> program -> bind();
+    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
 
     for (int i = 0; i < nb_planes; i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        f -> glActiveTexture(GL_TEXTURE0 + i);
+        f -> glBindTexture(GL_TEXTURE_2D, textures[i]);
         glPixelStorei(GL_UNPACK_ROW_LENGTH, texture_size[i].width() + vFrame -> buffer -> pad(i));
 
         glTexSubImage2D(

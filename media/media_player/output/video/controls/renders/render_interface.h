@@ -6,6 +6,7 @@
 
 #include <QMutex>
 #include <QTimer>
+#include <QOpenGLWidget>
 
 class RenderInterface : public QOpenGLWidget {
      Q_OBJECT

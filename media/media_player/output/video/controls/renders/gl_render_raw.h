@@ -14,7 +14,7 @@ const GLfloat kVertices[] = {
     -1, -1,
 };
 
-class GLRenderRaw : public RenderInterface, protected QOpenGLFunctions {
+class GLRenderRaw : public RenderInterface {
 public:
     GLRenderRaw(QWidget* parent = NULL);
     virtual ~GLRenderRaw();
