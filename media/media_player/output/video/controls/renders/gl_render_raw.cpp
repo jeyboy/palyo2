@@ -11,10 +11,9 @@ const GLfloat kTexCoords[] = {
 
 GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), color_conversion(0) {
     //    setAcceptDrops(true);
-    //    setAttribute(Qt::WA_PaintOnScreen);
     //    setAttribute(Qt::WA_NoSystemBackground);
 
-//    setAutoFillBackground(false);
+    setAutoFillBackground(false);
 }
 
 GLRenderRaw::~GLRenderRaw() {
@@ -23,7 +22,6 @@ GLRenderRaw::~GLRenderRaw() {
         shader = 0;
     }
 
-//    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
     glDeleteTextures(textures.size(), textures.data());
     textures.clear();
 
@@ -203,6 +201,7 @@ bool GLRenderRaw::initTextures() {
 }
 
 void GLRenderRaw::resizeViewport(int w, int h) {
+    qDebug() << "$$$$$$$$$ " << w << " " << h << " " << rect();
     makeCurrent();
 
     mpv_matrix(0, 0) = mpv_matrix(1, 1) = 1.0f;

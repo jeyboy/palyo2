@@ -201,6 +201,7 @@ bool MediaPlayer::openContext(QUrl & url) {
 
 void MediaPlayer::closeContext() {
     delete attributes;
+    attributes = 0;
 
     if (decoder) {
         decoder -> stop();

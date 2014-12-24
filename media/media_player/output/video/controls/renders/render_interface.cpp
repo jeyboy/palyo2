@@ -10,8 +10,7 @@ RenderInterface::RenderInterface(QWidget* parent) : QOpenGLWidget(parent)
 
     setFocusPolicy(Qt::StrongFocus);
 
-//    setAttribute(Qt::WA_OpaquePaintEvent, true);
-//    setAttribute(Qt::WA_PaintOnScreen, true);
+    setAttribute(Qt::WA_OpaquePaintEvent, true);
     frameInit();
     fpsCalculation();
 }
