@@ -11,22 +11,10 @@ const GLfloat kTexCoords[] = {
 
 GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), color_conversion(0) {
     //    setAcceptDrops(true);
-    //    /* To rapidly update custom widgets that constantly paint over their entire areas with
-    //     * opaque content, e.g., video streaming widgets, it is better to set the widget's
-    //     * Qt::WA_OpaquePaintEvent, avoiding any unnecessary overhead associated with repainting the
-    //     * widget's background
-    //     */
     //    setAttribute(Qt::WA_PaintOnScreen);
     //    setAttribute(Qt::WA_NoSystemBackground);
-    //    //default: swap in qpainter dtor. we should swap before QPainter.endNativePainting()
-    //    setAutoBufferSwap(false);
-    //    setAutoFillBackground(false);
 
-
-
-
-////    setAutoBufferSwap(true);
-    setAutoFillBackground(false);
+//    setAutoFillBackground(false);
 }
 
 GLRenderRaw::~GLRenderRaw() {
