@@ -21,6 +21,10 @@ RenderInterface::~RenderInterface() {
     mutex.unlock();
 }
 
+void RenderInterface::resizeGL(int w, int h) {
+    qDebug() << "JJJJJJJJJJJJ";
+}
+
 void RenderInterface::initializeGL() {
     //glPixelStorei(GL_UNPACK_SWAP_BYTES,   GL_FALSE);
     //glPixelStorei(GL_UNPACK_LSB_FIRST,    GL_FALSE);
@@ -69,8 +73,11 @@ void RenderInterface::closeEvent(QCloseEvent *) {
 }
 
 void RenderInterface::resizeEvent(QResizeEvent * event) {
-    QWidget::resizeEvent(event);
-    resizeViewport(width(), height());
+    QOpenGLWidget::resizeEvent(event);
     if (vFrame)
         output_rect = vFrame -> calcSize(this -> rect());
+    else
+        output_rect = this -> rect();
+
+    resizeViewport();
 }

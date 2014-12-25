@@ -18,7 +18,7 @@ public:
 
     virtual void setQuality(const Quality & quality) = 0;
 //    void setFrame(VideoFrame * frame);
-    virtual void resizeViewport(int w, int h) = 0;
+    virtual void resizeViewport() = 0;
     virtual enum RenderType getRenderType() const = 0;
 
 signals:
@@ -32,6 +32,7 @@ private slots:
     void fpsCalculation();
 
 protected:
+    void resizeGL(int w, int h);
     void initializeGL();
     void redrawed();
 

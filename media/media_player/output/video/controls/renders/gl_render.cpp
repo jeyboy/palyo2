@@ -59,13 +59,8 @@ void GLRender::setQuality(const Quality & quality) {
     };
 }
 
-void GLRender::resizeViewport(int w, int h) {
-    if (vFrame) {
-        output_rect = vFrame -> calcSize(this -> rect());
-        glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
-    } else {
-        glViewport(0, 0, w, h);
-    }
+void GLRender::resizeViewport() {
+    glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
 }
 
 void GLRender::initializeGL() {
@@ -95,7 +90,7 @@ void GLRender::paintGL() {
 
     if (init == false) {
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, vFrame -> buffer -> settings() -> bytesPerPixel());
-        resizeViewport(width(), height());
+        resizeViewport();
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
         init = true;
     } else

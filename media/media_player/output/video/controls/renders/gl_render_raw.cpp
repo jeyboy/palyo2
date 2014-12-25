@@ -14,6 +14,7 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), 
     //    setAttribute(Qt::WA_NoSystemBackground);
 
     setAutoFillBackground(false);
+    mpv_matrix.setToIdentity();
 }
 
 GLRenderRaw::~GLRenderRaw() {
@@ -84,9 +85,11 @@ void GLRenderRaw::setQuality(const Quality & quality) {
 
 bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat) {
     makeCurrent();
-    glBindTexture(GL_TEXTURE_2D, tex);
+    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
 
-    glTexImage2D(GL_TEXTURE_2D
+    f -> glBindTexture(GL_TEXTURE_2D, tex);
+
+    f -> glTexImage2D(GL_TEXTURE_2D
                  , 0                //level
                  , internalFormat
                  , width
@@ -96,14 +99,14 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
                  , dataType
                  , NULL);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE); // Linux ?
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE); // Linux ?
 
 //    setQuality(best);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    f -> glBindTexture(GL_TEXTURE_2D, 0);
 
     return true;
 }
@@ -200,18 +203,13 @@ bool GLRenderRaw::initTextures() {
     return true;
 }
 
-void GLRenderRaw::resizeViewport(int w, int h) {
-    qDebug() << "$$$$$$$$$ " << w << " " << h << " " << rect();
-    makeCurrent();
+void GLRenderRaw::resizeViewport() {
+    mpv_matrix.setToIdentity();
+//    mpv_matrix.scale(1);
+////    mpv_matrix.translate(0, 0, 0);
+////    mpv_matrix.perspective(35.0f,float(w)/float(h),1.0f,30.0f);
 
-    mpv_matrix(0, 0) = mpv_matrix(1, 1) = 1.0f;
-
-    if (vFrame) {
-        output_rect = vFrame -> calcSize(this -> rect());
-        glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
-    } else {
-        glViewport(0, 0, w, h);
-    }
+    glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
 }
 
 void GLRenderRaw::prepareSettings() {
@@ -257,14 +255,13 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
-//    glClearColor(0.0, 0.0, 0.0, 0.0);
+//    glTranslatef(-1, -1, 0);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
     RenderInterface::initializeGL();
 
 //    makeCurrent();
 
     shader = new Shader(this);
-
-    resizeViewport(QOpenGLWidget::width(), QOpenGLWidget::height());
 }
 
 void GLRenderRaw::paintGL() {
@@ -275,12 +272,15 @@ void GLRenderRaw::paintGL() {
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
 
+    // temporary comented
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     mutex.lock();
     AVPicture * img = vFrame -> asPicture();
 
     if (init == false) {
         prepareSettings();
-        resizeViewport(width(), height());
+        resizeViewport();
         init = true;
     }
 
@@ -326,9 +326,6 @@ void GLRenderRaw::paintGL() {
     shader -> program -> setAttributeArray(shader -> a_TexCoords, GL_FLOAT, kTexCoords, 2);
     shader -> program -> enableAttributeArray(shader -> a_Position);
     shader -> program -> enableAttributeArray(shader -> a_TexCoords);
-
-    // temporary comented
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
