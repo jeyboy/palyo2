@@ -14,7 +14,6 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), 
     //    setAttribute(Qt::WA_NoSystemBackground);
 
     setAutoFillBackground(false);
-    mpv_matrix.setToIdentity();
 }
 
 GLRenderRaw::~GLRenderRaw() {
@@ -208,8 +207,10 @@ void GLRenderRaw::resizeViewport() {
 //    mpv_matrix.scale(1);
 ////    mpv_matrix.translate(0, 0, 0);
 ////    mpv_matrix.perspective(35.0f,float(w)/float(h),1.0f,30.0f);
+///
+//    mpv_matrix.perspective(60.0f, float(width())/float(height()), 0, 10.0f);
 
-    glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
+//    mpv_matrix.lookAt();
 }
 
 void GLRenderRaw::prepareSettings() {
@@ -274,6 +275,7 @@ void GLRenderRaw::paintGL() {
 
     // temporary comented
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
 
     mutex.lock();
     AVPicture * img = vFrame -> asPicture();

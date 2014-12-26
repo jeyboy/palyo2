@@ -11,7 +11,7 @@ public:
     void setQuality(const Quality & quality);
 
     inline RenderType getRenderType() const { return gl; }
-    void resizeViewport();
+    void resizeViewport() {}
 
     void repaint();
 

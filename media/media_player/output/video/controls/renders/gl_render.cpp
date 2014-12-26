@@ -59,10 +59,6 @@ void GLRender::setQuality(const Quality & quality) {
     };
 }
 
-void GLRender::resizeViewport() {
-    glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
-}
-
 void GLRender::initializeGL() {
     RenderInterface::initializeGL();
 

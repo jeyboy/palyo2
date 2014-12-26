@@ -73,11 +73,14 @@ void RenderInterface::closeEvent(QCloseEvent *) {
 }
 
 void RenderInterface::resizeEvent(QResizeEvent * event) {
-    QOpenGLWidget::resizeEvent(event);
     if (vFrame)
         output_rect = vFrame -> calcSize(this -> rect());
     else
         output_rect = this -> rect();
+
+    QOpenGLWidget::resizeEvent(event);
+
+//    context() -> functions() -> glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
 
     resizeViewport();
 }
