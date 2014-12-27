@@ -56,7 +56,7 @@ int MasterClock::computeVideoDelay(double compClock, double compClockNext) {
     mainLastDelayVal = delay;
 
     double diff = videoClockNext - audioClock;
-    qDebug() << "v - a  " << diff << " " << videoClockNext << " " << audioClock;
+//    qDebug() << "v - a  " << diff << " " << videoClockNext << " " << audioClock;
     double sync_threshold = FFMAX(AV_SYNC_THRESHOLD, delay);
     if (fabs(diff) < AV_NOSYNC_THRESHOLD) {
             if (diff <= -sync_threshold) {

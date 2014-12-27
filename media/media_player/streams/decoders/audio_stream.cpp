@@ -134,7 +134,7 @@ void AudioStream::routine() {
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
     int reslen = 0;
     AudioFrame * currFrame;
-//    memset(data, 0, maxlen); // ?
+    memset(data, 0, maxlen); // clear buffer while buffer is idle
     int copy_size;
 
     if (!pauseRequired && !frames.isEmpty()) {
