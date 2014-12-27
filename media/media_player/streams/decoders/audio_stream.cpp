@@ -27,6 +27,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterCloc
         framesBufferLen = framesPerBuffer * 15;
 
         output = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, parent);
+        output -> setBufferSize(bytesPerSecond() * 1);
 //        output -> setNotifyInterval(20);
         output -> setVolume(1.0);
         output -> start(this);
@@ -158,7 +159,13 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
                 clock -> setAudio(currFrame -> bufferPTS);
                 delete currFrame;
             } else {
+                float time_shift = (copy_size / (float)currFrame -> buffer -> size()) * currFrame -> time_length;
                 currFrame -> buffer -> remove(0, copy_size);
+
+                currFrame -> time_length -= time_shift;
+                time_buff -= time_shift;
+
+                clock -> iterateAudio(time_shift);
             }
         }
 
