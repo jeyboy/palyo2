@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    player -> open(QUrl("http://www.ex.ua/get/111412158")); //short
 //    player -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
 
-    player -> open(QUrl("http://www.ex.ua/get/47935441"));
+//    player -> open(QUrl("http://www.ex.ua/get/47935441"));
 
 //    player -> open(QUrl("http://www.ex.ua/get/47933391"));
 

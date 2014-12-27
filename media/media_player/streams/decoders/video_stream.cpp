@@ -49,23 +49,19 @@ void VideoStream::routine() {
     bool isEmpty = packets.isEmpty();
     mutex -> unlock();
 
-    if (!pauseRequired && isEmpty && eof) suspend();
-
-    if (is_attachment && isEmpty) {
-        msleep(100);
-        return;
-    }
-
     if (pauseRequired) return;
+    else if (isEmpty && eof) suspend();
 
     if (isEmpty) {
-        if (frames.size() <=  framesBufferLen / 2)
-            semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
-        msleep(2);
+        if (is_attachment)
+            msleep(100);
+        else {
+            if (frames.size() <=  framesBufferLen / 2)
+                semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
+            msleep(2);
+        }
         return;
     }
-
-
 
 //    if (frames.size() >= framesBufferLen) {
 //        msleep(frames.size() / 2);
