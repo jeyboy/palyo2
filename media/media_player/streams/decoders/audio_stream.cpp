@@ -81,7 +81,7 @@ void AudioStream::routine() {
     if (!pauseRequired && isEmpty && eof && output -> state() != QAudio::ActiveState) suspendStream();
 
     // TODO: mutex required for frames
-    if (isEmpty && frames.size() <= framesBufferLen / 2) {
+    if (isEmpty) {
         if (frames.size() <= framesBufferLen / 2)
             semaphore -> release(semaphore -> available() == 0 ? 1 : 0);
         msleep(sleep_correlation);

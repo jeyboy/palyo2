@@ -96,7 +96,7 @@ void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
 //    qDebug() << "decoder";
 
-    qDebug() << "WWWWWW " << audioStream -> calcDelay() << " " << videoStream -> calcDelay() << semaphore -> available();
+//    qDebug() << "WWWWWW " << audioStream -> calcDelay() << " " << videoStream -> calcDelay() << semaphore -> available();
     semaphore -> acquire(1);
 
     if (pauseRequired)
