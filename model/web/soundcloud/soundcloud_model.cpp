@@ -24,13 +24,14 @@ void SoundcloudModel::refresh() {
 //    QApplication::processEvents();
 }
 
-QModelIndex SoundcloudModel::dropProcession(const QList<QUrl> & list) {
+QModelIndex SoundcloudModel::dropProcession(const QList<QUrl> & /*list*/) {
 //    ModelItem * index = model -> buildPath(QFileInfo(list.first().toLocalFile()).path());
 //    filesRoutine(index, list);
 //    return model -> index(index);
+    return QModelIndex();
 }
 
-void SoundcloudModel::filesRoutine(ModelItem * index, QFileInfo currFile){
+void SoundcloudModel::filesRoutine(ModelItem * /*index*/, QFileInfo /*currFile*/){
 //    QFileInfoList fileList = folderFiles(currFile);
 
 //    foreach(QFileInfo file, fileList) {
@@ -46,7 +47,7 @@ void SoundcloudModel::filesRoutine(ModelItem * index, QFileInfo currFile){
 //    }
 }
 
-void SoundcloudModel::filesRoutine(ModelItem * index, QList<QUrl> list){
+void SoundcloudModel::filesRoutine(ModelItem * /*index*/, QList<QUrl> /*list*/){
 //    foreach(QUrl url, list) {
 //        QFileInfo file = QFileInfo(url.toLocalFile());
 //        if (file.isDir()) {

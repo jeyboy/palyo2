@@ -1,10 +1,12 @@
 #include "media_player.h"
-#include "media/duration.h"
+#include "media/media_player/utils/duration.h"
 
 MediaPlayer::MediaPlayer(QObject * parent) : QObject(parent)
+  , attributes(0)
   , clock(new MasterClock(this))
   , decoder(0)
   , isRemote(false)
+  , onlyInfo(false)
   , context(0)
   , custom_context(0)
   , errorStr("")
@@ -23,6 +25,21 @@ MediaPlayer::~MediaPlayer() {
     delete semaphore;
 }
 
+MediaAttributes * MediaPlayer::getInfo(QUrl url) {
+    MediaAttributes * ret = 0;
+
+    onlyInfo = true;
+    if (openMicro(url)) {
+        ret = attributes;
+        attributes = 0;
+    }
+
+    closeContext();
+    onlyInfo = false;
+
+    return ret;
+}
+
 bool MediaPlayer::open(QUrl url) {
     return openMicro(url);
 }
@@ -34,25 +51,23 @@ bool MediaPlayer::openMicro(QUrl url, int64_t position_micromillis, int64_t dura
 
     bool res = openContext(url);
 
-    if (res) {
-        item_duration = qMin(context -> duration, duration_micromillis > 0 ? duration_micromillis : INT64_MAX);
-        decoder = new StreamDecoder(this, context, clock, semaphore);
-        res &= decoder -> isValid();
-    }
+    if (!onlyInfo) {
+        if (res) {
+            item_duration = qMin(context -> duration, duration_micromillis > 0 ? duration_micromillis : INT64_MAX);
+            decoder = new StreamDecoder(this, context, clock, semaphore, attributes);
+            res &= decoder -> isValid();
+        }
 
-    if (res) {
-        if (position_micromillis > 0)
-            seekMicro(position_micromillis);
-        pause();
-    } else
-        closeContext();
+        if (res) {
+            if (position_micromillis > 0)
+                seekMicro(position_micromillis);
+            pause();
+        } else
+            closeContext();
+    }
 
     return res;
 }
-
-
-
-/////////////////  need to choose one type   ///////////////////
 
 //TODO: get correct duration needed
 int64_t MediaPlayer::durationMicro() {
@@ -88,19 +103,6 @@ QString MediaPlayer::filename() {
 
 QString MediaPlayer::info() {
     return Duration::fromMillis(positionMillis()) + " / " + Duration::fromMillis(durationMillis());
-}
-
-bool MediaPlayer::tags(QHash<QString, QString> & ret) {
-    if (context) {
-        AVDictionaryEntry * tag = 0;
-        while ((tag = av_dict_get(context -> metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-            ret.insert(tag -> key, tag -> value);
-            delete tag;
-        }
-        return true;
-    }
-
-    return false;
 }
 
 bool MediaPlayer::isPlayed() const {
@@ -183,7 +185,6 @@ bool MediaPlayer::openContext(QUrl & url) {
     av_dict_set(&options, "pixel_format", "rgb24", 0);
 
     if (avformat_open_input(&context, path.toUtf8().data(), NULL, &options) < 0) {
-//        abort(); // ?
         av_dict_free(&options);
         emit errorOccured(errorStr = "Did not open context of file");
         return false;
@@ -195,12 +196,16 @@ bool MediaPlayer::openContext(QUrl & url) {
         return false;
     }
 
-    av_dump_format(context, 0, path.toUtf8().data(), false);
+    av_dump_format(context, 0, path.toUtf8().data(), false); // remove after production
+    attributes = new MediaAttributes(context);
 
     return true;
 }
 
 void MediaPlayer::closeContext() {
+    delete attributes;
+    attributes = 0;
+
     if (decoder) {
         decoder -> stop();
         semaphore -> release(4);

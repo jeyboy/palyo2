@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-RenderInterface::RenderInterface(QWidget* parent) : QGLWidget(parent)
+RenderInterface::RenderInterface(QWidget* parent) : QOpenGLWidget(parent)
   , fpsCounter(0)
   , vFrame(0) {
 
@@ -11,7 +11,6 @@ RenderInterface::RenderInterface(QWidget* parent) : QGLWidget(parent)
     setFocusPolicy(Qt::StrongFocus);
 
     setAttribute(Qt::WA_OpaquePaintEvent, true);
-    setAttribute(Qt::WA_PaintOnScreen, true);
     frameInit();
     fpsCalculation();
 }
@@ -20,6 +19,10 @@ RenderInterface::~RenderInterface() {
     mutex.lock();
     delete vFrame;
     mutex.unlock();
+}
+
+void RenderInterface::resizeGL(int w, int h) {
+    qDebug() << "JJJJJJJJJJJJ";
 }
 
 void RenderInterface::initializeGL() {
@@ -70,8 +73,10 @@ void RenderInterface::closeEvent(QCloseEvent *) {
 }
 
 void RenderInterface::resizeEvent(QResizeEvent * event) {
-    QWidget::resizeEvent(event);
-    resizeViewport(width(), height());
     if (vFrame)
         output_rect = vFrame -> calcSize(this -> rect());
+    else
+        output_rect = this -> rect();
+
+    QOpenGLWidget::resizeEvent(event);
 }

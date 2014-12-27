@@ -5,7 +5,6 @@
 #include "media/media_player/streams/frames/video/shader.h"
 #include "media/media_player/streams/frames/video/color_conversion.h"
 #include "media/media_player/output/video/controls/renders/render_interface.h"
-#include <QOpenGLFunctions>
 
 const GLfloat kVertices[] = {
     -1,  1,
@@ -14,7 +13,7 @@ const GLfloat kVertices[] = {
     -1, -1,
 };
 
-class GLRenderRaw : public RenderInterface, protected QOpenGLFunctions {
+class GLRenderRaw : public RenderInterface {
 public:
     GLRenderRaw(QWidget* parent = NULL);
     virtual ~GLRenderRaw();
@@ -26,8 +25,6 @@ public:
 protected:
     bool initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat = GL_RGBA);
     bool initTextures();
-
-    void resizeViewport(int w, int h);
 
     void repaint();
 

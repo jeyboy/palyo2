@@ -33,12 +33,13 @@ MainWindow::MainWindow(QWidget *parent) :
 //    player -> open(QUrl("http://www.ex.ua/get/111412158")); //short
 //    player -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
 
-//    player -> open(QUrl("http://www.ex.ua/get/47935441"));
+    player -> open(QUrl("http://www.ex.ua/get/47935441"));
 
 //    player -> open(QUrl("http://www.ex.ua/get/47933391"));
 
 
 
+//    player -> open(QUrl::fromLocalFile("F:/Muzon/feel u.wma"));
 //    player -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
 //    qDebug() << player -> open(QUrl("http://www.ex.ua/get/116023228")); //asterix 2
 //    qDebug() << player -> open(QUrl("https://cs1-43v4.vk-cdn.net/p12/f97b321ed3ed8a.mp3?extra=b8mi7AY_T_njmTpycZLbdJnNCoI1hgzvLkAJIA83H16rdNecFzZqMVHLtCcj7liPcl0CnVn7xFTDKEkx7xDG_FSznd8nUZ3S"));
@@ -53,6 +54,23 @@ MainWindow::MainWindow(QWidget *parent) :
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/Shakra – Trapped.mp3"));
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));
 //      player -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));
+
+
+//    MediaAttributes * attrs = 0;
+//    attrs = player -> getInfo(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
+////    qDebug() << attrs -> operator QString();
+////    qDebug() << "-------------------------";
+//    delete attrs;
+
+//    attrs = player -> getInfo(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
+////    qDebug() << attrs -> operator QString();
+////    qDebug() << "-------------------------";
+//    delete attrs;
+
+//    attrs = player -> getInfo(QUrl("http://www.ex.ua/get/116023228"));
+////    qDebug() << attrs -> operator QString();
+////    qDebug() << "-------------------------";
+//    delete attrs;
 
     player -> play();
 }
@@ -108,19 +126,8 @@ void MainWindow::initialization() {
 
     connect(Player::instance(), SIGNAL(itemChanged(ModelItem *, ModelItem *)), this, SLOT(outputActiveItem(ModelItem *, ModelItem *)));
 
-//    qDebug() << "LOL " << Library::instance() -> prepareName("dj fafo - medellin (dj fist remix) [exclusive-music-dj.com.ua.pl]");
-
     showActiveElem();
     registrateTray();
-
-//    AudioPlayer player;
-////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("C:/Users/JB/Desktop/Dj Maze feat. Dina Rae - Falling In Love.mp3")); // ~70
-////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/katy_perry_-_last_friday_night_(zaycev.net).mp3")); // ~126
-////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/katy_perry_feat._kanye_west_-_e.t._(zaycev.net).mp3")); // ~76
-////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/Shakra – Trapped.mp3")); // ~105
-////    qDebug() << "BPM " << player.getBpmValue(QUrl::fromLocalFile("F:/Yellow Claw feat. Rochelle - Shotgun .mp3")); // ~145
-//    player.setMedia(QUrl::fromLocalFile("C:/Users/JB/Desktop/Akon_Ft_French_Montana_-_Hurt_Somebody.mp3"));
-//    player.play();
 }
 
 //TODO: menu finish needed
@@ -155,6 +162,7 @@ QDockWidget * MainWindow::createDockWidget() {
 //    dock->setWidget(customerList);
 //    addDockWidget(Qt::RightDockWidgetArea, dock);
 //    viewMenu->addAction(dock->toggleViewAction());
+    return 0;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent * event) {

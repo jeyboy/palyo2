@@ -15,7 +15,9 @@
 
 #include <QDebug>
 
-#define __STDC_CONSTANT_MACROS
+#ifndef __STDC_CONSTANT_MACROS
+    #define __STDC_CONSTANT_MACROS
+#endif
 extern "C" {
     #include "media_player_libs.h"
 }

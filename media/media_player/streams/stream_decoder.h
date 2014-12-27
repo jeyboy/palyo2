@@ -3,6 +3,8 @@
 
 //#include "media/media_player/utils/media_player_utils.h"
 
+#include "../utils/media_attributes.h"
+
 #include "decoders/audio_stream.h"
 #include "decoders/video_stream.h"
 #include "decoders/subtitle_stream.h"
@@ -16,10 +18,12 @@ public:
         Process = 1,
         EofDetected = 2,
         Seeking = 3,
-        Suspended = 4
+        Suspended = 4,
+        Resumed = 5
     };
 
-    StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock, QSemaphore * sema);
+    StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock, QSemaphore * sema, MediaAttributes * attrs);
+
     ~StreamDecoder();
 
     DecoderState getState() const { return state; }
@@ -42,6 +46,7 @@ public:
     uint getVolume() const;
     void setVolume(uint val);
 signals:
+    void stateChanged(DecoderState);
     void flushDataRequired();
     void eofDetectRequired();
     void eofRejectRequired();
@@ -59,6 +64,8 @@ private:
     int langStream();
     uint bestStream(AudioStream * audio, VideoStream * video);
     void findStreams(MasterClock * clock);
+
+    MediaAttributes * attributes;
 
     QString defaultLang;
     enum DecoderState state;

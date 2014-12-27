@@ -11,9 +11,9 @@
 #include <QApplication>
 #include <QVector>
 
-#include "genre.h"
+#include "media/media_player/utils/genre.h"
 #include "mediainfo.h"
-#include "duration.h"
+#include "media/media_player/utils/duration.h"
 
 #include "model/model_item.h"
 
@@ -49,7 +49,7 @@ private slots:
 private:
     static Library *self;
 
-    Library() : QObject() {
+    Library() : QObject(), remote_items_max(10) {
         catalogs = new QHash<QChar,  QHash<QString, int>* >();
         catalogs_state = QHash<QChar, QList<QString> *>();
         catsSaveResult = QFuture<void>();
@@ -103,7 +103,7 @@ private:
     QHash<QChar, QList<QString> *> catalogs_state;
     QHash<ModelItem *, FuncContainer> remote_collations;
     QList<ModelItem *> remote_items;
-    int remote_items_max = 10;
+    int remote_items_max;
 
     ModelItem * currRemote;
     QTimer * timer;

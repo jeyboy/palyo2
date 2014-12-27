@@ -4,11 +4,11 @@
 #include "media/media_player/streams/frames/video_frame.h"
 #include "render_types.h"
 
-#include <QGLWidget>
 #include <QMutex>
 #include <QTimer>
+#include <QOpenGLWidget>
 
-class RenderInterface : public QGLWidget {
+class RenderInterface : public QOpenGLWidget {
      Q_OBJECT
 public:
     enum Quality { best, fast, low };
@@ -17,8 +17,6 @@ public:
     virtual ~RenderInterface();
 
     virtual void setQuality(const Quality & quality) = 0;
-//    void setFrame(VideoFrame * frame);
-    virtual void resizeViewport(int w, int h) = 0;
     virtual enum RenderType getRenderType() const = 0;
 
 signals:
@@ -32,6 +30,7 @@ private slots:
     void fpsCalculation();
 
 protected:
+    void resizeGL(int w, int h);
     void initializeGL();
     void redrawed();
 

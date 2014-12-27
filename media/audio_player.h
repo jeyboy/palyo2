@@ -12,7 +12,7 @@
 #include "override/notify_timer.h"
 
 #include "misc/format.h"
-#include "duration.h"
+#include "media/media_player/utils/duration.h"
 
 #ifdef Q_OS_WIN
     void __stdcall endTrackSync(HSYNC handle, DWORD channel, DWORD data, void * user);

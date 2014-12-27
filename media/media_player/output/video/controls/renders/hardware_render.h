@@ -10,7 +10,6 @@ public:
 
     void setQuality(const Quality & quality);
     inline RenderType getRenderType() const { return hardware; }
-    void resizeViewport(int /*w*/, int /*h*/) {}
 
 protected:
     void paintEvent(QPaintEvent *);

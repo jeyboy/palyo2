@@ -10,47 +10,14 @@ const GLfloat kTexCoords[] = {
 };
 
 GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), color_conversion(0) {
-    makeCurrent();
-    initializeOpenGLFunctions();
-
     //    setAcceptDrops(true);
-    //    /* To rapidly update custom widgets that constantly paint over their entire areas with
-    //     * opaque content, e.g., video streaming widgets, it is better to set the widget's
-    //     * Qt::WA_OpaquePaintEvent, avoiding any unnecessary overhead associated with repainting the
-    //     * widget's background
-    //     */
-    //    setAttribute(Qt::WA_PaintOnScreen);
     //    setAttribute(Qt::WA_NoSystemBackground);
-    //    //default: swap in qpainter dtor. we should swap before QPainter.endNativePainting()
-    //    setAutoBufferSwap(false);
-    //    setAutoFillBackground(false);
 
-
-
-
-////    setAutoBufferSwap(true);
-////    setAutoFillBackground(false);
-
-////    QGL::setPreferredPaintEngine(QPaintEngine::OpenGL2);
-
-////    glFormat = GL_RGB;  //  QImage RGBA is BGRA
-////    glType = GL_UNSIGNED_BYTE;
-
-    QGLFormat glFmt;
-    glFmt.setSwapInterval(1); // 1= vsync on
-//    glFmt.setAlpha(GL_RGBA==glFormat);
-//    glFmt.setRgba(GL_RGBA==glFormat);
-    glFmt.setDoubleBuffer(true); // default
-    glFmt.setOverlay(false);
-    glFmt.setSampleBuffers(false);
-    glFmt.setDepth(false);
-    glFmt.setDirectRendering(true);
-    QGLFormat::setDefaultFormat(glFmt);
-
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    setAutoFillBackground(false);
+    mpv_matrix.setToIdentity();
 }
 
-GLRenderRaw::~GLRenderRaw() {   
+GLRenderRaw::~GLRenderRaw() {
     if (shader) {
         delete shader;
         shader = 0;
@@ -66,6 +33,8 @@ GLRenderRaw::~GLRenderRaw() {
 }
 
 void GLRenderRaw::setQuality(const Quality & quality) {
+//    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
+
     switch(quality) {
         case RenderInterface::best : {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -116,9 +85,11 @@ void GLRenderRaw::setQuality(const Quality & quality) {
 
 bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat) {
     makeCurrent();
-    glBindTexture(GL_TEXTURE_2D, tex);
+    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
 
-    glTexImage2D(GL_TEXTURE_2D
+    f -> glBindTexture(GL_TEXTURE_2D, tex);
+
+    f -> glTexImage2D(GL_TEXTURE_2D
                  , 0                //level
                  , internalFormat
                  , width
@@ -128,14 +99,14 @@ bool GLRenderRaw::initTexture(GLuint tex, GLenum format, GLenum dataType, int wi
                  , dataType
                  , NULL);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE); // Linux ?
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    f -> glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE); // Linux ?
 
 //    setQuality(best);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    f -> glBindTexture(GL_TEXTURE_2D, 0);
 
     return true;
 }
@@ -229,24 +200,19 @@ bool GLRenderRaw::initTextures() {
         );
     }
 
-
-    qDebug() << texture_size;
-
     return true;
 }
 
-void GLRenderRaw::resizeViewport(int w, int h) {
-    makeCurrent();
+//void GLRenderRaw::resizeViewport() {
+//    mpv_matrix.setToIdentity();
+////    mpv_matrix.scale(1);
+//////    mpv_matrix.translate(0, 0, 0);
+//////    mpv_matrix.perspective(35.0f,float(w)/float(h),1.0f,30.0f);
+/////
+////    mpv_matrix.perspective(60.0f, float(width())/float(height()), 0, 10.0f);
 
-    mpv_matrix(0, 0) = mpv_matrix(1, 1) = 1.0f;
-
-    if (vFrame) {
-        output_rect = vFrame -> calcSize(this -> rect());
-        glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
-    } else {
-        glViewport(0, 0, w, h);
-    }
-}
+////    mpv_matrix.lookAt();
+//}
 
 void GLRenderRaw::prepareSettings() {
     makeCurrent();
@@ -291,13 +257,10 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
+    glClearColor(0.0, 0.0, 0.0, 0.0);
     RenderInterface::initializeGL();
 
-    makeCurrent();
-
-    shader = new Shader(context());
-
-    resizeViewport(QGLWidget::width(), QGLWidget::height());
+    shader = new Shader(this);
 }
 
 void GLRenderRaw::paintGL() {
@@ -308,20 +271,23 @@ void GLRenderRaw::paintGL() {
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
+
     mutex.lock();
     AVPicture * img = vFrame -> asPicture();
 
     if (init == false) {
         prepareSettings();
-        resizeViewport(width(), height());
         init = true;
     }
 
     shader -> program -> bind();
+    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
 
     for (int i = 0; i < nb_planes; i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        f -> glActiveTexture(GL_TEXTURE0 + i);
+        f -> glBindTexture(GL_TEXTURE_2D, textures[i]);
         glPixelStorei(GL_UNPACK_ROW_LENGTH, texture_size[i].width() + vFrame -> buffer -> pad(i));
 
         glTexSubImage2D(
@@ -358,9 +324,6 @@ void GLRenderRaw::paintGL() {
     shader -> program -> setAttributeArray(shader -> a_TexCoords, GL_FLOAT, kTexCoords, 2);
     shader -> program -> enableAttributeArray(shader -> a_Position);
     shader -> program -> enableAttributeArray(shader -> a_TexCoords);
-
-    // temporary comented
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 

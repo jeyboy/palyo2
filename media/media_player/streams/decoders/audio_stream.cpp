@@ -72,14 +72,13 @@ void AudioStream::flushData() {
 }
 
 void AudioStream::routine() {
-//    qDebug() << " $$$ " << sleep_correlation;
     if (pauseRequired) return;
 
     mutex -> lock();
     bool isEmpty = packets.isEmpty();
     mutex -> unlock();
 
-    if (!pauseRequired && isEmpty && eof) suspendStream();
+    if (!pauseRequired && isEmpty && eof && output -> state() != QAudio::ActiveState) suspendStream();
 
     // TODO: mutex required for frames
     if (isEmpty && frames.size() <= framesBufferLen / 2) {
@@ -141,29 +140,40 @@ void AudioStream::routine() {
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
     int reslen = 0;
     AudioFrame * currFrame;
-    memset(data, 0, maxlen);
+    memset(data, 0, maxlen); // clear buffer while buffer is idle
+    int copy_size;
 
     if (!pauseRequired && !frames.isEmpty()) {
         char * out = data;
-        int k = 0;
         while(!frames.isEmpty()) {
-            currFrame = frames.takeFirst();
-
-            if (reslen + currFrame -> buffer -> size() > maxlen) {
-                frames.push_front(currFrame);
+            if (reslen == maxlen)
                 break;
-            }
 
-            memcpy(out, currFrame -> buffer -> data(), currFrame -> buffer -> size());
-            reslen += currFrame -> buffer -> size();
-            out += currFrame -> buffer -> size();
-            time_buff -= currFrame -> time_length;
-            clock -> setAudio(currFrame -> bufferPTS);
-            k++;
-            delete currFrame;
+            currFrame = frames.at(0);
+            copy_size = qMin(maxlen - reslen, (qint64)currFrame -> buffer -> size());
+
+            if (frames.at(0) -> buffer -> size() == copy_size)
+                currFrame = frames.takeFirst();
+
+            memcpy(out, currFrame -> buffer -> data(), copy_size);
+            reslen += copy_size;
+            out += copy_size;
+
+            if (copy_size == currFrame -> buffer -> size()) {
+                time_buff -= currFrame -> time_length;
+                clock -> setAudio(currFrame -> bufferPTS);
+                delete currFrame;
+            } else {
+                float time_shift = (copy_size / (float)currFrame -> buffer -> size()) * currFrame -> time_length;
+                currFrame -> buffer -> remove(0, copy_size);
+
+                currFrame -> time_length -= time_shift;
+                time_buff -= time_shift;
+
+                clock -> iterateAudio(time_shift);
+            }
         }
 
-//        qDebug() << "puted " << k;
         return reslen;
     }
 
@@ -172,7 +182,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
     return maxlen;
 }
 
-qint64 AudioStream::writeData(const char *data, qint64 len) {
+qint64 AudioStream::writeData(const char */*data*/, qint64 /*len*/) {
     return 0;
 }
 
@@ -230,6 +240,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
             format.setSampleType(QAudioFormat::SignedInt);
         break;}
 
+        // this format is not compatible with ffmpeg
         case AV_SAMPLE_FMT_FLT: { ///< float
             format.setSampleType(QAudioFormat::Float);
         break;}
@@ -287,7 +298,7 @@ double AudioStream::calcPts(AVPacket * packet) {
         );
 
         /* if no pts, then compute it */
-        clock += (double)data_size / (
+        clock = (double)data_size / (
                 codec_context -> channels *
                 codec_context -> sample_rate *
                 av_get_bytes_per_sample(codec_context -> sample_fmt)

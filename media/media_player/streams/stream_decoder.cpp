@@ -1,18 +1,20 @@
 #include "stream_decoder.h"
 #include <qDebug>
 
-StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock, QSemaphore * sema) : Stream(parent)
+StreamDecoder::StreamDecoder(QObject * parent, AVFormatContext * currContext, MasterClock * clock, QSemaphore * sema, MediaAttributes * attrs) : Stream(parent)
+    , attributes(attrs)
     , ac(0)
     , vc(0)
+    , context(currContext)
+    , currFrame(new AVPacket())
     , defaultLang("rus")
     , state(Initialization)
     , videoStream(0)
     , audioStream(0)
     , subtitleStream(0) {
 
-    currFrame = new AVPacket();
-    context = currContext;
     setSemaphore(sema);
+
     findStreams(clock);
 
     clock -> reset();
@@ -53,7 +55,7 @@ StreamDecoder::~StreamDecoder() {
 void StreamDecoder::seek(int64_t target) {
     skip = true;
     suspend();
-    state = Seeking;
+    emit stateChanged(state = Seeking);
     emit flushDataRequired();
     avformat_seek_file(context, -1, INT64_MIN, target, INT64_MAX, 0);
     emit eofRejectRequired();
@@ -62,11 +64,12 @@ void StreamDecoder::seek(int64_t target) {
 }
 
 void StreamDecoder::suspend() {
-    state = Suspended;
+    emit stateChanged(state = Suspended);
     Stream::suspend();
     emit suspendRequired();
 }
 void StreamDecoder::resume() {
+    emit stateChanged(state = Resumed);
     Stream::resume();
     emit resumeRequired();
 }
@@ -101,15 +104,16 @@ void StreamDecoder::routine() {
 
     int status;
     bool preload = qMin(videoStream -> calcDelay(), audioStream -> calcDelay()) == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
-    state = Process;
 
-    while (true) {
+//    bool preload = del == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
+    emit stateChanged(state = Process);
+
+    while (!skip) {
         if (pauseRequired) return;
 
         status = av_read_frame(context, currFrame);
 
         if (status >= 0) {
-
     //        hasKeyFrame = !!(currFrame.flags & AV_PKT_FLAG_KEY);
     //        // what about marking packet as invalid and do not use isCorrupt?
 
@@ -138,7 +142,7 @@ void StreamDecoder::routine() {
             qDebug() << "DECODER BLOCK " << " a " << ac << " v " << vc;
 
             pauseRequired = true;
-            state = EofDetected;
+            emit stateChanged(state = EofDetected);
             emit eofDetectRequired();
             semaphore -> release(1);
 
@@ -157,20 +161,7 @@ void StreamDecoder::routine() {
 ///////////////////////// Private //////////////////////////////////
 
 int StreamDecoder::langStream() {
-    AVDictionaryEntry * tag = 0;
-    AVDictionary * dict;
-
-    for(uint i = 0; i < context -> nb_streams; i++) {
-        if (context -> streams[i] -> codec -> codec_type != AVMEDIA_TYPE_AUDIO) continue;
-        dict = context -> streams[i] -> metadata;
-        while ((tag = av_dict_get(dict, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-            if (QString(tag -> key) == "language" && QString(tag -> value) == defaultLang)
-                return i;
-//            delete tag;
-        }
-    }
-
-    return -1;
+    return attributes -> streamIndexOfLang(defaultLang);
 }
 
 uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {
@@ -186,6 +177,6 @@ void StreamDecoder::findStreams(MasterClock * clock) {
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
 //        emit errorOccurred("No one audio or video streams founds");
-        state = NoData;
+        emit stateChanged(state = NoData);
     }
 }

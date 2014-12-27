@@ -1,12 +1,12 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <QGLShaderProgram>
+#include <QOpenGLShaderProgram>
 
 struct Shader {
 
-    Shader(const QGLContext * ctx) :
-          program(new QGLShaderProgram(ctx))
+    Shader(QObject * parent) :
+          program(new QOpenGLShaderProgram(parent))
           , a_Position(-1)
           , a_TexCoords(-1)
           , u_matrix(-1)
@@ -18,8 +18,8 @@ struct Shader {
     ~Shader() { remove(); }
 
     void setup(int textures_count, bool planar = false, bool big_endian = false, bool little_endian = false) {
-        program -> addShaderFromSourceCode(QGLShader::Vertex, vertexShader());
-        program -> addShaderFromSourceCode(QGLShader::Fragment, fragmentShader(planar, big_endian, little_endian));
+        program -> addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShader());
+        program -> addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShader(planar, big_endian, little_endian));
 
         bool res = program -> link();
 
@@ -51,6 +51,52 @@ struct Shader {
         } else return false;
     }
 
+//    const char * sharpShader() {
+//        return
+//              "#define KERNEL_SIZE 9 // Sharpness filter // -1 -1 -1 // -1 9 -1 // -1 -1 -1"
+//              "float kernel[KERNEL_SIZE];"
+//              "uniform sampler2D colorMap;"
+//              "uniform float width;"
+//              "uniform float height;"
+//              "float step_w = 1.0 / width;"
+//              "float step_h = 1.0 / height;"
+//              "vec2 offset[KERNEL_SIZE];"
+//              "void main(void) {"
+//              "  int i = 0;"
+//              "  vec4 sum = vec4(0.0);"
+//              "  offset[0] = vec2(-step_w, -step_h);"
+//              "  offset[1] = vec2(0.0, -step_h);"
+//              "  offset[2] = vec2(step_w, -step_h);"
+//              "  offset[3] = vec2(-step_w, 0.0);"
+//              "  offset[4] = vec2(0.0, 0.0);"
+//              "  offset[5] = vec2(step_w, 0.0);"
+//              "  offset[6] = vec2(-step_w, step_h);"
+//              "  offset[7] = vec2(0.0, step_h);"
+//              "  offset[8] = vec2(step_w, step_h);"
+
+//              "  kernel[0] = -1.0;"
+//              "  kernel[1] = -1.0;"
+//              "  kernel[2] = -1.0;"
+//              "  kernel[3] = -1.0;"
+//              "  kernel[4] = 9.0;"
+//              "  kernel[5] = -1.0;"
+//              "  kernel[6] = -1.0;"
+//              "  kernel[7] = -1.0;"
+//              "  kernel[8] = -1.0;"
+
+//              "  if(gl_TexCoord[0].s < 0.495) {"
+//              "      for(i = 0; i < KERNEL_SIZE; i++) {"
+//              "          vec4 tmp = texture2D(colorMap, gl_TexCoord[0].st + offset[i]);"
+//              "          sum += tmp * kernel[i]; "
+//              "      }"
+//              "  } else if(gl_TexCoord[0].s > 0.505) {"
+//              "      sum = texture2D(colorMap, gl_TexCoord[0].xy);"
+//              "  } else {"
+//              "      sum = vec4(1.0, 0.0, 0.0, 1.0); "
+//              "  }"
+//              "  gl_FragColor = sum; "
+//             "}";
+//    }
 
     const char * vertexShader() {
         return
@@ -140,13 +186,12 @@ struct Shader {
                     "uniform mat4 u_colorMatrix;"
                     ""
                     "void main() {"
-//                    "  gl_FragColor = texture2D(u_Texture0, v_TexCoords);"
                     "  gl_FragColor = u_colorMatrix * texture2D(u_Texture0, v_TexCoords);"
                     "}";
         }
     }
 
-    QGLShaderProgram * program;
+    QOpenGLShaderProgram * program;
 
     GLint a_Position;
     GLint a_TexCoords;

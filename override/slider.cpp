@@ -1,7 +1,7 @@
 #include "slider.h"
 #include "qdebug.h"
 #include "media/player.h"
-#include "media/duration.h"
+#include "media/media_player/utils/duration.h"
 #include "misc/stylesheets.h"
 
 Slider::Slider(QWidget * parent, bool isPositionSlider) : QSlider(parent) {

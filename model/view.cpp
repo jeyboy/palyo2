@@ -531,12 +531,12 @@ void View::downloadSelected(QString savePath, bool markAsLiked) {
 }
 
 //TODO: add copy func
-void View::copyItemsFrom(View * otherView) {
-    QModelIndexList indexes = otherView -> selectedItems();
+void View::copyItemsFrom(View * /*otherView*/) {
+//    QModelIndexList indexes = otherView -> selectedItems();
 
-    foreach(QModelIndex index, indexes) {
-        //TODO: copy logic
-    }
+//    foreach(QModelIndex index, indexes) {
+//        //TODO: copy logic
+//    }
 }
 
 //////////////////////////////////////////////////////

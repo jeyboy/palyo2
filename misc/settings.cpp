@@ -246,6 +246,13 @@ void Settings::setSpectrumColor2(QColor newColor) {
     spectrumColor2 = newColor;
 }
 
+QColor Settings::getSpectrumColor3() {
+    return spectrumColor3;
+}
+void Settings::setSpectrumColor3(QColor newColor) {
+    spectrumColor3 = newColor;
+}
+
 int Settings::getSpectrumFreqRate() {
     return spectrumFreqRate;
 }
@@ -391,7 +398,11 @@ void Settings::fromJson(QJsonObject settingsObj) {
     spectrumColor = specColorVar.isValid() ? specColorVar.value<QColor>() : QColor(0, 0, 0);
 
     QVariant specColorVar2 = settingsObj.value("spectrum_color2").toVariant();
-    spectrumColor2 = specColorVar2.isValid() ? specColorVar2.value<QColor>() : QColor(255, 255, 255);
+    spectrumColor2 = specColorVar2.isValid() ? specColorVar2.value<QColor>() : QColor(128, 128, 128);
+
+    QVariant specColorVar3 = settingsObj.value("spectrum_color3").toVariant();
+    spectrumColor3 = specColorVar3.isValid() ? specColorVar3.value<QColor>() : QColor(255, 255, 255);
+
 
     spectrumFreqRate = settingsObj.value("spectrum_rate").toInt(20);
     spectrumBarsCount = settingsObj.value("spectrum_bars_count").toInt(30);
@@ -438,6 +449,7 @@ QJsonObject Settings::toJson() {
     ret.insert("monocolor_spectrum", QJsonValue::fromVariant(monocolorSpectrum));
     ret.insert("spectrum_color", QJsonValue::fromVariant(spectrumColor));
     ret.insert("spectrum_color2", QJsonValue::fromVariant(spectrumColor2));
+    ret.insert("spectrum_color3", QJsonValue::fromVariant(spectrumColor3));
 
     ret.insert("spectrum_rate", QJsonValue::fromVariant(spectrumFreqRate));
     ret.insert("spectrum_bars_count", QJsonValue::fromVariant(spectrumBarsCount));

@@ -4,7 +4,7 @@
 #include "web/ip_checker.h"
 #include "web/socials/vk_api.h"
 #include "model/web/web_model.h"
-#include "media/duration.h"
+#include "media/media_player/utils/duration.h"
 
 class VkModel : public WebModel {
     Q_OBJECT

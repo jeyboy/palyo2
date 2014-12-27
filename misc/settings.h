@@ -110,6 +110,9 @@ public:
     QColor getSpectrumColor2();
     void setSpectrumColor2(QColor newColor);
 
+    QColor getSpectrumColor3();
+    void setSpectrumColor3(QColor newColor);
+
     int getSpectrumFreqRate();
     void setSpectrumFreqRate(int newRate);
 
@@ -187,6 +190,7 @@ private:
 
     QColor spectrumColor;
     QColor spectrumColor2;
+    QColor spectrumColor3;
     int spectrumMultiplier;
     int spectrumFreqRate;
     int spectrumBarsCount;

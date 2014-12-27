@@ -7,45 +7,53 @@
 #include <QDebug>
 
 int main(int argc, char *argv[]) {
-        qRegisterMetaType<QVector <int> >("QVector<int>");
+//    QSurfaceFormat format;
+//    format.setDepthBufferSize(24);
+//    format.setStencilBufferSize(8);
+//    format.setVersion(3, 2);
+//    format.setProfile(QSurfaceFormat::CoreProfile);
+//    QSurfaceFormat::setDefaultFormat(format);
 
-    //    qDebug() << "PATH " << QLibraryInfo::location(QLibraryInfo::PluginsPath);
 
-        QCoreApplication::setOrganizationName("BigBug");
-        QCoreApplication::setOrganizationDomain("bigbug.sos");
-        QCoreApplication::setApplicationName("Playo");
+    qRegisterMetaType<QVector <int> >("QVector<int>");
 
-    //    QCoreApplication::addLibraryPath("platforms");
+//    qDebug() << "PATH " << QLibraryInfo::location(QLibraryInfo::PluginsPath);
 
-        SingleApplication app(argc, argv, "bigbugplayo");
+    QCoreApplication::setOrganizationName("BigBug");
+    QCoreApplication::setOrganizationDomain("bigbug.sos");
+    QCoreApplication::setApplicationName("Playo");
 
-    //    app.setStyleSheet(QString("QWidget {background: black; color: gray;}"));
-        app.setStyleSheet(Stylesheets::appStyles());
+//    QCoreApplication::addLibraryPath("platforms");
 
-        QString message;
-        QStringList list = QCoreApplication::arguments();
-        if (list.length() > 1) {
-            list.removeFirst();
-            message = list.join('|');
-        }
+    SingleApplication app(argc, argv, "bigbugplayo");
 
-        if (app.isRunning()) {
-            if (!message.isEmpty()) {
-                app.sendMessage(message);
-            }
-    //        return 0; // uncomment later
-        }
+//    app.setStyleSheet(QString("QWidget {background: black; color: gray;}"));
+    app.setStyleSheet(Stylesheets::appStyles());
 
-        int * i = new int[10];
-        delete [] i;
+    QString message;
+    QStringList list = QCoreApplication::arguments();
+    if (list.length() > 1) {
+        list.removeFirst();
+        message = list.join('|');
+    }
 
-        MainWindow * mainWindow = new MainWindow();
-        QObject::connect(&app, SIGNAL(messageAvailable(QString)), mainWindow, SLOT(receiveMessage(QString)));
+    if (app.isRunning()) {
         if (!message.isEmpty()) {
-            mainWindow -> receiveMessage(message);
+            app.sendMessage(message);
         }
+//        return 0; // uncomment later
+    }
 
-        mainWindow -> show();
+    int * i = new int[10];
+    delete [] i;
+
+    MainWindow * mainWindow = new MainWindow();
+    QObject::connect(&app, SIGNAL(messageAvailable(QString)), mainWindow, SLOT(receiveMessage(QString)));
+    if (!message.isEmpty()) {
+        mainWindow -> receiveMessage(message);
+    }
+
+    mainWindow -> show();
 
     return app.exec();
 }

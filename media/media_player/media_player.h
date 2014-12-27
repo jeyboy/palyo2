@@ -16,6 +16,8 @@ public:
     MediaPlayer(QObject * parent);
     ~MediaPlayer();
 
+    MediaAttributes * getInfo(QUrl url);
+
     bool open(QUrl url);
     bool openMillis(QUrl url, int position_millis = 0, int duration_millis = 2147483647);
     bool openMicro(QUrl url, int64_t position_micromillis = 0, int64_t duration_micromillis = INT64_MAX);
@@ -32,7 +34,6 @@ public:
     QString filename();
 
     QString info();
-    bool tags(QHash<QString, QString> &);
 
     bool isPlayed() const;
     bool isPaused() const;
@@ -61,13 +62,15 @@ protected:
     void closeContext();
 
 private:
+    MediaAttributes * attributes;
+
     MasterClock * clock;
     StreamDecoder * decoder;
 
-    bool isRemote;
+    bool isRemote, onlyInfo;
     int64_t item_duration;
 
-    AVFormatContext *context;
+    AVFormatContext * context;
     CustomContext * custom_context;
 
     QString errorStr;
