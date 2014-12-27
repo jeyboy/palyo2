@@ -16,13 +16,13 @@ ControlPanel::ControlPanel(MasterClock * clock, QWidget * parent) : QFrame(paren
 
     setStyleSheet(
                 "ControlPanel {"
-                "   background: transparent #333;"
+                "   background: rgba(44, 44, 44, 96);"
                 "   border-radius: 16px;"
                 "}"
                 "QPushButton {"
                 "   border-radius: 16px;"
                 "   border: 2px solid #000;"
-                "   background-color: #eee;"
+                "   background-color: #ddd;"
                 "}"
                 "QPushButton:hover {"
                 "   background-color: #bbb;"
