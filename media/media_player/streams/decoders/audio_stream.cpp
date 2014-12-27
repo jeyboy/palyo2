@@ -139,25 +139,20 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
 
     if (!pauseRequired && !frames.isEmpty()) {
         char * out = data;
-        int k = 0;
         while(!frames.isEmpty()) {
-            currFrame = frames.takeFirst();
-
-            if (reslen + currFrame -> buffer -> size() > maxlen) {
-                frames.push_front(currFrame);
+            if (reslen + frames.at(0) -> buffer -> size() > maxlen)
                 break;
-            }
+            else
+                currFrame = frames.takeFirst();
 
             memcpy(out, currFrame -> buffer -> data(), currFrame -> buffer -> size());
             reslen += currFrame -> buffer -> size();
             out += currFrame -> buffer -> size();
             time_buff -= currFrame -> time_length;
             clock -> setAudio(currFrame -> bufferPTS);
-            k++;
             delete currFrame;
         }
 
-//        qDebug() << "puted " << k;
         return reslen;
     }
 
