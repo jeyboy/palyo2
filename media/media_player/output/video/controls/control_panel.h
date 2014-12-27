@@ -11,7 +11,7 @@
 
 #include "media/media_player/utils/master_clock.h"
 
-class ControlPanel : public QWidget {
+class ControlPanel : public QFrame {
     Q_OBJECT
 public:
     ControlPanel(MasterClock * clock, QWidget * parent = 0);
@@ -19,6 +19,8 @@ public:
     void setRegion(QRect rect);
 protected slots:
     void sliderUpdate(int);
+protected:
+    void paintEvent(QPaintEvent *);
 
 private:
     MasterClock * clock;

@@ -27,7 +27,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterCloc
         framesBufferLen = framesPerBuffer * 15;
 
         output = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, parent);
-        output -> setBufferSize(bytesPerSecond() * 1);
+//        output -> setBufferSize(bytesPerSecond() * 1);
 //        output -> setNotifyInterval(20);
         output -> setVolume(1.0);
         output -> start(this);
