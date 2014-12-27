@@ -166,7 +166,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
     return maxlen;
 }
 
-qint64 AudioStream::writeData(const char *data, qint64 len) {
+qint64 AudioStream::writeData(const char */*data*/, qint64 /*len*/) {
     return 0;
 }
 
@@ -224,6 +224,7 @@ void AudioStream::fillFormat(QAudioFormat & format) {
             format.setSampleType(QAudioFormat::SignedInt);
         break;}
 
+        // this format is not compatible with ffmpeg
         case AV_SAMPLE_FMT_FLT: { ///< float
             format.setSampleType(QAudioFormat::Float);
         break;}
@@ -281,7 +282,7 @@ double AudioStream::calcPts(AVPacket * packet) {
         );
 
         /* if no pts, then compute it */
-        clock += (double)data_size / (
+        clock = (double)data_size / (
                 codec_context -> channels *
                 codec_context -> sample_rate *
                 av_get_bytes_per_sample(codec_context -> sample_fmt)

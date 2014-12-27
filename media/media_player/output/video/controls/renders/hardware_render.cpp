@@ -43,7 +43,6 @@ void HardwareRender::paintEvent(QPaintEvent * event) {
     p.setRenderHint(QPainter::SmoothPixmapTransform, 1);
     p.setRenderHint(QPainter::Antialiasing, 1);
 
-    qDebug() << "LALAL";
     mutex.lock();
     p.drawImage(output_rect, *vFrame -> asImage());
     mutex.unlock();
