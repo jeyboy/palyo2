@@ -26,8 +26,6 @@ protected:
     bool initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat = GL_RGBA);
     bool initTextures();
 
-    void resizeViewport();
-
     void repaint();
 
 //    void computeOutParameters(qreal outAspectRatio);

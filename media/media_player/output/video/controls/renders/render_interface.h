@@ -17,8 +17,6 @@ public:
     virtual ~RenderInterface();
 
     virtual void setQuality(const Quality & quality) = 0;
-//    void setFrame(VideoFrame * frame);
-    virtual void resizeViewport() = 0;
     virtual enum RenderType getRenderType() const = 0;
 
 signals:

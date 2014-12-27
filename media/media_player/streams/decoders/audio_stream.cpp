@@ -157,7 +157,7 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
             delete currFrame;
         }
 
-        qDebug() << "puted " << k;
+//        qDebug() << "puted " << k;
         return reslen;
     }
 

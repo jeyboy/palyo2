@@ -80,13 +80,15 @@ void GLRender::paintGL() {
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
+
     mutex.lock();
     glBindTexture(GL_TEXTURE_2D, texture);
     QImage * img = vFrame -> asImage();
 
     if (init == false) {
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, vFrame -> buffer -> settings() -> bytesPerPixel());
-        resizeViewport();
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img -> width(), img -> height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img -> bits());
         init = true;
     } else

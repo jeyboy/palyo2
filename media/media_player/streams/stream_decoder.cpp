@@ -100,7 +100,6 @@ void StreamDecoder::routine() {
 
     int status;
     bool preload = del == 0; //audioStream -> requirePreload() && videoStream -> requirePreload();
-    qDebug() << "decoder proceed " << preload;
     emit stateChanged(state = Process);
 
     while (!skip) {

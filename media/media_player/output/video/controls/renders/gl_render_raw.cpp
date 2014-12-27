@@ -14,6 +14,7 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), 
     //    setAttribute(Qt::WA_NoSystemBackground);
 
     setAutoFillBackground(false);
+    mpv_matrix.setToIdentity();
 }
 
 GLRenderRaw::~GLRenderRaw() {
@@ -202,16 +203,16 @@ bool GLRenderRaw::initTextures() {
     return true;
 }
 
-void GLRenderRaw::resizeViewport() {
-    mpv_matrix.setToIdentity();
-//    mpv_matrix.scale(1);
-////    mpv_matrix.translate(0, 0, 0);
-////    mpv_matrix.perspective(35.0f,float(w)/float(h),1.0f,30.0f);
-///
-//    mpv_matrix.perspective(60.0f, float(width())/float(height()), 0, 10.0f);
+//void GLRenderRaw::resizeViewport() {
+//    mpv_matrix.setToIdentity();
+////    mpv_matrix.scale(1);
+//////    mpv_matrix.translate(0, 0, 0);
+//////    mpv_matrix.perspective(35.0f,float(w)/float(h),1.0f,30.0f);
+/////
+////    mpv_matrix.perspective(60.0f, float(width())/float(height()), 0, 10.0f);
 
-//    mpv_matrix.lookAt();
-}
+////    mpv_matrix.lookAt();
+//}
 
 void GLRenderRaw::prepareSettings() {
     makeCurrent();
@@ -256,11 +257,8 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
-//    glTranslatef(-1, -1, 0);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     RenderInterface::initializeGL();
-
-//    makeCurrent();
 
     shader = new Shader(this);
 }
@@ -273,7 +271,6 @@ void GLRenderRaw::paintGL() {
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
 
-    // temporary comented
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
 
@@ -282,7 +279,6 @@ void GLRenderRaw::paintGL() {
 
     if (init == false) {
         prepareSettings();
-        resizeViewport();
         init = true;
     }
 
