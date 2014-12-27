@@ -108,7 +108,6 @@ void StreamDecoder::routine() {
         status = av_read_frame(context, currFrame);
 
         if (status >= 0) {
-
     //        hasKeyFrame = !!(currFrame.flags & AV_PKT_FLAG_KEY);
     //        // what about marking packet as invalid and do not use isCorrupt?
 
@@ -150,23 +149,7 @@ void StreamDecoder::routine() {
 ///////////////////////// Private //////////////////////////////////
 
 int StreamDecoder::langStream() {
-    int l = attributes -> streamIndexOfLang(defaultLang);
-    qDebug() << "HHHHHHHHHHH " << l;
-    return l;
-
-//    AVDictionaryEntry * tag = 0;
-//    AVDictionary * dict;
-
-//    for(uint i = 0; i < context -> nb_streams; i++) {
-//        if (context -> streams[i] -> codec -> codec_type != AVMEDIA_TYPE_AUDIO) continue;
-//        dict = context -> streams[i] -> metadata;
-//        while ((tag = av_dict_get(dict, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-//            if (QString(tag -> key) == "language" && QString(tag -> value) == defaultLang)
-//                return i;
-//        }
-//    }
-
-//    return -1;
+    return attributes -> streamIndexOfLang(defaultLang);
 }
 
 uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {

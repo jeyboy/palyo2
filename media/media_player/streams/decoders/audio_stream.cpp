@@ -71,12 +71,11 @@ void AudioStream::flushData() {
 }
 
 void AudioStream::routine() {
-//    qDebug() << " $$$ " << sleep_correlation;
     if (pauseRequired) return;
 
     bool isEmpty = packets.isEmpty();
 
-    if (!pauseRequired && isEmpty && eof) suspendStream();
+    if (!pauseRequired && isEmpty && eof && output -> state() != QAudio::ActiveState) suspendStream();
 
     // TODO: mutex required for frames
     if (isEmpty) {
@@ -135,22 +134,32 @@ void AudioStream::routine() {
 qint64 AudioStream::readData(char *data, qint64 maxlen) {
     int reslen = 0;
     AudioFrame * currFrame;
-    memset(data, 0, maxlen);
+//    memset(data, 0, maxlen); // ?
+    int copy_size;
 
     if (!pauseRequired && !frames.isEmpty()) {
         char * out = data;
         while(!frames.isEmpty()) {
-            if (reslen + frames.at(0) -> buffer -> size() > maxlen)
+            if (reslen == maxlen)
                 break;
-            else
+
+            currFrame = frames.at(0);
+            copy_size = qMin(maxlen - reslen, (qint64)currFrame -> buffer -> size());
+
+            if (frames.at(0) -> buffer -> size() == copy_size)
                 currFrame = frames.takeFirst();
 
-            memcpy(out, currFrame -> buffer -> data(), currFrame -> buffer -> size());
-            reslen += currFrame -> buffer -> size();
-            out += currFrame -> buffer -> size();
-            time_buff -= currFrame -> time_length;
-            clock -> setAudio(currFrame -> bufferPTS);
-            delete currFrame;
+            memcpy(out, currFrame -> buffer -> data(), copy_size);
+            reslen += copy_size;
+            out += copy_size;
+
+            if (copy_size == currFrame -> buffer -> size()) {
+                time_buff -= currFrame -> time_length;
+                clock -> setAudio(currFrame -> bufferPTS);
+                delete currFrame;
+            } else {
+                currFrame -> buffer -> remove(0, copy_size);
+            }
         }
 
         return reslen;
