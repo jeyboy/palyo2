@@ -5,7 +5,6 @@ VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type,
     , clock(clock)
     , screen(0) {
 
-    setMouseTracking(true);
     resize(width, height);
 
     QVBoxLayout * newLayout = new QVBoxLayout(this);
@@ -66,21 +65,18 @@ void VideoOutput::titleUpdate() {
     setWindowTitle(temp);
 }
 
-//void VideoOutput::setFrame(void * frame) {
-//    if (screen == 0)
-//        delete (VideoFrame *)frame;
-//    else
-//        screen -> setFrame((VideoFrame *)frame);
-//}
-
 void VideoOutput::hideMouse() {
-    if (!isFullScreen()) return;
+    if (!isFullScreen() || panel -> isVisible()) return;
     QApplication::setOverrideCursor(Qt::BlankCursor);
     offScreenSaver();
 }
 
 void VideoOutput::fpsChanged(int newFps) {
     fps = QString::number(newFps);
+}
+
+void VideoOutput::leaveEvent(QEvent *) {
+    QApplication::restoreOverrideCursor();
 }
 
 void VideoOutput::mouseMoveEvent(QMouseEvent * event) {
@@ -92,9 +88,3 @@ void VideoOutput::resizeEvent(QResizeEvent * event) {
     panel -> setRegion(rect());
     OutputContainer::resizeEvent(event);
 }
-
-//void VideoOutput::paintEvent(QPaintEvent * event) {
-//    OutputContainer::paintEvent(event);
-//    QPainter painter(this);
-//    panel -> render(&painter, panel -> getRegion().topLeft());
-//}

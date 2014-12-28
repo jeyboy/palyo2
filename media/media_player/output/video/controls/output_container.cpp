@@ -1,8 +1,8 @@
 #include "output_container.h"
 #include "media/media_player/media_player.h"
-#include <QDebug>
 
 OutputContainer::OutputContainer(MasterClock * clock, QWidget * parent) : QWidget(parent), clock(clock) {
+    setMouseTracking(true);
     panel = new ControlPanel(clock, this);
 }
 
@@ -13,11 +13,9 @@ bool OutputContainer::event(QEvent * event) {
         if (mouseEvent -> button() == Qt::LeftButton) {
             if (((MediaPlayer * )clock -> mediaPlayer()) -> isPlayed()) {
                 ((MediaPlayer * )clock -> mediaPlayer()) -> pause();
-//                panel -> update pause button
             }
             else {
                 ((MediaPlayer * )clock -> mediaPlayer()) -> play();
-//                panel -> update play button
             }
         }
     }

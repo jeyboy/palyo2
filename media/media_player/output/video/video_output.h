@@ -19,15 +19,13 @@ public:
 public slots:
     void fpsChanged(int fpsVal);
     void titleUpdate();
-//    void setFrame(void * frame);
 protected slots:
     void hideMouse();
 
 protected:
-//    void leaveEvent(QEvent *);
+    void leaveEvent(QEvent *);
     void mouseMoveEvent(QMouseEvent * event);
     void resizeEvent(QResizeEvent * event);
-//    void paintEvent(QPaintEvent *);
 private:
     MasterClock * clock;
     QString fps;
