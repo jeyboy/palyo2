@@ -44,6 +44,7 @@ signals:
     void errorOccured(QString error);
     void positionChangedMicro(int64_t);
     void positionChangedMillis(int);
+    void stateChanged(MediaPlayerState::Type);
 
 public slots:
     void play();

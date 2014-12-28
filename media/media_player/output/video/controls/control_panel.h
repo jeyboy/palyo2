@@ -10,6 +10,8 @@
 #include "override/slider_style.h"
 
 #include "media/media_player/utils/master_clock.h"
+#include "media/media_player/media_player_state.h"
+
 
 class ControlPanel : public QFrame {
     Q_OBJECT
@@ -19,6 +21,7 @@ public:
     void setRegion(QRect rect);
 protected slots:
     void sliderUpdate(int);
+    void playerStateChanged(MediaPlayerState::Type);
 protected:
     void paintEvent(QPaintEvent *);
 
@@ -28,6 +31,8 @@ private:
     QLabel * timer;
     Slider * slider;
     QRect region;
+
+    QPushButton * play, * pause, * stop;
 };
 
 #endif // CONTROL_PANEL_H
