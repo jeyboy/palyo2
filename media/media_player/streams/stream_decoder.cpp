@@ -175,5 +175,6 @@ void StreamDecoder::findStreams(MasterClock * clock) {
         emit stateChanged(state = NoData);
     } else {
         connect((Stream *)audioStream, SIGNAL(suspended()), (QObject *)clock -> mediaPlayer(), SLOT(threadSuspended()));
+        connect((Stream *)videoStream, SIGNAL(suspended()), (QObject *)clock -> mediaPlayer(), SLOT(threadSuspended()));
     }
 }
