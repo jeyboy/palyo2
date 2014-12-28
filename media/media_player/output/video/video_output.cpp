@@ -3,7 +3,8 @@
 
 VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type, int width, int height) : OutputContainer(clock)
     , clock(clock)
-    , screen(0) {
+    , screen(0)
+    , thread(parent) {
 
     resize(width, height);
 
@@ -11,9 +12,6 @@ VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type,
     newLayout -> setContentsMargins(0, 0, 0, 0);
     setLayout(newLayout);
     setRender(type);
-
-    if (screen)
-        connect(screen, SIGNAL(frameNeeded(void*&)), parent, SLOT(nextFrame(void *&)));
 
     panel -> show();
     panel -> raise();
@@ -26,7 +24,7 @@ VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type,
 }
 
 VideoOutput::~VideoOutput() {
-//    delete screen;
+    delete screen;
 }
 
 void VideoOutput::setRender(RenderType type) {
@@ -39,21 +37,22 @@ void VideoOutput::setRender(RenderType type) {
     switch(type) {
         case none: { return; }
         case gl_plus: {
-            screen = new GLRenderRaw(this);
+            screen = new GLRenderRaw();
             break;
         }
         case gl: {
-            screen = new GLRender(this);
+            screen = new GLRender();
             break;
         }
         default: {
-            screen = new HardwareRender(this);
+            screen = new HardwareRender();
             break;
         }
     }
 
     connect(screen, SIGNAL(fpsChanged(int)), this, SLOT(fpsChanged(int)));
     connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
+    connect(screen, SIGNAL(frameNeeded(void*&)), thread, SLOT(nextFrame(void *&)));
 
     screen -> setMouseTracking(true);
     layout() -> addWidget(screen);

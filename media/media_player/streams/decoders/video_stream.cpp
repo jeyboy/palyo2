@@ -20,7 +20,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterCloc
         width = qMin((int)(width * 0.6), codec_context -> width);
         height = qMin((int)(height * 0.6), codec_context -> height);
 
-        RenderType type = gl;
+        RenderType type = gl_plus;
 
         resampler = new VideoResampler(codec_context, type == hardware || type == gl);
         output = new VideoOutput(this, clock, type == hardware || type == gl ? type : (resampler -> isGLShaderCompatible() ? gl_plus : gl), width, height);
@@ -30,7 +30,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterCloc
 VideoStream::~VideoStream() {
     if (valid) {
         flushData();
-        output -> setRender(none);
+//        output -> setRender(none);
         delete output;
         delete resampler;
     }

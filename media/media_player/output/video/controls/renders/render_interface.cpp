@@ -16,16 +16,22 @@ RenderInterface::RenderInterface(QWidget* parent) : QOpenGLWidget(parent)
 }
 
 RenderInterface::~RenderInterface() {
+    makeCurrent();
+
     mutex.lock();
     delete vFrame;
     mutex.unlock();
+
+    doneCurrent();
 }
 
-void RenderInterface::resizeGL(int w, int h) {
-    qDebug() << "JJJJJJJJJJJJ";
+void RenderInterface::resizeGL(int /*w*/, int /*h*/) {
+
 }
 
 void RenderInterface::initializeGL() {
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+
     //glPixelStorei(GL_UNPACK_SWAP_BYTES,   GL_FALSE);
     //glPixelStorei(GL_UNPACK_LSB_FIRST,    GL_FALSE);
     //glPixelStorei(GL_UNPACK_ROW_LENGTH,   0);

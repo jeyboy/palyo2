@@ -32,6 +32,7 @@ private:
     RenderInterface * screen;
     QTimer timer;
     bool trimming;
+    QObject * thread;
 };
 
 #endif // VIDEO_OUTPUT_H

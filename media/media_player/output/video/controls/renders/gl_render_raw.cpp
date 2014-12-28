@@ -257,7 +257,6 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
-    glClearColor(0.0, 0.0, 0.0, 0.0);
     RenderInterface::initializeGL();
 
     shader = new Shader(this);
@@ -317,8 +316,6 @@ void GLRenderRaw::paintGL() {
     shader -> program -> setUniformValue(shader -> u_colorMatrix, color_conversion -> matrixRef());
     shader -> program -> setUniformValue(shader -> u_matrix, mpv_matrix);
     shader -> program -> setUniformValue(shader -> u_bpp, bipp);
-
-    //   // uniforms done. attributes begin
 
     shader -> program -> setAttributeArray(shader -> a_Position, GL_FLOAT, kVertices, 2);
     shader -> program -> setAttributeArray(shader -> a_TexCoords, GL_FLOAT, kTexCoords, 2);
