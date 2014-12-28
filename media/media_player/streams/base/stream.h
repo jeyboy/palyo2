@@ -17,6 +17,8 @@ public:
     void suspend();
     void resume();
 
+    inline bool isSuspended() const { return pauseRequired; }
+
 protected:
     virtual void routine() = 0;
 

@@ -11,6 +11,11 @@ public:
     virtual ~MediaStream();
 
     inline bool requirePreload() { return !valid || (valid && packets.isEmpty()); }
+
+    void suspend();
+signals:
+    void suspended();
+
 public slots:
     virtual void nextFrame(void *& ret) { ret = 0; } // stub
     void rejectEof();

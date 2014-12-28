@@ -58,6 +58,9 @@ public slots:
     //0..10000
     void setVolume(uint val);
 
+protected slots:
+    void threadSuspended();
+
 protected:
     bool openContext(QUrl & url);
     void closeContext();

@@ -92,6 +92,13 @@ void StreamDecoder::setVolume(uint val) {
 void StreamDecoder::routine() {
 //    av_init_packet(currFrame);
 
+//    if (pauseRequired) {
+//        if (state == EofDetected && !inAction())
+//            emit threadSuspended();
+
+//        return;
+//    }
+
     int del = qMin(videoStream -> calcDelay(), audioStream -> calcDelay());
     if (del > 2 || pauseRequired) {
         msleep(del);
@@ -166,5 +173,7 @@ void StreamDecoder::findStreams(MasterClock * clock) {
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
 //        emit errorOccurred("No one audio or video streams founds");
         emit stateChanged(state = NoData);
+    } else {
+        connect((Stream *)audioStream, SIGNAL(suspended()), (QObject *)clock -> mediaPlayer(), SLOT(threadSuspended()));
     }
 }

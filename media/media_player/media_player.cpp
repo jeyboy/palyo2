@@ -161,6 +161,11 @@ void MediaPlayer::setVolume(uint val) {
 
 ////////////// PROTECTED //////////////////////////////////
 
+void MediaPlayer::threadSuspended() {
+    if (decoder && !decoder -> inAction())
+        emit stateChanged(MediaPlayerState::Stoped);
+}
+
 bool MediaPlayer::openContext(QUrl & url) {
     QString path;
     if ((isRemote = !url.isLocalFile())) {
