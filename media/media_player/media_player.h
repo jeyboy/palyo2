@@ -33,7 +33,7 @@ public:
     QString lastError() const;
     QString filename();
 
-    QString info();
+    QString timeInfo(QString separator = " / ");
 
     bool isPlayed() const;
     bool isPaused() const;

@@ -16,7 +16,7 @@ ControlPanel::ControlPanel(MasterClock * clock, QWidget * parent) : QFrame(paren
 
     setStyleSheet(
                 "ControlPanel {"
-                "   background: rgba(44, 44, 44, 96);"
+                "   background: rgba(44, 44, 44, 72);"
                 "   border-radius: 16px;"
                 "}"
                 "QPushButton {"
@@ -45,6 +45,7 @@ ControlPanel::ControlPanel(MasterClock * clock, QWidget * parent) : QFrame(paren
 //                }
                 "QLabel {"
                 "   color: #fff;"
+                "   font-weight: bold;"
                 "}"
     );
 
@@ -104,7 +105,7 @@ void ControlPanel::sliderUpdate(int pos) {
     slider -> setValue(pos);
     slider -> blockSignals(false);
 
-    QString temp = ((MediaPlayer *) clock -> mediaPlayer()) -> info();
+    QString temp = ((MediaPlayer *) clock -> mediaPlayer()) -> timeInfo("\n");
     timer -> setText(temp);
 }
 

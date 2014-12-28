@@ -101,8 +101,8 @@ QString MediaPlayer::filename() {
     return QString(context -> filename);
 }
 
-QString MediaPlayer::info() {
-    return Duration::fromMillis(positionMillis()) + " / " + Duration::fromMillis(durationMillis());
+QString MediaPlayer::timeInfo(QString separator) {
+    return Duration::fromMillis(positionMillis()) + separator + Duration::fromMillis(durationMillis());
 }
 
 bool MediaPlayer::isPlayed() const {
