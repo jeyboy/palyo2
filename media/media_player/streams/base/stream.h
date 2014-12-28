@@ -20,6 +20,8 @@ public:
 
     void setSemaphore(QSemaphore *);
 
+    inline bool isSuspended() const { return pauseRequired; }
+
 protected:
     virtual void routine() = 0;
 

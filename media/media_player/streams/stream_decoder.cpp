@@ -178,5 +178,8 @@ void StreamDecoder::findStreams(MasterClock * clock) {
     if(!audioStream -> isValid() && !videoStream -> isValid()) {
 //        emit errorOccurred("No one audio or video streams founds");
         emit stateChanged(state = NoData);
+    } else {
+        connect((Stream *)audioStream, SIGNAL(suspended()), (QObject *)clock -> mediaPlayer(), SLOT(threadSuspended()));
+        connect((Stream *)videoStream, SIGNAL(suspended()), (QObject *)clock -> mediaPlayer(), SLOT(threadSuspended()));
     }
 }

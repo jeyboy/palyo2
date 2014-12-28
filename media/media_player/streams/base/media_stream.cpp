@@ -21,6 +21,11 @@ MediaStream::~MediaStream() {
 
 }
 
+void MediaStream::suspend() {
+    Stream::suspend();
+    emit suspended();
+}
+
 void MediaStream::rejectEof() { eof = false; }
 void MediaStream::eofDetected() { eof = true; }
 void MediaStream::suspendStream() { Stream::suspend(); }

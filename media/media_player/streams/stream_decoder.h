@@ -28,8 +28,14 @@ public:
 
     DecoderState getState() const { return state; }
 
+    inline bool inAction() const {
+        return isActive()
+                || (!audioStream -> isValid() || (audioStream -> isValid() && !audioStream -> isSuspended()))
+                || (!videoStream -> isValid() || (videoStream -> isValid() && !videoStream -> isSuspended()))
+                ;
+    }
     inline bool isValid() const { return state != NoData; }
-    inline bool isActive() const { return state == Seeking || state == Process || state == Initialization; }
+    inline bool isActive() const { return state == Seeking || state == Process || state == Initialization || state == Resumed || (isPaused() && skip); }
     inline bool isPaused() const { return state == Suspended; }
 
     inline bool hasAudio() const { return audioStream -> isValid(); }

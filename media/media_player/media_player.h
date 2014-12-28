@@ -44,6 +44,7 @@ signals:
     void errorOccured(QString error);
     void positionChangedMicro(int64_t);
     void positionChangedMillis(int);
+    void stateChanged(MediaPlayerState::Type);
 
 public slots:
     void play();
@@ -56,6 +57,9 @@ public slots:
 
     //0..10000
     void setVolume(uint val);
+
+protected slots:
+    void threadSuspended();
 
 protected:
     bool openContext(QUrl & url);

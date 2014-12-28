@@ -123,22 +123,26 @@ QWidget * MediaPlayer::getScreenWidget() const {
 
 void MediaPlayer::play() {
     if (decoder == 0) return;
+    emit stateChanged(MediaPlayerState::Played);
     decoder -> resume();
 }
 
 void MediaPlayer::resume() {
     if (decoder == 0) return;
+    emit stateChanged(MediaPlayerState::Played);
     decoder -> resume();
 }
 
 void MediaPlayer::pause() {
     if (decoder == 0) return;
+    emit stateChanged(MediaPlayerState::Paused);
     decoder -> suspend();
 }
 
 void MediaPlayer::stop() {
     if (decoder)
         decoder -> suspend();
+    emit stateChanged(MediaPlayerState::Stoped);
 
     closeContext();
 }
@@ -159,6 +163,11 @@ void MediaPlayer::setVolume(uint val) {
 }
 
 ////////////// PROTECTED //////////////////////////////////
+
+void MediaPlayer::threadSuspended() {
+    if (decoder && !decoder -> inAction())
+        emit stateChanged(MediaPlayerState::Stoped);
+}
 
 bool MediaPlayer::openContext(QUrl & url) {
     QString path;

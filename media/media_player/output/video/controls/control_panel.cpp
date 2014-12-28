@@ -52,23 +52,25 @@ ControlPanel::ControlPanel(MasterClock * clock, QWidget * parent) : QFrame(paren
     setLayout(panelLayout);
     setVisible(false); // remove later
 
-    QPushButton * play = new QPushButton(QIcon(":play"), "", this);
+    play = new QPushButton(QIcon(":play"), "", this);
     play -> setMaximumSize(40, 50);
     play -> setMinimumWidth(40);
     connect(play, SIGNAL(clicked()), (MediaPlayer *)clock -> mediaPlayer(), SLOT(play()));
     layout() -> addWidget(play);
 
-    QPushButton * pause = new QPushButton(QIcon(":pause"), "", this);
+    pause = new QPushButton(QIcon(":pause"), "", this);
     pause -> setMaximumSize(40, 50);
     pause -> setMinimumWidth(40);
     connect(pause, SIGNAL(clicked()), (MediaPlayer *)clock -> mediaPlayer(), SLOT(pause()));
     layout() -> addWidget(pause);
 
-    QPushButton * stop = new QPushButton(QIcon(":stop"), "", this);
+    stop = new QPushButton(QIcon(":stop"), "", this);
     stop -> setMaximumSize(40, 50);
     stop -> setMinimumWidth(40);
     connect(stop, SIGNAL(clicked()), (MediaPlayer *)clock -> mediaPlayer(), SLOT(stop()));
     layout() -> addWidget(stop);
+
+    connect((MediaPlayer *)clock -> mediaPlayer(), SIGNAL(stateChanged(MediaPlayerState::Type)), this, SLOT(playerStateChanged(MediaPlayerState::Type)));
 
     timer = new QLabel(this);
     layout() -> addWidget(timer);
@@ -104,6 +106,28 @@ void ControlPanel::sliderUpdate(int pos) {
 
     QString temp = ((MediaPlayer *) clock -> mediaPlayer()) -> info();
     timer -> setText(temp);
+}
+
+void ControlPanel::playerStateChanged(MediaPlayerState::Type state) {
+    switch(state) {
+        case MediaPlayerState::Played: {
+            play -> hide();
+            pause -> show();
+            stop -> show();
+        break;}
+        case MediaPlayerState::Paused: {
+            play -> show();
+            pause -> hide();
+            stop -> show();
+        break;}
+        case MediaPlayerState::Stoped:
+        case MediaPlayerState::Error: {
+            play -> show();
+            pause -> hide();
+            stop -> hide();
+        break;}
+
+    }
 }
 
 void ControlPanel::paintEvent(QPaintEvent *) {
