@@ -21,8 +21,10 @@ RenderInterface::~RenderInterface() {
     mutex.lock();
     delete vFrame;
     mutex.unlock();
-
     doneCurrent();
+
+    //context is not deleted in usuall way (need to wait 5.4.1 version patch) :(
+//    context() -> setParent(this);
 }
 
 void RenderInterface::resizeGL(int /*w*/, int /*h*/) {
@@ -40,8 +42,37 @@ void RenderInterface::initializeGL() {
     //glPixelStorei(GL_UNPACK_SKIP_PIXELS,  0);
     //glPixelStorei(GL_UNPACK_SKIP_IMAGES,  0);
     glPixelStorei(GL_UNPACK_ALIGNMENT,    1); // 1,2,4,8
+}
 
+void RenderInterface::setQuality(const Quality & quality) {
+//    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
 
+    switch(quality) {
+        case RenderInterface::best : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+        break;}
+        case RenderInterface::low : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
+        break;}
+        default : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+        }
+    };
 }
 
 //void RenderInterface::repaint() {

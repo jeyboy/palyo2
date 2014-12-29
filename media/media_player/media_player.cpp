@@ -101,8 +101,12 @@ QString MediaPlayer::filename() {
     return QString(context -> filename);
 }
 
+//TODO: move has_hours flag init in open file method
 QString MediaPlayer::timeInfo(QString separator) {
-    return Duration::fromMillis(positionMillis()) + separator + Duration::fromMillis(durationMillis());
+    return
+            Duration::fromMillis(positionMillis(), Duration::hasHours(durationMillis()))
+            + separator +
+            Duration::fromMillis(durationMillis());
 }
 
 bool MediaPlayer::isPlayed() const {

@@ -16,7 +16,7 @@ public:
     RenderInterface(QWidget* parent = NULL);
     virtual ~RenderInterface();
 
-    virtual void setQuality(const Quality & quality) = 0;
+    virtual void setQuality(const Quality & quality);
     virtual enum RenderType getRenderType() const = 0;
 
 signals:

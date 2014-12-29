@@ -18,10 +18,19 @@ GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), 
 }
 
 GLRenderRaw::~GLRenderRaw() {
-    if (shader) {
-        delete shader;
-        shader = 0;
-    }
+//    makeCurrent();
+//    context() -> setParent(this);
+//    doneCurrent();
+}
+
+void GLRenderRaw::cleanup() {
+    qDebug() << "GL PLUS CLEANUP";
+    makeCurrent();
+
+//    if (shader) {
+//        delete shader;
+//        shader = 0;
+//    }
 
     glDeleteTextures(textures.size(), textures.data());
     textures.clear();
@@ -30,37 +39,8 @@ GLRenderRaw::~GLRenderRaw() {
         delete color_conversion;
         color_conversion = 0;
     }
-}
 
-void GLRenderRaw::setQuality(const Quality & quality) {
-//    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
-
-    switch(quality) {
-        case RenderInterface::best : {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-            //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-        break;}
-        case RenderInterface::low : {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
-            glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-            //glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
-            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
-        break;}
-        default : {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
-            glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-            //glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
-            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-        }
-    };
+    doneCurrent();
 }
 
 //void GLRenderRaw::computeOutParameters(qreal outAspectRatio) {
@@ -258,6 +238,8 @@ void GLRenderRaw::prepareSettings() {
 
 void GLRenderRaw::initializeGL() {
     RenderInterface::initializeGL();
+
+    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLRenderRaw::cleanup, Qt::DirectConnection);
 
     shader = new Shader(this);
 }

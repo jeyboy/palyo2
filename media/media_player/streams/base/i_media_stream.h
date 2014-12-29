@@ -133,7 +133,7 @@ public:
         mutex -> lock();
             while(packets.size() > 0)
                 av_free_packet(packets.takeFirst());
-            packets.clear();// maybe not ?
+//            packets.clear();// maybe not ?
             time_buff = 0;
         mutex -> unlock();
     }

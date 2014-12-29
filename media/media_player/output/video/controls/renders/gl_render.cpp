@@ -27,50 +27,22 @@ GLRender::GLRender(QWidget* parent) : RenderInterface(parent) {
 }
 
 GLRender::~GLRender() {
-    glDeleteTextures(1, &texture);
+
 }
 
-void GLRender::setQuality(const Quality & quality) {
-    switch(quality) {
-        case RenderInterface::best : {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-            //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-        break;}
-        case RenderInterface::low : {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
-            glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-            //glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
-            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
-        break;}
-        default : {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
-            glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-            //glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
-            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-        }
-    };
+void GLRender::cleanup() {
+    qDebug() << "GL CLEANUP";
+    makeCurrent();
+    glDeleteTextures(1, &texture);
+    doneCurrent();
 }
 
 void GLRender::initializeGL() {
     RenderInterface::initializeGL();
 
-    glViewport(0, 0, QOpenGLWidget::width(), QOpenGLWidget::height());
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-1, 1, -1, 1, 0, 1);
+    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLRender::cleanup, Qt::DirectConnection);
 
-//    generate the texture name
     glGenTextures(1, &texture);
-
-    //bind the texture ID
     glBindTexture(GL_TEXTURE_2D, texture);
 }
 

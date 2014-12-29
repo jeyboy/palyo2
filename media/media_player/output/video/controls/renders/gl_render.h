@@ -8,13 +8,12 @@ public:
     GLRender(QWidget* parent = NULL);
     virtual ~GLRender();
 
-    void setQuality(const Quality & quality);
-
     inline RenderType getRenderType() const { return gl; }
 
     void repaint();
 
 protected:
+    void cleanup();
     void initializeGL();
     void paintGL();
 private:

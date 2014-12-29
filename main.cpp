@@ -19,6 +19,8 @@ int main(int argc, char *argv[]) {
 
 //    qDebug() << "PATH " << QLibraryInfo::location(QLibraryInfo::PluginsPath);
 
+//    QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts, true);
+
     QCoreApplication::setOrganizationName("BigBug");
     QCoreApplication::setOrganizationDomain("bigbug.sos");
     QCoreApplication::setApplicationName("Playo");

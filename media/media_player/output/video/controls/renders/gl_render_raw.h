@@ -18,11 +18,10 @@ public:
     GLRenderRaw(QWidget* parent = NULL);
     virtual ~GLRenderRaw();
 
-    void setQuality(const Quality & quality);
-
     inline RenderType getRenderType() const { return gl_plus; }
 
 protected:
+    void cleanup();
     bool initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat = GL_RGBA);
     bool initTextures();
 
