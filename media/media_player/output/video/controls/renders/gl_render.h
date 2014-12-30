@@ -13,6 +13,7 @@ public:
     void setQuality(const Quality & quality);
 
     inline RenderType getRenderType() const { return gl; }
+    inline QWidget * toWidget() { return this; }
 protected:
     void cleanup();
     void initializeGL();

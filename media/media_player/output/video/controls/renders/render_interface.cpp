@@ -18,6 +18,7 @@ void RenderInterface::setFrame(VideoFrame * frame) {
         delete vFrame;
         vFrame = frame;
         mutex.unlock();
+        toWidget() -> repaint();
     }
 }
 

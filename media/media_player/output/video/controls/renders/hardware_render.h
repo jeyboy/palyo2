@@ -10,7 +10,7 @@ public:
 
     void setQuality(const Quality & quality);
     inline RenderType getRenderType() const { return hardware; }
-
+    inline QWidget * toWidget() { return this; }
 protected:
     void paintEvent(QPaintEvent *);
 };

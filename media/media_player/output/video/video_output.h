@@ -25,9 +25,9 @@ public slots:
     void titleUpdate();
 protected slots:
     void hideMouse();
+    void frameInit();
 
 protected:
-    void frameInit();
     void leaveEvent(QEvent *);
     void mouseMoveEvent(QMouseEvent * event);
     void resizeEvent(QResizeEvent * event);

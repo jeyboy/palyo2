@@ -20,6 +20,7 @@ public:
     void setFrame(VideoFrame * frame);
     void resize(QRect rect);
     inline void redrawed() { redrawRef++; }
+    virtual inline QWidget * toWidget() = 0;
 protected:
     bool init;
     int & redrawRef;

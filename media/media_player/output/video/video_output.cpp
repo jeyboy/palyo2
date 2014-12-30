@@ -32,7 +32,7 @@ VideoOutput::~VideoOutput() {
 
 void VideoOutput::setRender(RenderType type) {
     if (screen) {
-        layout() -> removeWidget((QWidget *)screen);
+        layout() -> removeWidget(screen -> toWidget());
         delete screen;
         screen = 0;
     }
@@ -53,8 +53,8 @@ void VideoOutput::setRender(RenderType type) {
         }
     }
 
-    ((QWidget *)screen) -> setMouseTracking(true);
-    layout() -> addWidget(((QWidget *)screen));
+    screen -> toWidget() -> setMouseTracking(true);
+    layout() -> addWidget(screen -> toWidget());
     panel -> setRegion(rect());
 }
 
