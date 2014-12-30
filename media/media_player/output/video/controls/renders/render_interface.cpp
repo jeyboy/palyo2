@@ -4,6 +4,7 @@
 
 RenderInterface::RenderInterface(QWidget* parent) : QOpenGLWidget(parent)
   , fpsCounter(0)
+  , last_delay(0)
   , vFrame(0) {
 
     init = false;
@@ -12,7 +13,6 @@ RenderInterface::RenderInterface(QWidget* parent) : QOpenGLWidget(parent)
 
     setAttribute(Qt::WA_OpaquePaintEvent, true);
     frameInit();
-    fpsCalculation();
 }
 
 RenderInterface::~RenderInterface() {
@@ -83,6 +83,12 @@ void RenderInterface::setQuality(const Quality & quality) {
 void RenderInterface::redrawed() { fpsCounter++; }
 
 void RenderInterface::frameInit() {
+    if (last_delay != 0) {
+        emit fpsChanged(fpsCounter * (1000.0f / last_delay));
+        fpsCounter = 0;
+    }
+
+
     VideoFrame * frame = 0;
     emit frameNeeded((void *&)frame);
     if (frame) {
@@ -94,15 +100,8 @@ void RenderInterface::frameInit() {
             emit updated();
             repaint();
         }
-        frameTimer.singleShot(frame -> calcDelay(), this, SLOT(frameInit()));
+        frameTimer.singleShot((last_delay = frame -> calcDelay()), this, SLOT(frameInit()));
     } else frameTimer.singleShot(5, this, SLOT(frameInit()));
-}
-
-void RenderInterface::fpsCalculation() {
-    emit fpsChanged(fpsCounter);
-
-    fpsCounter = 0;
-    timer.singleShot(1000, this, SLOT(fpsCalculation()));
 }
 
 void RenderInterface::closeEvent(QCloseEvent *) {

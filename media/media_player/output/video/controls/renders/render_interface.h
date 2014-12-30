@@ -27,7 +27,6 @@ signals:
 
 private slots:
     void frameInit();
-    void fpsCalculation();
 
 protected:
     void resizeGL(int w, int h);
@@ -40,11 +39,11 @@ protected:
 
     bool init;
     int fpsCounter;
+    int last_delay;
 
     QRect output_rect;
     VideoFrame * vFrame;
     QMutex mutex;
-    QTimer timer;
     QTimer frameTimer;
 };
 
