@@ -37,7 +37,7 @@ protected:
     void closeEvent(QCloseEvent *);
     void resizeEvent(QResizeEvent *);
 
-    bool init;
+    bool init, updateRequired;
     int fpsCounter;
     int drawCounter;
     int last_delay;

@@ -3,11 +3,11 @@
 #include <QDebug>
 
 RenderInterface::RenderInterface(QWidget* parent) : QOpenGLWidget(parent)
+  , init(false)
+  , updateRequired(false)
   , fpsCounter(0)
   , last_delay(0)
   , vFrame(0) {
-
-    init = false;
 
     setFocusPolicy(Qt::StrongFocus);
 
@@ -98,6 +98,7 @@ void RenderInterface::frameInit() {
             mutex.lock();
             delete vFrame;
             vFrame = frame;
+            updateRequired = true;
             mutex.unlock();
             emit updated();
             repaint();

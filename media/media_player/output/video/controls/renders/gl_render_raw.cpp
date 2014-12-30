@@ -245,7 +245,7 @@ void GLRenderRaw::initializeGL() {
 }
 
 void GLRenderRaw::paintGL() {
-    if (vFrame == 0) return;
+    if (vFrame == 0  || !updateRequired) return;
 
     makeCurrent();
 
@@ -287,6 +287,7 @@ void GLRenderRaw::paintGL() {
         shader -> program -> setUniformValue(shader -> u_Texture[i], (GLint)i);
     }
 
+    updateRequired = false;
     mutex.unlock();
 
     if (nb_planes < shader -> u_Texture.size()) {
