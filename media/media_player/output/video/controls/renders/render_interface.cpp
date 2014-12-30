@@ -2,8 +2,8 @@
 
 RenderInterface::RenderInterface(int & redrawCounter)
   : init(false)
-  , vFrame(0)
-  , redrawRef(redrawCounter) {
+  , redrawRef(redrawCounter)
+  , vFrame(0) {
 }
 
 RenderInterface::~RenderInterface() {
