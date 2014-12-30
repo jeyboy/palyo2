@@ -2,8 +2,8 @@
 
 #include <QDebug>
 
-GlRenderInterface::GlRenderInterface(QWidget* parent) : RenderInterface(parent), QOpenGLWidget(parent) {
-//    QOpenGLWidget::setAutoFillBackground(false);
+GlRenderInterface::GlRenderInterface(QWidget* parent) : QOpenGLWidget(parent), RenderInterface(parent) {
+    QOpenGLWidget::setAutoFillBackground(false);
 }
 
 GlRenderInterface::~GlRenderInterface() {
@@ -59,4 +59,9 @@ void GlRenderInterface::setQuality(const Quality & quality) {
             glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
         }
     };
+}
+
+void GlRenderInterface::resizeEvent(QResizeEvent * event) {
+    QOpenGLWidget::resizeEvent(event);
+    recalcOutputRect();
 }

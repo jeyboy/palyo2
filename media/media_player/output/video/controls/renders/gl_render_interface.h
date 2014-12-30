@@ -6,7 +6,7 @@
 
 #include <QOpenGLWidget>
 
-class GlRenderInterface : public RenderInterface, virtual public QOpenGLWidget {
+class GlRenderInterface : public QOpenGLWidget, public RenderInterface {
 public:
     GlRenderInterface(QWidget* parent = NULL);
     virtual ~GlRenderInterface();
@@ -14,7 +14,10 @@ public:
     virtual void setQuality(const Quality & quality);
     virtual enum RenderType getRenderType() const = 0;
 
+    inline void repaintNeeded() { QOpenGLWidget::repaint(); }
+
 protected:
+    void resizeEvent(QResizeEvent *);
     void resizeGL(int w, int h);
     void initializeGL();
 };

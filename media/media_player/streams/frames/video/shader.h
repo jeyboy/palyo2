@@ -4,7 +4,6 @@
 #include <QOpenGLShaderProgram>
 
 struct Shader {
-
     Shader(QObject * parent) :
           program(new QOpenGLShaderProgram(parent))
           , a_Position(-1)

@@ -44,15 +44,15 @@ void VideoOutput::setRender(RenderType type) {
 //            break;
 //        }
         case gl_plus: {
-            screen = new GLRenderRaw();
+            screen = new GLRenderRaw(this);
             break;
         }
         case gl: {
-            screen = new GLRender();
+            screen = new GLRender(this);
             break;
         }
         default: {
-            screen = new HardwareRender();
+            screen = new HardwareRender(this);
             break;
         }
     }

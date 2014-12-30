@@ -11,7 +11,10 @@ public:
     void setQuality(const Quality & quality);
     inline RenderType getRenderType() const { return hardware; }
 
+    void repaintNeeded() { repaint();}
+
 protected:
+    inline void resized(QResizeEvent *) {}
     void paintEvent(QPaintEvent *);
 };
 

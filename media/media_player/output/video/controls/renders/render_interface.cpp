@@ -21,6 +21,14 @@ RenderInterface::~RenderInterface() {
     mutex.unlock();
 }
 
+void RenderInterface::recalcOutputRect() {
+    qDebug() << "RECT " << rect();
+    if (vFrame)
+        output_rect = vFrame -> calcSize(this -> rect());
+    else
+        output_rect = this -> rect();
+}
+
 void RenderInterface::redrawed() { fpsCounter++; }
 
 void RenderInterface::frameInit() {
@@ -33,7 +41,7 @@ void RenderInterface::frameInit() {
             vFrame = frame;
             mutex.unlock();
             emit updated();
-            repaint();
+            repaintNeeded();
         }
         frameTimer.singleShot(frame -> calcDelay(), this, SLOT(frameInit()));
     } else frameTimer.singleShot(5, this, SLOT(frameInit()));
@@ -50,12 +58,8 @@ void RenderInterface::closeEvent(QCloseEvent *) {
     emit closed();
 }
 
-void RenderInterface::resizeEvent(QResizeEvent * event) {
-    if (vFrame)
-        output_rect = vFrame -> calcSize(this -> rect());
-    else
-        output_rect = this -> rect();
+//void RenderInterface::resizeEvent(QResizeEvent * event) {
+//    QWidget::resizeEvent(event);
 
-    QWidget::resizeEvent(event);
-    emit resized();
-}
+//    recalcOutputRect();
+//}

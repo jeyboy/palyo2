@@ -19,7 +19,6 @@ public:
     virtual enum RenderType getRenderType() const = 0;
 
 signals:
-    void resized();
     void closed();
     void updated();
     void fpsChanged(int val);
@@ -33,11 +32,13 @@ private slots:
     void fpsCalculation();
 
 protected:
+    void recalcOutputRect();
+    virtual void repaintNeeded() {}
     virtual void cleanupResources() {}
     void redrawed();
 
     void closeEvent(QCloseEvent *);
-    void resizeEvent(QResizeEvent *);
+//    void resizeEvent(QResizeEvent *);
 
     bool init;
     int fpsCounter;
