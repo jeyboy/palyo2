@@ -22,7 +22,7 @@ public:
 signals:
     void closed();
     void updated();
-    void fpsChanged(int val);
+    void fpsChanged(QString val);
     void frameNeeded(void *&);
 
 private slots:
@@ -39,6 +39,7 @@ protected:
 
     bool init;
     int fpsCounter;
+    int drawCounter;
     int last_delay;
 
     QRect output_rect;

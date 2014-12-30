@@ -80,12 +80,13 @@ void RenderInterface::setQuality(const Quality & quality) {
 //    paintFrame();
 //}
 
-void RenderInterface::redrawed() { fpsCounter++; }
+void RenderInterface::redrawed() { drawCounter++; }
 
 void RenderInterface::frameInit() {
     if (last_delay != 0) {
-        emit fpsChanged(fpsCounter * (1000.0f / last_delay));
-        fpsCounter = 0;
+        float delay = (1000.0f / last_delay);
+        emit fpsChanged(QString::number((int)(drawCounter * delay)) + "d / " + QString::number((int)(fpsCounter * delay)) + "f");
+        drawCounter = fpsCounter = 0;
     }
 
 
@@ -93,6 +94,7 @@ void RenderInterface::frameInit() {
     emit frameNeeded((void *&)frame);
     if (frame) {
         if (!frame -> skip()) {
+            fpsCounter++;
             mutex.lock();
             delete vFrame;
             vFrame = frame;

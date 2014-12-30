@@ -50,7 +50,7 @@ void VideoOutput::setRender(RenderType type) {
         }
     }
 
-    connect(screen, SIGNAL(fpsChanged(int)), this, SLOT(fpsChanged(int)));
+    connect(screen, SIGNAL(fpsChanged(QString)), this, SLOT(fpsChanged(QString)));
     connect(screen, SIGNAL(updated()), this, SLOT(titleUpdate()));
     connect(screen, SIGNAL(frameNeeded(void*&)), thread, SLOT(nextFrame(void *&)));
 
@@ -70,8 +70,8 @@ void VideoOutput::hideMouse() {
     offScreenSaver();
 }
 
-void VideoOutput::fpsChanged(int newFps) {
-    fps = QString::number(newFps);
+void VideoOutput::fpsChanged(QString newFps) {
+    fps = newFps;
 }
 
 void VideoOutput::leaveEvent(QEvent *) {

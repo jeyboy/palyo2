@@ -17,7 +17,7 @@ public:
     void setRender(RenderType type);
     void setAspectRatio(int w, int h);
 public slots:
-    void fpsChanged(int fpsVal);
+    void fpsChanged(QString fpsVal);
     void titleUpdate();
 protected slots:
     void hideMouse();
