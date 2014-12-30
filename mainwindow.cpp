@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    player -> open(QUrl::fromLocalFile("G:/test/test3/test.mp4"));
 //    player -> open(QUrl::fromLocalFile("G:/test/test3/test.mp3"));
-//      player -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
+      player -> open(QUrl::fromLocalFile("G:/test/test3/not played.mp3"));
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/Shakra – Trapped.mp3"));
 //      player -> open(QUrl::fromLocalFile("G:/test/test3/Белоснежка и брачный сезон.mp4"));
 //      player -> open(QUrl::fromLocalFile("F:/multichannel test/01. Please Don't Keep Me Waiting.wav"));

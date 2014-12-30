@@ -25,6 +25,7 @@ void RenderInterface::setFrame(VideoFrame * frame) {
 }
 
 void RenderInterface::resize(QRect rect) {
+    updateRequired = true;
     if (vFrame)
         output_rect = vFrame -> calcSize(rect);
     else
