@@ -22,7 +22,7 @@ public:
     inline void redrawed() { redrawRef++; }
     virtual inline QWidget * toWidget() = 0;
 protected:
-    bool init;
+    bool init, updateRequired;
     int & redrawRef;
 
     QRect output_rect;

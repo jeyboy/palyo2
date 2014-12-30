@@ -2,6 +2,7 @@
 
 RenderInterface::RenderInterface(int & redrawCounter)
   : init(false)
+  , updateRequired(false)
   , redrawRef(redrawCounter)
   , vFrame(0) {
 }
@@ -17,6 +18,7 @@ void RenderInterface::setFrame(VideoFrame * frame) {
         mutex.lock();
         delete vFrame;
         vFrame = frame;
+        updateRequired = true;
         mutex.unlock();
         toWidget() -> repaint();
     }

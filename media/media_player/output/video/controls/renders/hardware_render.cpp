@@ -24,7 +24,7 @@ void HardwareRender::setQuality(const Quality & quality) {
 }
 
 void HardwareRender::paintEvent(QPaintEvent * event) {
-    if (vFrame == 0) return;
+    if (vFrame == 0 || !updateRequired) return;
 
     if (!init) {
         init = true;

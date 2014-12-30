@@ -57,7 +57,7 @@ void GLRender::initializeGL() {
 }
 
 void GLRender::paintGL() {
-    if (vFrame == 0) return;
+    if (vFrame == 0 || !updateRequired) return;
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
