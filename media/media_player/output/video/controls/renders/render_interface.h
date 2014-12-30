@@ -12,7 +12,7 @@ public:
     enum Quality { best, fast, low };
 
     RenderInterface(int & redrawCounter);
-    ~RenderInterface();
+    virtual ~RenderInterface();
 
     virtual void setQuality(const Quality & quality) = 0;
     virtual enum RenderType getRenderType() const = 0;

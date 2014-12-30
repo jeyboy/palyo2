@@ -30,7 +30,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterCloc
 VideoStream::~VideoStream() {
     if (valid) {
         flushData();
-//        output -> setRender(none);
+        output -> setRender(none);
         delete output;
         delete resampler;
     }
