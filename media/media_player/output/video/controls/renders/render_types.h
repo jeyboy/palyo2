@@ -7,11 +7,13 @@ enum RenderType {
     none = -1,
     hardware,
     gl,
-    gl_plus
+    gl_plus,
+    stub
 };
 
 static QString renderTypeToStr(RenderType type) {
     switch(type) {
+        case stub: return "stub";
         case gl: return "gl + conversion";
         case gl_plus: return "gl + shaders";
         default: return "hardware";

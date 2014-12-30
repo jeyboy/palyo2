@@ -4,7 +4,7 @@
 #include "media/media_player/utils/video_types.h"
 #include "media/media_player/streams/frames/video/shader.h"
 #include "media/media_player/streams/frames/video/color_conversion.h"
-#include "media/media_player/output/video/controls/renders/render_interface.h"
+#include "gl_render_interface.h"
 
 const GLfloat kVertices[] = {
     -1,  1,
@@ -13,7 +13,7 @@ const GLfloat kVertices[] = {
     -1, -1,
 };
 
-class GLRenderRaw : public RenderInterface {
+class GLRenderRaw : public GlRenderInterface {
 public:
     GLRenderRaw(QWidget* parent = NULL);
     virtual ~GLRenderRaw();
@@ -21,11 +21,9 @@ public:
     inline RenderType getRenderType() const { return gl_plus; }
 
 protected:
-    void cleanup();
+    void cleanupResources();
     bool initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat = GL_RGBA);
     bool initTextures();
-
-    void repaint();
 
 //    void computeOutParameters(qreal outAspectRatio);
     void prepareSettings();

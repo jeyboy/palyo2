@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-GLRender::GLRender(QWidget* parent) : RenderInterface(parent) {
+GLRender::GLRender(QWidget* parent) : GlRenderInterface(parent) {
 ////    setAutoBufferSwap(true);
 ////    setAutoFillBackground(false);
 
@@ -30,7 +30,7 @@ GLRender::~GLRender() {
 
 }
 
-void GLRender::cleanup() {
+void GLRender::cleanupResources() {
     qDebug() << "GL CLEANUP";
     makeCurrent();
     glDeleteTextures(1, &texture);
@@ -38,9 +38,7 @@ void GLRender::cleanup() {
 }
 
 void GLRender::initializeGL() {
-    RenderInterface::initializeGL();
-
-    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLRender::cleanup, Qt::DirectConnection);
+    GlRenderInterface::initializeGL();
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);

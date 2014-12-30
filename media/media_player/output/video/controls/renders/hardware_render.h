@@ -12,8 +12,6 @@ public:
     inline RenderType getRenderType() const { return hardware; }
 
 protected:
-    void initializeGL();
-    void cleanup();
     void paintEvent(QPaintEvent *);
 };
 

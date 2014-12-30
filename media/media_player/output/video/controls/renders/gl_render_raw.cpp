@@ -9,11 +9,10 @@ const GLfloat kTexCoords[] = {
         0, 1,
 };
 
-GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), color_conversion(0) {
+GLRenderRaw::GLRenderRaw(QWidget* parent) : GlRenderInterface(parent), shader(0), color_conversion(0) {
     //    setAcceptDrops(true);
     //    setAttribute(Qt::WA_NoSystemBackground);
 
-    setAutoFillBackground(false);
     mpv_matrix.setToIdentity();
 }
 
@@ -23,14 +22,9 @@ GLRenderRaw::~GLRenderRaw() {
 //    doneCurrent();
 }
 
-void GLRenderRaw::cleanup() {
+void GLRenderRaw::cleanupResources() {
     qDebug() << "GL PLUS CLEANUP";
     makeCurrent();
-
-//    if (shader) {
-//        delete shader;
-//        shader = 0;
-//    }
 
     glDeleteTextures(textures.size(), textures.data());
     textures.clear();
@@ -237,11 +231,8 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
-    RenderInterface::initializeGL();
-
-    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLRenderRaw::cleanup, Qt::DirectConnection);
-
-    shader = new Shader(this);
+    GlRenderInterface::initializeGL();
+    shader = new Shader((QOpenGLWidget *)this);
 }
 
 void GLRenderRaw::paintGL() {

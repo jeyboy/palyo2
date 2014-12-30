@@ -35,7 +35,14 @@ void VideoOutput::setRender(RenderType type) {
     }
 
     switch(type) {
-        case none: { return; }
+        case none: {
+            delete this;
+            return;
+        }
+//        case stub: {
+//            screen = new StubRender();
+//            break;
+//        }
         case gl_plus: {
             screen = new GLRenderRaw();
             break;

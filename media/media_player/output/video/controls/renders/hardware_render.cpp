@@ -11,19 +11,6 @@ HardwareRender::~HardwareRender() {
 
 }
 
-void HardwareRender::initializeGL() {
-    RenderInterface::initializeGL();
-
-    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &HardwareRender::cleanup, Qt::DirectConnection);
-}
-
-void HardwareRender::cleanup() {
-    qDebug() << "HARDWARE CLEANUP";
-    makeCurrent();
-    ////////////
-    doneCurrent();
-}
-
 //TODO: add quality settings
 void HardwareRender::setQuality(const Quality & quality) {
     switch(quality) {

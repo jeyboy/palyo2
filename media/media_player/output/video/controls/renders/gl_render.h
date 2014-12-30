@@ -1,19 +1,17 @@
 #ifndef GL_RENDER_H
 #define GL_RENDER_H
 
-#include "media/media_player/output/video/controls/renders/render_interface.h"
+#include "gl_render_interface.h"
 
-class GLRender : public RenderInterface {
+class GLRender : public GlRenderInterface {
 public:
     GLRender(QWidget* parent = NULL);
     virtual ~GLRender();
 
     inline RenderType getRenderType() const { return gl; }
 
-    void repaint();
-
 protected:
-    void cleanup();
+    void cleanupResources();
     void initializeGL();
     void paintGL();
 private:
