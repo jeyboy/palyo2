@@ -100,6 +100,7 @@ SOURCES += main.cpp\
     misc/extensions.cpp \
     dialogs/extension_dialog.cpp \
     override/simple_list_view.cpp \
+    memory_profiler/memory_profiler.cpp \
     media/media_player/media_player.cpp \
     media/media_player/streams/stream_decoder.cpp \
     media/media_player/streams/base/stream.cpp \
@@ -120,10 +121,11 @@ SOURCES += main.cpp\
     media/media_player/output/video/controls/renders/gl_render.cpp \
     media/media_player/output/video/controls/renders/gl_render_raw.cpp \
     media/media_player/utils/video_types.cpp \ 
-    memory_profiler/memory_profiler.cpp \
     media/media_player/utils/web/custom_network_access_manager.cpp \
     media/media_player/utils/web/web_object.cpp \
-    media/media_player/contexts/custom_context.cpp
+    media/media_player/contexts/custom_context.cpp \
+    media/media_player/output/video/controls/renders/gl_render.cpp \
+    media/media_player/output/video/controls/renders/gl_render_raw.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -205,6 +207,7 @@ HEADERS  += mainwindow.h \
     misc/screen.h \
     dialogs/extension_dialog.h \
     override/simple_list_view.h \
+    memory_profiler/memory_profiler.h \
     media/media_player/media_player.h \
     media/media_player/utils/media_player_libs.h \
     media/media_player/utils/master_clock.h \
@@ -238,7 +241,6 @@ HEADERS  += mainwindow.h \
     media/media_player/utils/video_types.h \
     media/media_player/streams/frames/video/video_blending.h \
     media/media_player/utils/system_utils.h \
-    memory_profiler/memory_profiler.h \
     media/media_player/output/audio/audio_info.h \
     media/media_player/output/audio/rdft_spectrum.h \
     media/media_player/output/audio/fft_spectrum.h \
@@ -247,7 +249,8 @@ HEADERS  += mainwindow.h \
     media/media_player/contexts/custom_context.h \
     media/media_player/streams/frames/video/video_buffer_proxy.h \
     media/media_player/utils/media_attributes.h \
-    media/media_player/media_player_state.h
+    media/media_player/media_player_state.h \
+    media/media_player/output/video/controls/renders/gl_render_raw.h
 
 unix:!mac {
         QT += gui-private

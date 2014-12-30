@@ -8,6 +8,8 @@
 #include <QLayout>
 #include <QWidget>
 
+#define BASE_DELAY 5
+
 class VideoOutput : public OutputContainer {
      Q_OBJECT
 public:
@@ -16,23 +18,32 @@ public:
 
     void setRender(RenderType type);
     void setAspectRatio(int w, int h);
+signals:
+    void frameNeeded(void *&);
+
 public slots:
-    void fpsChanged(QString fpsVal);
     void titleUpdate();
 protected slots:
     void hideMouse();
 
 protected:
+    void frameInit();
     void leaveEvent(QEvent *);
     void mouseMoveEvent(QMouseEvent * event);
     void resizeEvent(QResizeEvent * event);
+
 private:
     MasterClock * clock;
     QString fps;
     RenderInterface * screen;
-    QTimer timer;
     bool trimming;
-    QObject * thread;
+
+    int fpsCounter;
+    int drawCounter;
+    int last_delay;
+    int mouse_delay;
+
+    QTimer frameTimer;
 };
 
 #endif // VIDEO_OUTPUT_H

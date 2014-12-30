@@ -1,9 +1,7 @@
 #include "hardware_render.h"
-
-#include <QDebug>
 #include <QPainter>
 
-HardwareRender::HardwareRender(QWidget* parent) : RenderInterface(parent) {
+HardwareRender::HardwareRender(int & redrawCounter, QWidget* parent) : RenderInterface(redrawCounter), QWidget(parent) {
     setAutoFillBackground(false);
 }
 
@@ -11,20 +9,6 @@ HardwareRender::~HardwareRender() {
 
 }
 
-void HardwareRender::initializeGL() {
-    RenderInterface::initializeGL();
-
-    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &HardwareRender::cleanup, Qt::DirectConnection);
-}
-
-void HardwareRender::cleanup() {
-    qDebug() << "HARDWARE CLEANUP";
-    makeCurrent();
-    ////////////
-    doneCurrent();
-}
-
-//TODO: add quality settings
 void HardwareRender::setQuality(const Quality & quality) {
     switch(quality) {
         case RenderInterface::best : {
@@ -44,7 +28,7 @@ void HardwareRender::paintEvent(QPaintEvent * event) {
 
     if (!init) {
         init = true;
-        output_rect = vFrame -> calcSize(this -> rect());
+        RenderInterface::resize(rect());
     }
 
     Q_UNUSED(event);

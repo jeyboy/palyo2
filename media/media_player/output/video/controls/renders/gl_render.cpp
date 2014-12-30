@@ -1,33 +1,42 @@
 #include "gl_render.h"
 
-#include <QDebug>
+GLRender::GLRender(int & redrawCounter, QWidget* parent) : QOpenGLWidget(parent), RenderInterface(redrawCounter) {
 
-GLRender::GLRender(QWidget* parent) : RenderInterface(parent) {
-////    setAutoBufferSwap(true);
-////    setAutoFillBackground(false);
-
-////    QGL::setPreferredPaintEngine(QPaintEngine::OpenGL2);
-
-////    glFormat = GL_RGB;  //  QImage RGBA is BGRA
-////    glType = GL_UNSIGNED_BYTE;
-
-    QGLFormat glFmt;
-    glFmt.setSwapInterval(1); // 1= vsync on
-//    glFmt.setAlpha(GL_RGBA==glFormat);
-//    glFmt.setRgba(GL_RGBA==glFormat);
-    glFmt.setDoubleBuffer(true); // default
-    glFmt.setOverlay(false);
-    glFmt.setSampleBuffers(false);
-    glFmt.setDepth(false);
-//    glFmt.setDirectRendering(true);
-    QGLFormat::setDefaultFormat(glFmt);
-
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-//    setQuality(best);
 }
 
 GLRender::~GLRender() {
 
+}
+
+void GLRender::setQuality(const Quality & quality) {
+//    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
+
+    switch(quality) {
+        case RenderInterface::best : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+        break;}
+        case RenderInterface::low : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
+        break;}
+        default : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+        }
+    };
 }
 
 void GLRender::cleanup() {
@@ -38,9 +47,10 @@ void GLRender::cleanup() {
 }
 
 void GLRender::initializeGL() {
-    RenderInterface::initializeGL();
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+//    setQuality(best);
 
-    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLRender::cleanup, Qt::DirectConnection);
+    QOpenGLContext::connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLRender::cleanup, Qt::DirectConnection);
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -77,7 +87,6 @@ void GLRender::paintGL() {
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-//    glTranslatef(0.0f, 1.0f, 0.0f);
 
     glRotatef(180, .5f, 0, 0);
 
@@ -89,11 +98,4 @@ void GLRender::paintGL() {
     glEnd();
 
     redrawed();
-
-//    QPainter painter(this);
-//    painter.beginNativePainting();
-//    painter.drawText(5, 5, 40, 20, Qt::AlignCenter, QString::number(fpsCounter));
-//    painter.endNativePainting();
-//    makeCurrent();
-//    swapBuffers();
 }

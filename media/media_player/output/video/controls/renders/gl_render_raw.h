@@ -1,10 +1,9 @@
 #ifndef GL_RENDER_RAW_H
 #define GL_RENDER_RAW_H
 
-#include "media/media_player/utils/video_types.h"
 #include "media/media_player/streams/frames/video/shader.h"
 #include "media/media_player/streams/frames/video/color_conversion.h"
-#include "media/media_player/output/video/controls/renders/render_interface.h"
+#include "render_interface.h"
 
 const GLfloat kVertices[] = {
     -1,  1,
@@ -13,19 +12,19 @@ const GLfloat kVertices[] = {
     -1, -1,
 };
 
-class GLRenderRaw : public RenderInterface {
+class GLRenderRaw : public QOpenGLWidget, public RenderInterface {
+    Q_OBJECT
 public:
-    GLRenderRaw(QWidget* parent = NULL);
+    GLRenderRaw(int & redrawCounter, QWidget* parent = NULL);
     virtual ~GLRenderRaw();
 
+    void setQuality(const Quality & quality);
     inline RenderType getRenderType() const { return gl_plus; }
 
 protected:
     void cleanup();
     bool initTexture(GLuint tex, GLenum format, GLenum dataType, int width, int height, GLint internalFormat = GL_RGBA);
     bool initTextures();
-
-    void repaint();
 
 //    void computeOutParameters(qreal outAspectRatio);
     void prepareSettings();

@@ -9,7 +9,7 @@ const GLfloat kTexCoords[] = {
         0, 1,
 };
 
-GLRenderRaw::GLRenderRaw(QWidget* parent) : RenderInterface(parent), shader(0), color_conversion(0) {
+GLRenderRaw::GLRenderRaw(int & redrawCounter, QWidget* parent) : QOpenGLWidget(parent), RenderInterface(redrawCounter), shader(0), color_conversion(0) {
     //    setAcceptDrops(true);
     //    setAttribute(Qt::WA_NoSystemBackground);
 
@@ -27,11 +27,6 @@ void GLRenderRaw::cleanup() {
     qDebug() << "GL PLUS CLEANUP";
     makeCurrent();
 
-//    if (shader) {
-//        delete shader;
-//        shader = 0;
-//    }
-
     glDeleteTextures(textures.size(), textures.data());
     textures.clear();
 
@@ -41,6 +36,37 @@ void GLRenderRaw::cleanup() {
     }
 
     doneCurrent();
+}
+
+void GLRenderRaw::setQuality(const Quality & quality) {
+//    QOpenGLFunctions * f = QOpenGLContext::currentContext() -> functions();
+
+    switch(quality) {
+        case RenderInterface::best : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+        break;}
+        case RenderInterface::low : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_DONT_CARE);
+        break;}
+        default : {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+            //glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+        }
+    };
 }
 
 //void GLRenderRaw::computeOutParameters(qreal outAspectRatio) {
@@ -237,7 +263,8 @@ void GLRenderRaw::prepareSettings() {
 }
 
 void GLRenderRaw::initializeGL() {
-    RenderInterface::initializeGL();
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+//    setQuality(best);
 
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLRenderRaw::cleanup, Qt::DirectConnection);
 

@@ -1,19 +1,17 @@
 #ifndef HARDWARE_RENDER_H
 #define HARDWARE_RENDER_H
 
-#include "media/media_player/output/video/controls/renders/render_interface.h"
+#include "render_interface.h"
 
-class HardwareRender : public RenderInterface {
+class HardwareRender : public RenderInterface, public QWidget {
 public:
-    HardwareRender(QWidget* parent = NULL);
+    HardwareRender(int & redrawCounter, QWidget* parent = NULL);
     virtual ~HardwareRender();
 
     void setQuality(const Quality & quality);
     inline RenderType getRenderType() const { return hardware; }
 
 protected:
-    void initializeGL();
-    void cleanup();
     void paintEvent(QPaintEvent *);
 };
 

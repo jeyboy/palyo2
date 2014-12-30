@@ -4,48 +4,29 @@
 #include "media/media_player/streams/frames/video_frame.h"
 #include "render_types.h"
 
+#include <QDebug>
 #include <QMutex>
-#include <QTimer>
-#include <QOpenGLWidget>
 
-class RenderInterface : public QOpenGLWidget {
-     Q_OBJECT
+class RenderInterface {
 public:
     enum Quality { best, fast, low };
 
-    RenderInterface(QWidget* parent = NULL);
-    virtual ~RenderInterface();
+    RenderInterface(int & redrawCounter);
+    ~RenderInterface();
 
-    virtual void setQuality(const Quality & quality);
+    virtual void setQuality(const Quality & quality) = 0;
     virtual enum RenderType getRenderType() const = 0;
 
-signals:
-    void closed();
-    void updated();
-    void fpsChanged(QString val);
-    void frameNeeded(void *&);
-
-private slots:
-    void frameInit();
-
+    void setFrame(VideoFrame * frame);
+    void resize(QRect rect);
+    inline void redrawed() { redrawRef++; }
 protected:
-    void resizeGL(int w, int h);
-    void initializeGL();
-    void redrawed();
-
-//    virtual void paintFrame() = 0;
-    void closeEvent(QCloseEvent *);
-    void resizeEvent(QResizeEvent *);
-
     bool init;
-    int fpsCounter;
-    int drawCounter;
-    int last_delay;
+    int & redrawRef;
 
     QRect output_rect;
     VideoFrame * vFrame;
     QMutex mutex;
-    QTimer frameTimer;
 };
 
 #endif // RENDER_INTERFACE_H
