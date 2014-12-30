@@ -244,7 +244,6 @@ void GLRenderRaw::paintGL() {
     glDisable(GL_DEPTH_TEST);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    qDebug() << "ERECT" << output_rect;
     glViewport(output_rect.left(), output_rect.top(), output_rect.width(), output_rect.height());
 
     mutex.lock();

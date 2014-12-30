@@ -11,10 +11,6 @@ GlRenderInterface::~GlRenderInterface() {
 //    context() -> setParent(this);
 }
 
-void GlRenderInterface::resizeGL(int /*w*/, int /*h*/) {
-
-}
-
 void GlRenderInterface::initializeGL() {
     QOpenGLWidget::connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &RenderInterface::cleanup, Qt::DirectConnection);
 
@@ -59,9 +55,4 @@ void GlRenderInterface::setQuality(const Quality & quality) {
             glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
         }
     };
-}
-
-void GlRenderInterface::resizeEvent(QResizeEvent * event) {
-    QOpenGLWidget::resizeEvent(event);
-    recalcOutputRect();
 }

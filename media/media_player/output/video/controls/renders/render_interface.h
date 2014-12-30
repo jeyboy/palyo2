@@ -34,11 +34,12 @@ private slots:
 protected:
     void recalcOutputRect();
     virtual void repaintNeeded() {}
+    virtual void resizeNeeded(QResizeEvent *) {}
     virtual void cleanupResources() {}
     void redrawed();
 
     void closeEvent(QCloseEvent *);
-//    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent *);
 
     bool init;
     int fpsCounter;

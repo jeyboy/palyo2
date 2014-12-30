@@ -22,7 +22,6 @@ RenderInterface::~RenderInterface() {
 }
 
 void RenderInterface::recalcOutputRect() {
-    qDebug() << "RECT " << rect();
     if (vFrame)
         output_rect = vFrame -> calcSize(this -> rect());
     else
@@ -58,8 +57,8 @@ void RenderInterface::closeEvent(QCloseEvent *) {
     emit closed();
 }
 
-//void RenderInterface::resizeEvent(QResizeEvent * event) {
-//    QWidget::resizeEvent(event);
-
-//    recalcOutputRect();
-//}
+void RenderInterface::resizeEvent(QResizeEvent * event) {
+    QWidget::resizeEvent(event);
+    recalcOutputRect();
+    resizeNeeded(event);
+}
