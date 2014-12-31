@@ -5,7 +5,7 @@ GLRender::GLRender(int & redrawCounter, QWidget* parent) : QOpenGLWidget(parent)
 }
 
 GLRender::~GLRender() {
-
+    cleanup();
 }
 
 void GLRender::setQuality(const Quality & quality) {

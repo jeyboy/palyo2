@@ -18,6 +18,7 @@ GLRenderRaw::GLRenderRaw(int & redrawCounter, QWidget* parent) : QOpenGLWidget(p
 }
 
 GLRenderRaw::~GLRenderRaw() {
+    cleanup();
 //    makeCurrent();
 //    context() -> setParent(this);
 //    doneCurrent();
