@@ -39,18 +39,18 @@ void VideoOutput::setRender(RenderType type) {
 
     switch(type) {
         case none: { return; }
+        case stub: {
+            screen = new StubRender(drawCounter, this);
+        break;}
         case gl_plus: {
             screen = new GLRenderRaw(drawCounter, this);
-            break;
-        }
+        break;}
         case gl: {
             screen = new GLRender(drawCounter, this);
-            break;
-        }
+        break;}
         default: {
             screen = new HardwareRender(drawCounter, this);
-            break;
-        }
+        break;}
     }
 
     screen -> toWidget() -> setMouseTracking(true);

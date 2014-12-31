@@ -123,7 +123,8 @@ SOURCES += main.cpp\
     media/media_player/utils/video_types.cpp \ 
     media/media_player/utils/web/custom_network_access_manager.cpp \
     media/media_player/utils/web/web_object.cpp \
-    media/media_player/contexts/custom_context.cpp
+    media/media_player/contexts/custom_context.cpp \
+    media/media_player/output/video/controls/renders/stub_render.cpp
 
 HEADERS  += mainwindow.h \
     misc/data_store.h \
@@ -247,7 +248,8 @@ HEADERS  += mainwindow.h \
     media/media_player/contexts/custom_context.h \
     media/media_player/streams/frames/video/video_buffer_proxy.h \
     media/media_player/utils/media_attributes.h \
-    media/media_player/media_player_state.h
+    media/media_player/media_player_state.h \
+    media/media_player/output/video/controls/renders/stub_render.h
 
 unix:!mac {
         QT += gui-private
