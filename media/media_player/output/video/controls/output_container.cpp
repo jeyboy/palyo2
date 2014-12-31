@@ -9,14 +9,12 @@ OutputContainer::OutputContainer(MasterClock * clock, QWidget * parent) : QWidge
 bool OutputContainer::event(QEvent * event) {
     if (event -> type() == QEvent::MouseButtonRelease) {
         QMouseEvent * mouseEvent = static_cast <QMouseEvent *> (event);
+        MediaPlayer * player = (MediaPlayer * )clock -> mediaPlayer();
 
-        if (mouseEvent -> button() == Qt::LeftButton) {
-            if (((MediaPlayer * )clock -> mediaPlayer()) -> isPlayed()) {
-                ((MediaPlayer * )clock -> mediaPlayer()) -> pause();
-            }
-            else {
-                ((MediaPlayer * )clock -> mediaPlayer()) -> play();
-            }
+        if (mouseEvent -> button() == Qt::LeftButton && hasFocus()) {
+            if (player -> isPlayed())
+                player -> pause();
+            else player -> play();
         }
     }
 

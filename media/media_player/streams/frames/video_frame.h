@@ -25,7 +25,7 @@ struct VideoFrame {
     QImage * asImage() { return buffer -> asQImage(); }
     AVPicture * asPicture() { return buffer -> asAVPicture(); }
 
-    bool skip() { return buffer == 0;}
+    inline bool skip() { return buffer == 0;}
 
     uint calcDelay() {
         uint res = 40;
@@ -37,22 +37,19 @@ struct VideoFrame {
             );
         }
 
-        if (pts < -1)
-            res = -pts;
-
         return res;
     }
 
     QRect calcSize(QRect defSize) {
         int h = defSize.height();
         int w = ((int)rint(h * aspect_ratio)) & -3;
+
         if (w > defSize.width()) {
             w = defSize.width();
             h = ((int)rint(w / aspect_ratio)) & -3;
         }
 
-        QRect rect(defSize.left() + (defSize.width() - w) / 2, defSize.top() + (defSize.height() - h) / 2, w, h);
-        return rect;
+        return QRect(defSize.left() + (defSize.width() - w) / 2, defSize.top() + (defSize.height() - h) / 2, w, h);
     }
 
     MasterClock * clock;

@@ -8,7 +8,7 @@ public:
     StubRender(int & redrawCounter, QWidget* parent = NULL);
     virtual ~StubRender();
 
-    inline void setFrame(VideoFrame * frame) { delete frame;  qDebug() << "SOSSAAS";}
+    inline void setFrame(int /*delay*/, VideoFrame * frame) { delete frame; }
     inline void setQuality(const Quality & /*quality*/) {}
     inline RenderType getRenderType() const { return stub; }
     inline QWidget * toWidget() { return this; }

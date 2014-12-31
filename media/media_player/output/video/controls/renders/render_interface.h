@@ -17,7 +17,7 @@ public:
     virtual void setQuality(const Quality & quality) = 0;
     virtual enum RenderType getRenderType() const = 0;
 
-    void setFrame(VideoFrame * frame);
+    virtual void setFrame(int delay, VideoFrame * frame);
     void resize(QRect rect);
     inline void redrawed() { redrawRef++; }
     virtual inline QWidget * toWidget() = 0;

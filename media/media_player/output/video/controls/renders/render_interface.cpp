@@ -13,14 +13,15 @@ RenderInterface::~RenderInterface() {
     mutex.unlock();
 }
 
-void RenderInterface::setFrame(VideoFrame * frame) {
+void RenderInterface::setFrame(int delay, VideoFrame * frame) {
     if (frame && !frame -> skip()) {
         mutex.lock();
         delete vFrame;
         vFrame = frame;
         updateRequired = true;
         mutex.unlock();
-        toWidget() -> repaint();
+        if (delay > 0)
+            toWidget() -> repaint();
     }
 }
 

@@ -87,11 +87,14 @@ void VideoOutput::frameInit() {
     VideoFrame * frame = 0;
     emit frameNeeded((void *&)frame);
     if (frame) {
+        last_delay = frame -> calcDelay();
+
         if (!frame -> skip()) {
             fpsCounter++;
-            screen -> setFrame(frame);
-        }
-        frameTimer.singleShot((last_delay = frame -> calcDelay()), this, SLOT(frameInit()));
+            screen -> setFrame(last_delay, frame);
+
+        } else delete frame;
+        frameTimer.singleShot(last_delay, this, SLOT(frameInit()));
 
     } else
         frameTimer.singleShot((last_delay = BASE_DELAY), this, SLOT(frameInit()));
