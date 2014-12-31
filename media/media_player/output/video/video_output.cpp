@@ -9,7 +9,7 @@ VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type,
     , clock(clock)
     , screen(0) {
 
-    resize(width, height);
+    resize(qMax(width, 250), qMax(height, 250));
 
     QVBoxLayout * newLayout = new QVBoxLayout(this);
     newLayout -> setContentsMargins(0, 0, 0, 0);
@@ -113,6 +113,7 @@ void VideoOutput::mouseMoveEvent(QMouseEvent * event) {
 }
 
 void VideoOutput::resizeEvent(QResizeEvent * event) {
+    qDebug() << event -> size();
     panel -> setRegion(rect());
     OutputContainer::resizeEvent(event);
 

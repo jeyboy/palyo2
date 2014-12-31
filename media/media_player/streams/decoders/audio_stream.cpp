@@ -37,6 +37,7 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterCloc
 AudioStream::~AudioStream() {
     qDebug() << "Audion stream";
     output -> stop();
+    delete output;
     close();
 
     delete resampler;
