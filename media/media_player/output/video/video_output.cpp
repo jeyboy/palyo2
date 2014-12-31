@@ -115,7 +115,6 @@ void VideoOutput::mouseMoveEvent(QMouseEvent * event) {
 }
 
 void VideoOutput::resizeEvent(QResizeEvent * event) {
-    qDebug() << event -> size();
     panel -> setRegion(rect());
     OutputContainer::resizeEvent(event);
 
