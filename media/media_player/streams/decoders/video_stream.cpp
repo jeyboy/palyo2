@@ -45,12 +45,13 @@ bool VideoStream::isBlocked() {
 }
 
 void VideoStream::routine() {
+    if (pauseRequired) return;
+
     mutex -> lock();
     bool isEmpty = packets.isEmpty();
     mutex -> unlock();
 
-    if (pauseRequired) return;
-    else if (isEmpty && eof) suspend();
+    if (isEmpty && eof) suspend();
 
     if (isEmpty) {
         if (is_attachment)
