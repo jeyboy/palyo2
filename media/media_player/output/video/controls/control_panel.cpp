@@ -71,7 +71,7 @@ ControlPanel::ControlPanel(MasterClock * clock, QWidget * parent) : QFrame(paren
     connect(stop, SIGNAL(clicked()), (MediaPlayer *)clock -> mediaPlayer(), SLOT(stop()));
     layout() -> addWidget(stop);
 
-    connect((MediaPlayer *)clock -> mediaPlayer(), SIGNAL(stateChanged(MediaPlayerState::Type)), this, SLOT(playerStateChanged(MediaPlayerState::Type)));
+    connect((MediaPlayer *)clock -> mediaPlayer(), SIGNAL(stateChanged(PlayerState)), this, SLOT(playerStateChanged(PlayerState)));
 
     timer = new QLabel(this);
     layout() -> addWidget(timer);
@@ -109,20 +109,20 @@ void ControlPanel::sliderUpdate(int pos) {
     timer -> setText(temp);
 }
 
-void ControlPanel::playerStateChanged(MediaPlayerState::Type state) {
+void ControlPanel::playerStateChanged(PlayerState state) {
     switch(state) {
-        case MediaPlayerState::Played: {
+        case Played: {
             play -> hide();
             pause -> show();
             stop -> show();
         break;}
-        case MediaPlayerState::Paused: {
+        case Paused: {
             play -> show();
             pause -> hide();
             stop -> show();
         break;}
-        case MediaPlayerState::Stoped:
-        case MediaPlayerState::Error: {
+        case Stoped:
+        case Error: {
             play -> show();
             pause -> hide();
             stop -> hide();

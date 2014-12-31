@@ -21,7 +21,7 @@ public:
     void setRegion(QRect rect);
 protected slots:
     void sliderUpdate(int);
-    void playerStateChanged(MediaPlayerState::Type);
+    void playerStateChanged(PlayerState);
 protected:
     void paintEvent(QPaintEvent *);
 
