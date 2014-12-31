@@ -12,9 +12,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterCloc
 
 ////        packetsBufferLen = 5;
 ////        framesBufferLen = 30;
-
         prepareRenderType(hardware);
-        resampler = new VideoResampler(codec_context, type != gl_plus);
         output = new VideoOutput(this, clock, type, codec_context -> width, codec_context -> height);
     }
 }
@@ -37,7 +35,9 @@ bool VideoStream::isBlocked() {
 }
 
 void VideoStream::prepareRenderType(RenderType newType) {
-    //TODO: maybe need to reinit resampler in some cases
+    delete resampler;
+    resampler = new VideoResampler(codec_context, newType != gl_plus);
+
     switch(newType) {
         case gl_plus: {
             type = resampler -> isGLShaderCompatible() ? gl_plus : gl;
