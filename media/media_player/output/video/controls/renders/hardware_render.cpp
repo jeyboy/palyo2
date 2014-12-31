@@ -23,7 +23,7 @@ void HardwareRender::setQuality(const Quality & quality) {
     };
 }
 
-void HardwareRender::paintEvent(QPaintEvent * event) {
+void HardwareRender::paintEvent(QPaintEvent * /*event*/) {
     if (vFrame == 0 || !updateRequired) return;
 
     if (!init) {
@@ -31,7 +31,7 @@ void HardwareRender::paintEvent(QPaintEvent * event) {
         RenderInterface::resize(rect());
     }
 
-    Q_UNUSED(event);
+//    Q_UNUSED(event);
 //    QWidget::paintEvent(event);
 
     QPainter p(this);

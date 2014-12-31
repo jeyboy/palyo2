@@ -24,6 +24,7 @@ public:
     void nextFrame(void *&);
 
 protected:
+    void prepareRenderType(RenderType newType);
     void routine();
     VideoFrame * calcPts(VideoFrame * videoFrame);
     double syncPts(AVFrame *src_frame);
@@ -34,6 +35,7 @@ private:
     VideoOutput * output;
     QList<VideoFrame *> frames;
     VideoResampler * resampler;
+    RenderType type;
 };
 
 #endif // VIDEO_STREAM_H

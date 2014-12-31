@@ -10,7 +10,7 @@ VideoResampler::VideoResampler(AVCodecContext * codec_context, bool hardwareConv
     , resampleContext(0)
 {
     img_format = VideoTypes::toQImageFormat(pixelFormatOut);
-    compatible = VideoTypes::isCompatible(pixelFormatOut);
+    compatible = VideoTypes::isCompatible(codec_context -> pix_fmt); //pixelFormatOut
     RGBFrame = av_frame_alloc();
 
     settings = new VideoSettings(

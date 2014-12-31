@@ -12,6 +12,18 @@ public:
         width = desktop -> width();
         height = desktop -> height();
     }
+
+    static void minimizeIfNeeded(int & width, int & height, float percentage) {
+        int screen_width, screen_height;
+        percentage /= 100;
+        screenSize(screen_width, screen_height);
+        qDebug() << "SCRREN " << screen_width << " " << screen_height << " | " << screen_width * percentage << " " << screen_height * percentage;
+
+        width = qMin((int)(screen_width * percentage), width);
+        height = qMin((int)(screen_height * percentage), height);
+
+        qDebug() << "SCRREN " << screen_width << " " << screen_height;
+    }
 };
 
 #endif // SCREEN_H

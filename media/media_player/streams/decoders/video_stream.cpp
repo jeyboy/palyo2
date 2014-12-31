@@ -1,5 +1,4 @@
 #include "video_stream.h"
-#include "misc/screen.h"
 #include "media/media_player/output/video/controls/renders/render_types.h"
 
 VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority)
@@ -11,19 +10,12 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterCloc
         setSemaphore(sema);
         calcAspectRatio();
 
-        int width, height;
-        Screen::screenSize(width, height);
+////        packetsBufferLen = 5;
+////        framesBufferLen = 30;
 
-//        packetsBufferLen = 5;
-//        framesBufferLen = 30;
-
-        width = qMin((int)(width * 0.6), codec_context -> width);
-        height = qMin((int)(height * 0.6), codec_context -> height);
-
-        RenderType type = stub;
-
-        resampler = new VideoResampler(codec_context, type == hardware || type == gl);
-        output = new VideoOutput(this, clock, type == hardware || type == gl || type == stub ? type : (resampler -> isGLShaderCompatible() ? gl_plus : gl), width, height);
+        prepareRenderType(hardware);
+        resampler = new VideoResampler(codec_context, type != gl_plus);
+        output = new VideoOutput(this, clock, type, codec_context -> width, codec_context -> height);
     }
 }
 
@@ -42,6 +34,18 @@ int VideoStream::calcDelay() {
 
 bool VideoStream::isBlocked() {
     return MediaStream::isBlocked() && (output && frames.size() >= framesBufferLen);
+}
+
+void VideoStream::prepareRenderType(RenderType newType) {
+    //TODO: maybe need to reinit resampler in some cases
+    switch(newType) {
+        case gl_plus: {
+            type = resampler -> isGLShaderCompatible() ? gl_plus : gl;
+        break;}
+        default: {
+            type = newType;
+        break;}
+    }
 }
 
 void VideoStream::routine() {
@@ -131,7 +135,8 @@ void VideoStream::resumeStream() {
     MediaStream::resume();
 }
 
-void VideoStream::changeRenderType(RenderType type) {
+void VideoStream::changeRenderType(RenderType newType) {
+    prepareRenderType(newType);
     output -> setRender(type);
 }
 

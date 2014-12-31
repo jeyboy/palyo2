@@ -1,5 +1,6 @@
 #include "video_output.h"
 #include "media/media_player/media_player.h"
+#include "misc/screen.h"
 
 VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type, int width, int height) : OutputContainer(clock)
     , fpsCounter(0)
@@ -9,6 +10,7 @@ VideoOutput::VideoOutput(QObject * parent, MasterClock * clock, RenderType type,
     , clock(clock)
     , screen(0) {
 
+    Screen::minimizeIfNeeded(width, height, 60);
     resize(qMax(width, 250), qMax(height, 250));
 
     QVBoxLayout * newLayout = new QVBoxLayout(this);
