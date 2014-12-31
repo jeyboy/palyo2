@@ -74,11 +74,9 @@ void VideoOutput::hideMouse() {
     offScreenSaver();
 }
 
-//void VideoOutput::redrawed() { drawCounter++; }
-
 void VideoOutput::frameInit() {
     if (!screen)
-        frameTimer.singleShot((last_delay = 5), this, SLOT(frameInit()));
+        frameTimer.singleShot((last_delay = BASE_DELAY), this, SLOT(frameInit()));
 
     if (last_delay != 0) {
         float delay = (1000.0f / last_delay);
@@ -96,7 +94,7 @@ void VideoOutput::frameInit() {
         frameTimer.singleShot((last_delay = frame -> calcDelay()), this, SLOT(frameInit()));
 
     } else
-        frameTimer.singleShot((last_delay = 5), this, SLOT(frameInit()));
+        frameTimer.singleShot((last_delay = BASE_DELAY), this, SLOT(frameInit()));
 
     if ((mouse_delay += last_delay) >= 5000) hideMouse();
 
