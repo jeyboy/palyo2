@@ -1,9 +1,9 @@
 #include "audio_stream.h"
 
 AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority)
-    : QIODevice(parent), MediaStream(context, clock, streamIndex, parent, priority)
-    , sleep_correlation(10)
+    : MediaStream(context, clock, streamIndex, parent, priority)
     , defaultChannelLayout(AV_CH_LAYOUT_STEREO)
+    , sleep_correlation(10)
     , resampleRequire(false)
     , resampler(0) {
 
@@ -17,31 +17,16 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterCloc
         //              << "  frame->extended_data[0] has the data for channel 1\n"
         //              << "  frame->extended_data[1] has the data for channel 2\n"
         //              << "  etc.\n";
-
-        open(QIODevice::ReadOnly);
-
-        QAudioFormat format;
-        fillFormat(format);
-
         framesPerBuffer = codec_context -> channels; //is_planar ? codec_context -> channels : 1;
         packetsBufferLen = framesPerBuffer * 10;
         framesBufferLen = framesPerBuffer * 15;
-
-        output = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, parent);
-//        output -> setNotifyInterval(20);
-        output -> setVolume(1.0);
-        output -> start(this);
     }
 }
 
 AudioStream::~AudioStream() {
-    qDebug() << "Audion stream";
-    output -> stop();
-    delete output;
-    close();
-
     delete resampler;
     flushData();
+    frames.clear();
 }
 
 //int AudioStream::calcDelay() {
@@ -54,21 +39,15 @@ bool AudioStream::isBlocked() {
 }
 
 void AudioStream::suspendStream() {
-    output -> suspend();
     MediaStream::suspend();
 }
 void AudioStream::resumeStream() {
     MediaStream::resume();
-    output -> resume();
 }
-
-uint AudioStream::getVolume() const { return output -> volume() * 1000; }
-void AudioStream::setVolume(uint val) { output -> setVolume((qreal)val / 1000); }
 
 void AudioStream::flushData() {
     MediaStream::dropPackets();
     qDeleteAll(frames);
-    frames.clear();
     avcodec_flush_buffers(codec_context);
 }
 
@@ -79,7 +58,7 @@ void AudioStream::routine() {
     bool isEmpty = packets.isEmpty();
     mutex -> unlock();
 
-    if (!pauseRequired && isEmpty && eof && output -> state() != QAudio::ActiveState) suspendStream();
+    if (!pauseRequired && isEmpty && eof && !deviceInAction()) suspendStream();
 
     // TODO: mutex required for frames
     if (isEmpty) {
@@ -138,14 +117,14 @@ void AudioStream::routine() {
     av_free_packet(packet);
 }
 
-qint64 AudioStream::readData(char *data, qint64 maxlen) {
+qint64 AudioStream::fillBuffer(char * data, qint64 maxlen) {
     int reslen = 0;
     AudioFrame * currFrame;
     memset(data, 0, maxlen); // clear buffer while buffer is idle
     int copy_size;
 
     if (!pauseRequired && !frames.isEmpty()) {
-        char * out = data;
+        void * out = data;
         while(!frames.isEmpty()) {
             if (reslen == maxlen)
                 break;
@@ -175,16 +154,13 @@ qint64 AudioStream::readData(char *data, qint64 maxlen) {
             }
         }
 
+        qDebug() << reslen;
         return reslen;
     }
 
     if (pauseRequired || eof) suspendStream();
     qDebug() << "IS EMPTY";
     return maxlen;
-}
-
-qint64 AudioStream::writeData(const char */*data*/, qint64 /*len*/) {
-    return 0;
 }
 
 //void AudioStream::sync(double delay, char *data, int & len, qint64 maxlen) {
@@ -217,72 +193,6 @@ qint64 AudioStream::writeData(const char */*data*/, qint64 /*len*/) {
 //        len = wanted_size;
 //    }
 //}
-
-void AudioStream::fillFormat(QAudioFormat & format) {
-    bool approxSettings = false, notSupport = false;
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-
-    format.setCodec("audio/pcm");
-    format.setSampleRate(codec_context -> sample_rate);
-    format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setChannelCount(codec_context -> channels);
-    format.setSampleSize(av_get_bytes_per_sample(codec_context -> sample_fmt) * 8);
-
-    switch (codec_context -> sample_fmt) {
-        case AV_SAMPLE_FMT_U8: { ///< unsigned 8 bits
-            format.setSampleType(QAudioFormat::UnSignedInt);
-        break;}
-
-        case AV_SAMPLE_FMT_S16: { ///< signed 16 bits
-            format.setSampleType(QAudioFormat::SignedInt);
-        break;}
-
-        case AV_SAMPLE_FMT_S32: { ///< signed 32 bits
-            format.setSampleType(QAudioFormat::SignedInt);
-        break;}
-
-        // this format is not compatible with ffmpeg
-        case AV_SAMPLE_FMT_FLT: { ///< float
-            format.setSampleType(QAudioFormat::Float);
-        break;}
-
-        default:  {
-            //        AV_SAMPLE_FMT_DBL,         ///< double
-            //        AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar
-            //        AV_SAMPLE_FMT_S16P,        ///< signed 16 bits, planar
-            //        AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
-            //        AV_SAMPLE_FMT_FLTP,        ///< float, planar
-            //        AV_SAMPLE_FMT_DBLP,        ///< double, planar
-
-            format.setSampleSize(32);
-            format.setSampleType(QAudioFormat::Float);
-            notSupport = true;
-        }
-    }
-
-    qDebug() << format;
-    if ((approxSettings = !info.isFormatSupported(format))) {
-        qWarning() << format << " format not supported by backend, set approx format.";
-        format = info.nearestFormat(format);
-        qDebug() << format;
-    }
-
-    if (approxSettings || notSupport) {
-        resampler = new AudioResampler();
-
-        enum AVSampleFormat sampleFormatOut = MediaPlayerUtils::toSampleFormat(format.sampleSize());
-
-        resampleRequire = resampler -> init(
-                        codec_context -> sample_fmt,
-                        sampleFormatOut,
-                        codec_context -> sample_rate,
-                        format.sampleRate(),
-                        MediaPlayerUtils::checkChannelLayout(codec_context -> channel_layout, codec_context -> channels),
-//                        MediaPlayerUtils::checkChannelLayout(MediaPlayerUtils::selectChannelLayout(codec), codec_context -> channels),
-                        MediaPlayerUtils::checkChannelLayout(defaultChannelLayout, format.channelCount())
-                    );
-    }
-}
 
 double AudioStream::calcPts(AVPacket * packet) {
     double clock;

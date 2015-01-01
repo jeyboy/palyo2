@@ -5,7 +5,7 @@
 
 #include "../utils/media_attributes.h"
 
-#include "decoders/audio_stream.h"
+#include "../output/audio/audio_output_types.h"
 #include "decoders/video_stream.h"
 #include "decoders/subtitle_stream.h"
 

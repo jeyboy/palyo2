@@ -5,37 +5,29 @@
 #include "media/media_player/streams/base/media_stream.h"
 #include "../frames/audio_frame.h"
 
-//#include <QAudioDeviceInfo>
-#include <QAudioOutput>
-#include <QIODevice>
-#include <QAudioFormat>
-
-class AudioStream : public QIODevice, public MediaStream {
+class AudioStream : public MediaStream {
 public:
     AudioStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority = InheritPriority);
     ~AudioStream();
 
     bool isBlocked();
 
-    void flushData();
-    void suspendStream();
-    void resumeStream();   
+    virtual void flushData();
+    virtual void suspendStream();
+    virtual void resumeStream();
 
-    uint getVolume() const;
-    void setVolume(uint val);
-
-    void nextFrame(void *& ret) { ret = 0; } // stub
+    virtual uint getVolume() const = 0;
+    virtual void setVolume(uint val) = 0;
+    virtual bool deviceInAction() = 0;
 protected:
     void routine();
-    qint64 readData(char *data, qint64 maxlen);
-    qint64 writeData(const char *data, qint64 len);
 
+    qint64 fillBuffer(char * data, qint64 maxlen);
 //    void sync(double delay, char *data, int & len, qint64 maxlen);
-    void fillFormat(QAudioFormat & format);
+
     double calcPts(AVPacket * packet);
     int bytesPerSecond();
 
-private:
     int defaultChannelLayout;
     int framesPerBuffer;
     int sleep_correlation;
@@ -43,7 +35,6 @@ private:
     bool resampleRequire;
     AudioResampler * resampler;
 
-    QAudioOutput * output;
     QList<AudioFrame *> frames;
 };
 

@@ -172,7 +172,7 @@ uint StreamDecoder::bestStream(AudioStream * audio, VideoStream * video) {
 
 void StreamDecoder::findStreams(MasterClock * clock) {
     videoStream = new VideoStream(this, context, clock, semaphore, av_find_best_stream(context, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0));
-    audioStream = new AudioStream(this, context, clock, semaphore, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, langStream(), bestStream(audioStream, videoStream), NULL, 0));
+    audioStream = new AudioOutputStream(this, context, clock, semaphore, av_find_best_stream(context, AVMEDIA_TYPE_AUDIO, langStream(), bestStream(audioStream, videoStream), NULL, 0));
     subtitleStream = new SubtitleStream(this, context, clock, semaphore, av_find_best_stream(context, AVMEDIA_TYPE_SUBTITLE, -1, bestStream(audioStream, videoStream), NULL, 0));
 
     if(!audioStream -> isValid() && !videoStream -> isValid()) {

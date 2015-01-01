@@ -249,7 +249,8 @@ HEADERS  += mainwindow.h \
     media/media_player/streams/frames/video/video_buffer_proxy.h \
     media/media_player/utils/media_attributes.h \
     media/media_player/media_player_state.h \
-    media/media_player/output/video/controls/renders/stub_render.h
+    media/media_player/output/video/controls/renders/stub_render.h \
+    media/media_player/output/audio/audio_output_types.h
 
 unix:!mac {
         QT += gui-private
