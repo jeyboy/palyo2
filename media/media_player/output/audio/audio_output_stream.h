@@ -13,8 +13,6 @@ public:
     AudioOutputStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority = InheritPriority);
     virtual ~AudioOutputStream();
 
-    void flushData();
-
     uint getVolume() const;
     void setVolume(uint val);
 
@@ -24,8 +22,8 @@ public:
     void resumeStream();
 protected:
     void fillFormat(QAudioFormat & format);
-    qint64 readData(char *data, qint64 maxlen);
-    qint64 writeData(const char *data, qint64 len);
+    qint64 readData(char *data, qint64 maxSize);
+    qint64 writeData(const char *data, qint64 maxSize);
 
     QAudioOutput * output;
 };

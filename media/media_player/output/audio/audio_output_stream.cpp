@@ -4,15 +4,16 @@ AudioOutputStream::AudioOutputStream(QObject * parent, AVFormatContext * context
     : QIODevice(parent), AudioStream(parent, context, clock, sema, streamIndex, priority) {
 
     if (valid) {
-        open(QIODevice::ReadOnly);
-
         QAudioFormat format;
         fillFormat(format);
 
         output = new QAudioOutput(QAudioDeviceInfo::defaultOutputDevice(), format, parent);
 //        output -> setNotifyInterval(20);
         output -> setVolume(1.0);
+
+        open(QIODevice::ReadOnly);
         output -> start(this);
+        qDebug() << output -> error();
     }
 }
 
@@ -35,11 +36,6 @@ void AudioOutputStream::suspendStream() {
 void AudioOutputStream::resumeStream() {
     AudioStream::resumeStream();
     output -> resume();
-}
-
-void AudioOutputStream::flushData() {
-    AudioStream::flushData();
-    output -> reset();
 }
 
 void AudioOutputStream::fillFormat(QAudioFormat & format) {
@@ -109,7 +105,6 @@ void AudioOutputStream::fillFormat(QAudioFormat & format) {
 }
 
 qint64 AudioOutputStream::readData(char *data, qint64 maxlen) {
-    qDebug() << maxlen;
     return fillBuffer(data, maxlen);
 }
 
