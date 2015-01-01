@@ -111,7 +111,6 @@ SOURCES += main.cpp\
     media/media_player/resamplers/audio_resampler.cpp \
     media/media_player/resamplers/video_resampler.cpp \
     media/media_player/utils/master_clock.cpp \
-    media/media_player/output/audio/portaudio_output_stream.cpp \
     media/media_player/output/audio/audio_output_stream.cpp \
     media/media_player/output/video/controls/control_panel.cpp \
     media/media_player/output/video/controls/output_container.cpp \
@@ -221,7 +220,6 @@ HEADERS  += mainwindow.h \
     media/media_player/resamplers/video_resampler.h \
     media/media_player/streams/base/i_media_stream.h \
     media/media_player/output/audio/audio_output_stream.h \
-    media/media_player/output/audio/portaudio_output_stream.h \
     media/media_player/output/video/controls/control_panel.h \
     media/media_player/output/video/controls/output_container.h \
     media/media_player/output/video/video_output.h \
@@ -264,7 +262,6 @@ unix:!mac {
 }
 win32: {
         LIBS += -lpsapi
-        SOURCES += globalshortcut/qxtglobalshortcut_win.cpp
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bass_fx.lib)
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/bassmix.lib)
@@ -273,10 +270,16 @@ win32: {
         LIBS += -L"$$_PRO_FILE_PWD_/libs/ffmpeg/" -llibavcodec -llibavdevice -llibavfilter -llibavformat -llibavutil -llibpostproc -llibswresample -llibswscale -lpostproc -lpostproc-53 -lswresample-1
 
         LIBS += -L"$$_PRO_FILE_PWD_/libs/portable_audio/" -lportaudio_x86
+
+        HEADERS  += media/media_player/output/audio/portaudio_output_stream.h
+
+        SOURCES += globalshortcut/qxtglobalshortcut_win.cpp  \
+            media/media_player/output/audio/portaudio_output_stream.cpp
 }
 mac: {
-        SOURCES += globalshortcut/qxtglobalshortcut_mac.cpp
         LIBS += $$quote($${_PRO_FILE_PWD_}/libs/bass/libbass.dylib)
+
+        SOURCES += globalshortcut/qxtglobalshortcut_mac.cpp
 }
 
 FORMS    += mainwindow.ui \

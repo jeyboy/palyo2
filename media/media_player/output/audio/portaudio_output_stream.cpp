@@ -9,7 +9,10 @@ static int callback(const void * /*inputBuffer*/,
 
     PortAudioOutputStream * stream = (PortAudioOutputStream *)userData;
     stream -> fillBuffer(outputBuffer, stream -> bytesPerBuffer(framesPerBuffer));
-    return paContinue;
+
+    if (stream -> dataLoadingFinished())
+        return paComplete;
+    else return paContinue;
 }
 
 PortAudioOutputStream::PortAudioOutputStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority)

@@ -11,6 +11,7 @@ public:
     virtual ~MediaStream();
 
     inline bool requirePreload() { return !valid || (valid && packets.isEmpty()); }
+    inline bool dataLoadingFinished() { return isSuspended() && eof;}
 
     void suspend();
 signals:

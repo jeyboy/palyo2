@@ -216,7 +216,7 @@ qint64 AudioStream::fillBuffer(void * data, qint64 maxlen) {
         return reslen;
     }
 
-    if (pauseRequired || eof) suspendStream(); // ?
+    if (pauseRequired || eof) suspendStream(); // for port audio
     qDebug() << "IS EMPTY";
     return maxlen;
 }
