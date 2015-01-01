@@ -1,29 +1,30 @@
 #include "portaudio_output_stream.h"
-#include "media/media_player/streams/decoders/audio_stream.h"
 
-static int callback( const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void *userData) {
-    AudioStream * stream  = (AudioStream *)userData;
-    int16_t *out = (int16_t *)outputBuffer;
+static int callback(const void * /*inputBuffer*/,
+                    void * outputBuffer,
+                    unsigned long framesPerBuffer,
+                    const PaStreamCallbackTimeInfo * /*timeInfo*/,
+                    PaStreamCallbackFlags /*statusFlags*/,
+                    void * userData) {
 
-    AudioFrame * frame = 0; /*stream -> decoded();*/
-    memcpy(out, frame -> buffer -> data(), frame -> buffer -> size());
-    delete frame;
+    PortAudioOutputStream * stream = (PortAudioOutputStream *)userData;
+    stream -> fillBuffer(outputBuffer, framesPerBuffer);
     return paContinue;
 }
 
-PortAudioOutputStream::PortAudioOutputStream(void * stream, int bytesPerSecond, QAudioFormat & streamFormat) :
-    initialized(false)
-    , outputParameters(new PaStreamParameters)
-    , stream(0)
-    , format(new QAudioFormat(streamFormat)) {
+PortAudioOutputStream::PortAudioOutputStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority)
+    : AudioStream(parent, context, clock, sema, streamIndex, priority)
+    , initialized(false)
+    , outputParameters(new PaStreamParameters) {
 
-    bytes_per_sec = bytesPerSecond;
-
-    init();
-    open(stream);
+    if (valid) {
+        init();
+        open();
+    }
 }
 
 PortAudioOutputStream::~PortAudioOutputStream() {
+    qDebug() << "Audio output";
     close();
 
     if (initialized)
@@ -32,61 +33,26 @@ PortAudioOutputStream::~PortAudioOutputStream() {
         delete outputParameters;
         outputParameters = 0;
     }
-
-    delete format;
 }
 
-//void PortAudioOutputStream::addBuffer(QByteArray & frame) {
-//    mutex -> lock();
-//        audioBuffers.append(frame);
-//    mutex -> unlock();
-//}
 
-//void PortAudioOutputStream::routine() {
-//    mutex -> lock();
-//    if (audioBuffers.isEmpty()) {
-//        mutex -> unlock();
-//        return;
-//    }
-//    QByteArray ar = audioBuffers.takeFirst();
-//    mutex -> unlock();
+//long gain = 0x4000; // equivalent to 0.5 in 1.15 fixed point format
 
-//    if (Pa_IsStreamStopped(stream))
-//        Pa_StartStream(stream);
-////#if KNOW_WHY
-////#ifndef Q_OS_MAC //?
-////    int diff = Pa_GetStreamWriteAvailable(stream) - outputLatency * format -> sampleRate();
-////    if (diff > 0) {
-////        int newsize = diff * format -> channelCount() * sizeof(float);
-////        static char *a = new char[newsize];
-////        memset(a, 0, newsize);
-////        Pa_WriteStream(stream, a, diff);
-////    }
-////#endif
-////#endif //KNOW_WHY
+//long sample = *data++;
 
-//    double last_buff_delay = ((double)ar.size()) / bytes_per_sec;
-//    MasterClock::instance() -> iterateAudioOutput(last_buff_delay);
+//long result = (gain * sample) > 15; // fixed point multiple
 
-//    PaError err = Pa_WriteStream(stream, ar.constData(), ar.size() / format -> channelCount() / (format -> sampleSize() / 8));
-//    if (err == paUnanticipatedHostError) {
-//        qWarning("Write portaudio stream error: %s", Pa_GetErrorText(err));
-//    }
+//*out++ = (short) result;
 
-//    msleep(last_buff_delay * 100);
-//}
+uint PortAudioOutputStream::getVolume() const { return 0;/*output -> volume() * 1000;*/ }
+void PortAudioOutputStream::setVolume(uint val) { /*output -> setVolume((qreal)val / 1000);*/ }
+bool PortAudioOutputStream::deviceInAction() { return Pa_IsStreamActive(stream); }
 
-int PortAudioOutputStream::paSampleFormat() {
-    if (format -> sampleSize() == 8 && format -> sampleType() == QAudioFormat::UnSignedInt)
-        return paUInt8;
-    else if (format -> sampleSize() == 16 && format -> sampleType() == QAudioFormat::SignedInt)
-        return paInt16;
-    else if (format -> sampleSize() == 32 && format -> sampleType() == QAudioFormat::SignedInt)
-        return paInt32;
-    else if (format -> sampleType() == QAudioFormat::Float)
-        return paFloat32;
-    else
-        return paCustomFormat;
+void PortAudioOutputStream::suspendStream() { // portaudio did not have suspend functional :(
+    AudioStream::suspendStream();
+}
+void PortAudioOutputStream::resumeStream() { // portaudio did not have resume functional :(
+    AudioStream::resumeStream();
 }
 
 bool PortAudioOutputStream::init() {
@@ -95,18 +61,17 @@ bool PortAudioOutputStream::init() {
         qWarning("Error when init portaudio: %s", Pa_GetErrorText(err));
         return false;
     }
-//    initialized = true;
 
-    int numDevices = Pa_GetDeviceCount();
-    for (int i = 0 ; i < numDevices ; ++i) {
-        const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(i);
-        if (deviceInfo) {
-            const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo(deviceInfo -> hostApi);
-            QString name = QString(hostApiInfo -> name) + ": " + QString::fromLocal8Bit(deviceInfo -> name);
-            qDebug("audio device %d: %s", i, name.toUtf8().constData());
-            qDebug("max in/out channels: %d/%d", deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels);
-        }
-    }
+//    int numDevices = Pa_GetDeviceCount();
+//    for (int i = 0 ; i < numDevices ; ++i) {
+//        const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(i);
+//        if (deviceInfo) {
+//            const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo(deviceInfo -> hostApi);
+//            QString name = QString(hostApiInfo -> name) + ": " + QString::fromLocal8Bit(deviceInfo -> name);
+//            qDebug("audio device %d: %s", i, name.toUtf8().constData());
+//            qDebug("max in/out channels: %d/%d", deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels);
+//        }
+//    }
 
     memset(outputParameters, 0, sizeof(PaStreamParameters));
     outputParameters -> device = Pa_GetDefaultOutputDevice();
@@ -121,15 +86,15 @@ bool PortAudioOutputStream::init() {
     qDebug("audio device: %s", QString::fromLocal8Bit(Pa_GetDeviceInfo(outputParameters -> device) -> name).toUtf8().constData());
     outputParameters -> hostApiSpecificStreamInfo = NULL;
     outputParameters -> suggestedLatency = Pa_GetDeviceInfo(outputParameters -> device) -> defaultHighOutputLatency;
-    outputParameters -> channelCount = format -> channelCount();
+    outputParameters -> channelCount = format.channelCount();
     outputParameters -> sampleFormat = paSampleFormat();
 
     initialized = true;
     return true;
 }
 
-bool PortAudioOutputStream::open(void * stream) {
-    PaError err = Pa_OpenStream(&stream, NULL, outputParameters, format -> sampleRate(), 0, paNoFlag, callback, stream);
+bool PortAudioOutputStream::open() {
+    PaError err = Pa_OpenStream(&stream, NULL, outputParameters, format.sampleRate(), 0, paNoFlag, callback, this);
     if (err == paNoError) {
         outputLatency = Pa_GetStreamInfo(stream) -> outputLatency;
         Pa_StartStream(stream);
@@ -157,3 +122,50 @@ bool PortAudioOutputStream::close() {
     stream = NULL;
     return true;
 }
+
+int PortAudioOutputStream::paSampleFormat() {
+    if (format.sampleSize() == 8 && format.sampleType() == QAudioFormat::UnSignedInt)
+        return paUInt8;
+    else if (format.sampleSize() == 16 && format.sampleType() == QAudioFormat::SignedInt)
+        return paInt16;
+    else if (format.sampleSize() == 32 && format.sampleType() == QAudioFormat::SignedInt)
+        return paInt32;
+    else if (format.sampleType() == QAudioFormat::Float)
+        return paFloat32;
+    else
+        return paCustomFormat;
+}
+
+////void PortAudioOutputStream::routine() {
+////    mutex -> lock();
+////    if (audioBuffers.isEmpty()) {
+////        mutex -> unlock();
+////        return;
+////    }
+////    QByteArray ar = audioBuffers.takeFirst();
+////    mutex -> unlock();
+
+////    if (Pa_IsStreamStopped(stream))
+////        Pa_StartStream(stream);
+//////#if KNOW_WHY
+//////#ifndef Q_OS_MAC //?
+//////    int diff = Pa_GetStreamWriteAvailable(stream) - outputLatency * format -> sampleRate();
+//////    if (diff > 0) {
+//////        int newsize = diff * format -> channelCount() * sizeof(float);
+//////        static char *a = new char[newsize];
+//////        memset(a, 0, newsize);
+//////        Pa_WriteStream(stream, a, diff);
+//////    }
+//////#endif
+//////#endif //KNOW_WHY
+
+////    double last_buff_delay = ((double)ar.size()) / bytes_per_sec;
+////    MasterClock::instance() -> iterateAudioOutput(last_buff_delay);
+
+////    PaError err = Pa_WriteStream(stream, ar.constData(), ar.size() / format -> channelCount() / (format -> sampleSize() / 8));
+////    if (err == paUnanticipatedHostError) {
+////        qWarning("Write portaudio stream error: %s", Pa_GetErrorText(err));
+////    }
+
+////    msleep(last_buff_delay * 100);
+////}

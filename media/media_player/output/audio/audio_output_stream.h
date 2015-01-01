@@ -3,10 +3,8 @@
 
 #include "media/media_player/streams/decoders/audio_stream.h"
 
-//#include <QAudioDeviceInfo>
 #include <QAudioOutput>
 #include <QIODevice>
-#include <QAudioFormat>
 
 class AudioOutputStream : public AudioStream, public QIODevice {
 public:
@@ -21,7 +19,6 @@ public:
     void suspendStream();
     void resumeStream();
 protected:
-    void fillFormat(QAudioFormat & format);
     qint64 readData(char *data, qint64 maxSize);
     qint64 writeData(const char *data, qint64 maxSize);
 

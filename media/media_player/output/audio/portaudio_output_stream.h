@@ -1,34 +1,38 @@
 #ifndef PORTAUDIO_OUTPUT_STREAM_H
 #define PORTAUDIO_OUTPUT_STREAM_H
 
+#include "media/media_player/streams/decoders/audio_stream.h"
 #include <QAudioFormat>
-#include <QList>
 #include <portaudio.h>
 
-class PortAudioOutputStream {
+class PortAudioOutputStream : public AudioStream {
 public:
-    PortAudioOutputStream(void * dStream, int bytesPerSecond, QAudioFormat & format);
-    ~PortAudioOutputStream();
+    PortAudioOutputStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority = InheritPriority);
+    virtual ~PortAudioOutputStream();
 
-//    void addBuffer(QByteArray & frame);
+    uint getVolume() const;
+    void setVolume(uint val);
+
+    bool deviceInAction();
+
+    void suspendStream();
+    void resumeStream();
+
+////    void addBuffer(QByteArray & frame);
 protected:
     bool init();
-    bool open(void * dStream);
+    bool open();
     bool close();
 
     int paSampleFormat();
-//    void routine();
-private:
-    int bytes_per_sec;
 
+private:
+//    int bytes_per_sec;
     bool initialized;
 
     PaStreamParameters *outputParameters;
     PaStream *stream;
     double outputLatency;
-
-    QList<QByteArray> audioBuffers;
-    QAudioFormat * format;
 };
 
 #endif // PORTAUDIO_OUTPUT_STREAM_H

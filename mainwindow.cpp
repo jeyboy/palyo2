@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    player -> open(QUrl("http://www.youtube.com/watch?v=dQw4w9WgXcQ"));
 
 //      player -> openMillis(QUrl::fromLocalFile("G:/Million.Sposobov.Poteryat'.Golovu.2014.RUS.BDRip.x264.-HELLYWOOD.mkv"), 38000);
-      player -> openMillis(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"), 60000);
+//      player -> openMillis(QUrl::fromLocalFile("L:/VIDEO/Dick Figures The Movie.mp4"), 60000);
 //    player -> open(QUrl::fromLocalFile("G:/test/test3/New Year, New Tricks - Happy 2014!.mkv"));
 //    player -> open(QUrl("http://www.ex.ua/get/111412158")); //short
 //    player -> open(QUrl("http://www.ex.ua/get/120031676")); //asterix
@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
+      player -> open(QUrl::fromLocalFile("L:/VIDEO/AsterIks.Zemlya.Bogov.2014.D.TS.rustorrents.org.avi"));
 //    player -> open(QUrl::fromLocalFile("F:/Muzon/feel u.wma"));
 //    player -> open(QUrl::fromLocalFile("G:/test/test3/Стрелок (RUS).mp4"));
 //    qDebug() << player -> open(QUrl("http://www.ex.ua/get/116023228")); //asterix 2

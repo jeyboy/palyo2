@@ -5,6 +5,9 @@
 #include "media/media_player/streams/base/media_stream.h"
 #include "../frames/audio_frame.h"
 
+#include <QAudioFormat>
+#include <QAudioDeviceInfo>
+
 class AudioStream : public MediaStream {
 public:
     AudioStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority = InheritPriority);
@@ -19,10 +22,12 @@ public:
     virtual uint getVolume() const = 0;
     virtual void setVolume(uint val) = 0;
     virtual bool deviceInAction() = 0;
+
+    qint64 fillBuffer(void * data, qint64 maxlen);
 protected:
     void routine();
 
-    qint64 fillBuffer(void * data, qint64 maxlen);
+    void fillFormat(QAudioFormat & format);
 //    void sync(double delay, char *data, int & len, qint64 maxlen);
 
     double calcPts(AVPacket * packet);
@@ -36,6 +41,8 @@ protected:
     AudioResampler * resampler;
 
     QList<AudioFrame *> frames;
+
+    QAudioFormat format;
 };
 
 #endif // AUDIO_STREAM_H

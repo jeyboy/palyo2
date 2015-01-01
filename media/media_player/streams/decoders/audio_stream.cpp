@@ -9,6 +9,8 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterCloc
 
     if (valid) {
         setSemaphore(sema);
+        fillFormat(format);
+
         // if (is_planar)
         //    std::cout << "The audio stream (and its frames) have too many channels to fit in\n"
         //              << "frame->data. Therefore, to access the audio data, you need to use\n"
@@ -18,15 +20,14 @@ AudioStream::AudioStream(QObject * parent, AVFormatContext * context, MasterCloc
         //              << "  frame->extended_data[1] has the data for channel 2\n"
         //              << "  etc.\n";
         framesPerBuffer = codec_context -> channels; //is_planar ? codec_context -> channels : 1;
-        packetsBufferLen = framesPerBuffer * 10;
-        framesBufferLen = framesPerBuffer * 15;
+        packetsBufferLen = framesPerBuffer * 5; // 10
+        framesBufferLen = framesPerBuffer * 10; // 15
     }
 }
 
 AudioStream::~AudioStream() {
     delete resampler;
     flushData();
-    frames.clear();
 }
 
 //int AudioStream::calcDelay() {
@@ -100,14 +101,78 @@ void AudioStream::routine() {
                 qDebug() << "Could not get audio data from this frame";
             }
 
+            av_frame_unref(frame);
             packet -> size -= len;
             packet -> data += len;
         }
     }
-
-    av_frame_unref(frame);
-
     av_free_packet(packet);
+}
+
+void AudioStream::fillFormat(QAudioFormat & format) {
+    bool approxSettings = false, notSupport = false;
+    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+
+    format.setCodec("audio/pcm");
+    format.setSampleRate(codec_context -> sample_rate);
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setChannelCount(codec_context -> channels);
+    format.setSampleSize(av_get_bytes_per_sample(codec_context -> sample_fmt) * 8);
+
+    switch (codec_context -> sample_fmt) {
+        case AV_SAMPLE_FMT_U8: { ///< unsigned 8 bits
+            format.setSampleType(QAudioFormat::UnSignedInt);
+        break;}
+
+        case AV_SAMPLE_FMT_S16: { ///< signed 16 bits
+            format.setSampleType(QAudioFormat::SignedInt);
+        break;}
+
+        case AV_SAMPLE_FMT_S32: { ///< signed 32 bits
+            format.setSampleType(QAudioFormat::SignedInt);
+        break;}
+
+        // this format is not compatible with ffmpeg
+        case AV_SAMPLE_FMT_FLT: { ///< float
+            format.setSampleType(QAudioFormat::Float);
+        break;}
+
+        default:  {
+            //        AV_SAMPLE_FMT_DBL,         ///< double
+            //        AV_SAMPLE_FMT_U8P,         ///< unsigned 8 bits, planar
+            //        AV_SAMPLE_FMT_S16P,        ///< signed 16 bits, planar
+            //        AV_SAMPLE_FMT_S32P,        ///< signed 32 bits, planar
+            //        AV_SAMPLE_FMT_FLTP,        ///< float, planar
+            //        AV_SAMPLE_FMT_DBLP,        ///< double, planar
+
+            format.setSampleSize(32);
+            format.setSampleType(QAudioFormat::Float);
+            notSupport = true;
+        }
+    }
+
+    qDebug() << format;
+    if ((approxSettings = !info.isFormatSupported(format))) {
+        qWarning() << format << " format not supported by backend, set approx format.";
+        format = info.nearestFormat(format);
+        qDebug() << format;
+    }
+
+    if (approxSettings || notSupport) {
+        resampler = new AudioResampler();
+
+        enum AVSampleFormat sampleFormatOut = MediaPlayerUtils::toSampleFormat(format.sampleSize());
+
+        resampleRequire = resampler -> init(
+                        codec_context -> sample_fmt,
+                        sampleFormatOut,
+                        codec_context -> sample_rate,
+                        format.sampleRate(),
+                        MediaPlayerUtils::checkChannelLayout(codec_context -> channel_layout, codec_context -> channels),
+//                        MediaPlayerUtils::checkChannelLayout(MediaPlayerUtils::selectChannelLayout(codec), codec_context -> channels),
+                        MediaPlayerUtils::checkChannelLayout(defaultChannelLayout, format.channelCount())
+                    );
+    }
 }
 
 qint64 AudioStream::fillBuffer(void * data, qint64 maxlen) {
@@ -151,7 +216,7 @@ qint64 AudioStream::fillBuffer(void * data, qint64 maxlen) {
         return reslen;
     }
 
-    if (pauseRequired || eof) suspendStream();
+    if (pauseRequired || eof) suspendStream(); // ?
     qDebug() << "IS EMPTY";
     return maxlen;
 }

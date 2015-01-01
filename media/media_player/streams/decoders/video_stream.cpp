@@ -12,7 +12,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterCloc
 
 ////        packetsBufferLen = 5;
 ////        framesBufferLen = 30;
-        prepareRenderType(hardware);
+        prepareRenderType(gl);
         output = new VideoOutput(this, clock, type, codec_context -> width, codec_context -> height);
     }
 }
@@ -100,7 +100,7 @@ void VideoStream::routine() {
             break;
         }
 
-        if (got_picture) {
+        if (got_picture) {           
             buff = resampler -> proceed(frame, width, height);
 
             if (buff) {
@@ -117,11 +117,10 @@ void VideoStream::routine() {
 //            delete [] bla;
         }
 
+        av_frame_unref(frame);
         packet -> size -= len;
         packet -> data += len;
     }
-
-//    av_frame_unref(frame);
 
     av_free_packet(packet);
 }

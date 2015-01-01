@@ -38,6 +38,7 @@ public:
 //            For streams with AV_DISPOSITION_ATTACHED_PIC disposition, this packet will contain the attached picture.
 
         codec_context = stream -> codec;
+//        codec_context -> refcounted_frames = 1; // did not clear frames automatically
         codec = avcodec_find_decoder(codec_context -> codec_id);
 
 //        //glitches with some video
