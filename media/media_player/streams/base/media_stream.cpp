@@ -1,8 +1,8 @@
 #include "media_stream.h"
 
 MediaStream::MediaStream(AVFormatContext * context, MasterClock * clock, int streamIndex, QObject * parent, Priority priority)
-    : IMediaStream(context, streamIndex)
-    , Stream(parent)
+    : Stream(parent)
+    , IMediaStream(context, streamIndex)
     , clock(clock)
     , eof(false) {
 
