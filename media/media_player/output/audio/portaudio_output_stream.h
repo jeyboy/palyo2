@@ -18,6 +18,8 @@ public:
     void suspendStream();
     void resumeStream();
 
+    inline uint bytesPerBuffer(uint framesPerBuffer) { return format.bytesForFrames(framesPerBuffer); }
+
 ////    void addBuffer(QByteArray & frame);
 protected:
     bool init();

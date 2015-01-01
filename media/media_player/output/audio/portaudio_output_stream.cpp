@@ -8,7 +8,7 @@ static int callback(const void * /*inputBuffer*/,
                     void * userData) {
 
     PortAudioOutputStream * stream = (PortAudioOutputStream *)userData;
-    stream -> fillBuffer(outputBuffer, framesPerBuffer);
+    stream -> fillBuffer(outputBuffer, stream -> bytesPerBuffer(framesPerBuffer));
     return paContinue;
 }
 
