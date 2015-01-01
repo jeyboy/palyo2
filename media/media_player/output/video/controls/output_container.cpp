@@ -10,7 +10,7 @@ OutputContainer::OutputContainer(MasterClock * clock, QWidget * parent)
 }
 
 bool OutputContainer::event(QEvent * event) {
-    if (event -> type() == QEvent::WindowActivate/*ApplicationActivate*/) {
+    if (event -> type() == QEvent::WindowActivate && isFullScreen()/*ApplicationActivate*/) {
         activated = true;
     }
 
