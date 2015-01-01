@@ -95,6 +95,7 @@ public:
 
     ~IMediaStream() {
         delete mutex;
+        delete frameMutex;
 
         if (frame)
             av_frame_free(&frame);
