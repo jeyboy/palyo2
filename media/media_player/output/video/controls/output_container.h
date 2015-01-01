@@ -17,6 +17,8 @@ protected:
 
     MasterClock * clock;
     ControlPanel * panel;
+private:
+   bool activated;
 };
 
 #endif // OUTPUT_CONTAINER_H
