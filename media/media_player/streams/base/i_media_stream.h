@@ -20,6 +20,7 @@ public:
         codec = 0;
         frame = 0;
         mutex = 0;
+        frameMutex = 0;
 
         //TODO: emit error
         valid = !(streamIndex < 0 || streamIndex == AVERROR_STREAM_NOT_FOUND || streamIndex == AVERROR_DECODER_NOT_FOUND);
@@ -89,6 +90,7 @@ public:
 
         frame = av_frame_alloc();
         mutex = new QMutex();
+        frameMutex = new QMutex();
     }
 
     ~IMediaStream() {
@@ -150,7 +152,7 @@ protected:
     bool is_lossless;
     bool is_vbr;
 
-    QMutex * mutex;
+    QMutex * mutex, * frameMutex;
     AVStream * stream;
     int uindex;
     AVCodecContext * codec_context;
