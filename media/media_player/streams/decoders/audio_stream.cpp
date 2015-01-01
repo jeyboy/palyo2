@@ -117,14 +117,14 @@ void AudioStream::routine() {
     av_free_packet(packet);
 }
 
-qint64 AudioStream::fillBuffer(char * data, qint64 maxlen) {
+qint64 AudioStream::fillBuffer(void * data, qint64 maxlen) {
     int reslen = 0;
     AudioFrame * currFrame;
     memset(data, 0, maxlen); // clear buffer while buffer is idle
     int copy_size;
 
     if (!pauseRequired && !frames.isEmpty()) {
-        void * out = data;
+        char * out = (char *)data;
         while(!frames.isEmpty()) {
             if (reslen == maxlen)
                 break;
@@ -154,7 +154,6 @@ qint64 AudioStream::fillBuffer(char * data, qint64 maxlen) {
             }
         }
 
-        qDebug() << reslen;
         return reslen;
     }
 

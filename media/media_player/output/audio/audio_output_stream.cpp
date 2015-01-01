@@ -1,7 +1,7 @@
 #include "audio_output_stream.h"
 
 AudioOutputStream::AudioOutputStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority)
-    : QIODevice(parent), AudioStream(parent, context, clock, sema, streamIndex, priority) {
+    : AudioStream(parent, context, clock, sema, streamIndex, priority), QIODevice(parent) {
 
     if (valid) {
         QAudioFormat format;
@@ -13,7 +13,6 @@ AudioOutputStream::AudioOutputStream(QObject * parent, AVFormatContext * context
 
         open(QIODevice::ReadOnly);
         output -> start(this);
-        qDebug() << output -> error();
     }
 }
 

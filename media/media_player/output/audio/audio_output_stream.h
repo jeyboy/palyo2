@@ -8,7 +8,7 @@
 #include <QIODevice>
 #include <QAudioFormat>
 
-class AudioOutputStream : public QIODevice, public AudioStream {
+class AudioOutputStream : public AudioStream, public QIODevice {
 public:
     AudioOutputStream(QObject * parent, AVFormatContext * context, MasterClock * clock, QSemaphore * sema, int streamIndex, Priority priority = InheritPriority);
     virtual ~AudioOutputStream();

@@ -22,7 +22,7 @@ public:
 protected:
     void routine();
 
-    qint64 fillBuffer(char * data, qint64 maxlen);
+    qint64 fillBuffer(void * data, qint64 maxlen);
 //    void sync(double delay, char *data, int & len, qint64 maxlen);
 
     double calcPts(AVPacket * packet);
