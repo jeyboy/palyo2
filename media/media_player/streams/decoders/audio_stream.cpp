@@ -47,9 +47,8 @@ void AudioStream::resumeStream() {
 
 void AudioStream::flushData() {
     MediaStream::dropPackets();
-    frameMutex -> lock();
     qDeleteAll(frames);
-    frameMutex -> unlock();
+    frames.clear();
     avcodec_flush_buffers(codec_context);
 }
 
@@ -69,14 +68,6 @@ void AudioStream::routine() {
         msleep(sleep_correlation);
         return;
     }
-
-//    if (frames.size() >= framesBufferLen) {
-////        qDebug() << " AUDIO FULL";
-//        sleep_correlation = time_buff * 50; // take half of time buff // 2
-//        msleep(sleep_correlation);
-//        return;
-//    } else if (frames.size() >= framesBufferLen / 2)
-//        msleep(time_buff * 80);
 
     int len, got_frame;
     AVPacket * packet = 0;
@@ -120,25 +111,23 @@ void AudioStream::routine() {
 }
 
 qint64 AudioStream::fillBuffer(void * data, qint64 maxlen) {
-    int reslen = 0;
-    AudioFrame * currFrame;
     memset(data, 0, maxlen); // clear buffer while buffer is idle
-    int copy_size;
 
     if (!pauseRequired && !frames.isEmpty()) {
+        int copy_size;
+        int reslen = 0;
+        AudioFrame * currFrame;
         char * out = (char *)data;
+
         while(!frames.isEmpty()) {
             if (reslen == maxlen)
                 break;
 
-            frameMutex -> lock();
             currFrame = frames.at(0);
             copy_size = qMin(maxlen - reslen, (qint64)currFrame -> buffer -> size());
 
-            if (frames.at(0) -> buffer -> size() == copy_size) {
+            if (frames.at(0) -> buffer -> size() == copy_size)
                 currFrame = frames.takeFirst();
-                frameMutex -> unlock();
-            }
 
             memcpy(out, currFrame -> buffer -> data(), copy_size);
             reslen += copy_size;
@@ -156,7 +145,6 @@ qint64 AudioStream::fillBuffer(void * data, qint64 maxlen) {
                 time_buff -= time_shift;
 
                 clock -> iterateAudio(time_shift);
-                frameMutex -> unlock();
             }
         }
 

@@ -17,10 +17,10 @@ AudioOutputStream::AudioOutputStream(QObject * parent, AVFormatContext * context
 }
 
 AudioOutputStream::~AudioOutputStream() {
-    close();
     qDebug() << "Audio output";
     output -> stop();
     output -> reset();
+    close();
     delete output;
 }
 
