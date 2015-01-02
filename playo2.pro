@@ -250,8 +250,8 @@ HEADERS  += mainwindow.h \
     media/media_player/output/audio/audio_output_types.h \
     media/media_player/utils/audio/audio_device.h \
     media/media_player/utils/audio/audio_info.h \
-    media/media_player/utils/audio/qt_audio_device.h \
-    media/media_player/utils/audio/port_audio_device.h
+    media/media_player/utils/audio/qt_audio_device.h
+
 
 unix:!mac {
         QT += gui-private
@@ -274,7 +274,8 @@ win32: {
 
         LIBS += -L"$$_PRO_FILE_PWD_/libs/portable_audio/" -lportaudio_x86
 
-        HEADERS  += media/media_player/output/audio/portaudio_output_stream.h
+        HEADERS  += media/media_player/output/audio/portaudio_output_stream.h \
+            media/media_player/utils/audio/port_audio_device.h
 
         SOURCES += globalshortcut/qxtglobalshortcut_win.cpp  \
             media/media_player/output/audio/portaudio_output_stream.cpp
