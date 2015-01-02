@@ -27,13 +27,13 @@ struct PortAudioDevice : public AudioDevice {
 //        }
 //    }
 
-    PortAudioDevice(PaDeviceInfo * deviceInfo, bool isDefault) {
+    PortAudioDevice(const PaDeviceInfo * deviceInfo, bool isDefault) {
         is_default = isDefault;
 
-        const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo(deviceInfo -> hostApi);
-        QString name = QString(hostApiInfo -> name) + ": " + QString::fromLocal8Bit(deviceInfo -> name);
-        qDebug("audio device %d: %s", i, name.toUtf8().constData());
-        qDebug("max in/out channels: %d/%d", deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels);
+//        const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo(deviceInfo -> hostApi);
+//        QString name = QString(hostApiInfo -> name) + ": " + QString::fromLocal8Bit(deviceInfo -> name);
+//        qDebug("audio device %d: %s", i, name.toUtf8().constData());
+//        qDebug("max in/out channels: %d/%d", deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels);
 
 
 

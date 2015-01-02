@@ -10,7 +10,7 @@ public:
     static availableDevices(QList<AudioDevice> * input = 0, QList<AudioDevice> * output = 0) {
         int numDevices = Pa_GetDeviceCount();
 
-        for (int i = 0 ; i < numDevices ; ++i) {
+        for (int i = 0; i < numDevices; ++i) {
             const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(i);
             if (deviceInfo) {
                 if (deviceInfo -> maxInputChannels > 0 && input)

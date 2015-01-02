@@ -2,7 +2,7 @@
 #define AUDIO_DEVICE
 
 #include <qstring>
-#include <qlist>
+#include <qstringlist>
 
 struct AudioDevice {
     QString name;
