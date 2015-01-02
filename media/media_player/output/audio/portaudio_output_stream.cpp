@@ -65,17 +65,6 @@ bool PortAudioOutputStream::init() {
         return false;
     }
 
-//    int numDevices = Pa_GetDeviceCount();
-//    for (int i = 0 ; i < numDevices ; ++i) {
-//        const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(i);
-//        if (deviceInfo) {
-//            const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo(deviceInfo -> hostApi);
-//            QString name = QString(hostApiInfo -> name) + ": " + QString::fromLocal8Bit(deviceInfo -> name);
-//            qDebug("audio device %d: %s", i, name.toUtf8().constData());
-//            qDebug("max in/out channels: %d/%d", deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels);
-//        }
-//    }
-
     memset(outputParameters, 0, sizeof(PaStreamParameters));
     outputParameters -> device = Pa_GetDefaultOutputDevice();
     if (outputParameters -> device == paNoDevice) {

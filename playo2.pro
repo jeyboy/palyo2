@@ -238,7 +238,6 @@ HEADERS  += mainwindow.h \
     media/media_player/utils/video_types.h \
     media/media_player/streams/frames/video/video_blending.h \
     media/media_player/utils/system_utils.h \
-    media/media_player/output/audio/audio_info.h \
     media/media_player/output/audio/rdft_spectrum.h \
     media/media_player/output/audio/fft_spectrum.h \
     media/media_player/utils/web/custom_network_access_manager.h \
@@ -248,7 +247,11 @@ HEADERS  += mainwindow.h \
     media/media_player/utils/media_attributes.h \
     media/media_player/media_player_state.h \
     media/media_player/output/video/controls/renders/stub_render.h \
-    media/media_player/output/audio/audio_output_types.h
+    media/media_player/output/audio/audio_output_types.h \
+    media/media_player/utils/audio/audio_device.h \
+    media/media_player/utils/audio/audio_info.h \
+    media/media_player/utils/audio/qt_audio_device.h \
+    media/media_player/utils/audio/port_audio_device.h
 
 unix:!mac {
         QT += gui-private
