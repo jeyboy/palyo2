@@ -6,8 +6,6 @@
 #include "hotkey_model_item.h"
 
 class HotkeyModel : public QAbstractItemModel {
-    Q_OBJECT
-
 public:
     HotkeyModel(QList<HotkeyModelItem *> * toplevelchilds = 0, QObject *parent = 0);
     ~HotkeyModel();

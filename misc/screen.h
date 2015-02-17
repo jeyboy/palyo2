@@ -1,7 +1,7 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include <QDesktopServices>
+//#include <QDesktopServices>
 #include <QDesktopWidget>
 #include <QApplication>
 
