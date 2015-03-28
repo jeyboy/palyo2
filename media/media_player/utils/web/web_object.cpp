@@ -33,8 +33,7 @@ bool WebObject::openSync(QUrl url) {
     QVariant possibleRedirectUrl = m_http -> attribute(QNetworkRequest::RedirectionTargetAttribute);
     if (possibleRedirectUrl.isValid()) {
         QUrl url = possibleRedirectUrl.toUrl();
-        openSync(url);
-        return false;
+        return openSync(url);
     } else {
         emit end(relation, true);
         return true;

@@ -12,7 +12,7 @@ VideoStream::VideoStream(QObject * parent, AVFormatContext * context, MasterCloc
 
 ////        packetsBufferLen = 5;
 ////        framesBufferLen = 30;
-        prepareRenderType(gl);
+        prepareRenderType(gl_plus);
         output = new VideoOutput(this, clock, type, codec_context -> width, codec_context -> height);
     }
 }

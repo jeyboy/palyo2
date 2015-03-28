@@ -1,0 +1,5 @@
+#ifndef GLOBAL_SETTINGS
+#define GLOBAL_SETTINGS
+
+#endif // GLOBAL_SETTINGS
+
